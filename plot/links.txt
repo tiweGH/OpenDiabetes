@@ -1,0 +1,4 @@
+http://www.pyinstaller.org/
+
+http://www.nixo-soft.de/tutorials/jlr/JLRTutorial.html
+https://miktex.org/portable

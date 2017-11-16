@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane id="AnchorPane" fx:id="ap" prefHeight="507.0" prefWidth="431.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.jhit.opendiabetesvault.fx.gui.MainGuiController">
+    <children>
+        <TabPane tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <tabs>
+                <Tab text="Import">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="474.0" prefWidth="431.0">
+                            <children>
+                                <CheckBox fx:id="odvCheckBox" layoutX="14.0" layoutY="329.0" mnemonicParsing="false" text="OpenDiabetesVault DB JSON" />
+                                <CheckBox fx:id="sonyCheckBox" layoutX="14.0" layoutY="266.0" mnemonicParsing="false" text="Sony SWR12 Dump" />
+                                <CheckBox fx:id="googleGatheredCheckBox" layoutX="14.0" layoutY="203.0" mnemonicParsing="false" text="Google Gathered JSON" />
+                                <CheckBox fx:id="googleFitCheckBox" layoutX="14.0" layoutY="140.0" mnemonicParsing="false" text="Google Fit CSV Folder" />
+                                <CheckBox fx:id="abbottCheckBox" layoutX="14.0" layoutY="77.0" mnemonicParsing="false" text="Abbott FreestyleLibre TXT" />
+                                <CheckBox fx:id="medtronicCheckBox" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" text="Medtronic Carelink CSV" />
+                                <Button layoutX="362.0" layoutY="38.0" mnemonicParsing="false" onAction="#handleButtonBrowseMedtronic" prefHeight="25.0" text="Browse" AnchorPane.rightAnchor="14.0" />
+                                <Button layoutX="362.0" layoutY="101.0" mnemonicParsing="false" onAction="#handleButtonBrowseAbbott" prefHeight="25.0" text="Browse" AnchorPane.rightAnchor="14.0" />
+                                <Button layoutX="362.0" layoutY="164.0" mnemonicParsing="false" onAction="#handleButtonBrowseGoogleFit" prefHeight="25.0" text="Browse" AnchorPane.rightAnchor="14.0" />
+                                <Button layoutX="362.0" layoutY="227.0" mnemonicParsing="false" onAction="#handleButtonBrowseGoogleTracks" prefHeight="25.0" text="Browse" AnchorPane.rightAnchor="14.0" />
+                                <Button layoutX="362.0" layoutY="290.0" mnemonicParsing="false" onAction="#handleButtonBrowseRoche" prefHeight="25.0" text="Browse" AnchorPane.rightAnchor="14.0" />
+                                <Button layoutX="362.0" layoutY="353.0" mnemonicParsing="false" onAction="#handleButtonBrowseOpenDiabetesVault" prefHeight="25.0" text="Browse" AnchorPane.rightAnchor="14.0" />
+                                <Button defaultButton="true" mnemonicParsing="false" onAction="#handleButtonImport" text="Import" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="14.0" />
+                                <CheckBox fx:id="importPeriodAllCheckbox" layoutX="272.0" layoutY="396.0" mnemonicParsing="true" onAction="#handlePeriodCheckboxClicked" text="All" />
+                                <DatePicker fx:id="importPeriodToPicker" layoutX="151.0" layoutY="392.0" prefWidth="110.0" />
+                                <DatePicker fx:id="importPeriodFromPicker" layoutX="14.0" layoutY="392.0" prefWidth="110.0" />
+                                <TextField fx:id="medtronicTextField" layoutX="14.0" layoutY="38.0" prefHeight="25.0" prefWidth="339.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="78.0" />
+                                <TextField fx:id="abbottTextField" layoutX="14.0" layoutY="101.0" prefHeight="25.0" prefWidth="339.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="78.0" />
+                                <TextField fx:id="googleFitTextField" layoutX="14.0" layoutY="164.0" prefHeight="25.0" prefWidth="339.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="78.0" />
+                                <TextField fx:id="googleGatheredTextField" layoutX="14.0" layoutY="227.0" prefHeight="25.0" prefWidth="339.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="78.0" />
+                                <TextField fx:id="sonyTextField" layoutX="14.0" layoutY="290.0" prefHeight="25.0" prefWidth="339.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="78.0" />
+                                <TextField fx:id="odvTextField" layoutX="14.0" layoutY="353.0" prefHeight="25.0" prefWidth="339.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="78.0" />
+                                <Label layoutX="136.0" layoutY="396.0" text="-" />
+                                <Hyperlink layoutX="165.0" layoutY="11.0" text="?" />
+                                <Hyperlink layoutX="177.0" layoutY="74.0" text="?" />
+                                <Hyperlink layoutX="158.0" layoutY="137.0" text="?" />
+                                <Hyperlink layoutX="184.0" layoutY="200.0" text="?" />
+                                <Hyperlink layoutX="197.0" layoutY="263.0" text="?" />
+                                <Hyperlink layoutX="204.0" layoutY="326.0" text="?" />
+                                <ProgressBar fx:id="importPorgressBar" layoutX="16.0" layoutY="443.0" prefHeight="18.0" prefWidth="338.0" progress="0.0" AnchorPane.bottomAnchor="17.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="78.0" />
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+                <Tab text="Export">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                            <children>
+                                <CheckBox fx:id="exportPlotDailyCheckBox" layoutX="14.0" layoutY="77.0" mnemonicParsing="false" text="Plot Daily Report" />
+                                <CheckBox fx:id="exportOdvCheckBox" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" text="ODV CSV File" />
+                                <Button layoutX="362.0" layoutY="38.0" mnemonicParsing="false" onAction="#handleExportButtonBrowseOpenDiabetesVaultClicked" prefHeight="25.0" text="Browse" AnchorPane.rightAnchor="14.0" />
+                                <Button layoutX="362.0" layoutY="101.0" mnemonicParsing="false" onAction="#handleExportButtonBrowsePlotDailyClicked" prefHeight="25.0" text="Browse" AnchorPane.rightAnchor="14.0" />
+                                <TextField fx:id="exportOdvTextField" layoutX="14.0" layoutY="38.0" prefHeight="25.0" prefWidth="339.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="78.0" />
+                                <TextField fx:id="exportPlotDailyTextField" layoutX="14.0" layoutY="101.0" prefHeight="25.0" prefWidth="339.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="78.0" />
+                                <DatePicker fx:id="exportPeriodFromPicker" layoutX="14.0" layoutY="392.0" prefWidth="110.0" />
+                                <DatePicker fx:id="exportPeriodToPicker" layoutX="151.0" layoutY="392.0" prefWidth="110.0" />
+                                <Button layoutX="365.0" layoutY="439.0" mnemonicParsing="false" onAction="#handleButtonExportClicked" text="Export" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="14.0" />
+                                <ProgressBar fx:id="exportPorgressBar" layoutX="20.0" layoutY="443.0" prefHeight="18.0" prefWidth="334.0" progress="0.0" AnchorPane.bottomAnchor="17.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="78.0" />
+                                <CheckBox fx:id="exportPeriodAllCheckbox" layoutX="272.0" layoutY="396.0" mnemonicParsing="false" onAction="#handleExportPeriodCheckboxClicked" text="All" />
+                                <Label layoutX="136.0" layoutY="396.0" text="-" />
+                        <Button layoutX="14.0" layoutY="224.0" mnemonicParsing="false" onAction="#handleButtonProcessing" text="Test Processing" />
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+                <Tab text="Interpreter Options">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                            <children>
+                                <CheckBox fx:id="fillAsNewKathederCheckbox" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleFillAsNewKathederClicked" text="Interpret fill canula as new katheder" />
+                                <Label layoutX="14.0" layoutY="42.0" text="Cool down time [min]" />
+                                <Spinner fx:id="cooldownTimeSpinner" layoutX="136.0" layoutY="38.0" onMouseClicked="#handleCooldownTimeClicked" prefHeight="25.0" prefWidth="65.0" />
+                                <Button layoutX="14.0" layoutY="521.0" mnemonicParsing="false" onAction="#handleSetToDefaultButton" text="Set to default" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" />
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+                <Tab text="About">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                            <children>
+                                <TextArea editable="false" prefHeight="234.0" prefWidth="431.0" text="OpenDiabetesVault is free software and comes with ABSOLUTELY NO WARRANTY, to the extent permitted by applicable law. OpenDiabetesVault is completely free of charge! You are welcome to redistribute it under certain conditions. See links above for more details.&#10;&#10;OpenDiabetesVault is a collaborative project with many contributors. If you are interested in contribute to the project, see links above.&#10;&#10;You are always welcome to buy us a beer for our work!" wrapText="true" AnchorPane.bottomAnchor="135.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <font>
+                                        <Font size="14.0" />
+                                    </font>
+                                </TextArea>
+                                <Hyperlink layoutX="14.0" layoutY="240.0" text="License information" AnchorPane.bottomAnchor="106.0" AnchorPane.leftAnchor="14.0" />
+                                <Hyperlink layoutX="14.0" layoutY="286.0" text="List of contributers" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="14.0" />
+                                <Hyperlink layoutX="14.0" layoutY="263.0" text="Redistribution conditions" AnchorPane.bottomAnchor="83.0" AnchorPane.leftAnchor="14.0" />
+                                <Hyperlink layoutX="14.0" layoutY="309.0" text="How to contribute" AnchorPane.bottomAnchor="37.0" AnchorPane.leftAnchor="14.0" />
+                                <Hyperlink layoutX="14.0" layoutY="332.0" text="Donate" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" />
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+    </children>
+</AnchorPane>
