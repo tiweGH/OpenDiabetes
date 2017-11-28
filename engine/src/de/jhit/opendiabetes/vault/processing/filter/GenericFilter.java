@@ -34,7 +34,7 @@ public class GenericFilter {
         this.GenericType = GenericType;
     }
 
-    public List<VaultEntry> tempfunction(List<VaultEntry> data) {
+    public List<VaultEntry> filter(List<VaultEntry> data) {
         List<VaultEntry> filteredData = new ArrayList<>();
 
         for (VaultEntry entry : data) {

@@ -110,7 +110,7 @@ public class UnderThresholdFilter implements Filter {
 
         GenericFilter tt = new GenericFilter(GenericType);
 
-        for (VaultEntry entry : tt.tempfunction(data) /*filter.filter(data).filteredData*/) {
+        for (VaultEntry entry : tt.filter(data) /*filter.filter(data).filteredData*/) {
             if (entry.getValue() < thresholdValue) {
                 filteredData.add(entry);
                 if (startOfCuttenTimeSeries == null) {

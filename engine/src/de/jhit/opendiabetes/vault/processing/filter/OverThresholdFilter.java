@@ -110,7 +110,7 @@ public class OverThresholdFilter implements Filter {
         Date lastTimeStamp = null;
 
         GenericFilter tt = new GenericFilter(GenericType);
-        for (VaultEntry entry : tt.tempfunction(data)) {
+        for (VaultEntry entry : tt.filter(data)) {
             if (entry.getValue() > thresholdValue) {
                 filteredData.add(entry);
                 if (startOfCuttenTimeSeries == null) {
