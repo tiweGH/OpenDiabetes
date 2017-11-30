@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 juehv
+ * Copyright (C) 2017 Jorg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,30 +14,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.jhit.opendiabetes.vault.processing.filter;
+package de.jhit.opendiabetes.vault.processing.filter.refactored;
 
-import com.sun.javafx.scene.control.skin.VirtualFlow;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
-import java.util.Date;
+import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import java.util.List;
-import javafx.util.Pair;
 
 /**
- * Does nothing.
  *
- * @author juehv
+ * @author Daniel aber an Jörgs Pc wie immer halt
  */
-public class NoneFilter implements Filter {
+public class EventFilter extends Filter {
 
-    @Override
-    public FilterResult filter(List<VaultEntry> data) {
-        List<Pair<Date, Date>> timeSeries = new VirtualFlow.ArrayLinkedList<>();
-        return new FilterResult(data, timeSeries);
+    private VaultEntryType vaultEntryType;
+
+    public EventFilter(VaultEntryType vaultEntryType) {
+        this.vaultEntryType = vaultEntryType;
     }
 
     @Override
-    public FilterType getType() {
-        return FilterType.NONE;
+    FilterType getType() {
+        return FilterType.EVENT_FILTER;
     }
 
+    @Override
+    boolean matchesFilterParameters(VaultEntry entry) {
+        return entry.getType().equals(vaultEntryType);
+    }
 }

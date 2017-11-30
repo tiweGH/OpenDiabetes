@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.jhit.opendiabetes.vault.processing.filter;
+package de.jhit.opendiabetes.vault.processing.filter.refactored;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
@@ -34,7 +34,7 @@ public class GenericFilter {
         this.GenericType = GenericType;
     }
 
-    public List<VaultEntry> tempfunction(List<VaultEntry> data) {
+    public List<VaultEntry> filter(List<VaultEntry> data) {
         List<VaultEntry> filteredData = new ArrayList<>();
 
         for (VaultEntry entry : data) {

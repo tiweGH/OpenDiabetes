@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.jhit.opendiabetes.vault.processing.filter;
+package de.jhit.opendiabetes.vault.processing.filter.refactored;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
@@ -110,7 +110,7 @@ public class UnderThresholdFilter implements Filter {
 
         GenericFilter tt = new GenericFilter(GenericType);
 
-        for (VaultEntry entry : tt.tempfunction(data) /*filter.filter(data).filteredData*/) {
+        for (VaultEntry entry : tt.filter(data) /*filter.filter(data).filteredData*/) {
             if (entry.getValue() < thresholdValue) {
                 filteredData.add(entry);
                 if (startOfCuttenTimeSeries == null) {

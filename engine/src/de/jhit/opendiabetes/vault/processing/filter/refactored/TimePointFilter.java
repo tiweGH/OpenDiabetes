@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 juehv
+ * Copyright (C) 2017 Jorg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,35 +14,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.jhit.opendiabetes.vault.processing.filter;
+package de.jhit.opendiabetes.vault.processing.filter.refactored;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
+import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 
 /**
  *
- * @author juehv
+ * @author Jorg
  */
-public class TimePointFilter implements Filter {
-
-    private final TimeSpanFilter filter;
+public class TimePointFilter extends Filter {
+    private LocalTime endTime;
+    private LocalTime startTime;
 
     public TimePointFilter(LocalTime timePoint, int marginInMinutes) {
-        LocalTime startTime = timePoint.minus(marginInMinutes, ChronoUnit.MINUTES);
-        LocalTime endTime = timePoint.plus(marginInMinutes, ChronoUnit.MINUTES);
-        filter = new TimeSpanFilter(startTime, endTime);
+        startTime = timePoint.minus(marginInMinutes, ChronoUnit.MINUTES);
+        endTime= timePoint.plus(marginInMinutes, ChronoUnit.MINUTES);
     }
 
     @Override
-    public FilterResult filter(List<VaultEntry> data) {
-        return filter.filter(data);
-    }
-
-    @Override
-    public FilterType getType() {
+    FilterType getType() {
         return FilterType.TIME_POINT;
+    }
+
+    @Override
+    boolean matchesFilterParameters(VaultEntry entry) {
+        return TimestampUtils.withinTimeSpan(startTime, endTime, entry.getTimestamp()); 
     }
 
 }

@@ -16,6 +16,7 @@
  */
 package de.jhit.opendiabetes.vault.processing.filter;
 
+import de.jhit.opendiabetes.vault.processing.filter.refactored.GenericFilter;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.testhelper.StaticDataset;

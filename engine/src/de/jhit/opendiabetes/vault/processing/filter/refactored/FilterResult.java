@@ -14,30 +14,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.jhit.opendiabetes.vault.processing.filter;
+package de.jhit.opendiabetes.vault.processing.filter.refactored;
 
-import com.sun.javafx.scene.control.skin.VirtualFlow;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import java.util.Date;
 import java.util.List;
 import javafx.util.Pair;
 
 /**
- * Does nothing.
  *
  * @author juehv
  */
-public class NoneFilter implements Filter {
+public class FilterResult {
 
-    @Override
-    public FilterResult filter(List<VaultEntry> data) {
-        List<Pair<Date, Date>> timeSeries = new VirtualFlow.ArrayLinkedList<>();
-        return new FilterResult(data, timeSeries);
+    public final List<VaultEntry> filteredData;
+    public final List<Pair<Date, Date>> timeSeries;
+
+    public FilterResult(List<VaultEntry> filteredData, List<Pair<Date, Date>> timeSeries) {
+        this.filteredData = filteredData;
+        this.timeSeries = timeSeries;
     }
-
-    @Override
-    public FilterType getType() {
-        return FilterType.NONE;
+    
+    public int size(){
+        return filteredData.size();
     }
 
 }

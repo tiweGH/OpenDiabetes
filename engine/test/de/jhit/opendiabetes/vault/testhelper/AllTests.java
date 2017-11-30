@@ -8,7 +8,7 @@ import de.jhit.opendiabetes.vault.container.csv.SliceCsVEntryTest;
 import de.jhit.opendiabetes.vault.data.VaultDaoTest;
 import de.jhit.opendiabetes.vault.processing.DataSlicerTest;
 import de.jhit.opendiabetes.vault.processing.filter.DateTimeSpanFilterTest;
-import de.jhit.opendiabetes.vault.processing.filter.EventFilter;
+import de.jhit.opendiabetes.vault.processing.filter.refactored.EventFilter;
 import de.jhit.opendiabetes.vault.processing.filter.EventFilterTest;
 import de.jhit.opendiabetes.vault.processing.filter.GenericFilterTest;
 import de.jhit.opendiabetes.vault.processing.filter.TimePointFilterTest;

@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-//diesen Filter ueberarbeiten
 package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
@@ -110,7 +109,7 @@ public class OverThresholdFilter implements Filter {
         Date lastTimeStamp = null;
 
         GenericFilter tt = new GenericFilter(GenericType);
-        for (VaultEntry entry : tt.filter(data)) {
+        for (VaultEntry entry : tt.tempfunction(data)) {
             if (entry.getValue() > thresholdValue) {
                 filteredData.add(entry);
                 if (startOfCuttenTimeSeries == null) {

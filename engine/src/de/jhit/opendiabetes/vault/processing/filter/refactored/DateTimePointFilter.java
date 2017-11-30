@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 juehv
+ * Copyright (C) 2017 gizem
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,30 +14,37 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.jhit.opendiabetes.vault.processing.filter;
+package de.jhit.opendiabetes.vault.processing.filter.refactored;
 
-import com.sun.javafx.scene.control.skin.VirtualFlow;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import java.util.Date;
 import java.util.List;
-import javafx.util.Pair;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.MINUTES;
 
 /**
- * Does nothing.
  *
- * @author juehv
+ * @author gizem
  */
-public class NoneFilter implements Filter {
+public class DateTimePointFilter implements Filter {
+
+    private final DateTimeSpanFilter filter;
+
+    public DateTimePointFilter(Date dateTimePoint, int marginInMinutes) {
+        long margin = MILLISECONDS.convert(marginInMinutes, MINUTES);
+        Date startTime = new Date(dateTimePoint.getTime() - margin);
+        Date endTime = new Date(dateTimePoint.getTime() + margin);
+        filter = new DateTimeSpanFilter(startTime, endTime);
+    }
 
     @Override
     public FilterResult filter(List<VaultEntry> data) {
-        List<Pair<Date, Date>> timeSeries = new VirtualFlow.ArrayLinkedList<>();
-        return new FilterResult(data, timeSeries);
+        return filter.filter(data);
     }
 
     @Override
     public FilterType getType() {
-        return FilterType.NONE;
+        return FilterType.DATE_TIME_POINT;
     }
 
 }

@@ -16,6 +16,8 @@
  */
 package de.jhit.opendiabetes.vault.processing.filter;
 
+import de.jhit.opendiabetes.vault.processing.filter.refactored.FilterResult;
+import de.jhit.opendiabetes.vault.processing.filter.refactored.DateTimeSpanFilter;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.testhelper.SensitivityDataset;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;

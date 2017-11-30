@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 juehv
+ * Copyright (C) 2017 mswin
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,30 +14,39 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.jhit.opendiabetes.vault.processing.filter;
-
-import com.sun.javafx.scene.control.skin.VirtualFlow;
-import de.jhit.opendiabetes.vault.container.VaultEntry;
-import java.util.Date;
-import java.util.List;
-import javafx.util.Pair;
+package de.jhit.opendiabetes.vault.processing.filter.refactored;
 
 /**
- * Does nothing.
  *
- * @author juehv
+ * @author mswin
  */
-public class NoneFilter implements Filter {
-
-    @Override
-    public FilterResult filter(List<VaultEntry> data) {
-        List<Pair<Date, Date>> timeSeries = new VirtualFlow.ArrayLinkedList<>();
-        return new FilterResult(data, timeSeries);
-    }
-
-    @Override
-    public FilterType getType() {
-        return FilterType.NONE;
-    }
+public enum FilterType {
+    // basic time
+    TIME_SPAN,
+    TIME_POINT,
+    DATE_TIME_POINT,
+    DATE_TIME_SPAN,
+    // available data
+    BOLUS_AVAILABLE,
+    BASAL_AVAILABLE,
+    BG_AVAILABLE,
+    CGM_AVAILABLE,
+    HR_AVAILABLE,
+    SLEEP_AVAILABLE,
+    STRESS_AVAILABLE,
+    EXERCISE_AVAILABLE,
+    EVENT_FILTER,
+    // data absence
+    MEAL_ABSENCE,
+    BOLUS_ABSENCE,
+    // threshould
+    BOLUS_TH,
+    BASAL_TH,
+    BG_TH,
+    CGM_TH,
+    HR_TH,
+    STRESS_TH,
+    // filter nothing
+    NONE;
 
 }

@@ -34,9 +34,5 @@ public class FilterResult {
         this.filteredData = filteredData;
         this.timeSeries = timeSeries;
     }
-    
-    public int size(){
-        return filteredData.size();
-    }
 
 }
