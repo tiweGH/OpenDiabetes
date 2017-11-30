@@ -37,9 +37,6 @@ import org.junit.Test;
  */
 public class EventFilterTest extends Assert {
 
-    public EventFilterTest() {
-    }
-
     @BeforeClass
     public static void setUpClass() {
     }
@@ -63,10 +60,21 @@ public class EventFilterTest extends Assert {
     public void testFilter() throws ParseException {
         System.out.println("filter");
         List<VaultEntry> data = StaticDataset.getStaticDataset();
-        EventFilter instance = new EventFilter();
-        List<Date> result = instance.filter(data, VaultEntryType.STRESS, 0);
-
+        EventFilter instance = new EventFilter(VaultEntryType.STRESS);
+        FilterResult result = instance.filter(data);
+        System.out.println(result);
         assertTrue(result.size() == 23);
     }
+    /*
+    @Test
+    public void meinTest() throws ParseException{
+        List<VaultEntry> data = StaticDataset.getStaticDataset();
+        EventFilter eventFilter = new EventFilter();
+        List<Date> results = eventFilter.filter(data, VaultEntryType.MEAL_MANUAL, 0);
+        System.out.println(results);
+        assertTrue(results.isEmpty());
+        assertTrue(results.size()== 0);
+        
+    }*/
 
 }

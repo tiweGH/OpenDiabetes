@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 gizem
+ * Copyright (C) 2017 Jorg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,44 +18,27 @@ package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static java.util.concurrent.TimeUnit.MINUTES;
 
 /**
  *
- * @author gizem
+ * @author Daniel aber an Jörgs Pc wie immer halt
  */
-public class EventFilter {
+public class EventFilter extends Filter {
 
-    public EventFilter() {
+    private VaultEntryType vaultEntryType;
+
+    public EventFilter(VaultEntryType vaultEntryType) {
+        this.vaultEntryType = vaultEntryType;
     }
 
-    private boolean isInsideRange(List<VaultEntry> list, Date bolusDate, long buffer) {
-        long threshold = MILLISECONDS.convert(buffer, MINUTES);
-        long pre = bolusDate.getTime() - list.get(0).getTimestamp().getTime();
-        long post = list.get(list.size() - 1).getTimestamp().getTime() - bolusDate.getTime();
-        return (pre >= threshold && post >= threshold);
+    @Override
+    FilterType getType() {
+        return FilterType.EVENT_FILTER;
     }
 
-    public List<Date> filter(List<VaultEntry> data, VaultEntryType event, long buffer) {
-        List<Date> events = new ArrayList<>();
-        if (data.isEmpty()) {
-            return events;
-        }
-
-        Date begin = data.get(0).getTimestamp();
-        Date end = data.get(data.size() - 1).getTimestamp();
-        for (VaultEntry entry : data) {
-            if (entry.getType().equals(event)) {
-                if (isInsideRange(data, entry.getTimestamp(), buffer)) {
-                    events.add(entry.getTimestamp());
-                }
-            }
-        }
-        return events;
+    @Override
+    boolean matchesFilterParameters(VaultEntry entry) {
+        return entry.getType().equals(vaultEntryType);
     }
-
 }

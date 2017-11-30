@@ -17,15 +17,49 @@
 package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
+import de.jhit.opendiabetes.vault.util.TimestampUtils;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import javafx.util.Pair;
 
 /**
  *
  * @author juehv
  */
-public interface Filter {
+public abstract class Filter {
+    
+    abstract FilterType getType();
 
-    FilterResult filter(List<VaultEntry> data);
+    abstract boolean matchesFilterParameters(VaultEntry entry);
 
-    FilterType getType();
+    public FilterResult filter(List<VaultEntry> data) {
+
+        List<VaultEntry> result = new ArrayList<>();
+        List<Pair<Date, Date>> timeSeries = new ArrayList<>();
+
+        Date startOfCurentTimeSeries = null;
+        Date lastTimeStamp = null;
+        for (VaultEntry entry : data) {
+            if (matchesFilterParameters(entry)) {
+                result.add(entry);
+                if (startOfCurentTimeSeries == null) {
+                    startOfCurentTimeSeries = entry.getTimestamp();
+                }
+                lastTimeStamp = entry.getTimestamp();
+            } else if (startOfCurentTimeSeries != null) {
+                timeSeries.add(new Pair<>(startOfCurentTimeSeries, lastTimeStamp));
+                startOfCurentTimeSeries = null;
+            }
+        }
+
+        if (startOfCurentTimeSeries != null) {
+            timeSeries.add(new Pair<>(startOfCurentTimeSeries, lastTimeStamp));
+        }
+
+        return new FilterResult(result, timeSeries);
+    }
+    
+    
+   
 }

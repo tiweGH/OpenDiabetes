@@ -27,17 +27,16 @@ import javafx.util.Pair;
  *
  * @author juehv
  */
-public class NoneFilter implements Filter {
-
-    @Override
-    public FilterResult filter(List<VaultEntry> data) {
-        List<Pair<Date, Date>> timeSeries = new VirtualFlow.ArrayLinkedList<>();
-        return new FilterResult(data, timeSeries);
-    }
+public class NoneFilter extends Filter {
 
     @Override
     public FilterType getType() {
         return FilterType.NONE;
+    }
+
+    @Override
+    boolean matchesFilterParameters(VaultEntry entry) {
+        return true;
     }
 
 }
