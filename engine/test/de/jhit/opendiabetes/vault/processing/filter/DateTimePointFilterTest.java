@@ -16,8 +16,6 @@
  */
 package de.jhit.opendiabetes.vault.processing.filter;
 
-import de.jhit.opendiabetes.vault.processing.filter.refactored.FilterResult;
-import de.jhit.opendiabetes.vault.processing.filter.refactored.DateTimePointFilter;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.testhelper.StaticDataset;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
@@ -25,6 +23,8 @@ import java.text.ParseException;
 import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.MINUTES;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -64,15 +64,15 @@ public class DateTimePointFilterTest extends Assert {
     public void testFilter() throws ParseException {
         System.out.println("filter");
         Date dateTimePoint = TimestampUtils.createCleanTimestamp("2017.06.29-05:26", "yyyy.MM.dd-HH:mm");
-        int margin = 5;
-        
+        int marginInMinutes = 5;
+        long margin = MILLISECONDS.convert(marginInMinutes, MINUTES);
         List<VaultEntry> data = StaticDataset.getStaticDataset();
-        DateTimePointFilter instance = new DateTimePointFilter(dateTimePoint,margin);
+        DateTimePointFilter instance = new DateTimePointFilter(dateTimePoint,marginInMinutes);
         FilterResult result = instance.filter(data);
 
         for (VaultEntry entry : result.filteredData) {
             assertTrue(TimestampUtils.withinDateTimeSpan(new Date(dateTimePoint.getTime() - margin),
-                    new Date(dateTimePoint.getTime() - margin), entry.getTimestamp()));
+                    new Date(dateTimePoint.getTime() + margin), entry.getTimestamp()));
         }
     }
 

@@ -17,15 +17,39 @@
 package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
+import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import java.util.List;
 
 /**
  *
  * @author juehv
  */
-public interface ThresholdFilter {
+public abstract class ThresholdFilter extends Filter{
+    
+    public boolean checkThresholdCombination(VaultEntryType GenericType, FilterType availabledatatype, FilterType TH)
+    {
+        boolean result = true;
+        
+        if (!(((GenericType == VaultEntryType.BASAL_PROFILE || GenericType == VaultEntryType.BASAL_MANUAL || GenericType == VaultEntryType.BASAL_INTERPRETER) && (TH == FilterType.BASAL_TH))
+                || ((GenericType == VaultEntryType.BOLUS_NORMAL || GenericType == VaultEntryType.BOLUS_SQARE || GenericType == VaultEntryType.GLUCOSE_BOLUS_CALCULATION) && (TH == FilterType.BOLUS_TH))
+                || ((GenericType == VaultEntryType.GLUCOSE_BG || GenericType == VaultEntryType.GLUCOSE_BG_MANUAL) && (TH == FilterType.BG_TH))
+                || ((GenericType == VaultEntryType.GLUCOSE_CGM || GenericType == VaultEntryType.GLUCOSE_CGM_RAW || GenericType == VaultEntryType.GLUCOSE_CGM_ALERT
+                || GenericType == VaultEntryType.GLUCOSE_CGM_CALIBRATION) && (TH == FilterType.CGM_TH))
+                || ((GenericType == VaultEntryType.HEART_RATE || GenericType == VaultEntryType.HEART_RATE_VARIABILITY) && (TH == FilterType.HR_TH))
+                || ((GenericType == VaultEntryType.STRESS) && (TH == FilterType.STRESS_TH)))) {
 
-    FilterResult filter(List<VaultEntry> data);
+            result = false;
+        } else if (!((availabledatatype == FilterType.BASAL_AVAILABLE && TH == FilterType.BASAL_TH)
+                || (availabledatatype == FilterType.BG_AVAILABLE && TH == FilterType.BG_TH)
+                || (availabledatatype == FilterType.BOLUS_AVAILABLE && TH == FilterType.BOLUS_TH)
+                || (availabledatatype == FilterType.CGM_AVAILABLE && TH == FilterType.CGM_TH)
+                || (availabledatatype == FilterType.HR_AVAILABLE && TH == FilterType.HR_TH)
+                || (availabledatatype == FilterType.STRESS_AVAILABLE && TH == FilterType.STRESS_TH))) {
 
-    FilterType getType();
+            result = false;
+        }
+        
+        return result;
+    }
+
 }

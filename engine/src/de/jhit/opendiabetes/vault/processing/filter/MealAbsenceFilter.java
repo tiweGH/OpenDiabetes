@@ -28,7 +28,7 @@ import javafx.util.Pair;
  *
  * @author juehv
  */
-public class MealAbsenceFilter implements Filter {
+public class MealAbsenceFilter extends Filter {
 
     private final long marginAfterMeal; // minutes after a meal until data becomes interesting again.
 
@@ -85,6 +85,12 @@ public class MealAbsenceFilter implements Filter {
     @Override
     public FilterType getType() {
         return FilterType.MEAL_ABSENCE;
+    }
+
+    @Override
+    boolean matchesFilterParameters(VaultEntry entry) {
+        return entry.getType() == VaultEntryType.MEAL_BOLUS_CALCULATOR
+                    || entry.getType() == VaultEntryType.MEAL_MANUAL;
     }
 
 }

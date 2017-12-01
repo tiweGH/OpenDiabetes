@@ -18,9 +18,9 @@ package de.jhit.opendiabetes.vault.testhelper;
  */
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
-import de.jhit.opendiabetes.vault.processing.filter.refactored.FilterResult;
-import de.jhit.opendiabetes.vault.processing.filter.refactored.FilterType;
-import de.jhit.opendiabetes.vault.processing.filter.refactored.OverThresholdFilter;
+import de.jhit.opendiabetes.vault.processing.filter.FilterResult;
+import de.jhit.opendiabetes.vault.processing.filter.FilterType;
+import de.jhit.opendiabetes.vault.processing.filter.OverThresholdFilter;
 import java.text.ParseException;
 import java.util.List;
 import java.util.logging.Level;

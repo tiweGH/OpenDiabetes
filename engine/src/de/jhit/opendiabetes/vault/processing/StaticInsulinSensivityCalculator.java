@@ -25,6 +25,7 @@ import static de.jhit.opendiabetes.vault.container.VaultEntryType.GLUCOSE_CGM;
 import static de.jhit.opendiabetes.vault.container.VaultEntryType.MEAL_MANUAL;
 import de.jhit.opendiabetes.vault.processing.filter.DateTimePointFilter;
 import de.jhit.opendiabetes.vault.processing.filter.EventFilter;
+import de.jhit.opendiabetes.vault.processing.filter.FilterResult;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -64,14 +65,15 @@ public class StaticInsulinSensivityCalculator {
         Date bolusDate;
         double bolusVal, cgmBegin, cgmEnd;
         double bolusAdd = 0.0;
-        EventFilter eventFilter = new EventFilter();
+        
         VaultEntryType type = BOLUS_NORMAL;
+        EventFilter eventFilter = new EventFilter(type);
         // Save timestamp of each bolus event
-        List<Date> bolusEvents = eventFilter.filter(data, type, options.observationRange);
+        FilterResult bolusEvents = eventFilter.filter(data);
 
         // Cut time series including bolus event in middle
-        for (Date date : bolusEvents) {
-            DateTimePointFilter filter = new DateTimePointFilter(date, (int) options.observationRange);
+        for (Pair<Date, Date> date : bolusEvents.timeSeries) {
+            DateTimePointFilter filter = new DateTimePointFilter(date.getKey(), (int) options.observationRange);
             cutTimeSeries.add(new Pair(date, (filter.filter(data)).filteredData));
         }
 

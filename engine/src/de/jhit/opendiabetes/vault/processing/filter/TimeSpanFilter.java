@@ -28,7 +28,7 @@ import javafx.util.Pair;
  *
  * @author juehv
  */
-public class TimeSpanFilter implements Filter {
+public class TimeSpanFilter extends Filter {
 
     private final LocalTime startTime;
     private final LocalTime endTime;
@@ -39,35 +39,13 @@ public class TimeSpanFilter implements Filter {
     }
 
     @Override
-    public FilterResult filter(List<VaultEntry> data) {
-        List<VaultEntry> filteredData = new ArrayList<>();
-        List<Pair<Date, Date>> timeSeries = new ArrayList<>();
-
-        Date startOfCuttenTimeSeries = null;
-        Date lastTimeStamp = null;
-        for (VaultEntry entry : data) {
-            if (TimestampUtils.withinTimeSpan(startTime, endTime, entry.getTimestamp())) {
-                filteredData.add(entry);
-                if (startOfCuttenTimeSeries == null) {
-                    startOfCuttenTimeSeries = entry.getTimestamp();
-                }
-                lastTimeStamp = entry.getTimestamp();
-            } else if (startOfCuttenTimeSeries != null) {
-                timeSeries.add(new Pair<>(startOfCuttenTimeSeries, lastTimeStamp));
-                startOfCuttenTimeSeries = null;
-            }
-        }
-
-        if (startOfCuttenTimeSeries != null) {
-            timeSeries.add(new Pair<>(startOfCuttenTimeSeries, lastTimeStamp));
-        }
-
-        return new FilterResult(filteredData, timeSeries);
+    public FilterType getType() {
+        return FilterType.TIME_SPAN;
     }
 
     @Override
-    public FilterType getType() {
-        return FilterType.TIME_SPAN;
+    boolean matchesFilterParameters(VaultEntry entry) {
+        return TimestampUtils.withinTimeSpan(startTime, endTime, entry.getTimestamp());
     }
 
 }

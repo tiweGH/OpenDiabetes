@@ -17,6 +17,7 @@
 package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
+import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.util.Date;
 import java.util.List;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -26,25 +27,26 @@ import static java.util.concurrent.TimeUnit.MINUTES;
  *
  * @author gizem
  */
-public class DateTimePointFilter implements Filter {
+public class DateTimePointFilter extends Filter {
 
-    private final DateTimeSpanFilter filter;
+    private Date startTime;
+    private Date endTime;
 
     public DateTimePointFilter(Date dateTimePoint, int marginInMinutes) {
         long margin = MILLISECONDS.convert(marginInMinutes, MINUTES);
-        Date startTime = new Date(dateTimePoint.getTime() - margin);
-        Date endTime = new Date(dateTimePoint.getTime() + margin);
-        filter = new DateTimeSpanFilter(startTime, endTime);
-    }
-
-    @Override
-    public FilterResult filter(List<VaultEntry> data) {
-        return filter.filter(data);
+        startTime = new Date(dateTimePoint.getTime() - margin);
+        endTime = new Date(dateTimePoint.getTime() + margin);
     }
 
     @Override
     public FilterType getType() {
         return FilterType.DATE_TIME_POINT;
+    }
+
+    @Override
+    boolean matchesFilterParameters(VaultEntry entry) {
+        return TimestampUtils.withinDateTimeSpan(startTime, endTime, entry.getTimestamp());
+
     }
 
 }

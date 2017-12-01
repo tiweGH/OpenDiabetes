@@ -17,8 +17,8 @@
 package de.jhit.opendiabetes.vault.processing;
 
 import de.jhit.opendiabetes.vault.container.SliceEntry;
-import de.jhit.opendiabetes.vault.processing.filter.refactored.Filter;
-import de.jhit.opendiabetes.vault.processing.filter.refactored.NoneFilter;
+import de.jhit.opendiabetes.vault.processing.filter.Filter;
+import de.jhit.opendiabetes.vault.processing.filter.NoneFilter;
 import de.jhit.opendiabetes.vault.testhelper.StaticDataset;
 import java.text.ParseException;
 import java.util.List;
