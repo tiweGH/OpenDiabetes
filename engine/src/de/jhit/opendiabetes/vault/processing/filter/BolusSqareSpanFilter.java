@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  *
- * @author Daniel aber an Jörgs Pc wie immer halt
+ * @author Jörg an Jörgs Pc
  */
 public class BolusSqareSpanFilter extends Filter {
 
