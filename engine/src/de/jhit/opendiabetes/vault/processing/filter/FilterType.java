@@ -47,6 +47,6 @@ public enum FilterType {
     HR_TH,
     STRESS_TH,
     // filter nothing
-    NONE;
+    NONE, EVENT_SPAN_FILTER, BOLUS_SQARE, BOLUS_NORMAL;
 
 }
