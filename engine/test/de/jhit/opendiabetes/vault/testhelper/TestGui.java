@@ -64,7 +64,7 @@ public class TestGui extends Application {
             int i = 0;
 
             for (VaultEntry entry : result.filteredData) {
-                i++;
+                
                 series.getData().add(new XYChart.Data(dateFormat.format(entry.getTimestamp()), entry.getValue()));
             }
             //Scene scene = new Scene(lineChart, 800, 600);
@@ -76,7 +76,9 @@ public class TestGui extends Application {
                     = FXCollections.observableArrayList(
                             VaultEntryType.HEART_RATE,
                             VaultEntryType.STRESS,
-                            VaultEntryType.BOLUS_NORMAL
+                            VaultEntryType.BOLUS_NORMAL,
+                            VaultEntryType.PUMP_FILL,
+                            VaultEntryType.BASAL_INTERPRETER
                     );
 
             final ComboBox comboBox = new ComboBox(options);
@@ -93,17 +95,15 @@ public class TestGui extends Application {
                 @Override
                 public void handle(ActionEvent e) {
                     try {
-                        if (comboBox.getSelectionModel().getSelectedItem() != null && textFieldValue.getText() != null && textFieldMargin != null) {
+                        if (comboBox.getSelectionModel().getSelectedItem() != null && textFieldValue.getText() != null && !textFieldValue.getText().isEmpty() && textFieldMargin != null && !textFieldMargin.getText().isEmpty()) {
                             List<VaultEntry> data = StaticDataset.getStaticDataset();
                             EventSpanFilter instance = new EventSpanFilter((VaultEntryType) comboBox.getSelectionModel().getSelectedItem(), Float.parseFloat(textFieldValue.getText()), Float.parseFloat(textFieldMargin.getText()));
                             FilterResult result = instance.filter(data);
 
                             XYChart.Series newSeries = new XYChart.Series();
-
-                            int i = 0;
+                            series.setName("EntryType Filter");
 
                             for (VaultEntry entry : result.filteredData) {
-                                i++;
                                 newSeries.getData().add(new XYChart.Data(dateFormat.format(entry.getTimestamp()), entry.getValue()));
                             }
                             //Scene scene = new Scene(lineChart, 800, 600);
