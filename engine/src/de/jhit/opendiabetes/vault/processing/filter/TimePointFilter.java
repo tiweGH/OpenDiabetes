@@ -22,13 +22,20 @@ import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 
 /**
- *
- * @author Jorg
+ * This Filter checks if the given VaultEntry is in an given range of Time. 
+ * @author Daniel
  */
 public class TimePointFilter extends Filter {
     private LocalTime endTime;
     private LocalTime startTime;
 
+    /**
+     * Initialize fields and calculates:
+     * startTime: timepoint- marginInMinutes
+     * endTime: timepoint+ marginInMinutes
+     * @param timePoint
+     * @param marginInMinutes 
+     */
     public TimePointFilter(LocalTime timePoint, int marginInMinutes) {
         startTime = timePoint.minus(marginInMinutes, ChronoUnit.MINUTES);
         endTime= timePoint.plus(marginInMinutes, ChronoUnit.MINUTES);

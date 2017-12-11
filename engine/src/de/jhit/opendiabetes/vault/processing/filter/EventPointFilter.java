@@ -21,29 +21,35 @@ import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import java.util.List;
 
 /**
- *
- * @author Daniel 
- * This class extends filter and checks if the given vaultEntryType is equal.
+ * Checks if the given VaulEntey is in an range from a given Timpoint.
+ * @author Daniel
  */
-public class EventFilter extends Filter {
+public class EventPointFilter extends Filter {
 
     private VaultEntryType vaultEntryType;
+    private final float margin;
+    private final float value;
 
     /**
-     * Constructor initialize Parameter for comparing later
-     * @param vaultEntryType 
+     * Initialize fields for functions.
+     * 
+     * @param vaultEntryType
+     * @param value
+     * @param margin 
      */
-    public EventFilter(VaultEntryType vaultEntryType) {
+    public EventPointFilter(VaultEntryType vaultEntryType, float value, float margin) {
         this.vaultEntryType = vaultEntryType;
+        this.value = value;
+        this.margin = margin;
     }
 
     @Override
     FilterType getType() {
-        return FilterType.EVENT_FILTER;
+        return FilterType.EVENT_SPAN_FILTER;
     }
 
     @Override
     boolean matchesFilterParameters(VaultEntry entry) {
-        return entry.getType().equals(vaultEntryType);
+        return entry.getType().equals(vaultEntryType) && entry.getValue()>=value-margin && entry.getValue() <= value+margin;
     }
 }

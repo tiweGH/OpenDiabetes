@@ -20,31 +20,38 @@ import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 /**
- *
- * @author Jorg
+ * Check if the given VaultEntry Timestamp is in a specified range
+ * @author Daniel
  */
 public class EventTimeSpanFilter extends Filter {
-    private LocalTime endTime;
-    private LocalTime startTime;
-    private final VaultEntryType vaultEntryType;
 
-    public EventTimeSpanFilter(VaultEntryType vaultEntryType, LocalTime timePoint, int marginInMinutes) {
-        startTime = timePoint.minus(marginInMinutes, ChronoUnit.MINUTES);
-        endTime= timePoint.plus(marginInMinutes, ChronoUnit.MINUTES);
+    private VaultEntryType vaultEntryType;
+    private final LocalTime startTime;
+    private final LocalTime endTime;
+    
+    /**
+     * Initialize fields for functions.
+     * 
+     * @param vaultEntryType
+     * @param startTime
+     * @param endTime 
+     */
+    public EventTimeSpanFilter(VaultEntryType vaultEntryType, LocalTime startTime, LocalTime endTime ){
         this.vaultEntryType = vaultEntryType;
+        this.startTime = startTime;
+        this.endTime = endTime;
     }
 
     @Override
     FilterType getType() {
-        return FilterType.TIME_POINT;
+        return FilterType.EVENT_SPAN_FILTER;
     }
 
     @Override
     boolean matchesFilterParameters(VaultEntry entry) {
-        return entry.getType()== vaultEntryType && TimestampUtils.withinTimeSpan(startTime, endTime, entry.getTimestamp()); 
+        return  entry.getType().equals(vaultEntryType) && TimestampUtils.withinTimeSpan(startTime, endTime, entry.getTimestamp());
     }
-
 }
