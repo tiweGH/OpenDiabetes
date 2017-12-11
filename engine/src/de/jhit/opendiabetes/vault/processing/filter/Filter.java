@@ -24,15 +24,30 @@ import java.util.List;
 import javafx.util.Pair;
 
 /**
- *
- * @author juehv
+ *abstract Filter implements filter method for all Filters. All other Filter have to extend this Filter.
+ * 
+ * @author Daniel
  */
 public abstract class Filter {
     
+    /**
+     * Returns the name of the extended Filter
+     * @return FilterType
+     */
     abstract FilterType getType();
 
+    /**
+     * Check if the given VaultEntry matches the given criteria. Needs to be implemented. Is used in Method filter. 
+     * @param entry
+     * @return boolean
+     */
     abstract boolean matchesFilterParameters(VaultEntry entry);
 
+    /**
+     * Check if the given List of VaultEntrys matches the criteria of the Filter.
+     * @param data
+     * @return Filterresult
+     */
     public FilterResult filter(List<VaultEntry> data) {
 
         List<VaultEntry> result = new ArrayList<>();

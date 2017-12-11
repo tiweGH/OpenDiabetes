@@ -3,7 +3,7 @@ package de.jhit.opendiabetes.vault.testhelper;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.processing.filter.EventFilter;
-import de.jhit.opendiabetes.vault.processing.filter.EventSpanFilter;
+import de.jhit.opendiabetes.vault.processing.filter.EventPointFilter;
 import de.jhit.opendiabetes.vault.processing.filter.FilterResult;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.text.ParseException;
@@ -58,7 +58,7 @@ public class TestGui extends Application {
 
         try {
             List<VaultEntry> data = StaticDataset.getStaticDataset();
-            EventSpanFilter instance = new EventSpanFilter(VaultEntryType.HEART_RATE, 0, Integer.MAX_VALUE);
+            EventPointFilter instance = new EventPointFilter(VaultEntryType.HEART_RATE, 0, Integer.MAX_VALUE);
             FilterResult result = instance.filter(data);
 
             int i = 0;
@@ -97,7 +97,7 @@ public class TestGui extends Application {
                     try {
                         if (comboBox.getSelectionModel().getSelectedItem() != null && textFieldValue.getText() != null && !textFieldValue.getText().isEmpty() && textFieldMargin != null && !textFieldMargin.getText().isEmpty()) {
                             List<VaultEntry> data = StaticDataset.getStaticDataset();
-                            EventSpanFilter instance = new EventSpanFilter((VaultEntryType) comboBox.getSelectionModel().getSelectedItem(), Float.parseFloat(textFieldValue.getText()), Float.parseFloat(textFieldMargin.getText()));
+                            EventPointFilter instance = new EventPointFilter((VaultEntryType) comboBox.getSelectionModel().getSelectedItem(), Float.parseFloat(textFieldValue.getText()), Float.parseFloat(textFieldMargin.getText()));
                             FilterResult result = instance.filter(data);
 
                             XYChart.Series newSeries = new XYChart.Series();

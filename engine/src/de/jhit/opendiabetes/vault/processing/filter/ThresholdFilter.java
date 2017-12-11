@@ -21,11 +21,18 @@ import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import java.util.List;
 
 /**
- *
- * @author juehv
+ * This Filter is the superclass for the Thresholdfilter.
+ * @author juehv, Daniel
  */
 public abstract class ThresholdFilter extends Filter{
     
+    /**
+     * This method checks if the given Data is valuable for a real scenario.
+     * @param GenericType
+     * @param availabledatatype
+     * @param TH
+     * @return boolean
+     */
     public boolean checkThresholdCombination(VaultEntryType GenericType, FilterType availabledatatype, FilterType TH)
     {
         boolean result = true;
