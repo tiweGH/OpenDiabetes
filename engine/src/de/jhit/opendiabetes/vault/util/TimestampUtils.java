@@ -101,8 +101,8 @@ public class TimestampUtils {
      *
      * @param startTime Start of the time span
      * @param endTime end of the time span
-     * @param timePoint checks if this time point is within timespan
-     * @param respectToDate if false, date will be ignored and just hour and
+     * @param timePoint checks if this time point is within timespan //not-found
+     * param respectToDate if false, date will be ignored and just hour and
      * minutes are checked
      * @return
      */

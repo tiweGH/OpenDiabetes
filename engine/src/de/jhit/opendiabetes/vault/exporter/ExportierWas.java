@@ -31,42 +31,37 @@ import java.util.List;
  * @author Jorg
  */
 public class ExportierWas {
-    
- /**
-  * abstract class FileExporter —> abstract class CsvFileExporter —> abstract class VaultCsvExporter —> class VaultOdvExporter
-  * Um eine Instanz eines VaultOdvExporter zu erstellen benötigt man folgende Eingabeparameter:
-  * ExporterOptions options —> ExporterOptions benötigt zwei Date-Objekte 
-  * VaultDao db —> Irgendeine Art von Datenbank wtf macht man damit?
-  * String filePath —> Schreibt die Datei an den angegebenen Pfad
-  * 
-  */
 
-    
-      public static void main(String[] args) throws SQLException, ParseException {
+    /**
+     * abstract class FileExporter -- abstract class CsvFileExporter — abstract
+     * class VaultCsvExporter — class VaultOdvExporter Um eine Instanz eines
+     * VaultOdvExporter zu erstellen benötigt man folgende Eingabeparameter:
+     * ExporterOptions options — ExporterOptions benötigt zwei Date-Objekte
+     * VaultDao db — Irgendeine Art von Datenbank wtf macht man damit? String
+     * filePath — Schreibt die Datei an den angegebenen Pfad
+     *
+     */
+    public static void main(String[] args) throws SQLException, ParseException {
         Date from = new Date();
         Date d = new Date(100000);
         Date to = new Date();
         List<VaultEntry> data = StaticDataset.getStaticDataset();
         //TimestampUtils utils = new TimestampUtils();
         //String fromm = TimestampUtils.timestampToString(from, "TIME_FORMAT_LIBRE_DE");
-        
+
         VaultDao.initializeDb();
         VaultDao v = VaultDao.getInstance();
-        
+
         ExporterOptions opt = new ExporterOptions(true, d, to);
-        
-        
+
         VaultOdvExporter exp = new VaultOdvExporter(opt, v, "datei.csv");
-        
-         // exp.writeToFile(csvEntries); // csvEntries muessen als Typ ExportEntry vorliegen. --> megastress
+
+        // exp.writeToFile(csvEntries); // csvEntries muessen als Typ ExportEntry vorliegen. --> megastress
         exp.exportDataToFile(data); // leere Datei wird geschrieben  WARUM? Wer weiß, wie man die mit Inhalt füllt?
         System.out.println(exp);
         System.out.println(d);
-        
-        
-        //VaultCsvExporter vcsv = new VaultCsvExporter(opt, v, "csvdatei.csv");
-      
-      }
 
-   
+        //VaultCsvExporter vcsv = new VaultCsvExporter(opt, v, "csvdatei.csv");
+    }
+
 }
