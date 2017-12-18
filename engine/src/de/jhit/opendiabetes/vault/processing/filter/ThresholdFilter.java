@@ -18,7 +18,11 @@ package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
+import java.util.AbstractList;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import javafx.util.Pair;
 
 /**
  * This Filter is the superclass for the Thresholdfilter.
@@ -85,6 +89,17 @@ public abstract class ThresholdFilter extends Filter {
             result = false;
         }
 
+        return result;
+    }
+
+    @Override
+    public FilterResult filter(List<VaultEntry> data) {
+        FilterResult result;
+        if (checkThresholdCombination(GenericType, availabledatatype, TH)) {
+            result = super.filter(data);
+        } else {
+            result = null;
+        }
         return result;
     }
 

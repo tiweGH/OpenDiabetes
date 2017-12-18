@@ -54,6 +54,6 @@ public class UnderThresholdFilter extends ThresholdFilter {
 
     @Override
     boolean matchesFilterParameters(VaultEntry entry) {
-        return super.checkThresholdCombination(GenericType, availabledatatype, TH) && entry.getValue() < thresholdValue;
+        return entry.getType() == GenericType && entry.getValue() < thresholdValue;
     }
 }
