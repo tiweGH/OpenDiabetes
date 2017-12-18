@@ -22,21 +22,50 @@ import java.util.List;
 
 /**
  * This Filter is the superclass for the Thresholdfilter.
- * @author juehv, Daniel
+ *
+ * @author juehv, Daniel, tiweGH
  */
-public abstract class ThresholdFilter extends Filter{
-    
+public abstract class ThresholdFilter extends Filter {
+
     /**
-     * This method checks if the given Data is valuable for a real scenario.
-     * @param GenericType
+     * Is used to check if the value from DB is greater or less than given
+     * threshold
+     */
+    double thresholdValue;
+    /**
+     * The given Filtertype, usually the same as <code>TH</code>
+     */
+    FilterType type;
+
+    public List<VaultEntry> data;
+    public VaultEntryType GenericType;
+    public FilterType availabledatatype;
+    public FilterType TH;
+
+    /**
+     * Checks if the given parameters are a valid combination, which means
+     * <code>GenericType</code> and <code>TH</code> or
+     * <code>availabledatatype</code> and <code>TH</code> belong to the same
+     * Type-group.<p>
+     * Example:
+     * <p>
+     * <code>checkThresholdCombination(BASAL_PROFILE, BASAL_AVAILABLE, BASAL_TH)</code><p>
+     * <code>checkThresholdCombination(BASAL_PROFILE, BG_AVAILABLE, BASAL_TH)</code><p>
+     * <code>checkThresholdCombination(CGM_AVAILABLE, BASAL_AVAILABLE, BASAL_TH)</code><p>
+     * all return <b><code>TRUE</code></b>, whereas<p>
+     * <p>
+     * <code>checkThresholdCombination(BOLUS_NORMAL, BASAL_AVAILABLE, GLUCOSE_CGM_ALERT)</code><p>
+     * returns <b><code>FALSE</code></b>
+     *
+     * @param GenericType the <code>VaultEntryType</code> of the entry to be
+     * filtered
      * @param availabledatatype
      * @param TH
      * @return boolean
      */
-    public boolean checkThresholdCombination(VaultEntryType GenericType, FilterType availabledatatype, FilterType TH)
-    {
+    public boolean checkThresholdCombination(VaultEntryType GenericType, FilterType availabledatatype, FilterType TH) {
         boolean result = true;
-        
+
         if (!(((GenericType == VaultEntryType.BASAL_PROFILE || GenericType == VaultEntryType.BASAL_MANUAL || GenericType == VaultEntryType.BASAL_INTERPRETER) && (TH == FilterType.BASAL_TH))
                 || ((GenericType == VaultEntryType.BOLUS_NORMAL || GenericType == VaultEntryType.BOLUS_SQARE || GenericType == VaultEntryType.GLUCOSE_BOLUS_CALCULATION) && (TH == FilterType.BOLUS_TH))
                 || ((GenericType == VaultEntryType.GLUCOSE_BG || GenericType == VaultEntryType.GLUCOSE_BG_MANUAL) && (TH == FilterType.BG_TH))
@@ -55,7 +84,7 @@ public abstract class ThresholdFilter extends Filter{
 
             result = false;
         }
-        
+
         return result;
     }
 
