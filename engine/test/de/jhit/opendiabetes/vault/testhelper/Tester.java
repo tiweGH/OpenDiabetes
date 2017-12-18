@@ -33,20 +33,8 @@ import java.util.logging.Logger;
 public class Tester {
 
     public static void main(String[] args) {
-        OverThresholdFilter fla = new OverThresholdFilter(VaultEntryType.BASAL_PROFILE, 0.5, FilterType.BASAL_AVAILABLE, FilterType.BASAL_TH);
-        List<VaultEntry> vaultEntries;
-        try {
-            vaultEntries = StaticDataset.getStaticDataset();
-            System.out.println("input: ");
-            System.out.println(vaultEntries.toString());
-            FilterResult flop = fla.filter(vaultEntries);
-            System.out.println("output1: ");
-            System.out.println(flop.filteredData.toString());
-            System.out.println("output2: ");
-            System.out.println(flop.timeSeries.toString());
-        } catch (ParseException ex) {
-            Logger.getLogger(Tester.class.getName()).log(Level.SEVERE, null, ex);
+        for (VaultEntryType v : VaultEntryType.values()) {
+            System.out.println(v.toString() + " " + v.isOneHot() + " " + v.isMLrelevant() + " " + v.mergeTo());
         }
-
     }
 }

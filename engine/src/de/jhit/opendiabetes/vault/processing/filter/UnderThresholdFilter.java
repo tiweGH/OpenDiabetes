@@ -18,10 +18,6 @@ package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import javafx.util.Pair;
 
 /**
  *
@@ -29,19 +25,18 @@ import javafx.util.Pair;
  */
 public class UnderThresholdFilter extends ThresholdFilter {
 
-    private double thresholdValue;
-    private FilterType type;
-
-    public List<VaultEntry> data;
-    public VaultEntryType GenericType;
-    public FilterType availabledatatype;
-    public FilterType TH;
-
 // GenericType I am taking it as package de.jhit.opendiabetes.vault.container.VaultEntry as private VaultEntryType type;
-    // thresholdValue is used to check if the value from DB is greater or less than given threshold
+    /**
+     * Filters entries with a <code>value</code> <b>less</b> than
+     * <code>thresholdValue</code>
+     *
+     * @param GenericType
+     * @param thresholdValue
+     * @param availabledatatype
+     * @param TH
+     */
     public UnderThresholdFilter(VaultEntryType GenericType, Double thresholdValue, FilterType availabledatatype, FilterType TH) {
-        if (!super.checkThresholdCombination(GenericType, availabledatatype, TH))
-        {
+        if (!super.checkThresholdCombination(GenericType, availabledatatype, TH)) {
 
             this.thresholdValue = thresholdValue;
             this.type = TH;
@@ -51,7 +46,7 @@ public class UnderThresholdFilter extends ThresholdFilter {
 
         }
     }
-    
+
     @Override
     public FilterType getType() {
         return type;
@@ -59,6 +54,6 @@ public class UnderThresholdFilter extends ThresholdFilter {
 
     @Override
     boolean matchesFilterParameters(VaultEntry entry) {
-        return super.checkThresholdCombination(GenericType, availabledatatype, TH) && entry.getValue() < thresholdValue;
+        return entry.getType() == GenericType && entry.getValue() < thresholdValue;
     }
 }
