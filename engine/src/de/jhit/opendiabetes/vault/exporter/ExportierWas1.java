@@ -34,7 +34,7 @@ import javafx.scene.control.DatePicker;
  *
  * @author Jorg
  */
-public class ExportierWas {
+public class ExportierWas1 {
 
     private static DatePicker exportPeriodToPicker;
     private static DatePicker exportPeriodFromPicker;
@@ -85,7 +85,7 @@ public class ExportierWas {
 
             //VaultCsvExporter vcsv = new VaultCsvExporter(opt, v, "csvdatei.csv");
         } catch (Exception ex) {
-            Logger.getLogger(ExportierWas.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ExportierWas1.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("BOOM");
         }
     }

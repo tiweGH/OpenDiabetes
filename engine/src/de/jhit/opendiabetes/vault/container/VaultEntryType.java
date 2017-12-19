@@ -18,7 +18,7 @@ package de.jhit.opendiabetes.vault.container;
 
 /**
  *
- * @author mswin
+ * @author mswin, tiweGH
  */
 public enum VaultEntryType {
 
@@ -92,24 +92,31 @@ public enum VaultEntryType {
     // More unspecific input
     OTHER_ANNOTATION;
 
-    private final Boolean ISONEHOT;
-    private final Boolean ISMLRELEVANT;
+    private final boolean ISONEHOT;
+    private final boolean ISMLRELEVANT;
     private final VaultEntryType MERGETYPE;
 
-    private Boolean setMLrelevance(String isMLrelevant) {
-        Boolean result;
+    /**
+     * Handles the possibility of ISMLRELEVANT being "maybe"
+     *
+     * @param isMLrelevant information about the type's ML relevance, currently
+     * a String
+     * @return true if isMLrelevant is "true" or "maybe"
+     */
+    private boolean setMLrelevance(String isMLrelevant) {
+        boolean result;
         //current handling of "maybe" being true
         result = isMLrelevant.equalsIgnoreCase("maybe") || isMLrelevant.equalsIgnoreCase("true");
         return result;
     }
 
-    VaultEntryType(Boolean isOneHot, String isMLrelevant, VaultEntryType mergeType) {
+    VaultEntryType(boolean isOneHot, String isMLrelevant, VaultEntryType mergeType) {
         this.ISONEHOT = isOneHot;
         this.ISMLRELEVANT = setMLrelevance(isMLrelevant);
         this.MERGETYPE = mergeType;
     }
 
-    VaultEntryType(Boolean isOneHot, String isMLrelevant) {
+    VaultEntryType(boolean isOneHot, String isMLrelevant) {
         this.ISONEHOT = isOneHot;
         this.ISMLRELEVANT = setMLrelevance(isMLrelevant);
         this.MERGETYPE = this;
@@ -121,14 +128,31 @@ public enum VaultEntryType {
         this.MERGETYPE = this;
     }
 
-    public Boolean isOneHot() {
+    /**
+     * Returns if type-specific values are one-hot encoded.
+     *
+     * @return true if type is one-hot
+     */
+    public boolean isOneHot() {
         return ISONEHOT;
     }
 
-    public Boolean isMLrelevant() {
+    /**
+     * Returns if the EntryType is relevant for ML-processing
+     *
+     * @return True if ML-relevant
+     */
+    public boolean isMLrelevant() {
         return ISMLRELEVANT;
     }
 
+    /**
+     * If the type has to be merged to another <code>VaultEntryType</code>
+     * during exporting, it will be returned, if not, the instance of the Enum
+     * will be returned.
+     *
+     * @return the merge type
+     */
     public VaultEntryType mergeTo() {
         return MERGETYPE;
     }
