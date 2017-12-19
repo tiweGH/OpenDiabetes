@@ -36,9 +36,6 @@ import javafx.scene.control.DatePicker;
  */
 public class ExportierWas1 {
 
-    private static DatePicker exportPeriodToPicker;
-    private static DatePicker exportPeriodFromPicker;
-
     /**
      * abstract class FileExporter -- abstract class CsvFileExporter — abstract
      * class VaultCsvExporter — class VaultOdvExporter Um eine Instanz eines
@@ -54,34 +51,24 @@ public class ExportierWas1 {
             Date d = new Date(100000);
             Date to = new Date();
             List<VaultEntry> data = StaticDataset.getStaticDataset();
-            System.out.println("asd1" + data.toString());
-            //TimestampUtils utils = new TimestampUtils();
-            //String fromm = TimestampUtils.timestampToString(from, "TIME_FORMAT_LIBRE_DE");
 
             VaultDao.initializeDb();
             VaultDao v = VaultDao.getInstance();
 
+            for (VaultEntry entry : data) {
+                v.putEntry(entry);
+            }
+
             ExporterOptions opt = new ExporterOptions(true, TimestampUtils.createCleanTimestamp("2017.06.29-04:53", "yyyy.MM.dd-HH:mm"),
                     TimestampUtils.createCleanTimestamp("2017.06.29-12:40", "yyyy.MM.dd-HH:mm"));
 
-            /**
-             * ExporterOptions eOptions = new ExporterOptions( true,
-             * TimestampUtils.fromLocalDate( exportPeriodFromPicker.getValue()),
-             * TimestampUtils.fromLocalDate( exportPeriodToPicker.getValue(),
-             * 86399000));
-             */
-            System.out.println("ho" + new Date().toString());
-            System.out.println("dor:" + TimestampUtils.createCleanTimestamp("2017.06.29-12:40", "yyyy.MM.dd-HH:mm").toString());
             VaultOdvExporter exp = new VaultOdvExporter(opt, v, "datei.csv");
             //VaultCsvExporter vcsv = new VaultCsvExporter(opt, v, "csvdatei.csv");
             List<ExportEntry> exl = exp.prepareData(data);
-            System.out.println(exl == null ? "NULL" : exl.toString());
 
             // exp.writeToFile(csvEntries); // csvEntries muessen als Typ ExportEntry vorliegen. --> megastress
             //Nö, das macht perpareData wenn exportDataToFile aufgerufen wird
             exp.exportDataToFile(data); // leere Datei wird geschrieben  WARUM? Wer weiß, wie man die mit Inhalt füllt?
-            System.out.println(exp.toString());
-            System.out.println(d.toString());
 
             //VaultCsvExporter vcsv = new VaultCsvExporter(opt, v, "csvdatei.csv");
         } catch (Exception ex) {
