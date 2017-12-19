@@ -62,13 +62,16 @@ public class ExportierWas1 {
             ExporterOptions opt = new ExporterOptions(true, TimestampUtils.createCleanTimestamp("2017.06.29-04:53", "yyyy.MM.dd-HH:mm"),
                     TimestampUtils.createCleanTimestamp("2017.06.29-12:40", "yyyy.MM.dd-HH:mm"));
 
-            VaultOdvExporter exp = new VaultOdvExporter(opt, v, "datei.csv");
-            //VaultCsvExporter vcsv = new VaultCsvExporter(opt, v, "csvdatei.csv");
+            //VaultOdvExporter exp = new VaultOdvExporter(opt, v, "datei.csv");
+            VaultCsvExporter vcsv = new VaultCsvExporter(opt, v, "csvdatei.csv");
             List<ExportEntry> exl = exp.prepareData(data);
+            System.out.println(exl.size());
+            System.out.println(data.size());
 
             // exp.writeToFile(csvEntries); // csvEntries muessen als Typ ExportEntry vorliegen. --> megastress
             //Nö, das macht perpareData wenn exportDataToFile aufgerufen wird
-            exp.exportDataToFile(data); // leere Datei wird geschrieben  WARUM? Wer weiß, wie man die mit Inhalt füllt?
+            //exp.exportDataToFile(data);
+            vcsv.exportDataToFile(data);
 
             //VaultCsvExporter vcsv = new VaultCsvExporter(opt, v, "csvdatei.csv");
         } catch (Exception ex) {
