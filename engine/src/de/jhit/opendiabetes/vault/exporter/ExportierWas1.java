@@ -64,16 +64,9 @@ public class ExportierWas1 {
 
             //VaultOdvExporter exp = new VaultOdvExporter(opt, v, "datei.csv");
             VaultCsvExporter vcsv = new VaultCsvExporter(opt, v, "csvdatei.csv");
-            List<ExportEntry> exl = exp.prepareData(data);
-            System.out.println(exl.size());
-            System.out.println(data.size());
 
-            // exp.writeToFile(csvEntries); // csvEntries muessen als Typ ExportEntry vorliegen. --> megastress
-            //Nö, das macht perpareData wenn exportDataToFile aufgerufen wird
-            //exp.exportDataToFile(data);
             vcsv.exportDataToFile(data);
 
-            //VaultCsvExporter vcsv = new VaultCsvExporter(opt, v, "csvdatei.csv");
         } catch (Exception ex) {
             Logger.getLogger(ExportierWas1.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("BOOM");
