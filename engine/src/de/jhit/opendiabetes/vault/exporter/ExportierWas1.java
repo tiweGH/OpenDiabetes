@@ -59,8 +59,7 @@ public class ExportierWas1 {
                 v.putEntry(entry);
             }
 
-            ExporterOptions opt = new ExporterOptions(true, TimestampUtils.createCleanTimestamp("2017.06.29-04:53", "yyyy.MM.dd-HH:mm"),
-                    TimestampUtils.createCleanTimestamp("2017.06.29-12:40", "yyyy.MM.dd-HH:mm"));
+            ExporterOptions opt = new ExporterOptions(true, d, to);
 
             //VaultOdvExporter exp = new VaultOdvExporter(opt, v, "datei.csv");
             VaultCsvExporter vcsv = new VaultCsvExporter(opt, v, "csvdatei.csv");
@@ -73,6 +72,11 @@ public class ExportierWas1 {
         }
     }
 
+    
+    
+    
+    
+    
     public static void main(String[] args) {
         run();
     }
