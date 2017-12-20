@@ -1,0 +1,12 @@
+de.jhit.opendiabetes.vault.container
+de.jhit.opendiabetes.vault.container.csv
+de.jhit.opendiabetes.vault.data
+de.jhit.opendiabetes.vault.exporter
+de.jhit.opendiabetes.vault.importer
+de.jhit.opendiabetes.vault.importer.interpreter
+de.jhit.opendiabetes.vault.importer.validator
+de.jhit.opendiabetes.vault.processing
+de.jhit.opendiabetes.vault.processing.filter
+de.jhit.opendiabetes.vault.processing.filter.old
+de.jhit.opendiabetes.vault.util
+deprecated_code

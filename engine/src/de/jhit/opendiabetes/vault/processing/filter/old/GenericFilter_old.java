@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Jorg
+ * Copyright (C) 2017 AChikhale
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,35 +14,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.jhit.opendiabetes.vault.processing.filter;
+package de.jhit.opendiabetes.vault.processing.filter.old;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  *
- * @author Jörg an Jörgs Pc
+ * @author AChikhale
  */
-public class BolusSqareSpanFilter extends Filter {
+public class GenericFilter_old {
 
-    private final float value;
-    private final int margin;
-    private final VaultEntryType vaultEntryType;
-    
-    public BolusSqareSpanFilter(float value, int margin) {
-        vaultEntryType = VaultEntryType.BOLUS_SQARE;
-        this.value = value;
-        this.margin = margin;
+    private final VaultEntryType GenericType;
+
+    public GenericFilter_old(VaultEntryType GenericType) {
+
+        this.GenericType = GenericType;
     }
 
-    @Override
-    FilterType getType() {
-        return FilterType.BOLUS_SQARE;
-    }
+    public List<VaultEntry> tempfunction(List<VaultEntry> data) {
+        List<VaultEntry> filteredData = new ArrayList<>();
 
-    @Override
-    boolean matchesFilterParameters(VaultEntry entry) {
-        return entry.getType().equals(vaultEntryType) && entry.getValue()>=value-margin && entry.getValue()<= value + margin;
+        for (VaultEntry entry : data) {
+            if (entry.getType() == GenericType) //// GenericType I am taking it as package de.jhit.opendiabetes.vault.container.VaultEntry as private VaultEntryType type;
+            {
+                filteredData.add(entry);
+            }
+
+        }
+        return filteredData;
     }
 }

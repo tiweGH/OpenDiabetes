@@ -21,28 +21,35 @@ import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import java.util.List;
 
 /**
- *
- * @author Daniel aber an Jörgs Pc wie immer halt
+ * Checks if the given VaulEntey is between two values.
+ * @author Daniel
  */
-public class BolusNormalSpanFilter extends Filter {
+public class EventSpanFilter extends Filter {
 
-    private final float value;
-    private final int margin;
-    private final VaultEntryType vaultEntryType;
-    
-    public BolusNormalSpanFilter(float value, int margin) {
-        vaultEntryType = VaultEntryType.BOLUS_NORMAL;
-        this.value = value;
-        this.margin = margin;
+    private VaultEntryType vaultEntryType;
+    private final float from;
+    private final float to;
+
+    /**
+     * Initialize fields for functions.
+     * 
+     * @param vaultEntryType
+     * @param from
+     * @param to 
+     */
+    public EventSpanFilter(VaultEntryType vaultEntryType, float from, float to) {
+        this.vaultEntryType = vaultEntryType;
+        this.from = from;
+        this.to = to;
     }
 
     @Override
     FilterType getType() {
-        return FilterType.BOLUS_NORMAL;
+        return FilterType.EVENT_SPAN_FILTER;
     }
 
     @Override
     boolean matchesFilterParameters(VaultEntry entry) {
-        return entry.getType().equals(vaultEntryType) && entry.getValue()>=value-margin && entry.getValue()<= value + margin;
+        return entry.getType().equals(vaultEntryType) && entry.getValue()>=from && entry.getValue() <= to;
     }
 }
