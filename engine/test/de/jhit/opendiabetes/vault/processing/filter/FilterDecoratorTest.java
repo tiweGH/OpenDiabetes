@@ -38,7 +38,7 @@ import org.junit.Test;
  *
  * @author juehv
  */
-public class EventFilterTest extends Assert {
+public class FilterDecoratorTest extends Assert {
 
     @BeforeClass
     public static void setUpClass() {
@@ -59,9 +59,11 @@ public class EventFilterTest extends Assert {
     /** 
      * Test functions
      */
+      
     
     // Checks for the correct VaultEntryType in all result entries.
     private void checkForVaultEntryType(FilterResult result, VaultEntryType typeToCheckFor){
+        boolean output = false;
         for (VaultEntry entry : result.filteredData) {
             assertTrue(entry.getType()==typeToCheckFor);
         }
@@ -71,20 +73,9 @@ public class EventFilterTest extends Assert {
     private void checkForTimestamp(String startDate, String endDate, FilterResult toTest) throws ParseException{
         Date dateBegin = creatNewDateToCheckFor(startDate);
         Date dateEnd = creatNewDateToCheckFor(endDate);
-
-        // New pair with the date's to check for
-        List<Pair<Date, Date>> pairToCheckFor = new ArrayList<>();
-        pairToCheckFor.add(new Pair<>(dateBegin, dateBegin));
-        pairToCheckFor.add(new Pair<>(dateEnd, dateEnd));
-
-        // New pair with the given date's to compare
-        List<Pair<Date, Date>> pairGiven = new ArrayList<>();
-        // get the first date pair
-        pairGiven.add(toTest.timeSeries.get(0));
-        // get the last date pair
-        pairGiven.add(toTest.timeSeries.get(toTest.timeSeries.size() - 1));
-
-        assertEquals(pairToCheckFor, pairGiven);
+        for (VaultEntry entry : toTest.filteredData) {
+            assertTrue(TimestampUtils.withinDateTimeSpan(dateBegin, dateEnd, entry.getTimestamp()));
+        }        
     }
     
     // Should not throw any exceptions.
@@ -93,6 +84,42 @@ public class EventFilterTest extends Assert {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd-HH:mm");
         return  sdf.parse(date);
     }
+    
+    //-----
+    //For false test
+    //-----
+    // Checks for the correct VaultEntryType in all result entries.
+    private void checkForVaultEntryType_False(FilterResult result, VaultEntryType typeToCheckFor){
+        boolean output = false;
+        for (VaultEntry entry : result.filteredData) {
+            assertFalse(entry.getType()==typeToCheckFor);
+        }
+    }
+    
+    // Checks for the correct start and end timestams
+    private void checkForTimestamp_False(String startDate, String endDate, FilterResult toTest) throws ParseException{
+        Date dateBegin = creatNewDateToCheckFor(startDate);
+        Date dateEnd = creatNewDateToCheckFor(endDate);
+        for (VaultEntry entry : toTest.filteredData) {
+            assertFalse(TimestampUtils.withinDateTimeSpan(dateBegin, dateEnd, entry.getTimestamp()));
+        }        
+    }
+    //-----
+    //For false test END
+    //-----
+    
+    /**
+    // Should not throw any exceptions.
+    // Creats a new timestamp with the pair of dates that should be tested.
+    private List<Pair<Date, Date>> creatRealTimestamp(String start, String end) throws ParseException{
+        List<Pair<Date, Date>> realTimestamp = new ArrayList<>();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd-HH:mm");
+        Date dateBegin = sdf.parse(start);
+        Date dateEnd = sdf.parse(end);
+        realTimestamp.add(new Pair<>(dateBegin, dateEnd));
+        return realTimestamp;
+    }
+    */
     
     /**
      * Test functions END
@@ -103,6 +130,21 @@ public class EventFilterTest extends Assert {
     /**
      * Test of filter method, of class EventFilter.
      */
+    @Test
+    public void checkFilterMethod() throws ParseException{
+        List<Filter> filters = new ArrayList<>();
+        filters.add(new EventFilter(VaultEntryType.HEART_RATE));
+        filters.add(new EventFilter(VaultEntryType.STRESS));
+        Filter filter = new FilterDecorator(filters);
+        
+        List<VaultEntry> data = StaticDataset.getStaticDataset();
+                
+        FilterResult filterResult = filter.filter(data);
+        System.out.println(filterResult.size());
+    }
+    
+    
+    
     @Test
     public void testEventFilter_STRESS() throws ParseException {
         //System.out.println("filter");
@@ -200,6 +242,23 @@ public class EventFilterTest extends Assert {
     }
     
     @Test
+    // False test
+    public void testEventFilter_GLUCOSE_BOLUS_CALCULATION_False() throws ParseException {
+        //System.out.println("filter");
+        String dateTimePointBegin = "2000.01.01-00:00";
+        String dateTimePointEnd = "2000.01.01-00:00";
+        
+        List<VaultEntry> data = StaticDataset.getStaticDataset();
+        EventFilter instance = new EventFilter(VaultEntryType.GLUCOSE_BOLUS_CALCULATION);
+        FilterResult result = instance.filter(data);
+        
+        //System.out.println(result);
+        checkForVaultEntryType_False(result, VaultEntryType.GLUCOSE_BG);
+        checkForTimestamp_False(dateTimePointBegin, dateTimePointEnd, result);
+        assertFalse(result.size() != 1);
+    }
+    
+    @Test
     // Empty test
     public void testEventFilter_EMPTY() throws ParseException {
         //System.out.println("filter");
@@ -212,10 +271,7 @@ public class EventFilterTest extends Assert {
         
         //System.out.println(result);
         checkForVaultEntryType(result, VaultEntryType.GLUCOSE_BG);
-        // no timestamps given
-        //checkForTimestamp(dateTimePointBegin, dateTimePointEnd, result);
+        checkForTimestamp(dateTimePointBegin, dateTimePointEnd, result);
         assertTrue(result.size() == 0);
-        assertTrue(result.filteredData.isEmpty());
-        assertTrue(result.timeSeries.isEmpty());
     }
 }
