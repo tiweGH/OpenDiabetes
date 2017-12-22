@@ -30,7 +30,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.commons.csv.*;
+//import org.apache.commons.csv.*;
 
 /**
  *
@@ -49,7 +49,7 @@ public class ExporterManipulator {
             if ((tempDate2.getTime() - tempDate1.getTime()) > 60000) {
                 tempDate1.setTime(tempDate1.getTime() + 60000);
                 VaultEntry empty = new VaultEntry(VaultEntryType.BOLUS_SQARE, TimestampUtils.createCleanTimestamp(tempDate1));
-                liste.add(i+1,empty);
+                liste.add(i + 1, empty);
             }
             i = i + 1;
         }
@@ -95,28 +95,28 @@ public class ExporterManipulator {
         ExporterOptions opt = new ExporterOptions(true, d, to);
         VaultCsvExporter vcsv = new VaultCsvExporter(opt, v, "csvdatei.csv");
         vcsv.exportDataToFile(blah);
-        
+
         for (int i = 0; i < 10; i++) {
         System.out.println(data.get(i));
         }
-        */
-        List<VaultEntry> xxx = fillBuckets(data);
-        for (VaultEntry entry : xxx) {
-            System.out.println(entry);
-        }
-        Object[] header = {"x", "y"};
-        String NEW_LINE_SEPARATOR = "\n";
-        
-        FileWriter  fileWriter= new FileWriter("yay.csv");
-        CSVFormat csvFormat = CSVFormat.DEFAULT.withRecordSeparator(NEW_LINE_SEPARATOR);
-        
-        try (CSVPrinter csvPrinter = new CSVPrinter(fileWriter, csvFormat)) {
-            csvPrinter.printRecord(header);
-            for (VaultEntry en : data){
-                
-                csvPrinter.printRecord(en);
-            }
-            csvPrinter.flush();
-        } 
+         */
+//        List<VaultEntry> xxx = fillBuckets(data);
+//        for (VaultEntry entry : xxx) {
+//            System.out.println(entry);
+//        }
+//        Object[] header = {"x", "y"};
+//        String NEW_LINE_SEPARATOR = "\n";
+//
+//        FileWriter  fileWriter= new FileWriter("yay.csv");
+//        CSVFormat csvFormat = CSVFormat.DEFAULT.withRecordSeparator(NEW_LINE_SEPARATOR);
+//
+//        try (CSVPrinter csvPrinter = new CSVPrinter(fileWriter, csvFormat)) {
+//            csvPrinter.printRecord(header);
+//            for (VaultEntry en : data){
+//
+//                csvPrinter.printRecord(en);
+//            }
+//            csvPrinter.flush();
+//        }
     }
 }

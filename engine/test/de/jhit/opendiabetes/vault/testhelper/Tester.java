@@ -46,9 +46,9 @@ public class Tester {
             //        for (VaultEntryType v : VaultEntryType.values()) {
 //            System.out.println(v.toString() + " " + v.isOneHot() + " " + v.isMLrelevant() + " " + v.mergeTo());
 //        }
-            Filter fla = new EventFilter(VaultEntryType.HEART_RATE_VARIABILITY);
-            FilterResult fr = fla.filter(StaticDataset.getStaticDataset());
-            System.out.println(fr.filteredData.size() + " " + fr.timeSeries.size());
+            Filter fla = new EventFilter(VaultEntryType.GLUCOSE_BG);
+            FilterResult fri = fla.filter(StaticDataset.getStaticDataset());
+            System.out.println(fri.filteredData.size() + " " + fri.timeSeries.size());
 //            for (Pair<Date, Date> tp : fr.timeSeries) {
 //                System.out.println(tp.toString());
 //            }
@@ -57,9 +57,9 @@ public class Tester {
 //            System.out.println(new Date(timep.getTime() - MILLISECONDS.convert(5, MINUTES)).toString());
             List<Filter> lili = new ArrayList();
             lili.add(fla);
-            ContinuousWrapper cont = new ContinuousWrapper(lili, 5);
+            ContinuousWrapper cont = new ContinuousWrapper(lili, 0);
 
-            fr = cont.filter(StaticDataset.getStaticDataset());
+            FilterResult fr = cont.filter(StaticDataset.getStaticDataset());
             //List<Pair<Date, Date>> tp = cont.normalizeTimeSpans(fr.timeSeries);
             //System.out.println(tp.size());
             System.out.println(fr.size());
@@ -67,7 +67,13 @@ public class Tester {
             for (Pair<Date, Date> to : fr.timeSeries) {
                 System.out.println(to.toString());
             }
+            for (Pair<Date, Date> to : fri.timeSeries) {
+                System.out.println(to.toString());
+            }
             for (VaultEntry to : fr.filteredData) {
+                System.out.println(to.toString());
+            }
+            for (VaultEntry to : fri.filteredData) {
                 System.out.println(to.toString());
             }
         } catch (ParseException ex) {

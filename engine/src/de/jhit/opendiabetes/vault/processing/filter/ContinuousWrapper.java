@@ -59,6 +59,26 @@ public class ContinuousWrapper extends Filter {
         this.marginInMinutes = marginInMinutes;
     }
 
+    /**
+     * Filter subclass, gets a filter and uses the <code>timeSeries</code> of
+     * the internal FilterResult, together with a margin value in minutes, on
+     * the initial List of VaultEntrys and returns only entries located in these
+     * time spans
+     *
+     * @param filter Filter which provides the results for the time spans
+     * @param marginInMinutes time range applied to the resulting time spans of
+     * <code>registeredFilter</code>
+     */
+    public ContinuousWrapper(Filter filter, int marginInMinutes) {
+        List<Filter> registeredFilter = new ArrayList<>();
+        registeredFilter.add(filter);
+        this.registeredFilter = registeredFilter;
+        if (marginInMinutes < 0) {
+            throw new IllegalArgumentException("Expected a margin >= 0 but was " + marginInMinutes);
+        }
+        this.marginInMinutes = marginInMinutes;
+    }
+
     @Override
     FilterType getType() {
         return FilterType.EVENT_SPAN_FILTER;
