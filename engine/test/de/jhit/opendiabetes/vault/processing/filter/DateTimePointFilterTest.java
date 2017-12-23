@@ -38,7 +38,7 @@ import org.junit.Test;
 
 /**
  *
- * @author juehv
+ * @author juehv, aa80hifa
  */
 public class DateTimePointFilterTest extends Assert {
     
