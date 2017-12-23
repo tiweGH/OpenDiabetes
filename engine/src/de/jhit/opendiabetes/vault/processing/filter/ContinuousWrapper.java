@@ -33,7 +33,7 @@ public class ContinuousWrapper extends Filter {
 
     List<VaultEntry> baseData;
     List<Filter> registeredFilter;
-    protected long marginInMinutes;
+    protected int marginInMinutes;
     List<Pair<Date, Date>> timeSpansForContinuousData;
 
     //folgendes problem: die Filter werden dem Slicer scheinbar fertig übergeben,
@@ -92,7 +92,7 @@ public class ContinuousWrapper extends Filter {
      * @param timeSeries time spans to be merged
      * @return merged time series
      */
-    protected List<Pair<Date, Date>> normalizeTimeSpans(List<Pair<Date, Date>> timeSeries) {
+    protected List<Pair<Date, Date>> normalizeTimeSeries(List<Pair<Date, Date>> timeSeries, int marginInMinutes) {
         List<Pair<Date, Date>> result = new ArrayList<>();
         Date startOfCurentTimeSeries = null;
         Date lastTimeStamp = null;
@@ -150,7 +150,7 @@ public class ContinuousWrapper extends Filter {
                 tempResult = filter.filter(tempResult.filteredData);
             }
         }
-        timeSpansForContinuousData = normalizeTimeSpans(tempResult.timeSeries);
+        timeSpansForContinuousData = normalizeTimeSeries(tempResult.timeSeries, marginInMinutes);
         result = super.filter(data);
         return result;
     }

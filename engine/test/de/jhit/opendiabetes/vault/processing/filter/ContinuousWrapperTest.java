@@ -186,4 +186,61 @@ public class ContinuousWrapperTest {
         assertEquals(expectedResult.timeSeries, result.timeSeries);
 
     }
+
+    @Test
+    public void testNormalizeTimeSeriesZeroMargin() throws ParseException {
+        setUpFilterUnderTest(new NoneFilter(), 0);
+        List<Pair<Date, Date>> timeSeries = new ArrayList<>();
+        List<Pair<Date, Date>> expectedResult = new ArrayList<>();
+        timeSeries.add(new Pair(TimestampUtils.createCleanTimestamp("2017.06.29-04:53", "yyyy.MM.dd-HH:mm"),
+                TimestampUtils.createCleanTimestamp("2017.06.29-04:56", "yyyy.MM.dd-HH:mm")));
+        timeSeries.add(new Pair(TimestampUtils.createCleanTimestamp("2017.06.29-04:56", "yyyy.MM.dd-HH:mm"),
+                TimestampUtils.createCleanTimestamp("2017.06.29-04:58", "yyyy.MM.dd-HH:mm")));
+
+        expectedResult.add(new Pair(TimestampUtils.createCleanTimestamp("2017.06.29-04:53", "yyyy.MM.dd-HH:mm"),
+                TimestampUtils.createCleanTimestamp("2017.06.29-04:58", "yyyy.MM.dd-HH:mm")));
+        //no margin, overlapping of entries
+        assertEquals(expectedResult, filterUnderTest.normalizeTimeSeries(timeSeries, 0));
+
+        timeSeries = new ArrayList<>();
+        timeSeries.add(new Pair(TimestampUtils.createCleanTimestamp("2017.06.29-04:53", "yyyy.MM.dd-HH:mm"),
+                TimestampUtils.createCleanTimestamp("2017.06.29-04:56", "yyyy.MM.dd-HH:mm")));
+        timeSeries.add(new Pair(TimestampUtils.createCleanTimestamp("2017.06.29-04:57", "yyyy.MM.dd-HH:mm"),
+                TimestampUtils.createCleanTimestamp("2017.06.29-04:58", "yyyy.MM.dd-HH:mm")));
+
+        expectedResult = timeSeries;
+        //no margin, no overlapping of entries
+        assertEquals(expectedResult, filterUnderTest.normalizeTimeSeries(timeSeries, 0));
+
+    }
+
+    @Test
+    public void testNormalizeTimeSeriesMargin() throws ParseException {
+        setUpFilterUnderTest(new NoneFilter(), 5);
+        List<Pair<Date, Date>> timeSeries = new ArrayList<>();
+        List<Pair<Date, Date>> expectedResult = new ArrayList<>();
+        timeSeries.add(new Pair(TimestampUtils.createCleanTimestamp("2017.06.29-04:53", "yyyy.MM.dd-HH:mm"),
+                TimestampUtils.createCleanTimestamp("2017.06.29-04:53", "yyyy.MM.dd-HH:mm")));
+        expectedResult.add(new Pair(TimestampUtils.createCleanTimestamp("2017.06.29-04:48", "yyyy.MM.dd-HH:mm"),
+                TimestampUtils.createCleanTimestamp("2017.06.29-04:58", "yyyy.MM.dd-HH:mm")));
+        //margin 5, single entry
+        assertEquals(expectedResult, filterUnderTest.normalizeTimeSeries(timeSeries, 5));
+
+        timeSeries = new ArrayList<>();
+        expectedResult = new ArrayList<>();
+        timeSeries.add(new Pair(TimestampUtils.createCleanTimestamp("2017.06.29-04:53", "yyyy.MM.dd-HH:mm"),
+                TimestampUtils.createCleanTimestamp("2017.06.29-04:59", "yyyy.MM.dd-HH:mm")));
+        timeSeries.add(new Pair(TimestampUtils.createCleanTimestamp("2017.06.29-04:56", "yyyy.MM.dd-HH:mm"),
+                TimestampUtils.createCleanTimestamp("2017.06.29-05:00", "yyyy.MM.dd-HH:mm")));
+        timeSeries.add(new Pair(TimestampUtils.createCleanTimestamp("2017.06.29-05:05", "yyyy.MM.dd-HH:mm"),
+                TimestampUtils.createCleanTimestamp("2017.06.29-05:05", "yyyy.MM.dd-HH:mm")));
+        timeSeries.add(new Pair(TimestampUtils.createCleanTimestamp("2017.06.29-05:16", "yyyy.MM.dd-HH:mm"),
+                TimestampUtils.createCleanTimestamp("2017.06.29-05:17", "yyyy.MM.dd-HH:mm")));
+        expectedResult.add(new Pair(TimestampUtils.createCleanTimestamp("2017.06.29-04:48", "yyyy.MM.dd-HH:mm"),
+                TimestampUtils.createCleanTimestamp("2017.06.29-05:10", "yyyy.MM.dd-HH:mm")));
+        expectedResult.add(new Pair(TimestampUtils.createCleanTimestamp("2017.06.29-05:11", "yyyy.MM.dd-HH:mm"),
+                TimestampUtils.createCleanTimestamp("2017.06.29-05:22", "yyyy.MM.dd-HH:mm")));
+        //margin 5, two segments
+        assertEquals(expectedResult, filterUnderTest.normalizeTimeSeries(timeSeries, 5));
+    }
 }
