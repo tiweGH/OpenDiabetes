@@ -35,7 +35,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- *
+ * Test of filter method, of class EventFilter.
  * @author juehv, aa80hifa
  */
 public class EventFilterTest extends Assert {
@@ -55,51 +55,6 @@ public class EventFilterTest extends Assert {
     @After
     public void tearDown() {
     }
-
-    /** 
-     * Test functions
-     */
-    
-    // Checks for the correct VaultEntryType in all result entries.
-    private void checkForVaultEntryType(FilterResult result, VaultEntryType typeToCheckFor){
-        for (VaultEntry entry : result.filteredData) {
-            assertTrue(entry.getType()==typeToCheckFor);
-        }
-    }
-    
-    // Checks for the correct start and end timestams
-    private void checkForTimestamp(String startDateStart, String startDateEnd, String endDateStart, String endDateEnd, FilterResult toTest) throws ParseException{
-        Date dateBeginStart = creatNewDateToCheckFor(startDateStart);
-        Date dateBeginEnd = creatNewDateToCheckFor(startDateEnd);
-        Date dateEndStart = creatNewDateToCheckFor(endDateStart);
-        Date dateEndEnd = creatNewDateToCheckFor(endDateEnd);
-
-        // New pair with the date's to check for
-        List<Pair<Date, Date>> pairToCheckFor = new ArrayList<>();
-        pairToCheckFor.add(new Pair<>(dateBeginStart, dateBeginEnd));
-        pairToCheckFor.add(new Pair<>(dateEndStart, dateEndEnd));
-
-        // New pair with the given date's to compare
-        List<Pair<Date, Date>> pairGiven = new ArrayList<>();
-        // get the first date pair
-        pairGiven.add(toTest.timeSeries.get(0));
-        // get the last date pair
-        pairGiven.add(toTest.timeSeries.get(toTest.timeSeries.size() - 1));
-
-        assertEquals(pairToCheckFor, pairGiven);
-    }
-    
-    // Should not throw any exceptions.
-    // Creats a new date
-    private Date creatNewDateToCheckFor(String date) throws ParseException{
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd-HH:mm");
-        return  sdf.parse(date);
-    }
-    
-    /**
-     * Test functions END
-     */
-    
     
     
     /**
@@ -118,8 +73,8 @@ public class EventFilterTest extends Assert {
         FilterResult result = instance.filter(data);
         
         //System.out.println(result);
-        checkForVaultEntryType(result, VaultEntryType.STRESS);
-        checkForTimestamp(dateTimePointBegin_1, dateTimePointBegin_2, dateTimePointEnd_1, dateTimePointEnd_2, result);
+        TestFunctions.checkForVaultEntryType(result, VaultEntryType.STRESS);
+        TestFunctions.checkForTimestamp(dateTimePointBegin_1, dateTimePointBegin_2, dateTimePointEnd_1, dateTimePointEnd_2, result);
         assertTrue(result.size() == 23);
     }
     
@@ -136,8 +91,8 @@ public class EventFilterTest extends Assert {
         FilterResult result = instance.filter(data);
         
         //System.out.println(result);
-        checkForVaultEntryType(result, VaultEntryType.GLUCOSE_BG);
-        checkForTimestamp(dateTimePointBegin_1, dateTimePointBegin_2, dateTimePointEnd_1, dateTimePointEnd_2, result);
+        TestFunctions.checkForVaultEntryType(result, VaultEntryType.GLUCOSE_BG);
+        TestFunctions.checkForTimestamp(dateTimePointBegin_1, dateTimePointBegin_2, dateTimePointEnd_1, dateTimePointEnd_2, result);
         assertTrue(result.size() == 2);
     }
     
@@ -154,8 +109,8 @@ public class EventFilterTest extends Assert {
         FilterResult result = instance.filter(data);
         
         //System.out.println(result);
-        checkForVaultEntryType(result, VaultEntryType.HEART_RATE);
-        checkForTimestamp(dateTimePointBegin_1, dateTimePointBegin_2, dateTimePointEnd_1, dateTimePointEnd_2, result);
+        TestFunctions.checkForVaultEntryType(result, VaultEntryType.HEART_RATE);
+        TestFunctions.checkForTimestamp(dateTimePointBegin_1, dateTimePointBegin_2, dateTimePointEnd_1, dateTimePointEnd_2, result);
         assertTrue(result.size() == 33);
     }
     
@@ -172,8 +127,8 @@ public class EventFilterTest extends Assert {
         FilterResult result = instance.filter(data);
         
         //System.out.println(result);
-        checkForVaultEntryType(result, VaultEntryType.HEART_RATE_VARIABILITY);
-        checkForTimestamp(dateTimePointBegin_1, dateTimePointBegin_2, dateTimePointEnd_1, dateTimePointEnd_2, result);
+        TestFunctions.checkForVaultEntryType(result, VaultEntryType.HEART_RATE_VARIABILITY);
+        TestFunctions.checkForTimestamp(dateTimePointBegin_1, dateTimePointBegin_2, dateTimePointEnd_1, dateTimePointEnd_2, result);
         assertTrue(result.size() == 22);
     }
     
@@ -190,8 +145,8 @@ public class EventFilterTest extends Assert {
         FilterResult result = instance.filter(data);
         
         //System.out.println(result);
-        checkForVaultEntryType(result, VaultEntryType.BASAL_PROFILE);
-        checkForTimestamp(dateTimePointBegin_1, dateTimePointBegin_2, dateTimePointEnd_1, dateTimePointEnd_2, result);
+        TestFunctions.checkForVaultEntryType(result, VaultEntryType.BASAL_PROFILE);
+        TestFunctions.checkForTimestamp(dateTimePointBegin_1, dateTimePointBegin_2, dateTimePointEnd_1, dateTimePointEnd_2, result);
         assertTrue(result.size() == 8);
     }
     
@@ -208,8 +163,8 @@ public class EventFilterTest extends Assert {
         FilterResult result = instance.filter(data);
         
         //System.out.println(result);
-        checkForVaultEntryType(result, VaultEntryType.GLUCOSE_BOLUS_CALCULATION);
-        checkForTimestamp(dateTimePointBegin_1, dateTimePointBegin_2, dateTimePointEnd_1, dateTimePointEnd_2, result);
+        TestFunctions.checkForVaultEntryType(result, VaultEntryType.GLUCOSE_BOLUS_CALCULATION);
+        TestFunctions.checkForTimestamp(dateTimePointBegin_1, dateTimePointBegin_2, dateTimePointEnd_1, dateTimePointEnd_2, result);
         assertTrue(result.size() == 1);
     }
     
@@ -227,7 +182,7 @@ public class EventFilterTest extends Assert {
         FilterResult result = instance.filter(data);
         
         //System.out.println(result);
-        checkForVaultEntryType(result, VaultEntryType.GLUCOSE_BG);
+        TestFunctions.checkForVaultEntryType(result, VaultEntryType.GLUCOSE_BG);
         // no timestamps given
         //checkForTimestamp(dateTimePointBegin_1, dateTimePointBegin_2, dateTimePointEnd_1, dateTimePointEnd_2, result);
         assertTrue(result.size() == 0);
@@ -275,33 +230,33 @@ public class EventFilterTest extends Assert {
         filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE, TimestampUtils.createCleanTimestamp("2017.06.29-12:40", "yyyy.MM.dd-HH:mm"), 68.0));
 
         List<Pair<Date, Date>> timeSeries = new ArrayList<>();
-        timeSeries.add(new Pair<>(creatNewDateToCheckFor("2017.06.29-04:56"), creatNewDateToCheckFor("2017.06.29-04:56")));
-        timeSeries.add(new Pair<>(creatNewDateToCheckFor("2017.06.29-05:06"), creatNewDateToCheckFor("2017.06.29-05:06")));
-        timeSeries.add(new Pair<>(creatNewDateToCheckFor("2017.06.29-05:16"), creatNewDateToCheckFor("2017.06.29-05:16")));
-        timeSeries.add(new Pair<>(creatNewDateToCheckFor("2017.06.29-05:26"), creatNewDateToCheckFor("2017.06.29-05:26")));
-        timeSeries.add(new Pair<>(creatNewDateToCheckFor("2017.06.29-05:36"), creatNewDateToCheckFor("2017.06.29-05:36")));
-        timeSeries.add(new Pair<>(creatNewDateToCheckFor("2017.06.29-05:46"), creatNewDateToCheckFor("2017.06.29-05:56")));
-        timeSeries.add(new Pair<>(creatNewDateToCheckFor("2017.06.29-06:06"), creatNewDateToCheckFor("2017.06.29-06:06")));
-        timeSeries.add(new Pair<>(creatNewDateToCheckFor("2017.06.29-06:16"), creatNewDateToCheckFor("2017.06.29-06:16")));
-        timeSeries.add(new Pair<>(creatNewDateToCheckFor("2017.06.29-06:26"), creatNewDateToCheckFor("2017.06.29-06:26")));
-        timeSeries.add(new Pair<>(creatNewDateToCheckFor("2017.06.29-06:36"), creatNewDateToCheckFor("2017.06.29-06:36")));
-        timeSeries.add(new Pair<>(creatNewDateToCheckFor("2017.06.29-06:46"), creatNewDateToCheckFor("2017.06.29-06:46")));
-        timeSeries.add(new Pair<>(creatNewDateToCheckFor("2017.06.29-06:56"), creatNewDateToCheckFor("2017.06.29-06:56")));
-        timeSeries.add(new Pair<>(creatNewDateToCheckFor("2017.06.29-07:06"), creatNewDateToCheckFor("2017.06.29-07:16")));
-        timeSeries.add(new Pair<>(creatNewDateToCheckFor("2017.06.29-07:27"), creatNewDateToCheckFor("2017.06.29-07:36")));
-        timeSeries.add(new Pair<>(creatNewDateToCheckFor("2017.06.29-07:46"), creatNewDateToCheckFor("2017.06.29-07:46")));
-        timeSeries.add(new Pair<>(creatNewDateToCheckFor("2017.06.29-07:56"), creatNewDateToCheckFor("2017.06.29-07:56")));
-        timeSeries.add(new Pair<>(creatNewDateToCheckFor("2017.06.29-08:06"), creatNewDateToCheckFor("2017.06.29-08:06")));
-        timeSeries.add(new Pair<>(creatNewDateToCheckFor("2017.06.29-10:30"), creatNewDateToCheckFor("2017.06.29-10:41")));
-        timeSeries.add(new Pair<>(creatNewDateToCheckFor("2017.06.29-10:50"), creatNewDateToCheckFor("2017.06.29-10:50")));
-        timeSeries.add(new Pair<>(creatNewDateToCheckFor("2017.06.29-11:00"), creatNewDateToCheckFor("2017.06.29-11:00")));
-        timeSeries.add(new Pair<>(creatNewDateToCheckFor("2017.06.29-11:10"), creatNewDateToCheckFor("2017.06.29-11:10")));
-        timeSeries.add(new Pair<>(creatNewDateToCheckFor("2017.06.29-11:21"), creatNewDateToCheckFor("2017.06.29-11:21")));
-        timeSeries.add(new Pair<>(creatNewDateToCheckFor("2017.06.29-11:30"), creatNewDateToCheckFor("2017.06.29-11:30")));
-        timeSeries.add(new Pair<>(creatNewDateToCheckFor("2017.06.29-11:40"), creatNewDateToCheckFor("2017.06.29-11:40")));
-        timeSeries.add(new Pair<>(creatNewDateToCheckFor("2017.06.29-11:51"), creatNewDateToCheckFor("2017.06.29-12:00")));
-        timeSeries.add(new Pair<>(creatNewDateToCheckFor("2017.06.29-12:21"), creatNewDateToCheckFor("2017.06.29-12:21")));
-        timeSeries.add(new Pair<>(creatNewDateToCheckFor("2017.06.29-12:31"), creatNewDateToCheckFor("2017.06.29-12:40")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-04:56"), TestFunctions.creatNewDateToCheckFor("2017.06.29-04:56")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-05:06"), TestFunctions.creatNewDateToCheckFor("2017.06.29-05:06")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-05:16"), TestFunctions.creatNewDateToCheckFor("2017.06.29-05:16")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-05:26"), TestFunctions.creatNewDateToCheckFor("2017.06.29-05:26")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-05:36"), TestFunctions.creatNewDateToCheckFor("2017.06.29-05:36")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-05:46"), TestFunctions.creatNewDateToCheckFor("2017.06.29-05:56")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-06:06"), TestFunctions.creatNewDateToCheckFor("2017.06.29-06:06")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-06:16"), TestFunctions.creatNewDateToCheckFor("2017.06.29-06:16")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-06:26"), TestFunctions.creatNewDateToCheckFor("2017.06.29-06:26")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-06:36"), TestFunctions.creatNewDateToCheckFor("2017.06.29-06:36")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-06:46"), TestFunctions.creatNewDateToCheckFor("2017.06.29-06:46")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-06:56"), TestFunctions.creatNewDateToCheckFor("2017.06.29-06:56")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-07:06"), TestFunctions.creatNewDateToCheckFor("2017.06.29-07:16")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-07:27"), TestFunctions.creatNewDateToCheckFor("2017.06.29-07:36")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-07:46"), TestFunctions.creatNewDateToCheckFor("2017.06.29-07:46")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-07:56"), TestFunctions.creatNewDateToCheckFor("2017.06.29-07:56")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-08:06"), TestFunctions.creatNewDateToCheckFor("2017.06.29-08:06")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-10:30"), TestFunctions.creatNewDateToCheckFor("2017.06.29-10:41")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-10:50"), TestFunctions.creatNewDateToCheckFor("2017.06.29-10:50")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-11:00"), TestFunctions.creatNewDateToCheckFor("2017.06.29-11:00")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-11:10"), TestFunctions.creatNewDateToCheckFor("2017.06.29-11:10")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-11:21"), TestFunctions.creatNewDateToCheckFor("2017.06.29-11:21")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-11:30"), TestFunctions.creatNewDateToCheckFor("2017.06.29-11:30")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-11:40"), TestFunctions.creatNewDateToCheckFor("2017.06.29-11:40")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-11:51"), TestFunctions.creatNewDateToCheckFor("2017.06.29-12:00")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-12:21"), TestFunctions.creatNewDateToCheckFor("2017.06.29-12:21")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-12:31"), TestFunctions.creatNewDateToCheckFor("2017.06.29-12:40")));
 
         FilterResult checkForThisResult = new FilterResult(filteredData, timeSeries);
         
