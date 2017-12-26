@@ -21,6 +21,7 @@ import de.jhit.opendiabetes.vault.processing.filter.Filter;
 import de.jhit.opendiabetes.vault.processing.filter.NoneFilter;
 import de.jhit.opendiabetes.vault.testhelper.StaticDataset;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -65,11 +66,11 @@ public class DataSlicerTest extends Assert {
         DataSlicer instance = new DataSlicer(options);
         instance.registerFilter(filter);
 
-        List<SliceEntry> expResult = null;
+        List<SliceEntry> expResult = new ArrayList<>();
         List<SliceEntry> result = instance.sliceData(StaticDataset.getStaticDataset());
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        //fail("The test case is a prototype.");
     }
 
 }

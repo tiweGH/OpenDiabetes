@@ -26,7 +26,7 @@ import javafx.util.Pair;
  *
  * @author Daniel
  */
-public class FilterDecorator extends Filter{
+public class FilterDecorator extends Filter {
 
     private final List<Filter> filters;
     private int currentFilterPosition = 0;
@@ -34,7 +34,7 @@ public class FilterDecorator extends Filter{
     public FilterDecorator(List<Filter> filters) {
         this.filters = filters;
     }
-        
+
     @Override
     FilterType getType() {
         return FilterType.FILTER_DECORATOR;
@@ -44,10 +44,10 @@ public class FilterDecorator extends Filter{
     boolean matchesFilterParameters(VaultEntry entry) {
         return filters.get(currentFilterPosition).matchesFilterParameters(entry);
     }
-    
-    
+
     /**
-     * This methods override the normal Filtermethod. This Filter combines multiple Filters and adds an Or to the given Filters.
+     * This methods override the normal Filtermethod. This Filter combines
+     * multiple Filters and adds an Or to the given Filters.
      */
     @Override
     public FilterResult filter(List<VaultEntry> data) {
@@ -56,22 +56,26 @@ public class FilterDecorator extends Filter{
         List<Pair<Date, Date>> timeSeries = new ArrayList<>();
         FilterResult filterResult = new FilterResult(result, timeSeries);
         FilterResult filterTmpResult = new FilterResult(result, timeSeries);
-        
+
+        //Vorschlag: um unnötiges iterieren zu vermeiden, über data nur einmal iterieren,
+        //aber pro entry alle matchesFilterParameters für diesen entry ausführen und ver-odern
+        //(dh sobald einer true zurück gibt, kommt der entry ins Ergebnis)
+        //das geht natürlich nur bei FIltern die filter() selbst nicht überschreiben um zu funktionieren
+        //
         for (Filter filter : filters) {
-            if(currentFilterPosition == 0)
+            if (currentFilterPosition == 0) {
                 filterResult = filter.filter(data);
-            else
-            {
+            } else {
                 filterTmpResult = filter.filter(data);
                 filterResult.filteredData.addAll(filterTmpResult.filteredData);
                 filterResult.timeSeries.addAll(filterTmpResult.timeSeries);
             }
-            
+
             currentFilterPosition++;
-            
+
         }
-        
+
         return filterResult;
     }
-    
+
 }

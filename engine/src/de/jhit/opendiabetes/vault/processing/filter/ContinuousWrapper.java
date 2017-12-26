@@ -33,7 +33,8 @@ public class ContinuousWrapper extends Filter {
 
     List<VaultEntry> baseData;
     List<Filter> registeredFilter;
-    protected int marginInMinutes;
+    protected int marginBefore;
+    protected int marginAfter;
     List<Pair<Date, Date>> timeSpansForContinuousData;
 
     //folgendes problem: die Filter werden dem Slicer scheinbar fertig übergeben,
@@ -48,15 +49,15 @@ public class ContinuousWrapper extends Filter {
      *
      * @param registeredFilter Filter(s) which provide the results for the time
      * spans
-     * @param marginInMinutes time range applied to the resulting time spans of
-     * <code>registeredFilter</code>
+     * @param marginInMinutes time range in minutes applied to the resulting
+     * time spans of <code>registeredFilter</code>
      */
     public ContinuousWrapper(List<Filter> registeredFilter, int marginInMinutes) {
         this.registeredFilter = registeredFilter;
         if (marginInMinutes < 0) {
             throw new IllegalArgumentException("Expected a margin >= 0 but was " + marginInMinutes);
         }
-        this.marginInMinutes = marginInMinutes;
+        this.marginBefore = this.marginAfter = marginInMinutes;
     }
 
     /**
@@ -66,8 +67,8 @@ public class ContinuousWrapper extends Filter {
      * time spans
      *
      * @param filter Filter which provides the results for the time spans
-     * @param marginInMinutes time range applied to the resulting time spans of
-     * <code>registeredFilter</code>
+     * @param marginInMinutes time range in minutes applied to the resulting
+     * time spans of <code>registeredFilter</code>
      */
     public ContinuousWrapper(Filter filter, int marginInMinutes) {
         List<Filter> registeredFilter = new ArrayList<>();
@@ -76,7 +77,28 @@ public class ContinuousWrapper extends Filter {
         if (marginInMinutes < 0) {
             throw new IllegalArgumentException("Expected a margin >= 0 but was " + marginInMinutes);
         }
-        this.marginInMinutes = marginInMinutes;
+        this.marginBefore = this.marginAfter = marginInMinutes;
+    }
+
+    /**
+     * Filter subclass, gets a filter and uses the <code>timeSeries</code> of
+     * the internal FilterResult, together with a before-margin value and
+     * after-margin value in minutes, on the initial List of VaultEntrys and
+     * returns only entries located in these time spans
+     *
+     * @param filter Filter which provides the results for the time spans
+     * @param marginInMinutes time range in minutes applied to the resulting
+     * time spans of <code>registeredFilter</code>
+     */
+    public ContinuousWrapper(Filter filter, int marginBefore, int marginAfter) {
+        List<Filter> registeredFilter = new ArrayList<>();
+        registeredFilter.add(filter);
+        this.registeredFilter = registeredFilter;
+        if (marginBefore < 0 || marginAfter < 0) {
+            throw new IllegalArgumentException("Expected a margin >= 0 but was " + marginBefore + " " + marginAfter);
+        }
+        this.marginBefore = marginBefore;
+        this.marginAfter = marginAfter;
     }
 
     @Override
@@ -90,9 +112,11 @@ public class ContinuousWrapper extends Filter {
      * <code>marginInMinutes</code> value set in the constructor
      *
      * @param timeSeries time spans to be merged
+     * @param marginBefore margin before each timespamp
+     * @param marginAfter margin after each timespamp
      * @return merged time series
      */
-    protected List<Pair<Date, Date>> normalizeTimeSeries(List<Pair<Date, Date>> timeSeries, int marginInMinutes) {
+    protected List<Pair<Date, Date>> normalizeTimeSeries(List<Pair<Date, Date>> timeSeries, int marginBefore, int marginAfter) {
         List<Pair<Date, Date>> result = new ArrayList<>();
         Date startOfCurentTimeSeries = null;
         Date lastTimeStamp = null;
@@ -100,12 +124,12 @@ public class ContinuousWrapper extends Filter {
         for (Pair<Date, Date> p : timeSeries) {
             if (startOfCurentTimeSeries == null) {
                 //initial run of the loop
-                startOfCurentTimeSeries = TimestampUtils.addMinutesToTimestamp(p.getKey(), -1 * marginInMinutes);
-                lastTimeStamp = TimestampUtils.addMinutesToTimestamp(p.getValue(), marginInMinutes);
+                startOfCurentTimeSeries = TimestampUtils.addMinutesToTimestamp(p.getKey(), -1 * marginBefore);
+                lastTimeStamp = TimestampUtils.addMinutesToTimestamp(p.getValue(), marginAfter);
             } else if (TimestampUtils.withinDateTimeSpan(startOfCurentTimeSeries, lastTimeStamp, p.getKey())
-                    || TimestampUtils.withinDateTimeSpan(startOfCurentTimeSeries, lastTimeStamp, TimestampUtils.addMinutesToTimestamp(p.getKey(), -1 * marginInMinutes))) {
+                    || TimestampUtils.withinDateTimeSpan(startOfCurentTimeSeries, lastTimeStamp, TimestampUtils.addMinutesToTimestamp(p.getKey(), -1 * marginBefore))) {
                 //Dates which start within the current time span, or would start within after margin has been applied
-                tempTimeStamp = TimestampUtils.addMinutesToTimestamp(p.getValue(), marginInMinutes);
+                tempTimeStamp = TimestampUtils.addMinutesToTimestamp(p.getValue(), marginAfter);
                 if (!(TimestampUtils.withinDateTimeSpan(startOfCurentTimeSeries, lastTimeStamp, tempTimeStamp))) {
                     //the current time span extends to the end of the merged time span
                     lastTimeStamp = tempTimeStamp;
@@ -113,16 +137,31 @@ public class ContinuousWrapper extends Filter {
             } else {
                 //if no othe time span can be merged to the current span, it will be added to the result and the next span starts
                 result.add(new Pair<>(startOfCurentTimeSeries, lastTimeStamp));
-                startOfCurentTimeSeries = TimestampUtils.addMinutesToTimestamp(p.getKey(), -1 * marginInMinutes);
-                lastTimeStamp = TimestampUtils.addMinutesToTimestamp(p.getValue(), marginInMinutes);
+                startOfCurentTimeSeries = TimestampUtils.addMinutesToTimestamp(p.getKey(), -1 * marginBefore);
+                lastTimeStamp = TimestampUtils.addMinutesToTimestamp(p.getValue(), marginAfter);
             }
 
-            if (timeSeries.lastIndexOf(p) == timeSeries.size() - 1) {
-                //since, contrary to filter, every element of the list has to be in the result, this ensures that the last time span will be in the result
-                result.add(new Pair<>(startOfCurentTimeSeries, lastTimeStamp));
-            }
+//            if (timeSeries.lastIndexOf(p) == timeSeries.size() - 1) {
+//                //since, contrary to filter, every element of the list has to be in the result, this ensures that the last time span will be in the result
+//                result.add(new Pair<>(startOfCurentTimeSeries, lastTimeStamp));
+//            }
+        }
+        if (timeSeries.size() > 0) {
+            result.add(new Pair<>(startOfCurentTimeSeries, lastTimeStamp));
         }
         return result;
+    }
+
+    /**
+     * Gets a series of time spans and merges overlapping spans according to the
+     * <code>marginInMinutes</code> value set in the constructor
+     *
+     * @param timeSeries time spans to be merged
+     * @param margin margin before and after each timespamp
+     * @return merged time series
+     */
+    protected List<Pair<Date, Date>> normalizeTimeSeries(List<Pair<Date, Date>> timeSeries, int margin) {
+        return normalizeTimeSeries(timeSeries, margin, margin);
     }
 
     @Override
@@ -150,7 +189,7 @@ public class ContinuousWrapper extends Filter {
                 tempResult = filter.filter(tempResult.filteredData);
             }
         }
-        timeSpansForContinuousData = normalizeTimeSeries(tempResult.timeSeries, marginInMinutes);
+        timeSpansForContinuousData = normalizeTimeSeries(tempResult.timeSeries, marginBefore, marginAfter);
         result = super.filter(data);
         return result;
     }

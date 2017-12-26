@@ -221,8 +221,10 @@ public class ContinuousWrapperTest {
         List<Pair<Date, Date>> expectedResult = new ArrayList<>();
         timeSeries.add(new Pair(TimestampUtils.createCleanTimestamp("2017.06.29-04:53", "yyyy.MM.dd-HH:mm"),
                 TimestampUtils.createCleanTimestamp("2017.06.29-04:53", "yyyy.MM.dd-HH:mm")));
+        timeSeries.add(new Pair(TimestampUtils.createCleanTimestamp("2017.06.29-04:54", "yyyy.MM.dd-HH:mm"),
+                TimestampUtils.createCleanTimestamp("2017.06.29-04:54", "yyyy.MM.dd-HH:mm")));
         expectedResult.add(new Pair(TimestampUtils.createCleanTimestamp("2017.06.29-04:48", "yyyy.MM.dd-HH:mm"),
-                TimestampUtils.createCleanTimestamp("2017.06.29-04:58", "yyyy.MM.dd-HH:mm")));
+                TimestampUtils.createCleanTimestamp("2017.06.29-04:59", "yyyy.MM.dd-HH:mm")));
         //margin 5, single entry
         assertEquals(expectedResult, filterUnderTest.normalizeTimeSeries(timeSeries, 5));
 
@@ -242,5 +244,13 @@ public class ContinuousWrapperTest {
                 TimestampUtils.createCleanTimestamp("2017.06.29-05:22", "yyyy.MM.dd-HH:mm")));
         //margin 5, two segments
         assertEquals(expectedResult, filterUnderTest.normalizeTimeSeries(timeSeries, 5));
+    }
+
+    @Test
+    public void testNormalizeTimeSeriesEmpty() throws ParseException {
+        setUpFilterUnderTest(new NoneFilter(), 0);
+        List<Pair<Date, Date>> timeSeries = new ArrayList<>();
+        List<Pair<Date, Date>> expectedResult = new ArrayList<>();
+        assertEquals(expectedResult, filterUnderTest.normalizeTimeSeries(timeSeries, 0));
     }
 }

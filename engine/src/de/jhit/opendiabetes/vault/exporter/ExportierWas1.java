@@ -72,11 +72,6 @@ public class ExportierWas1 {
         }
     }
 
-    
-    
-    
-    
-    
     public static void main(String[] args) {
         run();
     }
