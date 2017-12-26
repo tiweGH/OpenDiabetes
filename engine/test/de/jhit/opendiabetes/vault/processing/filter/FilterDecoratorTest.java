@@ -36,10 +36,12 @@ import org.junit.Test;
 
 /**
  *
- * @author juehv
+ * @author juehv, aa80hifa
  */
 public class FilterDecoratorTest extends Assert {
 
+    List<VaultEntry> data;
+            
     @BeforeClass
     public static void setUpClass() {
     }
@@ -55,80 +57,10 @@ public class FilterDecoratorTest extends Assert {
     @After
     public void tearDown() {
     }
-
-    /** 
-     * Test functions
-     */
-      
-    
-    // Checks for the correct VaultEntryType in all result entries.
-    private void checkForVaultEntryType(FilterResult result, VaultEntryType typeToCheckFor){
-        boolean output = false;
-        for (VaultEntry entry : result.filteredData) {
-            assertTrue(entry.getType()==typeToCheckFor);
-        }
-    }
-    
-    // Checks for the correct start and end timestams
-    private void checkForTimestamp(String startDate, String endDate, FilterResult toTest) throws ParseException{
-        Date dateBegin = creatNewDateToCheckFor(startDate);
-        Date dateEnd = creatNewDateToCheckFor(endDate);
-        for (VaultEntry entry : toTest.filteredData) {
-            assertTrue(TimestampUtils.withinDateTimeSpan(dateBegin, dateEnd, entry.getTimestamp()));
-        }        
-    }
-    
-    // Should not throw any exceptions.
-    // Creats a new date
-    private Date creatNewDateToCheckFor(String date) throws ParseException{
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd-HH:mm");
-        return  sdf.parse(date);
-    }
-    
-    //-----
-    //For false test
-    //-----
-    // Checks for the correct VaultEntryType in all result entries.
-    private void checkForVaultEntryType_False(FilterResult result, VaultEntryType typeToCheckFor){
-        boolean output = false;
-        for (VaultEntry entry : result.filteredData) {
-            assertFalse(entry.getType()==typeToCheckFor);
-        }
-    }
-    
-    // Checks for the correct start and end timestams
-    private void checkForTimestamp_False(String startDate, String endDate, FilterResult toTest) throws ParseException{
-        Date dateBegin = creatNewDateToCheckFor(startDate);
-        Date dateEnd = creatNewDateToCheckFor(endDate);
-        for (VaultEntry entry : toTest.filteredData) {
-            assertFalse(TimestampUtils.withinDateTimeSpan(dateBegin, dateEnd, entry.getTimestamp()));
-        }        
-    }
-    //-----
-    //For false test END
-    //-----
     
     /**
-    // Should not throw any exceptions.
-    // Creats a new timestamp with the pair of dates that should be tested.
-    private List<Pair<Date, Date>> creatRealTimestamp(String start, String end) throws ParseException{
-        List<Pair<Date, Date>> realTimestamp = new ArrayList<>();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd-HH:mm");
-        Date dateBegin = sdf.parse(start);
-        Date dateEnd = sdf.parse(end);
-        realTimestamp.add(new Pair<>(dateBegin, dateEnd));
-        return realTimestamp;
-    }
-    */
-    
-    /**
-     * Test functions END
-     */
-    
-    
-    
-    /**
-     * Test of filter method, of class EventFilter.
+     * Test of filter method, of class FilterDecoratorTest.
+     * @author daniel, aa80hifa
      */
     @Test
     public void checkFilterMethod() throws ParseException{
@@ -137,141 +69,140 @@ public class FilterDecoratorTest extends Assert {
         filters.add(new EventFilter(VaultEntryType.STRESS));
         Filter filter = new FilterDecorator(filters);
         
-        List<VaultEntry> data = StaticDataset.getStaticDataset();
-                
-        FilterResult filterResult = filter.filter(data);
-        System.out.println(filterResult.size());
-    }
-    
-    
-    
-    @Test
-    public void testEventFilter_STRESS() throws ParseException {
-        //System.out.println("filter");
-        String dateTimePointBegin = "2017.06.29-04:46";
-        String dateTimePointEnd = "2017.06.29-12:21";
+        data = StaticDataset.getStaticDataset();                
+        FilterResult result = filter.filter(data);
         
-        List<VaultEntry> data = StaticDataset.getStaticDataset();
-        EventFilter instance = new EventFilter(VaultEntryType.STRESS);
-        FilterResult result = instance.filter(data);
+        List<VaultEntry> filteredData = new ArrayList<>();
+        // 22
+        filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-04:46"), 21.5));        
+        filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-04:56"), 36.25));        
+        filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-05:06"), 23.75));        
+        filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-05:16"), 19.25));        
+        filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-05:26"), 21.75));        
+        filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-06:06"), 35.5));        
+        filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-06:16"), 30.25));        
+        filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-06:26"), 27.25));
+        filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-06:36"), 26.5));        
+        filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-06:46"), 27.25));        
+        filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-07:27"), 25.75));        
+        filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-07:45"), 30.25));        
+        filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-07:56"), 28.0));
+        filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-08:06"), 27.25));
+        filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-08:16"), 0.0));
+        filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-10:50"), 52.75));
+        filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-11:00"), 73.0));
+        filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-11:10"), 61.0));        
+        filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-11:21"), 55.75));
+        filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-11:40"), 9.5));        
+        filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-11:51"), 75.25));        
+        filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-12:11"), 17.25));        
+        filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-12:21"), 18.25));
         
-        //System.out.println(result);
-        checkForVaultEntryType(result, VaultEntryType.STRESS);
-        checkForTimestamp(dateTimePointBegin, dateTimePointEnd, result);
-        assertTrue(result.size() == 23);
-    }
-    
-    @Test
-    public void testEventFilter_GLUCOSE_BG() throws ParseException {
-        //System.out.println("filter");
-        String dateTimePointBegin = "2017.06.29-04:53";
-        String dateTimePointEnd = "2017.06.29-08:39";
+        // 33 - 6 == 27
+        filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE, TestFunctions.creatNewDateToCheckFor("2017.06.29-04:56"), 72.0));
+        filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE, TestFunctions.creatNewDateToCheckFor("2017.06.29-05:06"), 59.0));        
+        filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE, TestFunctions.creatNewDateToCheckFor("2017.06.29-05:16"), 53.0));
+        filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE, TestFunctions.creatNewDateToCheckFor("2017.06.29-05:26"), 58.0));        
+        filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE, TestFunctions.creatNewDateToCheckFor("2017.06.29-05:36"), 59.0));
+        //
+        filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE, TestFunctions.creatNewDateToCheckFor("2017.06.29-05:46"), 57.0));
+        filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE, TestFunctions.creatNewDateToCheckFor("2017.06.29-05:56"), 56.0));
+        //
+        filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE, TestFunctions.creatNewDateToCheckFor("2017.06.29-06:06"), 71.0));        
+        filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE, TestFunctions.creatNewDateToCheckFor("2017.06.29-06:16"), 66.0));        
+        filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE, TestFunctions.creatNewDateToCheckFor("2017.06.29-06:26"), 62.0));        
+        filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE, TestFunctions.creatNewDateToCheckFor("2017.06.29-06:36"), 63.0));        
+        filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE, TestFunctions.creatNewDateToCheckFor("2017.06.29-06:46"), 58.0));        
+        filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE, TestFunctions.creatNewDateToCheckFor("2017.06.29-06:56"), 59.0));
+        //
+        filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE, TestFunctions.creatNewDateToCheckFor("2017.06.29-07:06"), 56.0));
+        filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE, TestFunctions.creatNewDateToCheckFor("2017.06.29-07:16"), 57.0));
+        //
+        filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE, TestFunctions.creatNewDateToCheckFor("2017.06.29-07:27"), 58.0));
+        filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE, TestFunctions.creatNewDateToCheckFor("2017.06.29-07:36"), 68.0));
+        //
+        filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE, TestFunctions.creatNewDateToCheckFor("2017.06.29-07:46"), 62.0));
+        filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE, TestFunctions.creatNewDateToCheckFor("2017.06.29-07:56"), 63.0));        
+        filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE, TestFunctions.creatNewDateToCheckFor("2017.06.29-08:06"), 62.0));
+        //
+        filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE, TestFunctions.creatNewDateToCheckFor("2017.06.29-10:30"), 65.0));
+        filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE, TestFunctions.creatNewDateToCheckFor("2017.06.29-10:41"), 66.0));
+        //
+        filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE, TestFunctions.creatNewDateToCheckFor("2017.06.29-10:50"), 85.0));        
+        filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE, TestFunctions.creatNewDateToCheckFor("2017.06.29-11:00"), 91.0));
+        filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE, TestFunctions.creatNewDateToCheckFor("2017.06.29-11:10"), 77.0));        
+        filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE, TestFunctions.creatNewDateToCheckFor("2017.06.29-11:21"), 68.0));
+        filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE, TestFunctions.creatNewDateToCheckFor("2017.06.29-11:30"), 51.0));        
+        filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE, TestFunctions.creatNewDateToCheckFor("2017.06.29-11:40"), 94.0));
+        //
+        filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE, TestFunctions.creatNewDateToCheckFor("2017.06.29-11:51"), 58.0));
+        filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE, TestFunctions.creatNewDateToCheckFor("2017.06.29-12:00"), 55.0));
+        //
+        filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE, TestFunctions.creatNewDateToCheckFor("2017.06.29-12:21"), 51.0));
+        //
+        filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE, TestFunctions.creatNewDateToCheckFor("2017.06.29-12:31"), 60.0));
+        filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE, TestFunctions.creatNewDateToCheckFor("2017.06.29-12:40"), 68.0));
         
-        List<VaultEntry> data = StaticDataset.getStaticDataset();
-        EventFilter instance = new EventFilter(VaultEntryType.GLUCOSE_BG);
-        FilterResult result = instance.filter(data);
         
-        //System.out.println(result);
-        checkForVaultEntryType(result, VaultEntryType.GLUCOSE_BG);
-        checkForTimestamp(dateTimePointBegin, dateTimePointEnd, result);
-        assertTrue(result.size() == 2);
-    }
-    
-    @Test
-    public void testEventFilter_HEART_RATE() throws ParseException {
-        //System.out.println("filter");
-        String dateTimePointBegin = "2017.06.29-04:56";
-        String dateTimePointEnd = "2017.06.29-12:40";
+        List<Pair<Date, Date>> timeSeries = new ArrayList<>();
+        // 22 + 27 == 49
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-04:46"), TestFunctions.creatNewDateToCheckFor("2017.06.29-04:46")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-04:56"), TestFunctions.creatNewDateToCheckFor("2017.06.29-04:56")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-05:06"), TestFunctions.creatNewDateToCheckFor("2017.06.29-05:06")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-05:16"), TestFunctions.creatNewDateToCheckFor("2017.06.29-05:16")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-05:26"), TestFunctions.creatNewDateToCheckFor("2017.06.29-05:26")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-06:06"), TestFunctions.creatNewDateToCheckFor("2017.06.29-06:06")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-06:16"), TestFunctions.creatNewDateToCheckFor("2017.06.29-06:16")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-06:26"), TestFunctions.creatNewDateToCheckFor("2017.06.29-06:26")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-06:36"), TestFunctions.creatNewDateToCheckFor("2017.06.29-06:36")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-06:46"), TestFunctions.creatNewDateToCheckFor("2017.06.29-06:46")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-07:27"), TestFunctions.creatNewDateToCheckFor("2017.06.29-07:27")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-07:45"), TestFunctions.creatNewDateToCheckFor("2017.06.29-07:45")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-07:56"), TestFunctions.creatNewDateToCheckFor("2017.06.29-07:56")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-08:06"), TestFunctions.creatNewDateToCheckFor("2017.06.29-08:06")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-08:16"), TestFunctions.creatNewDateToCheckFor("2017.06.29-08:16")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-10:50"), TestFunctions.creatNewDateToCheckFor("2017.06.29-10:50")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-11:00"), TestFunctions.creatNewDateToCheckFor("2017.06.29-11:00")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-11:10"), TestFunctions.creatNewDateToCheckFor("2017.06.29-11:10")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-11:21"), TestFunctions.creatNewDateToCheckFor("2017.06.29-11:21")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-11:40"), TestFunctions.creatNewDateToCheckFor("2017.06.29-11:40")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-11:51"), TestFunctions.creatNewDateToCheckFor("2017.06.29-11:51")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-12:11"), TestFunctions.creatNewDateToCheckFor("2017.06.29-12:11")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-12:21"), TestFunctions.creatNewDateToCheckFor("2017.06.29-12:21")));
         
-        List<VaultEntry> data = StaticDataset.getStaticDataset();
-        EventFilter instance = new EventFilter(VaultEntryType.HEART_RATE);
-        FilterResult result = instance.filter(data);
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-04:56"), TestFunctions.creatNewDateToCheckFor("2017.06.29-04:56")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-05:06"), TestFunctions.creatNewDateToCheckFor("2017.06.29-05:06")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-05:16"), TestFunctions.creatNewDateToCheckFor("2017.06.29-05:16")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-05:26"), TestFunctions.creatNewDateToCheckFor("2017.06.29-05:26")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-05:36"), TestFunctions.creatNewDateToCheckFor("2017.06.29-05:36")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-05:46"), TestFunctions.creatNewDateToCheckFor("2017.06.29-05:56")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-06:06"), TestFunctions.creatNewDateToCheckFor("2017.06.29-06:06")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-06:16"), TestFunctions.creatNewDateToCheckFor("2017.06.29-06:16")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-06:26"), TestFunctions.creatNewDateToCheckFor("2017.06.29-06:26")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-06:36"), TestFunctions.creatNewDateToCheckFor("2017.06.29-06:36")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-06:46"), TestFunctions.creatNewDateToCheckFor("2017.06.29-06:46")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-06:56"), TestFunctions.creatNewDateToCheckFor("2017.06.29-06:56")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-07:06"), TestFunctions.creatNewDateToCheckFor("2017.06.29-07:16")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-07:27"), TestFunctions.creatNewDateToCheckFor("2017.06.29-07:36")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-07:46"), TestFunctions.creatNewDateToCheckFor("2017.06.29-07:46")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-07:56"), TestFunctions.creatNewDateToCheckFor("2017.06.29-07:56")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-08:06"), TestFunctions.creatNewDateToCheckFor("2017.06.29-08:06")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-10:30"), TestFunctions.creatNewDateToCheckFor("2017.06.29-10:41")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-10:50"), TestFunctions.creatNewDateToCheckFor("2017.06.29-10:50")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-11:00"), TestFunctions.creatNewDateToCheckFor("2017.06.29-11:00")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-11:10"), TestFunctions.creatNewDateToCheckFor("2017.06.29-11:10")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-11:21"), TestFunctions.creatNewDateToCheckFor("2017.06.29-11:21")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-11:30"), TestFunctions.creatNewDateToCheckFor("2017.06.29-11:30")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-11:40"), TestFunctions.creatNewDateToCheckFor("2017.06.29-11:40")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-11:51"), TestFunctions.creatNewDateToCheckFor("2017.06.29-12:00")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-12:21"), TestFunctions.creatNewDateToCheckFor("2017.06.29-12:21")));
+        timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-12:31"), TestFunctions.creatNewDateToCheckFor("2017.06.29-12:40")));
         
-        //System.out.println(result);
-        checkForVaultEntryType(result, VaultEntryType.HEART_RATE);
-        checkForTimestamp(dateTimePointBegin, dateTimePointEnd, result);
-        assertTrue(result.size() == 33);
-    }
-    
-    @Test
-    public void testEventFilter_HEART_RATE_VARIABILITY() throws ParseException {
-        //System.out.println("filter");
-        String dateTimePointBegin = "2017.06.29-04:56";
-        String dateTimePointEnd = "2017.06.29-12:40";
         
-        List<VaultEntry> data = StaticDataset.getStaticDataset();
-        EventFilter instance = new EventFilter(VaultEntryType.HEART_RATE_VARIABILITY);
-        FilterResult result = instance.filter(data);
+        FilterResult checkForThisResult = new FilterResult(filteredData, timeSeries);
         
-        //System.out.println(result);
-        checkForVaultEntryType(result, VaultEntryType.HEART_RATE_VARIABILITY);
-        checkForTimestamp(dateTimePointBegin, dateTimePointEnd, result);
-        assertTrue(result.size() == 22);
-    }
-    
-    @Test
-    public void testEventFilter_BASAL_PROFILE() throws ParseException {
-        //System.out.println("filter");
-        String dateTimePointBegin = "2017.06.29-05:00";
-        String dateTimePointEnd = "2017.06.29-12:00";
-        
-        List<VaultEntry> data = StaticDataset.getStaticDataset();
-        EventFilter instance = new EventFilter(VaultEntryType.BASAL_PROFILE);
-        FilterResult result = instance.filter(data);
-        
-        //System.out.println(result);
-        checkForVaultEntryType(result, VaultEntryType.BASAL_PROFILE);
-        checkForTimestamp(dateTimePointBegin, dateTimePointEnd, result);
-        assertTrue(result.size() == 8);
-    }
-    
-    @Test
-    public void testEventFilter_GLUCOSE_BOLUS_CALCULATION() throws ParseException {
-        //System.out.println("filter");
-        String dateTimePointBegin = "2017.06.29-08:40";
-        String dateTimePointEnd = "2017.06.29-08:40";
-        
-        List<VaultEntry> data = StaticDataset.getStaticDataset();
-        EventFilter instance = new EventFilter(VaultEntryType.GLUCOSE_BOLUS_CALCULATION);
-        FilterResult result = instance.filter(data);
-        
-        //System.out.println(result);
-        checkForVaultEntryType(result, VaultEntryType.GLUCOSE_BOLUS_CALCULATION);
-        checkForTimestamp(dateTimePointBegin, dateTimePointEnd, result);
-        assertTrue(result.size() == 1);
-    }
-    
-    @Test
-    // False test
-    public void testEventFilter_GLUCOSE_BOLUS_CALCULATION_False() throws ParseException {
-        //System.out.println("filter");
-        String dateTimePointBegin = "2000.01.01-00:00";
-        String dateTimePointEnd = "2000.01.01-00:00";
-        
-        List<VaultEntry> data = StaticDataset.getStaticDataset();
-        EventFilter instance = new EventFilter(VaultEntryType.GLUCOSE_BOLUS_CALCULATION);
-        FilterResult result = instance.filter(data);
-        
-        //System.out.println(result);
-        checkForVaultEntryType_False(result, VaultEntryType.GLUCOSE_BG);
-        checkForTimestamp_False(dateTimePointBegin, dateTimePointEnd, result);
-        assertFalse(result.size() != 1);
-    }
-    
-    @Test
-    // Empty test
-    public void testEventFilter_EMPTY() throws ParseException {
-        //System.out.println("filter");
-        String dateTimePointBegin = "2010.01.01-10:10";
-        String dateTimePointEnd = "2010.01.01-10:10";
-        
-        List<VaultEntry> data = new ArrayList<VaultEntry>();
-        EventFilter instance = new EventFilter(VaultEntryType.GLUCOSE_BG);
-        FilterResult result = instance.filter(data);
-        
-        //System.out.println(result);
-        checkForVaultEntryType(result, VaultEntryType.GLUCOSE_BG);
-        checkForTimestamp(dateTimePointBegin, dateTimePointEnd, result);
-        assertTrue(result.size() == 0);
+        assertEquals(result.filteredData, checkForThisResult.filteredData);
+        assertEquals(result.timeSeries, checkForThisResult.timeSeries);
+        //assertEquals(result, checkForThisResult);
     }
 }
