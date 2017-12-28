@@ -27,98 +27,93 @@ public enum VaultEntryType {
     MEAL,
     SLEEP,
     // Bolus
-    BOLUS_NORMAL(false, "true"),
-    BOLUS_SQARE(false, "true"),
+    BOLUS_NORMAL(false, true),
+    BOLUS_SQARE(false, true),
     // Basal
-    BASAL_PROFILE(false, "true", BASAL),
-    BASAL_MANUAL(false, "true", BASAL),
-    BASAL_INTERPRETER(false, "true", BASAL),
+    BASAL_PROFILE(false, true, BASAL),
+    BASAL_MANUAL(false, true, BASAL),
+    BASAL_INTERPRETER(false, true, BASAL),
     // Exercise
-    EXERCISE_MANUAL(true, "true"),
-    EXERCISE_OTHER(true, "true"),
-    EXERCISE_WALK(true, "true"),
-    EXERCISE_BICYCLE(true, "true"),
-    EXERCISE_RUN(true, "true"),
+    EXERCISE_MANUAL(true, true),
+    EXERCISE_OTHER(true, true),
+    EXERCISE_WALK(true, true),
+    EXERCISE_BICYCLE(true, true),
+    EXERCISE_RUN(true, true),
     // Glucose
-    GLUCOSE_CGM(false, "true"),
+    GLUCOSE_CGM(false, true),
     GLUCOSE_CGM_RAW,
-    GLUCOSE_CGM_ALERT(true, "maybe"),
-    GLUCOSE_CGM_CALIBRATION(false, "maybe"),
-    GLUCOSE_BG(false, "maybe"),
-    GLUCOSE_BG_MANUAL(false, "maybe"),
-    GLUCOSE_BOLUS_CALCULATION(false, "maybe"),
+    GLUCOSE_CGM_ALERT(true, VaultEntryType.MAYBE),
+    GLUCOSE_CGM_CALIBRATION(false, VaultEntryType.MAYBE),
+    GLUCOSE_BG(false, VaultEntryType.MAYBE),
+    GLUCOSE_BG_MANUAL(false, VaultEntryType.MAYBE),
+    GLUCOSE_BOLUS_CALCULATION(false, VaultEntryType.MAYBE),
     GLUCOSE_ELEVATION_30,
     // CGM system
-    CGM_SENSOR_FINISHED(true, "maybe"),
-    CGM_SENSOR_START(true, "maybe"),
-    CGM_CONNECTION_ERROR(true, "maybe"),
-    CGM_CALIBRATION_ERROR(true, "true"),
-    CGM_TIME_SYNC(false, "maybe"),
+    CGM_SENSOR_FINISHED(true, VaultEntryType.MAYBE),
+    CGM_SENSOR_START(true, VaultEntryType.MAYBE),
+    CGM_CONNECTION_ERROR(true, VaultEntryType.MAYBE),
+    CGM_CALIBRATION_ERROR(true, true),
+    CGM_TIME_SYNC(false, VaultEntryType.MAYBE),
     // Meal
-    MEAL_BOLUS_CALCULATOR(false, "true", MEAL),
-    MEAL_MANUAL(false, "true", MEAL),
+    MEAL_BOLUS_CALCULATOR(false, true, MEAL),
+    MEAL_MANUAL(false, true, MEAL),
     // Pump Events
-    PUMP_REWIND(true, "maybe"),
-    PUMP_PRIME(false, "maybe"),
-    PUMP_FILL(true, "maybe"),
-    PUMP_FILL_INTERPRETER(true, "maybe", PUMP_FILL),
-    PUMP_NO_DELIVERY(true, "true"),
-    PUMP_SUSPEND(true, "true"),
-    PUMP_UNSUSPEND(false, "true"),
+    PUMP_REWIND(true, VaultEntryType.MAYBE),
+    PUMP_PRIME(false, VaultEntryType.MAYBE),
+    PUMP_FILL(true, VaultEntryType.MAYBE),
+    PUMP_FILL_INTERPRETER(true, VaultEntryType.MAYBE, PUMP_FILL),
+    PUMP_NO_DELIVERY(true, true),
+    PUMP_SUSPEND(true, true),
+    PUMP_UNSUSPEND(false, true),
     PUMP_UNTRACKED_ERROR,
-    PUMP_RESERVOIR_EMPTY(true, "maybe"),
-    PUMP_TIME_SYNC(false, "maybe"),
-    PUMP_AUTONOMOUS_SUSPEND(true, "true", PUMP_SUSPEND),
+    PUMP_RESERVOIR_EMPTY(true, VaultEntryType.MAYBE),
+    PUMP_TIME_SYNC(false, VaultEntryType.MAYBE),
+    PUMP_AUTONOMOUS_SUSPEND(true, true, PUMP_SUSPEND),
     PUMP_CGM_PREDICTION,
     // Sleep
-    SLEEP_LIGHT(true, "true", SLEEP),
-    SLEEP_REM(true, "true", SLEEP),
-    SLEEP_DEEP(true, "true", SLEEP),
+    SLEEP_LIGHT(true, true, SLEEP),
+    SLEEP_REM(true, true, SLEEP),
+    SLEEP_DEEP(true, true, SLEEP),
     // Heart
-    HEART_RATE(false, "maybe"),
-    HEART_RATE_VARIABILITY(false, "maybe"),
+    HEART_RATE(false, VaultEntryType.MAYBE),
+    HEART_RATE_VARIABILITY(false, VaultEntryType.MAYBE),
     STRESS,
     // Location (Geocoding)
-    LOC_TRANSISTION(true, "true"),
-    LOC_HOME(true, "true"),
-    LOC_WORK(true, "true"),
-    LOC_FOOD(true, "true"),
-    LOC_SPORTS(true, "true"),
+    LOC_TRANSISTION(true, true),
+    LOC_HOME(true, true),
+    LOC_WORK(true, true),
+    LOC_FOOD(true, true),
+    LOC_SPORTS(true, true),
     LOC_OTHER,
     // Machine Learning
     ML_CGM_PREDICTION,
     // Date Mining
-    DM_INSULIN_SENSITIVTY(false, "maybe"),
+    DM_INSULIN_SENSITIVTY(false, VaultEntryType.MAYBE),
     // More unspecific input
     OTHER_ANNOTATION;
+
+    //current handling of MAYBE being true
+    private final static boolean MAYBE = true;
 
     private final boolean ISONEHOT;
     private final boolean ISMLRELEVANT;
     private final VaultEntryType MERGETYPE;
 
     /**
-     * Handles the possibility of ISMLRELEVANT being "maybe"
      *
-     * @param isMLrelevant information about the type's ML relevance, currently
-     * a String
-     * @return true if isMLrelevant is "true" or "maybe"
+     * @param isOneHot
+     * @param isMLrelevant information about the type's ML relevance
+     * @param mergeType
      */
-    private boolean setMLrelevance(String isMLrelevant) {
-        boolean result;
-        //current handling of "maybe" being true
-        result = isMLrelevant.equalsIgnoreCase("maybe") || isMLrelevant.equalsIgnoreCase("true");
-        return result;
-    }
-
-    VaultEntryType(boolean isOneHot, String isMLrelevant, VaultEntryType mergeType) {
+    VaultEntryType(boolean isOneHot, boolean isMLrelevant, VaultEntryType mergeType) {
         this.ISONEHOT = isOneHot;
-        this.ISMLRELEVANT = setMLrelevance(isMLrelevant);
+        this.ISMLRELEVANT = isMLrelevant;
         this.MERGETYPE = mergeType;
     }
 
-    VaultEntryType(boolean isOneHot, String isMLrelevant) {
+    VaultEntryType(boolean isOneHot, boolean isMLrelevant) {
         this.ISONEHOT = isOneHot;
-        this.ISMLRELEVANT = setMLrelevance(isMLrelevant);
+        this.ISMLRELEVANT = isMLrelevant;
         this.MERGETYPE = this;
     }
 
