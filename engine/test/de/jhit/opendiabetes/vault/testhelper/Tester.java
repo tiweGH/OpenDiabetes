@@ -60,22 +60,30 @@ public class Tester {
             ContinuousWrapper cont = new ContinuousWrapper(lili, 0);
 
             FilterResult fr = cont.filter(StaticDataset.getStaticDataset());
-            //List<Pair<Date, Date>> tp = cont.normalizeTimeSpans(fr.timeSeries);
+//            List<Pair<Date, Date>> tp = new ArrayList<>();
+//            tp.add(new Pair(TimestampUtils.createCleanTimestamp("2017.06.29-04:53", "yyyy.MM.dd-HH:mm"),
+//                    TimestampUtils.createCleanTimestamp("2017.06.29-04:53", "yyyy.MM.dd-HH:mm")));
+//            tp.add(new Pair(TimestampUtils.createCleanTimestamp("2017.06.29-04:54", "yyyy.MM.dd-HH:mm"),
+//                    TimestampUtils.createCleanTimestamp("2017.06.29-04:54", "yyyy.MM.dd-HH:mm")));
+//            tp = cont.normalizeTimeSeries(tp, 0, 0);
+//            for (Pair<Date, Date> to : tp) {
+//                System.out.println(to.toString());
+//            }
             //System.out.println(tp.size());
-            System.out.println(fr.size());
-            System.out.println(StaticDataset.getStaticDataset().size());
-            for (Pair<Date, Date> to : fr.timeSeries) {
-                System.out.println(to.toString());
-            }
-            for (Pair<Date, Date> to : fri.timeSeries) {
-                System.out.println(to.toString());
-            }
-            for (VaultEntry to : fr.filteredData) {
-                System.out.println(to.toString());
-            }
-            for (VaultEntry to : fri.filteredData) {
-                System.out.println(to.toString());
-            }
+//            System.out.println(fr.size());
+//            System.out.println(StaticDataset.getStaticDataset().size());
+//            for (Pair<Date, Date> to : fr.timeSeries) {
+//                System.out.println(to.toString());
+//            }
+//            for (Pair<Date, Date> to : fri.timeSeries) {
+//                System.out.println(to.toString());
+//            }
+//            for (VaultEntry to : fr.filteredData) {
+//                System.out.println(to.toString());
+//            }
+//            for (VaultEntry to : fri.filteredData) {
+//                System.out.println(to.toString());
+//            }
         } catch (ParseException ex) {
             Logger.getLogger(Tester.class.getName()).log(Level.SEVERE, null, ex);
         }
