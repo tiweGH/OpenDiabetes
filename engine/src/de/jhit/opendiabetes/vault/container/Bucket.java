@@ -25,7 +25,7 @@ public class Bucket {
     private VaultEntry vaultEntry;
     
     // Array size settings
-    private static final int numberOfEntries = 2;
+    private static final int numberOfVaultEntryTriggerTypes = 2;
 
     // time countdown Array
     private int[] timeCountDownArray;
@@ -33,18 +33,18 @@ public class Bucket {
     private boolean[] booleanArray;
     // onehot trigger
     private VaultEntryType[] entryTypeArray;
-    // TODO missing wait till next entry
+    // wait till next entry
     private VaultEntryType[] findNextArray;
 
-
+    
     public Bucket(VaultEntry entry) {
         vaultEntry = entry;
 
         // Arrays containing OneHot information
-        timeCountDownArray = new int[numberOfEntries];
-        booleanArray = new boolean[numberOfEntries];
-        entryTypeArray = new VaultEntryType[numberOfEntries];
-        findNextArray = new VaultEntryType[numberOfEntries];
+        timeCountDownArray = new int[numberOfVaultEntryTriggerTypes];
+        booleanArray = new boolean[numberOfVaultEntryTriggerTypes];
+        entryTypeArray = new VaultEntryType[numberOfVaultEntryTriggerTypes];
+        findNextArray = new VaultEntryType[numberOfVaultEntryTriggerTypes];
     }
 
     //
@@ -55,31 +55,31 @@ public class Bucket {
     }
 
     //
-    // GETTER - SETTER onhotArraySize
+    // GETTER onehotArraySize
     //
-    public static int getNumberOfEntries() {
-        return numberOfEntries;
+    public static int getNumberOfVaultEntryTriggerTypes() {
+        return numberOfVaultEntryTriggerTypes;
     }
 
     //
     // GETTER
     //
-    // TODO get time countdown
+    // get time countdown
     // ArrayOutOfBounds
     public int getTimeCountDown(int position) {
         return timeCountDownArray[position];
     }
-    // TODO get boolean
+    // get boolean
     // ArrayOutOfBounds
-    public Boolean getBoolean(int position) {
+    public boolean getBoolean(int position) {
         return booleanArray[position];
     }
-    // TODO get VaultEntryType
+    // get VaultEntryType
     // ArrayOutOfBounds
     public VaultEntryType getVaultEntryType(int position) {
         return entryTypeArray[position];
     }
-    // TODO get find next
+    // get find next
     // ArrayOutOfBounds
     public VaultEntryType getFindNextArray(int position) {
         return findNextArray[position];
@@ -88,22 +88,22 @@ public class Bucket {
     //
     // SETTER
     //
-    // TODO set time countdown
+    // set time countdown
     // ArrayOutOfBounds
     public void setTimeCountDown(int position, int time) {
         timeCountDownArray[position] = time;
     }
-    // TODO set boolean
+    // set boolean
     // ArrayOutOfBounds
-    public void setBoolean(int position, Boolean bool) {
+    public void setBoolean(int position, boolean bool) {
         booleanArray[position] = bool;
     }
-    // TODO set VaultEntryType
+    // set VaultEntryType
     // ArrayOutOfBounds
     public void setVaultEntryType(int position, VaultEntryType entry) {
         entryTypeArray[position] = entry;
     }
-    // TODO set find next
+    // set find next
     // ArrayOutOfBounds
     public void setFindNextArray(int position, VaultEntryType entry) {
         findNextArray[position] = entry;
