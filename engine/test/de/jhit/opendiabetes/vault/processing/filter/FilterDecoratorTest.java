@@ -36,7 +36,7 @@ import org.junit.Test;
 
 /**
  *
- * @author juehv, aa80hifa
+ * @author aa80hifa
  */
 public class FilterDecoratorTest extends Assert {
 
