@@ -16,45 +16,13 @@
  */
 package de.jhit.opendiabetes.vault.container;
 
-import java.util.HashMap;
+import static de.jhit.opendiabetes.vault.container.BucketEventTriggers.ARRAYENTRYTRIGGERHASHMAP;
 
 /**
  *
  * @author aa80hifa
  */
 public class BucketEntry {
-    
-    // ArrayEntryTriggerHashMap
-    public static final HashMap<VaultEntryType, Integer> ARRAYENTRYTRIGGERHASHMAP;
-    static
-    {  
-        ARRAYENTRYTRIGGERHASHMAP = new HashMap<>();
-        ARRAYENTRYTRIGGERHASHMAP.put(VaultEntryType.GLUCOSE_CGM_ALERT, 0);
-        ARRAYENTRYTRIGGERHASHMAP.put(VaultEntryType.CGM_SENSOR_FINISHED, 1);
-        ARRAYENTRYTRIGGERHASHMAP.put(VaultEntryType.CGM_SENSOR_START, 2);
-        ARRAYENTRYTRIGGERHASHMAP.put(VaultEntryType.CGM_CONNECTION_ERROR, 3);
-        ARRAYENTRYTRIGGERHASHMAP.put(VaultEntryType.CGM_CALIBRATION_ERROR, 4);
-        ARRAYENTRYTRIGGERHASHMAP.put(VaultEntryType.PUMP_FILL_INTERPRETER, 5);
-        ARRAYENTRYTRIGGERHASHMAP.put(VaultEntryType.PUMP_NO_DELIVERY, 6);
-        ARRAYENTRYTRIGGERHASHMAP.put(VaultEntryType.PUMP_RESERVOIR_EMPTY, 7);
-        ARRAYENTRYTRIGGERHASHMAP.put(VaultEntryType.PUMP_AUTONOMOUS_SUSPEND, 8);
-        ARRAYENTRYTRIGGERHASHMAP.put(VaultEntryType.SLEEP_LIGHT, 9);
-        ARRAYENTRYTRIGGERHASHMAP.put(VaultEntryType.SLEEP_REM, 10);
-        ARRAYENTRYTRIGGERHASHMAP.put(VaultEntryType.SLEEP_DEEP, 11);
-        ARRAYENTRYTRIGGERHASHMAP.put(VaultEntryType.LOC_TRANSISTION, 12);
-        ARRAYENTRYTRIGGERHASHMAP.put(VaultEntryType.LOC_HOME, 13);
-        ARRAYENTRYTRIGGERHASHMAP.put(VaultEntryType.LOC_WORK, 14);
-        ARRAYENTRYTRIGGERHASHMAP.put(VaultEntryType.LOC_FOOD, 15);
-        ARRAYENTRYTRIGGERHASHMAP.put(VaultEntryType.LOC_SPORTS, 16);
-        ARRAYENTRYTRIGGERHASHMAP.put(VaultEntryType.EXERCISE_OTHER, 17);
-        ARRAYENTRYTRIGGERHASHMAP.put(VaultEntryType.EXERCISE_WALK, 18);
-        ARRAYENTRYTRIGGERHASHMAP.put(VaultEntryType.EXERCISE_BICYCLE, 19);
-        ARRAYENTRYTRIGGERHASHMAP.put(VaultEntryType.EXERCISE_RUN, 20);
-        ARRAYENTRYTRIGGERHASHMAP.put(VaultEntryType.EXERCISE_MANUAL, 21);
-        ARRAYENTRYTRIGGERHASHMAP.put(VaultEntryType.PUMP_REWIND, 22);
-        ARRAYENTRYTRIGGERHASHMAP.put(VaultEntryType.PUMP_FILL, 23);
-        ARRAYENTRYTRIGGERHASHMAP.put(VaultEntryType.PUMP_SUSPEND, 24);
-    }
     
     private VaultEntry vaultEntry;
     
@@ -63,7 +31,7 @@ public class BucketEntry {
     private static final int NUMBEROFVAULTENTRYTRIGGERTYPES = ARRAYENTRYTRIGGERHASHMAP.size();
 
     // time countdown Array
-    private int[] timeCountDownArray;
+    private double[] timeCountDownArray;
     // onehot Boolean
     private boolean[] booleanArray;
     // onehot trigger
@@ -76,7 +44,7 @@ public class BucketEntry {
         vaultEntry = entry;
 
         // Arrays containing OneHot information
-        timeCountDownArray = new int[NUMBEROFVAULTENTRYTRIGGERTYPES];
+        timeCountDownArray = new double[NUMBEROFVAULTENTRYTRIGGERTYPES];
         booleanArray = new boolean[NUMBEROFVAULTENTRYTRIGGERTYPES];
 //        entryTypeArray = new VaultEntryType[NUMBEROFVAULTENTRYTRIGGERTYPES];
         findNextArray = new VaultEntryType[NUMBEROFVAULTENTRYTRIGGERTYPES];
@@ -101,7 +69,7 @@ public class BucketEntry {
     //
     // get time countdown
     // ArrayOutOfBounds
-    public int getTimeCountDown(int position) {
+    public double getTimeCountDown(int position) {
         return timeCountDownArray[position];
     }
     // get boolean
@@ -125,7 +93,7 @@ public class BucketEntry {
     //
     // set time countdown
     // ArrayOutOfBounds
-    public void setTimeCountDown(int position, int time) {
+    public void setTimeCountDown(int position, double time) {
         timeCountDownArray[position] = time;
     }
     // set boolean
@@ -144,5 +112,4 @@ public class BucketEntry {
         findNextArray[position] = entry;
     }
     
-
 }
