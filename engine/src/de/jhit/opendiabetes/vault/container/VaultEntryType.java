@@ -18,9 +18,12 @@ package de.jhit.opendiabetes.vault.container;
 
 /**
  *
- * @author mswin, tiweGH
+ * @author mswin, tiweGH, aa80hifa
  */
 public enum VaultEntryType {
+    
+    // Empty Type for BucketEntry
+    EMPTY,
 
     //Merge Types
     BASAL,
