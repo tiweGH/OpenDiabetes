@@ -24,6 +24,7 @@ import static de.jhit.opendiabetes.vault.container.BucketEventTriggers.TRIGGEREV
 import static de.jhit.opendiabetes.vault.container.BucketEventTriggers.TRIGGEREVENTACTTIMEONE;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
+import static de.jhit.opendiabetes.vault.util.TimestampUtils.addMinutesToTimestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,6 +34,13 @@ import java.util.List;
  *
  * @author aa80hifa
  */
+
+
+    // TODO multiple VaultEntrys possible for one timestamp
+    // timestamp < counter == just create bucket
+    // timestamp = counter == create bucket / count up
+    // timestamp > counder == create emtpy bucket / count up
+
 public class BucketProcessor {
 
     // time countdown Array
@@ -45,9 +53,7 @@ public class BucketProcessor {
     private VaultEntryType[] findNextArray = new VaultEntryType[BucketEntry.getNumberOfVaultEntryTriggerTypes()];
     
     
-    
-    
-
+    // Create a new Bucket with a given VaultEntry
     public BucketEntry createNewBucket(VaultEntry entry) {
         
         // create new BucketEntry
@@ -94,47 +100,111 @@ public class BucketProcessor {
 
     }
     
-    public BucketEntry createEmptyBucket(VaultEntry entry, Date date) throws ParseException {
+    // Create a new empty Bucket containing VaultEntryType.EMPTY and the given Date
+    public BucketEntry createEmptyBucket(Date date) throws ParseException {
         
         BucketEntry newBucket = new BucketEntry(new VaultEntry(VaultEntryType.EMPTY, date));
         return newBucket;
 
     }
-
-    // TODO check for date but iterate over local time
-    public List<BucketEntry> createListOfBuckets(List<VaultEntry> entryList) {
+    
+    // TODO test for Date change when reaching 00:00 of the next day
+    public List<BucketEntry> createListOfBuckets(List<VaultEntry> entryList) throws ParseException {
 
         // TODO Liste aus Buckets erstellen aus der gegebenen VaultEnty Liste
         List<BucketEntry> outputBucketList = new ArrayList<>();
         Date timeCounter = entryList.get(0).getTimestamp();
-
-        // 
-        // TODO multiple VaultEntrys possible for one timestamp
-        // TODO is ML-relevant??? .isMLrelevant()
-        // 
+        int entryListPosition = 0;
+        
         // compare Trigger (time or Event) with EventType before starting a new Trigger
         // 
-        // timestamp < counter == just create bucket
-        // timestamp = counter == create bucket / count up
-        // timestamp > counder == create emtpy bucket / count up
-        while (!entryList.isEmpty()) {
-                // create a new Bucket or continue
-                if (timeCounter == getLocalVaultEntryTime) {
-                        // create an new Bucket with the given entry
-                        outputBucketList.add(CreateNewBucket(VaultEntry));
-                        // TODO move to the next VaultEntry in the list
+        
+        while (entryListPosition < entryList.size()) {
+                
+                // found an earlier Date        TODO check for hours and minutes ?
+                if (entryList.get(entryListPosition).getTimestamp().before(timeCounter)) {
+                    
+                    // check is ML-relevant
+                    if (entryList.get(entryListPosition).getType().isMLrelevant()) {
+                        // create a new Bucket with the given entry
+                        outputBucketList.add(createNewBucket(entryList.get(entryListPosition)));
+
+                        //
+                        // TODO onehot - merge-to
+                        //
+                        
+                    } // else do nothing ... VaultEntry is not ML-relevant
+                    
+    
+                    // DO NOT UPDATE TIMECOUNTER! entryList may contain more VaultEntrys with the same timestamp
+                    
+                    // move to the next VaultEntry in the list
+                    entryListPosition++;
+                
+                // found the same Date
+                } else if (timeCounter == entryList.get(0).getTimestamp()) {
+                    
+                    if (entryList.get(entryListPosition).getType().isMLrelevant()) {
+                        // create a new Bucket with the given entry
+                        outputBucketList.add(createNewBucket(entryList.get(entryListPosition)));
+
+                        //
+                        // TODO onehot - merge-to
+                        //
+
+                        // update timecounter
+                        timeCounter = addMinutesToTimestamp(timeCounter, 1);
+                        // move to the next VaultEntry in the list
+                        entryListPosition++;
+                        
+                    // create a new empty Bucket because VaultEntry is not ML-relevant
+                    } else {
+                        
+                        // create a new empty Bucket
+                        outputBucketList.add(createEmptyBucket(timeCounter));
+
+                        //
+                        // TODO onehot - merge-to
+                        //
+                        
+                        // update timecounter
+                        timeCounter = addMinutesToTimestamp(timeCounter, 1);
+                        // move to the next VaultEntry in the list
+                        entryListPosition++;
+                        
+                    }                    
+                    
+                // found a later Date           TODO check for hours and minutes ?
+                } else if (entryList.get(0).getTimestamp().after(timeCounter)){
+                    // create a new empty Bucket
+                    outputBucketList.add(createEmptyBucket(timeCounter));
+                    
+                    //
+                    // TODO onehot - merge-to
+                    //
+                    
+                    // update timecounter
+                    timeCounter = addMinutesToTimestamp(timeCounter, 1);
+                    
+                    // DO NOT UPDATE LIST POSITION! ... the given list position has not been reached yet
+                    
+                // Date not found
                 } else {
-                        // create an new empty Bucket
-                        outputBucketList.add(CreateNewBucket(NULL)); // TODO missing localtime entry
                 }
-                // TODO timeCounter um eine minute hoch zählen
-                //			timestampUtil
+                
             }
+        
+        return outputBucketList;
 
     }
 
-    public BucketEntry setBucketArrayInformation(int annotationPosition, BucketEntry bucket) {
+    public BucketEntry setBucketArrayInformation(int annotationPosition, BucketEntry bucket) 
+            throws ParseException {
+        
+        BucketEntry outputBucket = createEmptyBucket(TimestampUtils.createCleanTimestamp("2016.04.18-06:48", "yyyy.MM.dd-HH:mm"));
 
+        /*
+        
         // TODO check for onehot
         if (getTimeCountDown(annotationPosition) > 0) {
                 setTimeCountDown(annotationPosition) = getTimeCountDown(annotationPosition) - 1;
@@ -144,5 +214,9 @@ public class BucketProcessor {
         // TODO check for merge-to
         // TODO get merge-to name and rename the bucket
 
+        */
+        
+        return outputBucket;
+        
     }
 }
