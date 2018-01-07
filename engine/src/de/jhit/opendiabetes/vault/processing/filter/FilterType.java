@@ -39,6 +39,7 @@ public enum FilterType {
     // data absence
     MEAL_ABSENCE,
     BOLUS_ABSENCE,
+    TYPE_ABSENCE,
     // threshould
     BOLUS_TH,
     BASAL_TH,
@@ -47,6 +48,6 @@ public enum FilterType {
     HR_TH,
     STRESS_TH,
     // filter nothing
-    NONE, EVENT_SPAN_FILTER, BOLUS_SQARE, BOLUS_NORMAL, FILTER_DECORATOR;
+    NONE, EVENT_SPAN_FILTER, BOLUS_SQARE, BOLUS_NORMAL, FILTER_DECORATOR, CONTINOUS_FILTER, COMBINATION_FILTER;
 
 }

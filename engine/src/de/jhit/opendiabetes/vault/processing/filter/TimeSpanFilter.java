@@ -48,4 +48,9 @@ public class TimeSpanFilter extends Filter {
         return TimestampUtils.withinTimeSpan(startTime, endTime, entry.getTimestamp());
     }
 
+    @Override
+    Filter update(VaultEntry vaultEntry) {
+        return new TimeSpanFilter(TimestampUtils.dateToLocalTime(vaultEntry.getTimestamp()), endTime);
+    }
+
 }

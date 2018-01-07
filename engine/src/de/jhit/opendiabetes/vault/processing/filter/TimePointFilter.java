@@ -28,6 +28,7 @@ import java.time.temporal.ChronoUnit;
 public class TimePointFilter extends Filter {
     private LocalTime endTime;
     private LocalTime startTime;
+    private final int marginInMinutes;
 
     /**
      * Initialize fields and calculates:
@@ -37,6 +38,7 @@ public class TimePointFilter extends Filter {
      * @param marginInMinutes 
      */
     public TimePointFilter(LocalTime timePoint, int marginInMinutes) {
+        this.marginInMinutes = marginInMinutes;
         startTime = timePoint.minus(marginInMinutes, ChronoUnit.MINUTES);
         endTime= timePoint.plus(marginInMinutes, ChronoUnit.MINUTES);
     }
@@ -49,6 +51,11 @@ public class TimePointFilter extends Filter {
     @Override
     boolean matchesFilterParameters(VaultEntry entry) {
         return TimestampUtils.withinTimeSpan(startTime, endTime, entry.getTimestamp()); 
+    }
+
+    @Override
+    Filter update(VaultEntry vaultEntry) {
+    return new TimePointFilter(TimestampUtils.dateToLocalTime(vaultEntry.getTimestamp()), marginInMinutes);
     }
 
 }

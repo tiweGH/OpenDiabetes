@@ -46,4 +46,9 @@ public class EventFilter extends Filter {
     boolean matchesFilterParameters(VaultEntry entry) {
         return entry.getType().equals(vaultEntryType);
     }
+
+    @Override
+    Filter update(VaultEntry vaultEntry) {
+        return new EventFilter(vaultEntry.getType());
+    }
 }

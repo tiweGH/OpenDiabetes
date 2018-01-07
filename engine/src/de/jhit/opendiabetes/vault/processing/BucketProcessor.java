@@ -207,16 +207,37 @@ public class BucketProcessor {
         
         // TODO check for onehot
         if (getTimeCountDown(annotationPosition) > 0) {
-                setTimeCountDown(annotationPosition) = getTimeCountDown(annotationPosition) - 1;
-                setBoolean(annotationPosition) = true;
+               // setTimeCountDown(annotationPosition) = getTimeCountDown(annotationPosition) - 1;
+               // setBoolean(annotationPosition) = true;
         }
 
         // TODO check for merge-to
         // TODO get merge-to name and rename the bucket
+        return null;
 
         */
         
         return outputBucket;
         
+    }
+
+    private boolean setBoolean(int annotationPosition) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private int getTimeCountDown(int annotationPosition) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private int setTimeCountDown(int annotationPosition) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private Date getLocalVaultEntryTime() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private BucketEntry CreateNewBucket(Object object) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

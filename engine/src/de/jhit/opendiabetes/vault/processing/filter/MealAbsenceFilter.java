@@ -56,9 +56,10 @@ public class MealAbsenceFilter extends Filter {
                     lastTimeStamp = null;
                 }
             } else if ((lastMealFound != null
+                    //potential error, the negation leads to the margin never be applied in a useful way
                     && !TimestampUtils
-                    .addMinutesToTimestamp(lastMealFound, marginAfterMeal)
-                    .before(entry.getTimestamp()))
+                            .addMinutesToTimestamp(lastMealFound, marginAfterMeal)
+                            .before(entry.getTimestamp()))
                     || (startOfTimeSeries == null
                     && lastTimeStamp == null
                     && lastMealFound == null)) {
@@ -90,7 +91,12 @@ public class MealAbsenceFilter extends Filter {
     @Override
     boolean matchesFilterParameters(VaultEntry entry) {
         return entry.getType() == VaultEntryType.MEAL_BOLUS_CALCULATOR
-                    || entry.getType() == VaultEntryType.MEAL_MANUAL;
+                || entry.getType() == VaultEntryType.MEAL_MANUAL;
+    }
+
+    @Override
+    Filter update(VaultEntry vaultEntry) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }
