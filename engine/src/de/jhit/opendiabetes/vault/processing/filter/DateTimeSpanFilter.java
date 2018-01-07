@@ -46,4 +46,9 @@ public class DateTimeSpanFilter extends Filter {
         return TimestampUtils.withinDateTimeSpan(startTime, endTime, entry.getTimestamp());
     }
 
+    @Override
+    Filter update(VaultEntry vaultEntry) {
+        return new DateTimeSpanFilter(vaultEntry.getTimestamp(), endTime);
+    }
+
 }

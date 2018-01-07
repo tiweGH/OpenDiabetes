@@ -110,4 +110,9 @@ public class TriggerAbsenceFilter extends Filter {
         return FilterType.MEAL_ABSENCE;
     }
 
+    @Override
+    Filter update(VaultEntry vaultEntry) {
+        return new TriggerAbsenceFilter(types, marginAfterTrigger);
+    }
+
 }

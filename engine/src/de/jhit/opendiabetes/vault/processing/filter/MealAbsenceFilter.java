@@ -93,4 +93,9 @@ public class MealAbsenceFilter extends Filter {
                 || entry.getType() == VaultEntryType.MEAL_MANUAL;
     }
 
+    @Override
+    Filter update(VaultEntry vaultEntry) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

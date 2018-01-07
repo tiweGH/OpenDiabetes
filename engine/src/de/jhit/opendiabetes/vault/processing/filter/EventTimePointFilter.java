@@ -30,8 +30,10 @@ public class EventTimePointFilter extends Filter {
     private LocalTime endTime;
     private LocalTime startTime;
     private final VaultEntryType vaultEntryType;
+    private final int marginInMinutes;
 
     public EventTimePointFilter(VaultEntryType vaultEntryType, LocalTime timePoint, int marginInMinutes) {
+        this.marginInMinutes = marginInMinutes;
         startTime = timePoint.minus(marginInMinutes, ChronoUnit.MINUTES);
         endTime= timePoint.plus(marginInMinutes, ChronoUnit.MINUTES);
         this.vaultEntryType = vaultEntryType;
@@ -45,6 +47,11 @@ public class EventTimePointFilter extends Filter {
     @Override
     boolean matchesFilterParameters(VaultEntry entry) {
         return entry.getType()== vaultEntryType && TimestampUtils.withinTimeSpan(startTime, endTime, entry.getTimestamp()); 
+    }
+
+    @Override
+    Filter update(VaultEntry vaultEntry) {
+        return new EventTimePointFilter(vaultEntry.getType(), TimestampUtils.dateToLocalTime(vaultEntry.getTimestamp()), marginInMinutes);
     }
 
 }
