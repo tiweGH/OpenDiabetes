@@ -45,8 +45,8 @@ public class MealAbsenceFilter extends Filter {
         Date lastTimeStamp = null;
         Date lastMealFound = null;
         for (VaultEntry entry : data) {
-            if (entry.getType() == VaultEntryType.GLUCOSE_BOLUS_CALCULATION) {
-                System.out.println("nothing here");
+            if (entry.getType() == VaultEntryType.MEAL_BOLUS_CALCULATOR
+                    || entry.getType() == VaultEntryType.MEAL_MANUAL) {
                 // found a meal, stop time slices
                 lastMealFound = entry.getTimestamp();
 
@@ -56,6 +56,7 @@ public class MealAbsenceFilter extends Filter {
                     lastTimeStamp = null;
                 }
             } else if ((lastMealFound != null
+                    //potential error, the negation leads to the margin never be applied in a useful way
                     && !TimestampUtils
                             .addMinutesToTimestamp(lastMealFound, marginAfterMeal)
                             .before(entry.getTimestamp()))

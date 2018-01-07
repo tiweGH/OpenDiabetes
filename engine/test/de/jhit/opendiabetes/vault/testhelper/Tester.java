@@ -25,6 +25,7 @@ import de.jhit.opendiabetes.vault.processing.filter.FilterResult;
 import de.jhit.opendiabetes.vault.processing.filter.FilterType;
 import de.jhit.opendiabetes.vault.processing.filter.MealAbsenceFilter;
 import de.jhit.opendiabetes.vault.processing.filter.OverThresholdFilter;
+import de.jhit.opendiabetes.vault.processing.filter.TypeAbsenceFilter;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -85,14 +86,19 @@ public class Tester {
 //            for (VaultEntry to : fri.filteredData) {
 //                System.out.println(to.toString());
 //            }
-
-            MealAbsenceFilter meal = new MealAbsenceFilter(10);
+            List<VaultEntryType> types = new ArrayList<>();
+            types.add(VaultEntryType.GLUCOSE_BOLUS_CALCULATION);
+            TypeAbsenceFilter meal = new TypeAbsenceFilter(VaultEntryType.GLUCOSE_BOLUS_CALCULATION, 20);
             fr = meal.filter(StaticDataset.getStaticDataset());
             for (Pair<Date, Date> to : fr.timeSeries) {
                 System.out.println(to.toString());
             }
-            for (VaultEntry to : fr.filteredData) {
-                System.out.println(to.toString());
+//            for (VaultEntry to : fr.filteredData) {
+//                System.out.println(to.toString());
+//            }
+
+            for (VaultEntryType type : VaultEntryType.getTypesOfGroup(VaultEntryType.GLUCOSE)) {
+                System.out.println(type);
             }
 
         } catch (ParseException ex) {

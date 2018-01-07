@@ -56,9 +56,10 @@ public class MealAbsenceFilter implements Filter_old {
                     lastTimeStamp = null;
                 }
             } else if ((lastMealFound != null
+                    //potential error, the negation leads to the margin never be applied in a useful way
                     && !TimestampUtils
-                    .addMinutesToTimestamp(lastMealFound, marginAfterMeal)
-                    .before(entry.getTimestamp()))
+                            .addMinutesToTimestamp(lastMealFound, marginAfterMeal)
+                            .before(entry.getTimestamp()))
                     || (startOfTimeSeries == null
                     && lastTimeStamp == null
                     && lastMealFound == null)) {
