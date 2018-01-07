@@ -55,4 +55,9 @@ public class OrFilter extends Filter {
 
         return result;
     }
+
+    @Override
+    Filter update(VaultEntry vaultEntry) {
+        return new OrFilter(filters);
+    }
 }

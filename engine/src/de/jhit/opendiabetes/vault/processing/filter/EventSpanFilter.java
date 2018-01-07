@@ -52,4 +52,9 @@ public class EventSpanFilter extends Filter {
     boolean matchesFilterParameters(VaultEntry entry) {
         return entry.getType().equals(vaultEntryType) && entry.getValue()>=from && entry.getValue() <= to;
     }
+
+    @Override
+    Filter update(VaultEntry vaultEntry) {
+        return new EventSpanFilter(vaultEntry.getType(), from, to);
+    }
 }

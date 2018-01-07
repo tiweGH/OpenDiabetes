@@ -39,4 +39,9 @@ public class NoneFilter extends Filter {
         return true;
     }
 
+    @Override
+    Filter update(VaultEntry vaultEntry) {
+        return new NoneFilter();
+    }
+
 }

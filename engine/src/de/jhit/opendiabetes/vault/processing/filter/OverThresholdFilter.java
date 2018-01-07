@@ -60,4 +60,9 @@ public class OverThresholdFilter extends ThresholdFilter {
     boolean matchesFilterParameters(VaultEntry entry) {
         return entry.getType() == GenericType && entry.getValue() > thresholdValue;
     }
+
+    @Override
+    Filter update(VaultEntry vaultEntry) {
+        return new OverThresholdFilter(vaultEntry.getType(), thresholdValue, availabledatatype, TH);
+    }
 }

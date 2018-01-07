@@ -52,4 +52,9 @@ public class EventPointFilter extends Filter {
     boolean matchesFilterParameters(VaultEntry entry) {
         return entry.getType().equals(vaultEntryType) && entry.getValue()>=value-margin && entry.getValue() <= value+margin;
     }
+
+    @Override
+    Filter update(VaultEntry vaultEntry) {
+        return new EventPointFilter(vaultEntry.getType(), value, margin);
+    }
 }

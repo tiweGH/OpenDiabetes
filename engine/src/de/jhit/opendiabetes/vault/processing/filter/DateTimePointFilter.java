@@ -31,9 +31,10 @@ public class DateTimePointFilter extends Filter {
 
     private Date startTime;
     private Date endTime;
-
+    private long margin;
+    
     public DateTimePointFilter(Date dateTimePoint, int marginInMinutes) {
-        long margin = MILLISECONDS.convert(marginInMinutes, MINUTES);
+        margin = MILLISECONDS.convert(marginInMinutes, MINUTES);
         startTime = new Date(dateTimePoint.getTime() - margin);
         endTime = new Date(dateTimePoint.getTime() + margin);
     }
@@ -47,6 +48,11 @@ public class DateTimePointFilter extends Filter {
     boolean matchesFilterParameters(VaultEntry entry) {
         return TimestampUtils.withinDateTimeSpan(startTime, endTime, entry.getTimestamp());
 
+    }
+
+    @Override
+    Filter update(VaultEntry vaultEntry) {
+        return new DateTimePointFilter(vaultEntry.getTimestamp(), (int) margin);
     }
 
 }

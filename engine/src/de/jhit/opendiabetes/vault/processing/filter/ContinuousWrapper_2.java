@@ -189,4 +189,9 @@ public class ContinuousWrapper_2 extends Filter {
         result = super.filter(baseData);
         return result;
     }
+
+    @Override
+    Filter update(VaultEntry vaultEntry) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

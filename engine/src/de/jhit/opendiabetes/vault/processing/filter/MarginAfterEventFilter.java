@@ -72,5 +72,10 @@ public class MarginAfterEventFilter extends Filter{
         
         return result;
     }
+
+    @Override
+    Filter update(VaultEntry vaultEntry) {
+        return new MarginAfterEventFilter(marginAfter, vaultEntry.getType());
+    }
     
 }

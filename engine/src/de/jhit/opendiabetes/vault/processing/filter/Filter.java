@@ -74,7 +74,12 @@ public abstract class Filter {
 
         return new FilterResult(result, timeSeries);
     }
-    
-    
+
+    /**
+     * This Method returns a new Filter from the Filtertype.
+     * @param vaultEntry; Which the The Filter should work with
+     * @return 
+     */
+    abstract Filter update(VaultEntry vaultEntry);
    
 }

@@ -19,6 +19,7 @@ package de.jhit.opendiabetes.vault.processing.filter;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -53,5 +54,10 @@ public class EventTimeSpanFilter extends Filter {
     @Override
     boolean matchesFilterParameters(VaultEntry entry) {
         return  entry.getType().equals(vaultEntryType) && TimestampUtils.withinTimeSpan(startTime, endTime, entry.getTimestamp());
+    }
+
+    @Override
+    Filter update(VaultEntry vaultEntry) {
+        return new EventTimeSpanFilter(vaultEntry.getType(), TimestampUtils.dateToLocalTime(vaultEntry.getTimestamp()), endTime);
     }
 }
