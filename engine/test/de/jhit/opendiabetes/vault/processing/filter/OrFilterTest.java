@@ -38,7 +38,7 @@ import org.junit.Test;
  *
  * @author aa80hifa
  */
-public class FilterDecoratorTest extends Assert {
+public class OrFilterTest extends Assert {
 
     List<VaultEntry> data;
             
@@ -67,7 +67,7 @@ public class FilterDecoratorTest extends Assert {
         List<Filter> filters = new ArrayList<>();
         filters.add(new EventFilter(VaultEntryType.HEART_RATE));
         filters.add(new EventFilter(VaultEntryType.STRESS));
-        Filter filter = new FilterDecorator(filters);
+        Filter filter = new OrFilter(filters);
         
         data = StaticDataset.getStaticDataset();                
         FilterResult result = filter.filter(data);

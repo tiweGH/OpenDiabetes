@@ -119,17 +119,18 @@ public class BucketProcessor {
         // timestamp > counder == create emtpy bucket / count up
         while (!entryList.isEmpty()) {
                 // create a new Bucket or continue
-                if (timeCounter == getLocalVaultEntryTime) {
+                if (timeCounter == getLocalVaultEntryTime()) {
                         // create an new Bucket with the given entry
-                        outputBucketList.add(CreateNewBucket(VaultEntry));
+                        outputBucketList.add(CreateNewBucket(entryList.get(0)));
                         // TODO move to the next VaultEntry in the list
                 } else {
                         // create an new empty Bucket
-                        outputBucketList.add(CreateNewBucket(NULL)); // TODO missing localtime entry
+                        outputBucketList.add(CreateNewBucket(null)); // TODO missing localtime entry
                 }
                 // TODO timeCounter um eine minute hoch zählen
                 //			timestampUtil
             }
+        return null;
 
     }
 
@@ -137,12 +138,33 @@ public class BucketProcessor {
 
         // TODO check for onehot
         if (getTimeCountDown(annotationPosition) > 0) {
-                setTimeCountDown(annotationPosition) = getTimeCountDown(annotationPosition) - 1;
-                setBoolean(annotationPosition) = true;
+               // setTimeCountDown(annotationPosition) = getTimeCountDown(annotationPosition) - 1;
+               // setBoolean(annotationPosition) = true;
         }
 
         // TODO check for merge-to
         // TODO get merge-to name and rename the bucket
+        return null;
 
+    }
+
+    private boolean setBoolean(int annotationPosition) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private int getTimeCountDown(int annotationPosition) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private int setTimeCountDown(int annotationPosition) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private Date getLocalVaultEntryTime() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private BucketEntry CreateNewBucket(Object object) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
