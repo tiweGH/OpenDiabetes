@@ -17,8 +17,13 @@
 package de.jhit.opendiabetes.vault.exporter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
+import de.jhit.opendiabetes.vault.container.BucketEventTriggers;
+import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import org.apache.commons.csv.*;
 
@@ -27,32 +32,60 @@ import org.apache.commons.csv.*;
  * @author Jorg
  */
 public class ApacheCommonsCsvExporter {
-    
-//    protected List<VaultEntry> data;
-//    protected String filePath;
-    
-    public ApacheCommonsCsvExporter(){
-//        this.data = data;
-//        this.filePath = filePath;
+
+    protected static String deleteComma(VaultEntry entry) {
+        String result = entry.toString();
+        return result.replace(",", " ");
     }
-    
-    
-    protected void writeFile(List<VaultEntry> data, String filePath) throws IOException{
+
+    protected static Object[] createHeader() {
         
-        Object[] header = {"x", "y"};
+        
+        // TO DO: Sort HashMap by Value
+        HashMap<VaultEntryType, Integer> oneHotHeader = BucketEventTriggers.ARRAYENTRYTRIGGERHASHMAP;
+        String[] manualEntries = {"entry", "kjadskjdjkla"};
+        Object[] result = new Object[oneHotHeader.size() + manualEntries.length];
+        for (int k = 0; k < manualEntries.length; k++) {
+            result[k] = manualEntries[k];
+        }
+        int i = manualEntries.length;
+        for (VaultEntryType entryType : oneHotHeader.keySet()) {
+            result[i] = entryType;
+            i++;
+        }
+        return result;
+    }
+
+    protected static void writeFile(List<VaultEntry> data, int[] oha, String filePath) throws IOException {
+
+//        Object[] header = {"x", "y"};
+        Object[] header = createHeader();
         String NEW_LINE_SEPARATOR = "\n";
-        
-        FileWriter  fileWriter= new FileWriter(filePath);
+
+        FileWriter fileWriter = new FileWriter(filePath);
         CSVFormat csvFormat = CSVFormat.DEFAULT.withRecordSeparator(NEW_LINE_SEPARATOR);
-        
+
+        String oneHotArrayHeaderAsString = Arrays.toString(oha);
+        oneHotArrayHeaderAsString = oneHotArrayHeaderAsString.replace("[", "");
+        oneHotArrayHeaderAsString = oneHotArrayHeaderAsString.replace("]", "");
+        System.out.println(oneHotArrayHeaderAsString);
         try (CSVPrinter csvPrinter = new CSVPrinter(fileWriter, csvFormat)) {
             csvPrinter.printRecord(header);
-            for (VaultEntry en : data){
-                
-                csvPrinter.printRecord(en);
+            for (VaultEntry en : data) {
+                String entryString = deleteComma(en);
+                csvPrinter.printRecord(entryString + ", " + oneHotArrayHeaderAsString);
             }
             csvPrinter.flush();
         }
     }
-    
+
+    public static void main(String[] args) throws ParseException, IOException {
+        List<VaultEntry> d = StaticDataset.getStaticDataset();
+        
+        int[] oha = new int[23];
+        for (int i = 0; i < oha.length ; i++) {
+            oha[i] = i;
+        }
+        writeFile(d, oha, "asdas.csv");
+    }
 }
