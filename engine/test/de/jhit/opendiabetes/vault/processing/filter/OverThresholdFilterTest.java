@@ -38,7 +38,7 @@ import org.junit.Test;
 public class OverThresholdFilterTest extends Assert {
 
     static List<VaultEntry> data;
-            
+
     @BeforeClass
     public static void setUpClass() throws ParseException {
         data = NewDataset.getNewDataset();
@@ -55,36 +55,35 @@ public class OverThresholdFilterTest extends Assert {
     @After
     public void tearDown() {
     }
-    
+
     /**
      * Test of filter method, of class OverThresholdFilter.
+     *
      * @author aa80hifa
      */
-    
     @Test
-    public void testOverThresholdFilter_STRESS_25_00_STRESS_AVAILABLE_STRESS_TH() throws ParseException{
-        
+    public void testOverThresholdFilter_STRESS_25_00_STRESS_AVAILABLE_STRESS_TH() throws ParseException {
+
         OverThresholdFilter instance = new OverThresholdFilter(VaultEntryType.STRESS, 25.00, FilterType.STRESS_AVAILABLE, FilterType.STRESS_TH);
         FilterResult result = instance.filter(data);
-        
+
         List<VaultEntry> filteredData = new ArrayList<>();
-        filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-04:56"), 36.25));       
-        filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-06:06"), 35.5));        
-        filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-06:16"), 30.25));        
+        filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-04:56"), 36.25));
+        filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-06:06"), 35.5));
+        filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-06:16"), 30.25));
         filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-06:26"), 27.25));
-        filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-06:36"), 26.5));        
-        filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-06:46"), 27.25));        
-        filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-07:27"), 25.75));        
-        filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-07:45"), 30.25));        
+        filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-06:36"), 26.5));
+        filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-06:46"), 27.25));
+        filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-07:27"), 25.75));
+        filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-07:45"), 30.25));
         filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-07:56"), 28.0));
         filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-08:06"), 27.25));
         filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-10:50"), 52.75));
         filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-11:00"), 73.0));
-        filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-11:10"), 61.0));        
+        filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-11:10"), 61.0));
         filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-11:21"), 55.75));
         filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-11:51"), 75.25));
-        
-        
+
         List<Pair<Date, Date>> timeSeries = new ArrayList<>();
         timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-04:56"), TestFunctions.creatNewDateToCheckFor("2017.06.29-04:56")));
         timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-06:06"), TestFunctions.creatNewDateToCheckFor("2017.06.29-06:06")));
@@ -101,31 +100,29 @@ public class OverThresholdFilterTest extends Assert {
         timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-11:10"), TestFunctions.creatNewDateToCheckFor("2017.06.29-11:10")));
         timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-11:21"), TestFunctions.creatNewDateToCheckFor("2017.06.29-11:21")));
         timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-11:51"), TestFunctions.creatNewDateToCheckFor("2017.06.29-11:51")));
-        
-        
+
         FilterResult checkForThisResult = new FilterResult(filteredData, timeSeries);
-        
+
         assertEquals(result.filteredData, checkForThisResult.filteredData);
         assertEquals(result.timeSeries, checkForThisResult.timeSeries);
         //assertEquals(result, checkForThisResult);
     }
-    
-    @Test(expected = NullPointerException.class)
-    public void testOverThresholdFilter_STRESS_25_00_HR_AVAILABLE_STRESS_TH() throws ParseException{
-        
-        OverThresholdFilter instance = new OverThresholdFilter(VaultEntryType.STRESS, 25.00, FilterType.HR_AVAILABLE, FilterType.STRESS_TH);
-        FilterResult result = instance.filter(data);
-        
-        assertEquals(result.filteredData, null);
-        
-    }
-    
+
+//    @Test(expected = NullPointerException.class)
+//    public void testOverThresholdFilter_STRESS_25_00_HR_AVAILABLE_STRESS_TH() throws ParseException{
+//
+//        OverThresholdFilter instance = new OverThresholdFilter(VaultEntryType.STRESS, 25.00, FilterType.HR_AVAILABLE, FilterType.STRESS_TH);
+//        FilterResult result = instance.filter(data);
+//
+//        assertEquals(result.filteredData, null);
+//
+//    }
     @Test
-    public void testOverThresholdFilter_GLUCOSE_125_00_CGM_CGM_AVAILABLE_CGM_TH() throws ParseException{
-        
+    public void testOverThresholdFilter_GLUCOSE_125_00_CGM_CGM_AVAILABLE_CGM_TH() throws ParseException {
+
         OverThresholdFilter instance = new OverThresholdFilter(VaultEntryType.GLUCOSE_CGM, 125.00, FilterType.CGM_AVAILABLE, FilterType.CGM_TH);
         FilterResult result = instance.filter(data);
-        
+
         List<VaultEntry> filteredData = new ArrayList<>();
         filteredData.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TestFunctions.creatNewDateToCheckFor("2016.04.18-06:58"), 322));
         //
@@ -144,8 +141,7 @@ public class OverThresholdFilterTest extends Assert {
         filteredData.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TestFunctions.creatNewDateToCheckFor("2016.04.18-10:14"), 138));
         //
         filteredData.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TestFunctions.creatNewDateToCheckFor("2016.04.18-11:44"), 198));
-        
-        
+
         List<Pair<Date, Date>> timeSeries = new ArrayList<>();
         timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2016.04.18-06:58"), TestFunctions.creatNewDateToCheckFor("2016.04.18-06:58")));
         timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2016.04.18-07:13"), TestFunctions.creatNewDateToCheckFor("2016.04.18-07:58")));
@@ -153,10 +149,9 @@ public class OverThresholdFilterTest extends Assert {
         timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2016.04.18-09:13"), TestFunctions.creatNewDateToCheckFor("2016.04.18-09:29")));
         timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2016.04.18-10:14"), TestFunctions.creatNewDateToCheckFor("2016.04.18-10:14")));
         timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2016.04.18-11:44"), TestFunctions.creatNewDateToCheckFor("2016.04.18-11:44")));
-        
-        
+
         FilterResult checkForThisResult = new FilterResult(filteredData, timeSeries);
-        
+
         assertEquals(result.filteredData, checkForThisResult.filteredData);
         assertEquals(result.timeSeries, checkForThisResult.timeSeries);
         //assertEquals(result, checkForThisResult);

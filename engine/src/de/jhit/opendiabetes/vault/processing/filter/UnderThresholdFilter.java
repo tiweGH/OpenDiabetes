@@ -36,7 +36,7 @@ public class UnderThresholdFilter extends ThresholdFilter {
      * @param TH
      */
     public UnderThresholdFilter(VaultEntryType GenericType, Double thresholdValue, FilterType availabledatatype, FilterType TH) {
-        if (!super.checkThresholdCombination(GenericType, availabledatatype, TH)) {
+        if (super.checkThresholdCombination(GenericType, availabledatatype, TH)) {
 
             this.thresholdValue = thresholdValue;
             this.type = TH;

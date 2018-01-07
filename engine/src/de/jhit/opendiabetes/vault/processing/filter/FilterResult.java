@@ -17,6 +17,7 @@
 package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javafx.util.Pair;
@@ -34,8 +35,13 @@ public class FilterResult {
         this.filteredData = filteredData;
         this.timeSeries = timeSeries;
     }
-    
-    public int size(){
+
+    public FilterResult() {
+        this.filteredData = new ArrayList<>();
+        this.timeSeries = new ArrayList<>();
+    }
+
+    public int size() {
         return filteredData.size();
     }
 

@@ -28,12 +28,35 @@ import javafx.util.Pair;
  *
  * @author juehv
  */
-public class MealAbsenceFilter extends Filter {
+public class TriggerAbsenceFilter extends Filter {
 
-    private final long marginAfterMeal; // minutes after a meal until data becomes interesting again.
+    private final long marginAfterTrigger; // minutes after an trigger until data becomes interesting again.
+    private final List<VaultEntryType> types;
+    Date lastMealFound = null;
 
-    public MealAbsenceFilter(long marginAfterMeal) {
-        this.marginAfterMeal = marginAfterMeal;
+    public TriggerAbsenceFilter(List<VaultEntryType> types, long marginAfterTrigger) {
+        this.marginAfterTrigger = marginAfterTrigger;
+        this.types = types;
+    }
+
+    public TriggerAbsenceFilter(VaultEntryType type, long marginAfterTrigger) {
+        this.marginAfterTrigger = marginAfterTrigger;
+        this.types = VaultEntryType.getTypesOfGroup(type);
+    }
+
+    @Override
+    boolean matchesFilterParameters(VaultEntry entry) {
+        boolean result;
+        if (types.contains(entry.getType())) {
+            lastMealFound = entry.getTimestamp();
+            result = true;
+        } else if ((lastMealFound != null
+                && !TimestampUtils
+                        .addMinutesToTimestamp(lastMealFound, marginAfterTrigger)
+                        .before(entry.getTimestamp()))) {
+            result = true;
+        }
+        return true;
     }
 
     @Override
@@ -45,8 +68,8 @@ public class MealAbsenceFilter extends Filter {
         Date lastTimeStamp = null;
         Date lastMealFound = null;
         for (VaultEntry entry : data) {
-            if (entry.getType() == VaultEntryType.GLUCOSE_BOLUS_CALCULATION) {
-                System.out.println("nothing here");
+            if (entry.getType() == VaultEntryType.MEAL_BOLUS_CALCULATOR
+                    || entry.getType() == VaultEntryType.MEAL_MANUAL) {
                 // found a meal, stop time slices
                 lastMealFound = entry.getTimestamp();
 
@@ -57,7 +80,7 @@ public class MealAbsenceFilter extends Filter {
                 }
             } else if ((lastMealFound != null
                     && !TimestampUtils
-                            .addMinutesToTimestamp(lastMealFound, marginAfterMeal)
+                            .addMinutesToTimestamp(lastMealFound, marginAfterTrigger)
                             .before(entry.getTimestamp()))
                     || (startOfTimeSeries == null
                     && lastTimeStamp == null
@@ -85,12 +108,6 @@ public class MealAbsenceFilter extends Filter {
     @Override
     public FilterType getType() {
         return FilterType.MEAL_ABSENCE;
-    }
-
-    @Override
-    boolean matchesFilterParameters(VaultEntry entry) {
-        return entry.getType() == VaultEntryType.MEAL_BOLUS_CALCULATOR
-                || entry.getType() == VaultEntryType.MEAL_MANUAL;
     }
 
 }

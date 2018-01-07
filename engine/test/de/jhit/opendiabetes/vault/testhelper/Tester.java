@@ -23,6 +23,7 @@ import de.jhit.opendiabetes.vault.processing.filter.EventFilter;
 import de.jhit.opendiabetes.vault.processing.filter.Filter;
 import de.jhit.opendiabetes.vault.processing.filter.FilterResult;
 import de.jhit.opendiabetes.vault.processing.filter.FilterType;
+import de.jhit.opendiabetes.vault.processing.filter.MealAbsenceFilter;
 import de.jhit.opendiabetes.vault.processing.filter.OverThresholdFilter;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.text.ParseException;
@@ -84,6 +85,16 @@ public class Tester {
 //            for (VaultEntry to : fri.filteredData) {
 //                System.out.println(to.toString());
 //            }
+
+            MealAbsenceFilter meal = new MealAbsenceFilter(10);
+            fr = meal.filter(StaticDataset.getStaticDataset());
+            for (Pair<Date, Date> to : fr.timeSeries) {
+                System.out.println(to.toString());
+            }
+            for (VaultEntry to : fr.filteredData) {
+                System.out.println(to.toString());
+            }
+
         } catch (ParseException ex) {
             Logger.getLogger(Tester.class.getName()).log(Level.SEVERE, null, ex);
         }

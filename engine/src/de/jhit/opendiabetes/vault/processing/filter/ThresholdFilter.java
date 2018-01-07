@@ -92,15 +92,14 @@ public abstract class ThresholdFilter extends Filter {
         return result;
     }
 
-    @Override
-    public FilterResult filter(List<VaultEntry> data) {
-        FilterResult result;
-        if (checkThresholdCombination(GenericType, availabledatatype, TH)) {
-            result = super.filter(data);
-        } else {
-            result = null;
-        }
-        return result;
-    }
-
+//    @Override
+//    public FilterResult filter(List<VaultEntry> data) {
+//        FilterResult result;
+//        if (checkThresholdCombination(GenericType, availabledatatype, TH)) {
+//            result = super.filter(data);
+//        } else {
+//            result = new FilterResult();
+//        }
+//        return result;
+//    }
 }
