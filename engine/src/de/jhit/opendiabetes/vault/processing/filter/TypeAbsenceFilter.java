@@ -88,7 +88,7 @@ public class TypeAbsenceFilter extends Filter {
 
     @Override
     public FilterType getType() {
-        return FilterType.MEAL_ABSENCE;
+        return FilterType.TYPE_ABSENCE;
     }
 
     @Override

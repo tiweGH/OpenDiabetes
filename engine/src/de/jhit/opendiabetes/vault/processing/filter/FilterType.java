@@ -39,6 +39,7 @@ public enum FilterType {
     // data absence
     MEAL_ABSENCE,
     BOLUS_ABSENCE,
+    TYPE_ABSENCE,
     // threshould
     BOLUS_TH,
     BASAL_TH,
