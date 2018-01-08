@@ -16,7 +16,7 @@
  */
 package de.jhit.opendiabetes.vault.container;
 
-import static de.jhit.opendiabetes.vault.container.BucketEventTriggers.ARRAYENTRYTRIGGERHASHMAP;
+import static de.jhit.opendiabetes.vault.container.BucketEventTriggers.ARRAY_ENTRY_TRIGGER_HASHMAP;
 
 /**
  *
@@ -28,7 +28,7 @@ public class BucketEntry {
     
     // Array size settings
     // numberOfVaultEntryTriggerTypes
-    private static final int NUMBEROFVAULTENTRYTRIGGERTYPES = ARRAYENTRYTRIGGERHASHMAP.size();
+    private static final int NUMBER_OF_VAULT_ENTRY_TRIGGER_TYPES = ARRAY_ENTRY_TRIGGER_HASHMAP.size();
 
     // time countdown Array
     private double[] timeCountDownArray;
@@ -44,10 +44,10 @@ public class BucketEntry {
         vaultEntry = entry;
 
         // Arrays containing OneHot information
-        timeCountDownArray = new double[NUMBEROFVAULTENTRYTRIGGERTYPES];
-        booleanArray = new boolean[NUMBEROFVAULTENTRYTRIGGERTYPES];
+        timeCountDownArray = new double[NUMBER_OF_VAULT_ENTRY_TRIGGER_TYPES];
+        booleanArray = new boolean[NUMBER_OF_VAULT_ENTRY_TRIGGER_TYPES];
 //        entryTypeArray = new VaultEntryType[NUMBEROFVAULTENTRYTRIGGERTYPES];
-        findNextArray = new VaultEntryType[NUMBEROFVAULTENTRYTRIGGERTYPES];
+        findNextArray = new VaultEntryType[NUMBER_OF_VAULT_ENTRY_TRIGGER_TYPES];
     }
 
     //
@@ -61,7 +61,7 @@ public class BucketEntry {
     // GETTER onehotArraySize
     //
     public static int getNumberOfVaultEntryTriggerTypes() {
-        return NUMBEROFVAULTENTRYTRIGGERTYPES;
+        return NUMBER_OF_VAULT_ENTRY_TRIGGER_TYPES;
     }
 
     //
