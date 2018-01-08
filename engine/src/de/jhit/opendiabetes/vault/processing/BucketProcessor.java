@@ -18,10 +18,6 @@ package de.jhit.opendiabetes.vault.processing;
 
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.container.BucketEntry;
-import static de.jhit.opendiabetes.vault.container.BucketEventTriggers.ARRAYENTRYTRIGGERHASHMAP;
-import static de.jhit.opendiabetes.vault.container.BucketEventTriggers.TRIGGEREVENTACTTIMEGIVEN;
-import static de.jhit.opendiabetes.vault.container.BucketEventTriggers.TRIGGEREVENTACTTIMETILLNEXTEVENT;
-import static de.jhit.opendiabetes.vault.container.BucketEventTriggers.TRIGGEREVENTACTTIMEONE;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import static de.jhit.opendiabetes.vault.util.TimestampUtils.addMinutesToTimestamp;
@@ -29,6 +25,10 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import static de.jhit.opendiabetes.vault.container.BucketEventTriggers.ARRAY_ENTRY_TRIGGER_HASHMAP;
+import static de.jhit.opendiabetes.vault.container.BucketEventTriggers.TRIGGER_EVENT_ACT_TIME_GIVEN;
+import static de.jhit.opendiabetes.vault.container.BucketEventTriggers.TRIGGER_EVENT_ACT_TIME_TILL_NEXT_EVENT;
+import static de.jhit.opendiabetes.vault.container.BucketEventTriggers.TRIGGER_EVENT_ACT_TIME_ONE;
 
 /**
  *
@@ -61,13 +61,13 @@ public class BucketProcessor {
         
         // set Array information accroding to the VaultEntryType
         // is this a Trigger Event?
-        if (ARRAYENTRYTRIGGERHASHMAP.containsKey(entry.getType())) {
+        if (ARRAY_ENTRY_TRIGGER_HASHMAP.containsKey(entry.getType())) {
             
             // get VaultEntryType position from the HashMap
-            int arrayPosition = ARRAYENTRYTRIGGERHASHMAP.get(entry.getType());
+            int arrayPosition = ARRAY_ENTRY_TRIGGER_HASHMAP.get(entry.getType());
             
             // is the Act Time given?
-            if (TRIGGEREVENTACTTIMEGIVEN.contains(entry.getType())) {
+            if (TRIGGER_EVENT_ACT_TIME_GIVEN.contains(entry.getType())) {
                 // set Act Time
             newBucket.setTimeCountDown(arrayPosition, entry.getValue());
                 // set boolean true
@@ -76,16 +76,16 @@ public class BucketProcessor {
             newBucket.setFindNextArray(arrayPosition, VaultEntryType.EMPTY);
                 
             // is the the Act Time till some next Event?
-            } else if (TRIGGEREVENTACTTIMETILLNEXTEVENT.containsKey(entry.getType())) {
+            } else if (TRIGGER_EVENT_ACT_TIME_TILL_NEXT_EVENT.containsKey(entry.getType())) {
                 // set to 0 (no direct Act Time)
             newBucket.setTimeCountDown(arrayPosition, 0);
                 // set boolean true
             newBucket.setBoolean(arrayPosition, true);
                 // set find next to the needed VaultEntryType
-            newBucket.setFindNextArray(arrayPosition, TRIGGEREVENTACTTIMETILLNEXTEVENT.get(entry.getType()));
+            newBucket.setFindNextArray(arrayPosition, TRIGGER_EVENT_ACT_TIME_TILL_NEXT_EVENT.get(entry.getType()));
                 
             // is the Act Time just for one Frame?    
-            } else if (TRIGGEREVENTACTTIMEONE.contains(entry.getType())) {
+            } else if (TRIGGER_EVENT_ACT_TIME_ONE.contains(entry.getType())) {
                 // set Act Time to 1 Frame
             newBucket.setTimeCountDown(arrayPosition, 1);
                 // set boolean true
@@ -160,6 +160,19 @@ public class BucketProcessor {
                     // create a new empty Bucket because VaultEntry is not ML-relevant
                     } else {
                         
+                        // TODO check if next VaultEntry has the same timestamp
+                        //      if yes skip this Bucket to prevent multiple empty buckets for one timestamp
+                        //      if not create a new empty Bucket for this timestamp
+                        
+                        // maybe get last entry Date and check if current Date before last given Date##
+                        
+                        // maybe just ignore case Date = Date and ML-relevant == false 
+                        //      since a skiped Date will fall under Date after Date case 
+                        //      and an empty bucket will be created for the skiped timestamp 
+                        // ---> check if possible
+                        // last VaultEntry might be a problem if it is not ML-relevant
+                        
+                        
                         // create a new empty Bucket
                         outputBucketList.add(createEmptyBucket(timeCounter));
 
@@ -204,6 +217,9 @@ public class BucketProcessor {
         BucketEntry outputBucket = createEmptyBucket(TimestampUtils.createCleanTimestamp("2016.04.18-06:48", "yyyy.MM.dd-HH:mm"));
 
         /*
+        
+        // TODO only one change for each timestamp 
+        //          same timestamps will have the same information in the Arrays
         
         // TODO check for onehot
         if (getTimeCountDown(annotationPosition) > 0) {
