@@ -23,7 +23,7 @@ import java.util.List;
 import javafx.util.Pair;
 
 /**
- *
+ * The CombinationFilter is a special kind of Filter. The CombinationFilter combines two Filter on different datasets. Another of it’s special Features is, that the CombinationFilter has two lists of VaultEntry, which will be used later in the .filter method. The first list of VaultEntry is set during the Constructor, this set is the basicData. The Second list is only used during the filter. In the Constructor there will also be set two Filter (firstFilter and secondFilter). 
  * @author Daniel
  */
 public class CombinationFilter extends Filter {
@@ -33,6 +33,12 @@ public class CombinationFilter extends Filter {
     private Filter secondFilter;
     private List<Filter> filters;
 
+    /**
+     * The Constructor will set the Filters and basic data, which will be used later in the filter method.
+     * @param data
+     * @param firstFilter; first Filter from the data in the filter method
+     * @param secondFilter; Filter mask for the list of Filters in the filter method
+     */
     public CombinationFilter(List<VaultEntry> data, Filter firstFilter, Filter secondFilter) {
         this.basicData = data;
         this.firstFilter = firstFilter;
@@ -43,11 +49,13 @@ public class CombinationFilter extends Filter {
     public FilterResult filter(List<VaultEntry> data) {
         FilterResult result = firstFilter.filter(data);
 
+        // generates an List of Filters from the first found dataset. The secondFilter will be used as Mask.
         filters = new ArrayList<>();
         for (VaultEntry vaultEntry : result.filteredData) {
             filters.add(secondFilter.update(vaultEntry));
         }
         
+        //filters with the basic method
         result = super.filter(basicData);
         
         return result;
@@ -62,6 +70,7 @@ public class CombinationFilter extends Filter {
     boolean matchesFilterParameters(VaultEntry entry) {
         boolean result = false;
         
+        //Checks if one of the new generated Filters is True
         for (Filter filter : filters) {
             if(filter.matchesFilterParameters(entry))
                 result= true;

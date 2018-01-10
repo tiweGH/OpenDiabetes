@@ -76,7 +76,8 @@ public abstract class Filter {
     }
 
     /**
-     * This Method returns a new Filter from the Filtertype.
+     * This Method returns a new Filter from extended Filter. The Filter is constructucted with the Data from the vaultEntry. 
+     * Example: TimeFilter Constructs a Filter with the startTime from the vaultEntry.
      * @param vaultEntry; Which the The Filter should work with
      * @return 
      */
