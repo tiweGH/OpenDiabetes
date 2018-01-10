@@ -42,7 +42,7 @@ public class ApacheCommonsCsvExporter {
         
         
         // TO DO: Sort HashMap by Value
-        HashMap<VaultEntryType, Integer> oneHotHeader = BucketEventTriggers.ARRAYENTRYTRIGGERHASHMAP;
+        HashMap<VaultEntryType, Integer> oneHotHeader = BucketEventTriggers.ARRAY_ENTRY_TRIGGER_HASHMAP;
         String[] manualEntries = {"entry", "kjadskjdjkla"};
         Object[] result = new Object[oneHotHeader.size() + manualEntries.length];
         for (int k = 0; k < manualEntries.length; k++) {
