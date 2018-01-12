@@ -26,28 +26,43 @@ public class BucketEntry {
     
     private VaultEntry vaultEntry;
     
+    // BucketEntry list counter
+    private int bucketEntryNumber;
+    
     // Array size settings
     // numberOfVaultEntryTriggerTypes
     private static final int NUMBER_OF_VAULT_ENTRY_TRIGGER_TYPES = ARRAY_ENTRY_TRIGGER_HASHMAP.size();
 
     // time countdown Array
     private double[] timeCountDownArray;
-    // onehot Boolean
-    private boolean[] booleanArray;
+    // onehot information Array
+    private double[] onehoteInformationArray;
     // onehot trigger
 //    private VaultEntryType[] entryTypeArray;
     // wait till next entry
     private VaultEntryType[] findNextArray;
 
     
-    public BucketEntry(VaultEntry entry) {
+    public BucketEntry(int bucketNumber,VaultEntry entry) {
         vaultEntry = entry;
 
+        // counter
+        bucketEntryNumber = bucketNumber;
+        
         // Arrays containing OneHot information
         timeCountDownArray = new double[NUMBER_OF_VAULT_ENTRY_TRIGGER_TYPES];
-        booleanArray = new boolean[NUMBER_OF_VAULT_ENTRY_TRIGGER_TYPES];
+        onehoteInformationArray = new double[NUMBER_OF_VAULT_ENTRY_TRIGGER_TYPES];
 //        entryTypeArray = new VaultEntryType[NUMBEROFVAULTENTRYTRIGGERTYPES];
         findNextArray = new VaultEntryType[NUMBER_OF_VAULT_ENTRY_TRIGGER_TYPES];
+    }
+    
+    // 
+    // GETTER bucket entry number
+    // only getter since bucket entry number is set when BucketEntry is created
+    // 
+    // get bucket entry number
+    public int getBucketNumber() {
+        return bucketEntryNumber;
     }
 
     //
@@ -74,8 +89,8 @@ public class BucketEntry {
     }
     // get boolean
     // ArrayOutOfBounds
-    public boolean getBoolean(int position) {
-        return booleanArray[position];
+    public double getOnehoteInformationArray(int position) {
+        return onehoteInformationArray[position];
     }
     // get VaultEntryType
     // ArrayOutOfBounds
@@ -98,8 +113,8 @@ public class BucketEntry {
     }
     // set boolean
     // ArrayOutOfBounds
-    public void setBoolean(int position, boolean bool) {
-        booleanArray[position] = bool;
+    public void setOnehoteInformationArray(int position, double bool) {
+        onehoteInformationArray[position] = bool;
     }
     // set VaultEntryType
     // ArrayOutOfBounds
