@@ -42,13 +42,6 @@ import static de.jhit.opendiabetes.vault.container.BucketEventTriggers.TRIGGER_E
     // timestamp > counder == create emtpy bucket / count up
 
 public class BucketProcessor {
-    
-    // BucketEntry list counter
-    // BucketEntryNumber starts with entry number 1
-    // 
-    // if changed to 0 then checkPreviousBucketEntry must be changed as well
-    // 
-    private int bucketEntryNumber = 1;
 
     // time countdown Array
     private int[] timeCountDownArray = new int[BucketEntry.getNumberOfVaultEntryTriggerTypes()];
@@ -59,9 +52,15 @@ public class BucketProcessor {
     // TODO missing wait till next entry
     private VaultEntryType[] findNextArray = new VaultEntryType[BucketEntry.getNumberOfVaultEntryTriggerTypes()];
     
-    
-    // Create a new Bucket with a given VaultEntry
-    public BucketEntry createNewBucket(int bucketNumber,VaultEntry entry) {
+    /**
+     * This method creates a new BucketEntry out of the given int and VaultEntry.
+     * The int is the consecutive numbering of the BucketEntry.
+     * During the process the VaultEntryType will be checked and all necessary inputs for the arrays inside the BucketEntry will be generated accordingly.
+     * @param bucketNumber The consecutive number of the BucketEntry that is being created.
+     * @param entry The VaultEntry that will be stored inside the BucketEntry.
+     * @return This method returns a newly created BucketEntry
+     */
+    public BucketEntry createNewBucket(int bucketNumber, VaultEntry entry) {
         
         // create new BucketEntry
         BucketEntry newBucket = new BucketEntry(bucketNumber, entry);
@@ -107,7 +106,15 @@ public class BucketProcessor {
 
     }
     
-    // Create a new empty Bucket containing VaultEntryType.EMPTY and the given Date
+    /**
+     * This method creates a new empty BucketEntry out of the given int and Date.
+     * The int is the consecutive numbering of the BucketEntry.
+     * A new VaultEntry will be created containing the VauleEntryType EMPTY and the given Date.
+     * @param bucketNumber The consecutive number of the BucketEntry that is being created.
+     * @param date The Date (timestamp) that is needed to create a vaild VaultEntry
+     * @return This method returns an newly created 'empty' BucketEntry.
+     * @throws ParseException 
+     */
     public BucketEntry createEmptyBucket(int bucketNumber, Date date) throws ParseException {
         
         BucketEntry newBucket = new BucketEntry(bucketNumber, new VaultEntry(VaultEntryType.EMPTY, date));
@@ -115,33 +122,63 @@ public class BucketProcessor {
 
     }
     
+    /**
+     * This method creates a list of BucketEntrys out of a list of VaultEntrys.
+     * This method checks if each VaultEntry is ML-relevant and if it is then a new BucketEntry with the given VaultEntry is created 
+     * and if not then a new empty BucketEntry will be crated in it's place.
+     * This method also creates a BucketEntry for every minute that passes starting from the timestamp of the first given VaultEntry 
+     * and ending with the timestamp of the last given VaultEntry.
+     * @param entryList This is the list of VaultEntrys that will be converted into a list of BucketEntrys.
+     * @return  This method returns the list of BucketEntrys that is generated out of the given list of VaultEntrys.
+     * @throws ParseException 
+     */
     // TODO test for Date change when reaching 00:00 of the next day
     public List<BucketEntry> createListOfBuckets(List<VaultEntry> entryList) throws ParseException {
+        
+        // BucketEntry list counter
+        // BucketEntryNumber starts with entry number 1
+        // 
+        // if changed to 0 then checkPreviousBucketEntry must be changed as well
+        // 
+        int bucketEntryNumber = 1;
 
         // TODO Liste aus Buckets erstellen aus der gegebenen VaultEnty Liste
         List<BucketEntry> outputBucketList = new ArrayList<>();
         Date timeCounter = entryList.get(0).getTimestamp();
         // position in the VaultEntry list
-        int VaultEntryListPosition = 0;
+        int vaultEntryListPosition = 0;
         
         // compare Trigger (time or Event) with EventType before starting a new Trigger
         // 
         
-        while (VaultEntryListPosition < entryList.size()) {
+        while (vaultEntryListPosition < entryList.size()) {
                 
                 // found an earlier Date        TODO check for hours and minutes ?
-                if (entryList.get(VaultEntryListPosition).getTimestamp().before(timeCounter)) {
+                // e.g. given 2000.01.01-00:01 is earlier than the timeCounter date 2000.01.01-00:02
+                if (entryList.get(vaultEntryListPosition).getTimestamp().before(timeCounter)) {
                     
                     // check is ML-relevant
-                    if (entryList.get(VaultEntryListPosition).getType().isMLrelevant()) {
-                        // create a new Bucket with the given entry
-                        outputBucketList.add(createNewBucket(bucketEntryNumber, entryList.get(VaultEntryListPosition)));
-                        // update bucketEntryNumber
-                        bucketEntryNumber++;
+                    if (entryList.get(vaultEntryListPosition).getType().isMLrelevant()) {
+                        
+                        // check if there already is a previous BucketEntry with the same VaultEntry timestamp and if this BucketEntry can be removed
+                        if (checkPreviousBucketEntry(bucketEntryNumber, entryList.get(vaultEntryListPosition).getTimestamp(), outputBucketList) && outputBucketList.size() > 1) {
+                            // the checked BucketEntry is vaild
+                            // create a new Bucket with the given entry
+                            outputBucketList.add(createNewBucket(bucketEntryNumber, entryList.get(vaultEntryListPosition)));
+                            // update bucketEntryNumber
+                            bucketEntryNumber++;
+                        } else {
+                            // the previous BucketEntry is invalid and should be overwritten
+                            outputBucketList.remove(bucketEntryNumber - 1);
+                            // create a new Bucket with the given entry
+                            outputBucketList.add(createNewBucket(bucketEntryNumber, entryList.get(vaultEntryListPosition)));
+                            
+                            // DO NOT UPDATE THE BUCKETENTRYNUMBER SINCE THE LAST POSITION HAS BEEN OVERWRITTEN
+                        }                        
 
-                        //
+                        //      ???
                         // TODO onehot - merge-to
-                        //
+                        //      ???
                         
                     } // else do nothing ... VaultEntry is not ML-relevant
                     
@@ -149,25 +186,23 @@ public class BucketProcessor {
                     // DO NOT UPDATE TIMECOUNTER! entryList may contain more VaultEntrys with the same timestamp
                     
                     // move to the next VaultEntry in the list
-                    VaultEntryListPosition++;
+                    vaultEntryListPosition++;
                 
                 // found the same Date
-                } else if (timeCounter == entryList.get(0).getTimestamp()) {
+                // e.g. given 2000.01.01-00:01 is equal to the timeCounter date 2000.01.01-00:01
+                } else if (timeCounter == entryList.get(vaultEntryListPosition).getTimestamp()) {
                     
-                    if (entryList.get(VaultEntryListPosition).getType().isMLrelevant()) {
+                    if (entryList.get(vaultEntryListPosition).getType().isMLrelevant()) {
                         
-                        // check if there already is an earlier BucketEntry with the same VaultEntry timestamp and if this BucketEntry can be removed
-                        if (checkPreviousBucketEntry(bucketEntryNumber - 1, timeCounter, outputBucketList)) {
-                            // create new BucketEntry
-                            
-                        // chekcBucketEntry == false
-                        } else {
-                            // create new BucketEntry
-                            
+                        /* not possible???
+                        // check if there already is a previous BucketEntry with the same VaultEntry timestamp and if this BucketEntry can be removed
+                        if (checkPreviousBucketEntry(bucketEntryNumber, timeCounter, outputBucketList)) {                            
+                        } else {                            
                         }
+                        */
                         
                         // create a new Bucket with the given entry
-                        outputBucketList.add(createNewBucket(bucketEntryNumber, entryList.get(VaultEntryListPosition)));
+                        outputBucketList.add(createNewBucket(bucketEntryNumber, entryList.get(vaultEntryListPosition)));
                         // update bucketEntryNumber
                         bucketEntryNumber++;
 
@@ -178,7 +213,7 @@ public class BucketProcessor {
                         // update timecounter
                         timeCounter = addMinutesToTimestamp(timeCounter, 1);
                         // move to the next VaultEntry in the list
-                        VaultEntryListPosition++;
+                        vaultEntryListPosition++;
                         
                     // create a new empty Bucket because VaultEntry is not ML-relevant
                     } else {
@@ -216,12 +251,13 @@ public class BucketProcessor {
                         // update timecounter
                         timeCounter = addMinutesToTimestamp(timeCounter, 1);
                         // move to the next VaultEntry in the list
-                        VaultEntryListPosition++;
+                        vaultEntryListPosition++;
                         
                     }                    
                     
                 // found a later Date           TODO check for hours and minutes ?
-                } else if (entryList.get(0).getTimestamp().after(timeCounter)){
+                // e.g. given 2000.01.01-00:02 is after than the timeCounter date 2000.01.01-00:01
+                } else if (entryList.get(vaultEntryListPosition).getTimestamp().after(timeCounter)){
                     // create a new empty Bucket
                     outputBucketList.add(createEmptyBucket(bucketEntryNumber, timeCounter));
                         // update bucketEntryNumber
@@ -242,22 +278,35 @@ public class BucketProcessor {
                 
             }
         
-        
-        
         return outputBucketList;
 
     }
     
-    // checks the BucketEntry at the previous position in the List of BucketEntrys
-    public boolean checkPreviousBucketEntry(int bucketListPosition, Date date, List<BucketEntry> listToCheckIn) {
+    /**
+     * This method checks the BucketEntry in a list of BucketEntrys that is prior to the bucket position that is given.
+     * The method checks if the previous BucketEntry is an empty BucketEntry with the Date (timestamp) that is given to the method.
+     * Returns true if the previous BucketEntry is ok. (Not empty BucketEntry)
+     * Returns false if the previous BucketEntry is obsolete. (is an empty BucketEntry)
+     * @param bucketListPosition This int - 1 will be checked on in the list of BucketEntrys.
+     * @param date The Date that is being searched for in the BucketEntry.
+     * @param listToCheckIn This is the list of BucketEntrys in which the BucketEntry will be taken out of.
+     * @return This method returns true if the previous BucketEntry is not an empty BucketEntry and the Date matches and returns false if the previous BucketEntry is an empty BucketEntry.
+     */
+    private boolean checkPreviousBucketEntry(int bucketListPosition, Date date, List<BucketEntry> listToCheckIn) {
         
-        // TODO check entry at position - 1 for the timestamp and if BucketEntry has VaultEntryType EMPTY
-        //      if yes then remove that bucket and replace it with the new BucketEntry with a real VaultEntryType
-        //          set bucketEntryNumber-- and return ???
-        //      else don't remove the BucketEntry since it has a vaild VaultEntry inside
-        //          keep this BucketEntry and create a new BucketEntry at the given position
+        // 
+        // TODO check if date == date is ok
+        // TODO check if Type == Type is ok
+        // 
+        if (listToCheckIn.get(bucketListPosition - 1).getVaultEntry().getType() != VaultEntryType.EMPTY && ( listToCheckIn.get(bucketListPosition - 1).getVaultEntry().getTimestamp() == date )) {
+            // VaultEntryType is usable
+            // Timestamp is correct
+            // BucketEntry is ok
+            return true;
+        } else {
+            return false;
+        }
         
-        return false;
     }
 
     public BucketEntry setBucketArrayInformation(int annotationPosition, BucketEntry bucket) 
