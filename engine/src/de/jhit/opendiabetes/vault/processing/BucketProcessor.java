@@ -171,7 +171,7 @@ public class BucketProcessor {
                     System.out.println("Bucket_input_size"); System.out.println(entryList.size());
                     System.out.println("===============================================");}
                 
-                // found an earlier Date        TODO check for hours and minutes ?
+                // found an earlier Date
                 // e.g. given 2000.01.01-00:01 is earlier than the timeCounter date 2000.01.01-00:02
                 if (entryList.get(vaultEntryListPosition).getTimestamp().before(timeCounter)) {
                     
@@ -199,10 +199,12 @@ public class BucketProcessor {
                     System.out.println("Date_before_remove_removing_bucket_entry_from_array_size"); System.out.println(outputBucketList.size());
                     System.out.println("===============================================");}   
         
-                            // the previous BucketEntry is invalid and should be overwritten
-                            outputBucketList.remove(bucketEntryNumber - 1);
+                            // the last BucketEntry is invalid and should be overwritten
+                            // outputBucketEntry.size() - 1 == bucketEntryNumber - 1
+                            outputBucketList.remove(outputBucketList.size() - 1);
                             // create a new Bucket with the given entry
-                            outputBucketList.add(createNewBucket(bucketEntryNumber, entryList.get(vaultEntryListPosition)));
+                            // the new BucketEntry has the bucketEntryNumber from the removed BucketEntry
+                            outputBucketList.add(createNewBucket((bucketEntryNumber - 1), entryList.get(vaultEntryListPosition)));
                             
                             // DO NOT UPDATE THE BUCKETENTRYNUMBER SINCE THE LAST POSITION HAS BEEN OVERWRITTEN
                             
@@ -306,7 +308,7 @@ public class BucketProcessor {
         
                     }
                     
-                // found a later Date           TODO check for hours and minutes ?
+                // found a later Date
                 // e.g. given 2000.01.01-00:02 is after than the timeCounter date 2000.01.01-00:01
                 } else if (entryList.get(vaultEntryListPosition).getTimestamp().after(timeCounter)){
                     // create a new empty Bucket
@@ -358,16 +360,13 @@ public class BucketProcessor {
     private static boolean checkPreviousBucketEntry(int bucketListPosition, Date date, List<BucketEntry> listToCheckIn) {
         
         if (debug) {System.out.println("check_prev_bucket");
-                    System.out.println("incoming_bucket_position"); System.out.println(bucketListPosition);
-                    System.out.println("inside_-1"); System.out.println(bucketListPosition - 1);
+                    System.out.println("incoming_bucket_position"); System.out.println(bucketListPosition + 1);
+                    System.out.println("inside"); System.out.println(bucketListPosition);
                     System.out.println(date);
                     System.out.println("check_prev_output_bucket_size"); System.out.println(listToCheckIn.size());
                     System.out.println("===============================================");}
         
-        // 
-        // TODO check if date == date is ok
-        // TODO check if Type == Type is ok
-        // 
+        // get position - 1 since entry x in the list is at the position x-1
         if (listToCheckIn.get(bucketListPosition - 1).getVaultEntry().getType() != VaultEntryType.EMPTY 
             && 
             listToCheckIn.get(bucketListPosition - 1).getVaultEntry().getTimestamp().equals(date)) {
