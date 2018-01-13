@@ -60,7 +60,7 @@ public class BucketProcessor {
      * @param entry The VaultEntry that will be stored inside the BucketEntry.
      * @return This method returns a newly created BucketEntry
      */
-    public BucketEntry createNewBucket(int bucketNumber, VaultEntry entry) {
+    public static BucketEntry createNewBucket(int bucketNumber, VaultEntry entry) {
         
         // create new BucketEntry
         BucketEntry newBucket = new BucketEntry(bucketNumber, entry);
@@ -115,7 +115,7 @@ public class BucketProcessor {
      * @return This method returns an newly created 'empty' BucketEntry.
      * @throws ParseException 
      */
-    public BucketEntry createEmptyBucket(int bucketNumber, Date date) throws ParseException {
+    public static BucketEntry createEmptyBucket(int bucketNumber, Date date) throws ParseException {
         
         BucketEntry newBucket = new BucketEntry(bucketNumber, new VaultEntry(VaultEntryType.EMPTY, date));
         return newBucket;
@@ -133,7 +133,7 @@ public class BucketProcessor {
      * @throws ParseException 
      */
     // TODO test for Date change when reaching 00:00 of the next day
-    public List<BucketEntry> createListOfBuckets(List<VaultEntry> entryList) throws ParseException {
+    public static List<BucketEntry> createListOfBuckets(List<VaultEntry> entryList) throws ParseException {
         
         // BucketEntry list counter
         // BucketEntryNumber starts with entry number 1
@@ -194,7 +194,7 @@ public class BucketProcessor {
                     
                     if (entryList.get(vaultEntryListPosition).getType().isMLrelevant()) {
                         
-                        /* not possible???
+                        /* not possible since there hasn't been a BucketEntry till this time???
                         // check if there already is a previous BucketEntry with the same VaultEntry timestamp and if this BucketEntry can be removed
                         if (checkPreviousBucketEntry(bucketEntryNumber, timeCounter, outputBucketList)) {                            
                         } else {                            
@@ -292,7 +292,7 @@ public class BucketProcessor {
      * @param listToCheckIn This is the list of BucketEntrys in which the BucketEntry will be taken out of.
      * @return This method returns true if the previous BucketEntry is not an empty BucketEntry and the Date matches and returns false if the previous BucketEntry is an empty BucketEntry.
      */
-    private boolean checkPreviousBucketEntry(int bucketListPosition, Date date, List<BucketEntry> listToCheckIn) {
+    private static boolean checkPreviousBucketEntry(int bucketListPosition, Date date, List<BucketEntry> listToCheckIn) {
         
         // 
         // TODO check if date == date is ok
