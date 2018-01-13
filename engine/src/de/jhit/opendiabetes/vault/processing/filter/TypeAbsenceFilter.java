@@ -18,6 +18,7 @@ package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
+import de.jhit.opendiabetes.vault.container.VaultEntryTypeGroup;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,7 +33,9 @@ public class TypeAbsenceFilter extends Filter {
 
     private final long marginAfterTrigger; // minutes after a trigger until data becomes interesting again.
     private final List<VaultEntryType> types;
-    Date lastMealFound = null;
+    private final VaultEntryTypeGroup typeGroup;
+
+    Date lastEntryTimeFound = null;
 
     /**
      * The Filter gets a List of EntryTypes and excludes all entries from the
@@ -46,43 +49,41 @@ public class TypeAbsenceFilter extends Filter {
     public TypeAbsenceFilter(List<VaultEntryType> types, long marginAfterTrigger) {
         this.marginAfterTrigger = marginAfterTrigger;
         this.types = types;
+        this.typeGroup = null;
     }
 
     /**
-     * The filter either gets a group of EntryTypes, or a specific EntryType and
-     * excludes all entries from the FilterResult, whose EntryType belong to the
-     * group or are located in the time margin after a trigger of the group
-     * occurs.
+     * The filter gets a group of EntryTypes and excludes all entries from the
+     * FilterResult, whose EntryType belong to the group or are located in the
+     * time margin after a trigger of the group occurs.
      * <p>
      * For more information about groups, look at VaultEntryType.java.
      *
-     * @param typeGroup either a group of EntryTypes, or a specific EntryType
+     * @param typeGroup a group of EntryTypes
      * @param marginAfterTrigger minutes after a trigger until data becomes
      * interesting again
      */
-    public TypeAbsenceFilter(VaultEntryType typeGroup, long marginAfterTrigger) {
-        //this(VaultEntryType.getTypesOfGroup(typeGroup), marginAfterTrigger);
-        if (typeGroup.getGROUP() != typeGroup) {
-            this.types = new ArrayList<>();
-            types.add(typeGroup);
-        } else {
-            this.types = VaultEntryType.getTypesOfGroup(typeGroup);
-        }
+    public TypeAbsenceFilter(VaultEntryTypeGroup typeGroup, long marginAfterTrigger) {
+        this.typeGroup = typeGroup;
         this.marginAfterTrigger = marginAfterTrigger;
+        this.types = null;
     }
 
     @Override
     boolean matchesFilterParameters(VaultEntry entry) {
         boolean result = true;
-        if (types.contains(entry.getType())) {
-            lastMealFound = entry.getTimestamp();
+
+        //maybe buggy behaviour. Whole class better be refactored in separate filter, e.g. TypeFilter, groupFilter and ExclusionFilter
+        if ((types != null && types.contains(entry.getType())) || typeGroup == entry.getType().getGROUP()) {
+            lastEntryTimeFound = entry.getTimestamp();
             result = false;
-        } else if ((lastMealFound != null
+        } else if ((lastEntryTimeFound != null
                 && !TimestampUtils
-                        .addMinutesToTimestamp(lastMealFound, marginAfterTrigger)
+                        .addMinutesToTimestamp(lastEntryTimeFound, marginAfterTrigger)
                         .before(entry.getTimestamp()))) {
             result = false;
         }
+
         return result;
     }
 
