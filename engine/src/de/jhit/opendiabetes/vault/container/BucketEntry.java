@@ -17,6 +17,7 @@
 package de.jhit.opendiabetes.vault.container;
 
 import static de.jhit.opendiabetes.vault.container.BucketEventTriggers.ARRAY_ENTRY_TRIGGER_HASHMAP;
+import java.util.Arrays;
 
 /**
  *
@@ -54,6 +55,9 @@ public class BucketEntry {
         onehoteInformationArray = new double[NUMBER_OF_VAULT_ENTRY_TRIGGER_TYPES];
 //        entryTypeArray = new VaultEntryType[NUMBEROFVAULTENTRYTRIGGERTYPES];
         findNextArray = new VaultEntryType[NUMBER_OF_VAULT_ENTRY_TRIGGER_TYPES];
+        
+        // Fill findNextArray with EMPTY
+        Arrays.fill(findNextArray, VaultEntryType.EMPTY);
     }
     
     // 
@@ -78,7 +82,23 @@ public class BucketEntry {
     public static int getNumberOfVaultEntryTriggerTypes() {
         return NUMBER_OF_VAULT_ENTRY_TRIGGER_TYPES;
     }
-
+    
+    // 
+    // GETTER full arrays of a BucketEntry
+    // 
+    // get full time countdown
+    public double[] getFullTimeCountDown() {
+        return timeCountDownArray;
+    }
+    // get full time countdown
+    public double[] getFullOnehoteInformationArray() {
+        return onehoteInformationArray;
+    }
+    // get full time countdown
+    public double[] getFullFindNextArray() {
+        return timeCountDownArray;
+    }
+    
     //
     // GETTER
     //
