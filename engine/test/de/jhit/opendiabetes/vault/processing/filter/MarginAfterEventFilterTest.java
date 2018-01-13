@@ -41,7 +41,7 @@ import org.junit.Test;
 public class MarginAfterEventFilterTest extends Assert {
 
     List<VaultEntry> data;
-            
+
     @BeforeClass
     public static void setUpClass() {
     }
@@ -57,36 +57,36 @@ public class MarginAfterEventFilterTest extends Assert {
     @After
     public void tearDown() {
     }
-    
+
     /**
      * Test of filter method, of class FilterDecoratorTest.
+     *
      * @author daniel, aa80hifa
      */
     @Test
-    public void checkFilterMethod() throws ParseException{
+    public void checkFilterMethod() throws ParseException {
         Filter filter = new MarginAfterEventFilter(60, VaultEntryType.STRESS);
-        
-        data = StaticDataset.getStaticDataset();                
+
+        data = StaticDataset.getStaticDataset();
         FilterResult result = filter.filter(data);
-        
+
         List<VaultEntry> filteredData = new ArrayList<>();
         // 22
-        filteredData.add(new VaultEntry(VaultEntryType.MEAL, TestFunctions.creatNewDateToCheckFor("2017.06.29-04:46"), 21.5));         
-        filteredData.add(new VaultEntry(VaultEntryType.MEAL, TestFunctions.creatNewDateToCheckFor("2017.06.29-06:06"), 35.5));         
-        filteredData.add(new VaultEntry(VaultEntryType.MEAL, TestFunctions.creatNewDateToCheckFor("2017.06.29-07:27"), 25.75));
-        filteredData.add(new VaultEntry(VaultEntryType.MEAL, TestFunctions.creatNewDateToCheckFor("2017.06.29-10:50"), 52.75));      
-        filteredData.add(new VaultEntry(VaultEntryType.MEAL, TestFunctions.creatNewDateToCheckFor("2017.06.29-11:51"), 75.25));
-        
+        filteredData.add(new VaultEntry(VaultEntryType.MEAL_MANUAL, TestFunctions.creatNewDateToCheckFor("2017.06.29-04:46"), 21.5));
+        filteredData.add(new VaultEntry(VaultEntryType.MEAL_MANUAL, TestFunctions.creatNewDateToCheckFor("2017.06.29-06:06"), 35.5));
+        filteredData.add(new VaultEntry(VaultEntryType.MEAL_MANUAL, TestFunctions.creatNewDateToCheckFor("2017.06.29-07:27"), 25.75));
+        filteredData.add(new VaultEntry(VaultEntryType.MEAL_MANUAL, TestFunctions.creatNewDateToCheckFor("2017.06.29-10:50"), 52.75));
+        filteredData.add(new VaultEntry(VaultEntryType.MEAL_MANUAL, TestFunctions.creatNewDateToCheckFor("2017.06.29-11:51"), 75.25));
+
         List<Pair<Date, Date>> timeSeries = new ArrayList<>();
         timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-04:46"), TestFunctions.creatNewDateToCheckFor("2017.06.29-04:46")));
         timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-06:06"), TestFunctions.creatNewDateToCheckFor("2017.06.29-06:06")));
         timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-07:27"), TestFunctions.creatNewDateToCheckFor("2017.06.29-07:27")));
         timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-10:50"), TestFunctions.creatNewDateToCheckFor("2017.06.29-10:50")));
         timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-11:51"), TestFunctions.creatNewDateToCheckFor("2017.06.29-11:51")));
-       
-        
+
         FilterResult checkForThisResult = new FilterResult(filteredData, timeSeries);
-        
+
         assertEquals(result.filteredData, checkForThisResult.filteredData);
         assertEquals(result.timeSeries, checkForThisResult.timeSeries);
         //assertEquals(result, checkForThisResult);

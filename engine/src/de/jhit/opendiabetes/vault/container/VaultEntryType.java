@@ -27,82 +27,69 @@ public enum VaultEntryType {
 
     // Empty Type for BucketEntry
     EMPTY,
-    //Merge Types and Groups
-    CGM_SYSTEM,
-    PUMP_SYSTEM,
-    SLEEP,
-    LOCATION,
-    EXERCISE,
-    GLUCOSE,
-    MACHINE_LEARNING,
-    DATA_MINING,
-    BASAL,
-    HEART,
-    BOLUS,
-    MEAL,
     // Bolus
-    BOLUS_NORMAL(BOLUS, false, true),
-    BOLUS_SQARE(BOLUS, false, true),
+    BOLUS_NORMAL(VaultEntryTypeGroup.BOLUS, false, true),
+    BOLUS_SQARE(VaultEntryTypeGroup.BOLUS, false, true),
     // Basal
-    BASAL_PROFILE(BASAL, false, true, BASAL),
-    BASAL_MANUAL(BASAL, false, true, BASAL),
-    BASAL_INTERPRETER(BASAL, false, true, BASAL),
+    BASAL_PROFILE(VaultEntryTypeGroup.BASAL, false, true),
+    BASAL_MANUAL(VaultEntryTypeGroup.BASAL, false, true, BASAL_PROFILE),
+    BASAL_INTERPRETER(VaultEntryTypeGroup.BASAL, false, true, BASAL_PROFILE),
     // Exercise
-    EXERCISE_MANUAL(EXERCISE, true, true),
-    EXERCISE_OTHER(EXERCISE, true, true),
-    EXERCISE_WALK(EXERCISE, true, true),
-    EXERCISE_BICYCLE(EXERCISE, true, true),
-    EXERCISE_RUN(EXERCISE, true, true),
+    EXERCISE_MANUAL(VaultEntryTypeGroup.EXERCISE, true, true),
+    EXERCISE_OTHER(VaultEntryTypeGroup.EXERCISE, true, true),
+    EXERCISE_WALK(VaultEntryTypeGroup.EXERCISE, true, true),
+    EXERCISE_BICYCLE(VaultEntryTypeGroup.EXERCISE, true, true),
+    EXERCISE_RUN(VaultEntryTypeGroup.EXERCISE, true, true),
     // Glucose
-    GLUCOSE_CGM(GLUCOSE, false, true),
-    GLUCOSE_CGM_RAW(GLUCOSE),
-    GLUCOSE_CGM_ALERT(GLUCOSE, true, VaultEntryType.MAYBE),
-    GLUCOSE_CGM_CALIBRATION(GLUCOSE, false, VaultEntryType.MAYBE),
-    GLUCOSE_BG(GLUCOSE, false, VaultEntryType.MAYBE),
-    GLUCOSE_BG_MANUAL(GLUCOSE, false, VaultEntryType.MAYBE),
-    GLUCOSE_BOLUS_CALCULATION(GLUCOSE, false, VaultEntryType.MAYBE),
-    GLUCOSE_ELEVATION_30(GLUCOSE),
+    GLUCOSE_CGM(VaultEntryTypeGroup.GLUCOSE, false, true),
+    GLUCOSE_CGM_RAW(VaultEntryTypeGroup.GLUCOSE),
+    GLUCOSE_CGM_ALERT(VaultEntryTypeGroup.GLUCOSE, true, VaultEntryType.MAYBE),
+    GLUCOSE_CGM_CALIBRATION(VaultEntryTypeGroup.GLUCOSE, false, VaultEntryType.MAYBE),
+    GLUCOSE_BG(VaultEntryTypeGroup.GLUCOSE, false, VaultEntryType.MAYBE),
+    GLUCOSE_BG_MANUAL(VaultEntryTypeGroup.GLUCOSE, false, VaultEntryType.MAYBE),
+    GLUCOSE_BOLUS_CALCULATION(VaultEntryTypeGroup.GLUCOSE, false, VaultEntryType.MAYBE),
+    GLUCOSE_ELEVATION_30(VaultEntryTypeGroup.GLUCOSE),
     // CGM system
-    CGM_SENSOR_FINISHED(CGM_SYSTEM, true, VaultEntryType.MAYBE),
-    CGM_SENSOR_START(CGM_SYSTEM, true, VaultEntryType.MAYBE),
-    CGM_CONNECTION_ERROR(CGM_SYSTEM, true, VaultEntryType.MAYBE),
-    CGM_CALIBRATION_ERROR(CGM_SYSTEM, true, true),
-    CGM_TIME_SYNC(CGM_SYSTEM, false, VaultEntryType.MAYBE),
+    CGM_SENSOR_FINISHED(VaultEntryTypeGroup.CGM_SYSTEM, true, VaultEntryType.MAYBE),
+    CGM_SENSOR_START(VaultEntryTypeGroup.CGM_SYSTEM, true, VaultEntryType.MAYBE),
+    CGM_CONNECTION_ERROR(VaultEntryTypeGroup.CGM_SYSTEM, true, VaultEntryType.MAYBE),
+    CGM_CALIBRATION_ERROR(VaultEntryTypeGroup.CGM_SYSTEM, true, true),
+    CGM_TIME_SYNC(VaultEntryTypeGroup.CGM_SYSTEM, false, VaultEntryType.MAYBE),
     // Meal
-    MEAL_BOLUS_CALCULATOR(MEAL, false, true, MEAL),
-    MEAL_MANUAL(MEAL, false, true, MEAL),
+    MEAL_BOLUS_CALCULATOR(VaultEntryTypeGroup.MEAL, false, true),
+    MEAL_MANUAL(VaultEntryTypeGroup.MEAL, false, true, MEAL_BOLUS_CALCULATOR),
     // Pump Events
-    PUMP_REWIND(PUMP_SYSTEM, true, VaultEntryType.MAYBE),
-    PUMP_PRIME(PUMP_SYSTEM, false, VaultEntryType.MAYBE),
-    PUMP_FILL(PUMP_SYSTEM, true, VaultEntryType.MAYBE),
-    PUMP_FILL_INTERPRETER(PUMP_SYSTEM, true, VaultEntryType.MAYBE, PUMP_FILL),
-    PUMP_NO_DELIVERY(PUMP_SYSTEM, true, true),
-    PUMP_SUSPEND(PUMP_SYSTEM, true, true),
-    PUMP_UNSUSPEND(PUMP_SYSTEM, false, true),
-    PUMP_UNTRACKED_ERROR(PUMP_SYSTEM),
-    PUMP_RESERVOIR_EMPTY(PUMP_SYSTEM, true, VaultEntryType.MAYBE),
-    PUMP_TIME_SYNC(PUMP_SYSTEM, false, VaultEntryType.MAYBE),
-    PUMP_AUTONOMOUS_SUSPEND(PUMP_SYSTEM, true, true, PUMP_SUSPEND),
-    PUMP_CGM_PREDICTION(PUMP_SYSTEM),
+    PUMP_REWIND(VaultEntryTypeGroup.PUMP_SYSTEM, true, VaultEntryType.MAYBE),
+    PUMP_PRIME(VaultEntryTypeGroup.PUMP_SYSTEM, false, VaultEntryType.MAYBE),
+    PUMP_FILL(VaultEntryTypeGroup.PUMP_SYSTEM, true, VaultEntryType.MAYBE),
+    PUMP_FILL_INTERPRETER(VaultEntryTypeGroup.PUMP_SYSTEM, true, VaultEntryType.MAYBE, PUMP_FILL),
+    PUMP_NO_DELIVERY(VaultEntryTypeGroup.PUMP_SYSTEM, true, true),
+    PUMP_SUSPEND(VaultEntryTypeGroup.PUMP_SYSTEM, true, true),
+    PUMP_UNSUSPEND(VaultEntryTypeGroup.PUMP_SYSTEM, false, true),
+    PUMP_UNTRACKED_ERROR(VaultEntryTypeGroup.PUMP_SYSTEM),
+    PUMP_RESERVOIR_EMPTY(VaultEntryTypeGroup.PUMP_SYSTEM, true, VaultEntryType.MAYBE),
+    PUMP_TIME_SYNC(VaultEntryTypeGroup.PUMP_SYSTEM, false, VaultEntryType.MAYBE),
+    PUMP_AUTONOMOUS_SUSPEND(VaultEntryTypeGroup.PUMP_SYSTEM, true, true, PUMP_SUSPEND),
+    PUMP_CGM_PREDICTION(VaultEntryTypeGroup.PUMP_SYSTEM),
     // Sleep
-    SLEEP_LIGHT(SLEEP, true, true, SLEEP),
-    SLEEP_REM(SLEEP, true, true, SLEEP),
-    SLEEP_DEEP(SLEEP, true, true, SLEEP),
+    SLEEP_LIGHT(VaultEntryTypeGroup.SLEEP, true, true),
+    SLEEP_REM(VaultEntryTypeGroup.SLEEP, true, true, SLEEP_LIGHT),
+    SLEEP_DEEP(VaultEntryTypeGroup.SLEEP, true, true, SLEEP_LIGHT),
     // Heart
-    HEART_RATE(HEART, false, VaultEntryType.MAYBE),
-    HEART_RATE_VARIABILITY(HEART, false, VaultEntryType.MAYBE),
-    STRESS(HEART),
-    // Location (Geocoding)
-    LOC_TRANSISTION(LOCATION, true, true),
-    LOC_HOME(LOCATION, true, true),
-    LOC_WORK(LOCATION, true, true),
-    LOC_FOOD(LOCATION, true, true),
-    LOC_SPORTS(LOCATION, true, true),
-    LOC_OTHER(LOCATION),
+    HEART_RATE(VaultEntryTypeGroup.HEART, false, VaultEntryType.MAYBE),
+    HEART_RATE_VARIABILITY(VaultEntryTypeGroup.HEART, false, VaultEntryType.MAYBE),
+    STRESS(VaultEntryTypeGroup.HEART),
+    // Location (VaultEntryTypeGroup.Geocoding)
+    LOC_TRANSISTION(VaultEntryTypeGroup.LOCATION, true, true),
+    LOC_HOME(VaultEntryTypeGroup.LOCATION, true, true),
+    LOC_WORK(VaultEntryTypeGroup.LOCATION, true, true),
+    LOC_FOOD(VaultEntryTypeGroup.LOCATION, true, true),
+    LOC_SPORTS(VaultEntryTypeGroup.LOCATION, true, true),
+    LOC_OTHER(VaultEntryTypeGroup.LOCATION),
     // Machine Learning
-    ML_CGM_PREDICTION(MACHINE_LEARNING),
+    ML_CGM_PREDICTION(VaultEntryTypeGroup.MACHINE_LEARNING),
     // Date Mining
-    DM_INSULIN_SENSITIVTY(DATA_MINING, false, VaultEntryType.MAYBE),
+    DM_INSULIN_SENSITIVTY(VaultEntryTypeGroup.DATA_MINING, false, VaultEntryType.MAYBE),
     // More unspecific input
     OTHER_ANNOTATION;
 
@@ -112,7 +99,7 @@ public enum VaultEntryType {
     private final boolean ISONEHOT;
     private final boolean ISMLRELEVANT;
     private final VaultEntryType MERGETYPE;
-    private final VaultEntryType GROUP;
+    private final VaultEntryTypeGroup GROUP;
 
     /**
      *
@@ -120,21 +107,21 @@ public enum VaultEntryType {
      * @param isMLrelevant information about the type's ML relevance
      * @param mergeType
      */
-    VaultEntryType(VaultEntryType group, boolean isOneHot, boolean isMLrelevant, VaultEntryType mergeType) {
+    VaultEntryType(VaultEntryTypeGroup group, boolean isOneHot, boolean isMLrelevant, VaultEntryType mergeType) {
         this.ISONEHOT = isOneHot;
         this.ISMLRELEVANT = isMLrelevant;
         this.MERGETYPE = mergeType;
         this.GROUP = group;
     }
 
-    VaultEntryType(VaultEntryType group, boolean isOneHot, boolean isMLrelevant) {
+    VaultEntryType(VaultEntryTypeGroup group, boolean isOneHot, boolean isMLrelevant) {
         this.ISONEHOT = isOneHot;
         this.ISMLRELEVANT = isMLrelevant;
         this.MERGETYPE = this;
         this.GROUP = group;
     }
 
-    VaultEntryType(VaultEntryType group) {
+    VaultEntryType(VaultEntryTypeGroup group) {
         this.ISONEHOT = false;
         this.ISMLRELEVANT = false;
         this.MERGETYPE = this;
@@ -145,7 +132,7 @@ public enum VaultEntryType {
         this.ISONEHOT = false;
         this.ISMLRELEVANT = false;
         this.MERGETYPE = this;
-        this.GROUP = this;
+        this.GROUP = VaultEntryTypeGroup.EMPTY;
     }
 
     /**
@@ -182,18 +169,8 @@ public enum VaultEntryType {
      *
      * @return the Group of the VaultEntryType
      */
-    public VaultEntryType getGROUP() {
+    public VaultEntryTypeGroup getGROUP() {
         return GROUP;
-    }
-
-    public static List<VaultEntryType> getTypesOfGroup(VaultEntryType group) {
-        ArrayList<VaultEntryType> result = new ArrayList<>();
-        for (VaultEntryType type : VaultEntryType.values()) {
-            if (type.getGROUP() == group) {
-                result.add(type);
-            }
-        }
-        return result;
     }
 
 }

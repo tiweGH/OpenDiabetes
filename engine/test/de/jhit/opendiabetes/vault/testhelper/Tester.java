@@ -18,6 +18,7 @@ package de.jhit.opendiabetes.vault.testhelper;
  */
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
+import de.jhit.opendiabetes.vault.container.VaultEntryTypeGroup;
 import de.jhit.opendiabetes.vault.processing.filter.ContinuousWrapper;
 import de.jhit.opendiabetes.vault.processing.filter.EventFilter;
 import de.jhit.opendiabetes.vault.processing.filter.Filter;
@@ -88,7 +89,7 @@ public class Tester {
 //            }
             List<VaultEntryType> types = new ArrayList<>();
             types.add(VaultEntryType.GLUCOSE_BOLUS_CALCULATION);
-            TypeAbsenceFilter meal = new TypeAbsenceFilter(VaultEntryType.GLUCOSE_BOLUS_CALCULATION, 20);
+            TypeAbsenceFilter meal = new TypeAbsenceFilter(VaultEntryTypeGroup.GLUCOSE, 20);
             fr = meal.filter(StaticDataset.getStaticDataset());
             for (Pair<Date, Date> to : fr.timeSeries) {
                 System.out.println(to.toString());
@@ -97,7 +98,7 @@ public class Tester {
 //                System.out.println(to.toString());
 //            }
 
-            for (VaultEntryType type : VaultEntryType.getTypesOfGroup(VaultEntryType.GLUCOSE)) {
+            for (VaultEntryType type : VaultEntryTypeGroup.GLUCOSE.getTypes()) {
                 System.out.println(type);
             }
 

@@ -53,8 +53,8 @@ public class ExporterManipulator_1 {
     public static void main(String[] args) throws ParseException, SQLException, IOException {
 
         List<VaultEntry> dataTW = new ArrayList<>();
-        dataTW.add(new VaultEntry(VaultEntryType.MEAL, TimestampUtils.createCleanTimestamp("2017.06.29-04:50", "yyyy.MM.dd-HH:mm")));
-        dataTW.add(new VaultEntry(VaultEntryType.MEAL, TimestampUtils.createCleanTimestamp("2017.06.29-04:53", "yyyy.MM.dd-HH:mm")));
+        dataTW.add(new VaultEntry(VaultEntryType.MEAL_MANUAL, TimestampUtils.createCleanTimestamp("2017.06.29-04:50", "yyyy.MM.dd-HH:mm")));
+        dataTW.add(new VaultEntry(VaultEntryType.MEAL_MANUAL, TimestampUtils.createCleanTimestamp("2017.06.29-04:53", "yyyy.MM.dd-HH:mm")));
 
         List<VaultEntry> result = fillBuckets333(dataTW);
 
