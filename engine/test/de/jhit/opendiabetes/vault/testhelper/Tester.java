@@ -25,6 +25,7 @@ import de.jhit.opendiabetes.vault.processing.filter.Filter;
 import de.jhit.opendiabetes.vault.processing.filter.FilterResult;
 import de.jhit.opendiabetes.vault.processing.filter.FilterType;
 import de.jhit.opendiabetes.vault.processing.filter.MealAbsenceFilter;
+import de.jhit.opendiabetes.vault.processing.filter.NoneFilter;
 import de.jhit.opendiabetes.vault.processing.filter.OverThresholdFilter;
 import de.jhit.opendiabetes.vault.processing.filter.TypeAbsenceFilter;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
@@ -46,62 +47,28 @@ public class Tester {
 
     public static void main(String[] args) {
         try {
-            //        for (VaultEntryType v : VaultEntryType.values()) {
-//            System.out.println(v.toString() + " " + v.isOneHot() + " " + v.isMLrelevant() + " " + v.mergeTo());
-//        }
-            Filter fla = new EventFilter(VaultEntryType.GLUCOSE_BG);
-            FilterResult fri = fla.filter(StaticDataset.getStaticDataset());
-            System.out.println(fri.filteredData.size() + " " + fri.timeSeries.size());
-//            for (Pair<Date, Date> tp : fr.timeSeries) {
-//                System.out.println(tp.toString());
-//            }
-//            Date timep = TimestampUtils.createCleanTimestamp("2017.06.29-04:53", "yyyy.MM.dd-HH:mm");
-//            System.out.println(TimestampUtils.addMinutesToTimestamp(timep, -1 * (5)).toString());
-//            System.out.println(new Date(timep.getTime() - MILLISECONDS.convert(5, MINUTES)).toString());
-            List<Filter> lili = new ArrayList();
-            lili.add(fla);
-            ContinuousWrapper cont = new ContinuousWrapper(lili, 0);
-
-            FilterResult fr = cont.filter(StaticDataset.getStaticDataset());
-//            List<Pair<Date, Date>> tp = new ArrayList<>();
-//            tp.add(new Pair(TimestampUtils.createCleanTimestamp("2017.06.29-04:53", "yyyy.MM.dd-HH:mm"),
-//                    TimestampUtils.createCleanTimestamp("2017.06.29-04:53", "yyyy.MM.dd-HH:mm")));
-//            tp.add(new Pair(TimestampUtils.createCleanTimestamp("2017.06.29-04:54", "yyyy.MM.dd-HH:mm"),
-//                    TimestampUtils.createCleanTimestamp("2017.06.29-04:54", "yyyy.MM.dd-HH:mm")));
-//            tp = cont.normalizeTimeSeries(tp, 0, 0);
-//            for (Pair<Date, Date> to : tp) {
-//                System.out.println(to.toString());
-//            }
-            //System.out.println(tp.size());
-//            System.out.println(fr.size());
-//            System.out.println(StaticDataset.getStaticDataset().size());
-//            for (Pair<Date, Date> to : fr.timeSeries) {
-//                System.out.println(to.toString());
-//            }
-//            for (Pair<Date, Date> to : fri.timeSeries) {
-//                System.out.println(to.toString());
-//            }
-//            for (VaultEntry to : fr.filteredData) {
-//                System.out.println(to.toString());
-//            }
-//            for (VaultEntry to : fri.filteredData) {
-//                System.out.println(to.toString());
-//            }
-            List<VaultEntryType> types = new ArrayList<>();
-            types.add(VaultEntryType.GLUCOSE_BOLUS_CALCULATION);
-            TypeAbsenceFilter meal = new TypeAbsenceFilter(VaultEntryTypeGroup.GLUCOSE, 20);
-            fr = meal.filter(StaticDataset.getStaticDataset());
-            for (Pair<Date, Date> to : fr.timeSeries) {
-                System.out.println(to.toString());
+            NoneFilter nf = new NoneFilter();
+            System.out.println(StaticDataset.getStaticDataset().size());
+            System.out.println(TimestampUtils.getNormalizedTimeSeries(StaticDataset.getStaticDataset(), 0).size());
+            System.out.println(nf.filter(StaticDataset.getStaticDataset()).timeSeries.size());
+            List<VaultEntry> entries = StaticDataset.getStaticDataset();
+            List<Pair<Date, Date>> result = TimestampUtils.getNormalizedTimeSeries(StaticDataset.getStaticDataset(), 0);
+            for (VaultEntry entry : entries) {
+                boolean isso = false;
+                for (Pair<Date, Date> pair : result) {
+                    isso = TimestampUtils.withinDateTimeSpan(pair.getKey(), pair.getValue(), entry.getTimestamp()) || isso;
+                    if (TimestampUtils.withinDateTimeSpan(pair.getKey(), pair.getValue(), entry.getTimestamp())) {
+                        if (!pair.getKey().equals(pair.getValue())) {
+                            System.out.println(entry.getTimestamp().toString() + " is in " + pair.toString());
+                        } else {
+                            System.out.println(pair.toString());
+                        }
+                    }
+                }
+                if (!isso) {
+                    System.out.println(entry.getTimestamp().toString() + " has no result");
+                }
             }
-//            for (VaultEntry to : fr.filteredData) {
-//                System.out.println(to.toString());
-//            }
-
-            for (VaultEntryType type : VaultEntryTypeGroup.GLUCOSE.getTypes()) {
-                System.out.println(type);
-            }
-
         } catch (ParseException ex) {
             Logger.getLogger(Tester.class.getName()).log(Level.SEVERE, null, ex);
         }

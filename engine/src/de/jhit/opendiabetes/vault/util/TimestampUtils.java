@@ -16,6 +16,7 @@
  */
 package de.jhit.opendiabetes.vault.util;
 
+import de.jhit.opendiabetes.vault.container.VaultEntry;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -23,13 +24,16 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
+import javafx.util.Pair;
 
 /**
  *
- * @author juehv
+ * @author juehv, tiweGH
  */
 public class TimestampUtils {
 
@@ -137,6 +141,100 @@ public class TimestampUtils {
             return (tp.isAfter(startTime) || tp.equals(startTime))
                     || (tp.isBefore(endTime) || tp.equals(endTime));
         }
+    }
+
+    /**
+     * Gets a series of time spans and merges overlapping spans according to the
+     * <code>marginInMinutes</code> value set in the constructor
+     *
+     * @param timeSeries time spans to be merged
+     * @param marginBefore margin before each timespamp
+     * @param marginAfter margin after each timespamp
+     * @return merged time series
+     */
+    public static List<Pair<Date, Date>> normalizeTimeSeries(List<Pair<Date, Date>> timeSeries, int marginBefore, int marginAfter) {
+        List<Pair<Date, Date>> result = new ArrayList<>();
+        Date startOfCurentTimeSeries = null;
+        Date lastTimeStamp = null;
+        Date tempTimeStamp = null;
+        for (Pair<Date, Date> p : timeSeries) {
+            if (startOfCurentTimeSeries == null) {
+                //initial run of the loop
+                startOfCurentTimeSeries = TimestampUtils.addMinutesToTimestamp(p.getKey(), -1 * marginBefore);
+                lastTimeStamp = TimestampUtils.addMinutesToTimestamp(p.getValue(), marginAfter);
+                //for the comparison, adds 1 to lastTimeStamp to include Timestamps starting directly the minute after the last
+            } else if (TimestampUtils.withinDateTimeSpan(startOfCurentTimeSeries, TimestampUtils.addMinutesToTimestamp(lastTimeStamp, 1), p.getKey())
+                    || TimestampUtils.withinDateTimeSpan(startOfCurentTimeSeries, TimestampUtils.addMinutesToTimestamp(lastTimeStamp, 1), TimestampUtils.addMinutesToTimestamp(p.getKey(), -1 * marginBefore))) {
+                //Dates which start within the current time span, or would start within after margin has been applied
+                tempTimeStamp = TimestampUtils.addMinutesToTimestamp(p.getValue(), marginAfter);
+                if (!(TimestampUtils.withinDateTimeSpan(startOfCurentTimeSeries, lastTimeStamp, tempTimeStamp))) {
+                    //the current time span extends to the end of the merged time span
+                    lastTimeStamp = tempTimeStamp;
+                }
+            } else {
+                //if no othe time span can be merged to the current span, it will be added to the result and the next span starts
+                result.add(new Pair<>(startOfCurentTimeSeries, lastTimeStamp));
+                startOfCurentTimeSeries = TimestampUtils.addMinutesToTimestamp(p.getKey(), -1 * marginBefore);
+                lastTimeStamp = TimestampUtils.addMinutesToTimestamp(p.getValue(), marginAfter);
+            }
+
+        }
+        if (timeSeries.size() > 0) {
+            result.add(new Pair<>(startOfCurentTimeSeries, lastTimeStamp));
+        }
+        return result;
+    }
+
+    /**
+     * Gets a series of time spans and merges overlapping spans according to the
+     * <code>marginInMinutes</code> value set in the constructor
+     *
+     * @param timeSeries time spans to be merged
+     * @param margin margin before and after each timespamp
+     * @return merged time series
+     */
+    public static List<Pair<Date, Date>> normalizeTimeSeries(List<Pair<Date, Date>> timeSeries, int margin) {
+        return normalizeTimeSeries(timeSeries, margin, margin);
+    }
+
+    /**
+     * Generates a normalized TimeSeries with entry-Timestamps as input if no
+     * pre-processed TimeSeries is aviable.
+     * <p>
+     * Has NOT the same effect as getting the filterResult.timeSeries of e.g.
+     * NoneFilter, which would return a single Timestamp containing all entries.
+     * This will return a List of ALL entry-timestamps, merged depending on the
+     * margin
+     *
+     * @param data List of VaultEntrys, containing Timestamps
+     * @param marginBefore margin before each timespamp
+     * @param marginAfter margin after each timespamp
+     * @return merged time series
+     */
+    public static List<Pair<Date, Date>> getNormalizedTimeSeries(List<VaultEntry> data, int marginBefore, int marginAfter) {
+        List<Pair<Date, Date>> result = new ArrayList<>();
+        for (VaultEntry vaultEntry : data) {
+            result.add(new Pair<>(vaultEntry.getTimestamp(), vaultEntry.getTimestamp()));
+        }
+        result = normalizeTimeSeries(result, marginBefore, marginAfter);
+        return result;
+    }
+
+    /**
+     * Generates a normalized TimeSeries with entry-Timestamps as input if no
+     * pre-processed TimeSeries is aviable.
+     * <p>
+     * Has NOT the same effect as getting the filterResult.timeSeries of e.g.
+     * NoneFilter, which would return a single Timestamp containing all entries.
+     * This will return a List of ALL entry-timestamps, merged depending on the
+     * margin
+     *
+     * @param data List of VaultEntrys, containing Timestamps
+     * @param margin margin before and after each timespamp
+     * @return merged time series
+     */
+    public static List<Pair<Date, Date>> getNormalizedTimeSeries(List<VaultEntry> data, int margin) {
+        return getNormalizedTimeSeries(data, margin, margin);
     }
 
 }
