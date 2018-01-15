@@ -19,7 +19,6 @@ package de.jhit.opendiabetes.vault.processing;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.container.BucketEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
-import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import static de.jhit.opendiabetes.vault.util.TimestampUtils.addMinutesToTimestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -49,9 +48,9 @@ public class BucketProcessor {
     // 
 
     // time countdown Array
-    private int[] timeCountDownArray = new int[BucketEntry.getNumberOfVaultEntryTriggerTypes()];
+    private double[] timeCountDownArray = new double[BucketEntry.getNumberOfVaultEntryTriggerTypes()];
     // onehot information Array
-    private double[] booleanArray = new double[BucketEntry.getNumberOfVaultEntryTriggerTypes()];
+    private double[] onehotInformationArray = new double[BucketEntry.getNumberOfVaultEntryTriggerTypes()];
     // onehot Annotaion
 //    private VaultEntryType[] entryTypeArray = new VaultEntryType[BucketEntry.getNumberOfVaultEntryTriggerTypes()];
     // TODO missing wait till next entry
@@ -82,7 +81,7 @@ public class BucketProcessor {
                 // set Act Time
             newBucket.setTimeCountDown(arrayPosition, entry.getValue());
                 // set boolean true
-            newBucket.setOnehoteInformationArray(arrayPosition, 1);
+            newBucket.setOnehotInformationArray(arrayPosition, 1);
                 // set to EMPTY
             newBucket.setFindNextArray(arrayPosition, VaultEntryType.EMPTY);
                 
@@ -91,7 +90,7 @@ public class BucketProcessor {
                 // set to 0 (no direct Act Time)
             newBucket.setTimeCountDown(arrayPosition, 0);
                 // set boolean true
-            newBucket.setOnehoteInformationArray(arrayPosition, 1);
+            newBucket.setOnehotInformationArray(arrayPosition, 1);
                 // set find next to the needed VaultEntryType
             newBucket.setFindNextArray(arrayPosition, TRIGGER_EVENT_ACT_TIME_TILL_NEXT_EVENT.get(entry.getType()));
                 
@@ -100,7 +99,7 @@ public class BucketProcessor {
                 // set Act Time to 1 Frame
             newBucket.setTimeCountDown(arrayPosition, 1);
                 // set boolean true
-            newBucket.setOnehoteInformationArray(arrayPosition, 1);
+            newBucket.setOnehotInformationArray(arrayPosition, 1);
                 // set to EMPTY
             newBucket.setFindNextArray(arrayPosition, VaultEntryType.EMPTY);
                 
@@ -133,6 +132,7 @@ public class BucketProcessor {
      * and if not then a new empty BucketEntry will be crated in it's place.
      * This method also creates a BucketEntry for every minute that passes starting from the timestamp of the first given VaultEntry 
      * and ending with the timestamp of the last given VaultEntry.
+     * Do not call this method with null as an imput.
      * @param entryList This is the list of VaultEntrys that will be converted into a list of BucketEntrys.
      * @return  This method returns the list of BucketEntrys that is generated out of the given list of VaultEntrys.
      * @throws ParseException 
@@ -149,7 +149,8 @@ public class BucketProcessor {
 
         // TODO Liste aus Buckets erstellen aus der gegebenen VaultEnty Liste
         List<BucketEntry> outputBucketList = new ArrayList<>();
-        Date timeCounter = entryList.get(0).getTimestamp();
+        Date timeCounter = null;
+        if (entryList.size() > 0) {timeCounter = entryList.get(0).getTimestamp();}
         // position in the VaultEntry list
         int vaultEntryListPosition = 0;
         
@@ -380,29 +381,68 @@ public class BucketProcessor {
         
     }
 
-    public BucketEntry setBucketArrayInformation(int annotationPosition, BucketEntry bucket) 
-            throws ParseException {
+    public void setBucketArrayInformation(BucketEntry bucket) {
         
-        BucketEntry outputBucket = createEmptyBucket(0, TimestampUtils.createCleanTimestamp("2016.04.18-06:48", "yyyy.MM.dd-HH:mm"));
-
-        /*
+        // initial onehots are set when the Bucket is created
         
+        // 
+        // TODO CHECK FOR DATE TO PREVENT UPDATES IN THE SAME TIMESTAMP!!!!
+        // 
+        
+        // set internal arrays through 1st BucketEntry
+        if (bucket.getBucketNumber() == 1) {
+            timeCountDownArray = bucket.getFullTimeCountDown();
+            onehotInformationArray = bucket.getFullOnehotInformationArray();
+            findNextArray = bucket.getFullFindNextArray();
+        } else {
+            // after 1st BucketEntry
+            for (int i = 0; i < timeCountDownArray.length; i++) {
+                // set timers
+                if (timeCountDownArray[i] > 0) {timeCountDownArray[i] = timeCountDownArray[i] - 1;}
+                // set onehot to false
+                if (timeCountDownArray[i] == 0) {onehotInformationArray[i] = 0;}
+                // set onehot to true
+                if (timeCountDownArray[i] >= 1) {onehotInformationArray[i] = 1;}
+                // check for "till next array"
+                // VaultEntryType is the standard for an empty BucketEntry
+                if (!findNextArray[i].equals(VaultEntryType.EMPTY) &&
+                    findNextArray[i].equals(bucket.getVaultEntry().getType())) {onehotInformationArray[i] = 0;
+                                                                                findNextArray[i] = VaultEntryType.EMPTY;}
+                // 
+                // update info array stats
+                // 
+                // set timer
+                if (bucket.getTimeCountDown(i) > timeCountDownArray[i]) {timeCountDownArray[i] = bucket.getTimeCountDown(i);}
+                // set findNextEntry
+                if (!bucket.getFindNextArray(i).equals(VaultEntryType.EMPTY) && 
+                    !bucket.getFindNextArray(i).equals(findNextArray[i])) {findNextArray[i] = bucket.getFindNextArray(i);}
+                
+                // 
+                // update BucketEntry arrays
+                // 
+                // set timer
+                // TODO if case is wrong???
+                // if true then take this value ... else (false) take new updated time
+                if (timeCountDownArray[i] > bucket.getTimeCountDown(i)) {bucket.setTimeCountDown(i, timeCountDownArray[i]);}
+                else {}
+                
+                // set findNextArray
+                // if findNextArray is EMPTY then it is filled with the needed information
+                // if findNextArray is filled with something else then nothing has to be done
+                if (bucket.getFindNextArray(i).equals(VaultEntryType.EMPTY)) {bucket.setFindNextArray(i, findNextArray[i]);}
+            }
+        }
+        
+        // merge-to
+        bucket.getVaultEntry().setType(bucket.getVaultEntry().getType().mergeTo());
+        
+        // onehot
         // TODO only one change for each timestamp 
         //          same timestamps will have the same information in the Arrays
         
-        // TODO check for onehot
-        if (getTimeCountDown(annotationPosition) > 0) {
-               // setTimeCountDown(annotationPosition) = getTimeCountDown(annotationPosition) - 1;
-               // setBoolean(annotationPosition) = true;
-        }
-
-        // TODO check for merge-to
-        // TODO get merge-to name and rename the bucket
-        return null;
-
-        */
+        // update info stats ... fill internal array with new info where needed ... update bucket arrays
         
-        return outputBucket;
+        
         
     }
 }
