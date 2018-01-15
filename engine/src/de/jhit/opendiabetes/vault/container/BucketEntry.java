@@ -37,7 +37,7 @@ public class BucketEntry {
     // time countdown Array
     private double[] timeCountDownArray;
     // onehot information Array
-    private double[] onehoteInformationArray;
+    private double[] onehotInformationArray;
     // onehot trigger
 //    private VaultEntryType[] entryTypeArray;
     // wait till next entry
@@ -52,7 +52,7 @@ public class BucketEntry {
         
         // Arrays containing OneHot information
         timeCountDownArray = new double[NUMBER_OF_VAULT_ENTRY_TRIGGER_TYPES];
-        onehoteInformationArray = new double[NUMBER_OF_VAULT_ENTRY_TRIGGER_TYPES];
+        onehotInformationArray = new double[NUMBER_OF_VAULT_ENTRY_TRIGGER_TYPES];
 //        entryTypeArray = new VaultEntryType[NUMBEROFVAULTENTRYTRIGGERTYPES];
         findNextArray = new VaultEntryType[NUMBER_OF_VAULT_ENTRY_TRIGGER_TYPES];
         
@@ -91,12 +91,12 @@ public class BucketEntry {
         return timeCountDownArray;
     }
     // get full time countdown
-    public double[] getFullOnehoteInformationArray() {
-        return onehoteInformationArray;
+    public double[] getFullOnehotInformationArray() {
+        return onehotInformationArray;
     }
     // get full time countdown
-    public double[] getFullFindNextArray() {
-        return timeCountDownArray;
+    public VaultEntryType[] getFullFindNextArray() {
+        return findNextArray;
     }
     
     //
@@ -109,8 +109,8 @@ public class BucketEntry {
     }
     // get boolean
     // ArrayOutOfBounds
-    public double getOnehoteInformationArray(int position) {
-        return onehoteInformationArray[position];
+    public double getOnehotInformationArray(int position) {
+        return onehotInformationArray[position];
     }
     // get VaultEntryType
     // ArrayOutOfBounds
@@ -133,8 +133,8 @@ public class BucketEntry {
     }
     // set boolean
     // ArrayOutOfBounds
-    public void setOnehoteInformationArray(int position, double bool) {
-        onehoteInformationArray[position] = bool;
+    public void setOnehotInformationArray(int position, double bool) {
+        onehotInformationArray[position] = bool;
     }
     // set VaultEntryType
     // ArrayOutOfBounds
