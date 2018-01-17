@@ -34,8 +34,6 @@ import static de.jhit.opendiabetes.vault.container.BucketEventTriggers.TRIGGER_E
  * @author aa80hifa
  */
 
-
-    // TODO multiple VaultEntrys possible for one timestamp
     // timestamp < counter == just create bucket
     // timestamp = counter == create bucket / count up
     // timestamp > counder == create emtpy bucket / count up
@@ -46,6 +44,11 @@ public class BucketProcessor {
     // System.out mode (for debugging)
     private static final boolean debug = true;
     // 
+    
+    // Date check for setBucketArrayInformation (merge-to and onehot)
+    private Date lastDate = null;
+    // boolean switch for setBucketArrayInformation (merge-to and onehot)
+    private boolean sameDatesGetNoTimerArrayUpdate = true;
 
     // time countdown Array
     private double[] timeCountDownArray = new double[BucketEntry.getNumberOfVaultEntryTriggerTypes()];
@@ -381,7 +384,27 @@ public class BucketProcessor {
         
     }
 
-    public void setBucketArrayInformation(BucketEntry bucket) {
+    /**
+     * This method sets the necessary information into the BucketEntry arrays and 
+     * manages the onehot markers, onehot timers, and merge-tos.
+     * The Date expected is the timeCounter from createListOfBuckets.
+     * The BucketEntry that is given to this method will have it's arrays updated 
+     * according to the input of the previous BucketEntrys that have been in this method.
+     * The first call of this method musst be done with the BucketEntry with the bucketEntryNumber 1.
+     * @param date This is the current Date from the method createListOfBuckets (timecounter).
+     * @param bucket This is the BucketEntry that will have it's arrays updated.
+     */
+    public void setBucketArrayInformation(Date date, BucketEntry bucket) {
+        
+        // since it is possible to have multiple timestamps with the same date the timers should not be updated untill the next minute has started.
+        // set lastDate on the first call
+        if (lastDate == null) {lastDate = date;}
+        // if lastDate is 2 minutes off then there is a new line of timestamps starting
+        // e.g. lastDate = 00:01 and date = 00:02 then bucketEntrys for the timestamp of 00:01 are being created.
+        //      if lastDate = 00:01 and date = 00:03 then bucketEntrys with the timestamp of 00:02 
+        //          are being created and that's why lastdate need to be updated.
+        if (addMinutesToTimestamp(lastDate, 2) == date) {lastDate = addMinutesToTimestamp(lastDate, 1);
+                                                        sameDatesGetNoTimerArrayUpdate = true;}
         
         // initial onehots are set when the Bucket is created
         
@@ -397,12 +420,17 @@ public class BucketProcessor {
         } else {
             // after 1st BucketEntry
             for (int i = 0; i < timeCountDownArray.length; i++) {
-                // set timers
-                if (timeCountDownArray[i] > 0) {timeCountDownArray[i] = timeCountDownArray[i] - 1;}
-                // set onehot to false
-                if (timeCountDownArray[i] == 0) {onehotInformationArray[i] = 0;}
-                // set onehot to true
-                if (timeCountDownArray[i] >= 1) {onehotInformationArray[i] = 1;}
+                // DO NOT REPEAT TIMER ARRAY UPDATES ON SAME TIMESTAMP
+                if (sameDatesGetNoTimerArrayUpdate) {
+                    // set false to not enter this part till lastDate update
+                    sameDatesGetNoTimerArrayUpdate = false;
+                    // set timers
+                    if (timeCountDownArray[i] > 0) {timeCountDownArray[i] = timeCountDownArray[i] - 1;}
+                }
+                    // set onehot to false
+                    if (timeCountDownArray[i] == 0) {onehotInformationArray[i] = 0;}
+                    // set onehot to true
+                    if (timeCountDownArray[i] >= 1) {onehotInformationArray[i] = 1;}
                 // check for "till next array"
                 // VaultEntryType is the standard for an empty BucketEntry
                 if (!findNextArray[i].equals(VaultEntryType.EMPTY) &&
@@ -422,9 +450,10 @@ public class BucketProcessor {
                 // 
                 // set timer
                 // TODO if case is wrong???
-                // if true then take this value ... else (false) take new updated time
-                if (timeCountDownArray[i] > bucket.getTimeCountDown(i)) {bucket.setTimeCountDown(i, timeCountDownArray[i]);}
-                else {}
+                // if this timer is longer than the one saved in the BucketEntry take this one
+                // if this timer is equal to the one saven in the BucketEntry - 1 then update the BucketEntry 
+                if (timeCountDownArray[i] > bucket.getTimeCountDown(i) ||
+                    timeCountDownArray[i] == bucket.getTimeCountDown(i) - 1) {bucket.setTimeCountDown(i, timeCountDownArray[i]);}
                 
                 // set findNextArray
                 // if findNextArray is EMPTY then it is filled with the needed information
