@@ -16,35 +16,21 @@
  */
 package de.jhit.opendiabetes.vault.exporter;
 
+import de.jhit.opendiabetes.vault.container.BucketEntry;
 import de.jhit.opendiabetes.vault.container.BucketEventTriggers;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
-import de.jhit.opendiabetes.vault.container.VaultEntryAnnotation;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
-import de.jhit.opendiabetes.vault.container.csv.ExportEntry;
-import de.jhit.opendiabetes.vault.container.csv.VaultCsvEntry;
-import de.jhit.opendiabetes.vault.data.VaultDao;
-import static de.jhit.opendiabetes.vault.exporter.FileExporter.LOG;
-import de.jhit.opendiabetes.vault.util.EasyFormatter;
-import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-
-// TO DO: Sort HashMap by Value
-// Shape of Header: only index number and oha
-// Klammern aus Header entfernen
-// Statt VaultEntry Buckets einlesen
-
-
 
 /**
  *
@@ -58,41 +44,36 @@ public class MLExporter {
     }
 
     protected static String createHeader() {
-        
-        HashMap<VaultEntryType, Integer> oneHotHeader = BucketEventTriggers.ARRAY_ENTRY_TRIGGER_HASHMAP;
-        String[] result = new String[oneHotHeader.size()];
 
-//        String[] manualEntries = {"entry", "kjadskjdjkla"};
-//        String[] result = new String[oneHotHeader.size() + manualEntries.length];
-//        for (int k = 0; k < manualEntries.length; k++) {
-//            result[k] = manualEntries[k];
-//        }
-//        int i = manualEntries.length;
+        HashMap<VaultEntryType, Integer> oneHotHeader = BucketEventTriggers.ARRAY_ENTRY_TRIGGER_HASHMAP;
+        String[] header = new String[oneHotHeader.size()];
+        
         int i = 0;
-        for (VaultEntryType entryType : oneHotHeader.keySet()) {
-            result[i] = entryType.toString();
-            result[i] = result[i].replace("[", "");
-            result[i] = result[i].replace("]", "");
+        for(Map.Entry<VaultEntryType, Integer> entry : oneHotHeader.entrySet()){
+            VaultEntryType key = entry.getKey();
+            int value = entry.getValue();
+            header[value] = key.toString();
             i++;
         }
-        //String res = Arrays.toString(result);
-        return Arrays.toString(result);
+        
+        String result = Arrays.toString(header);
+        result = result.replace("[", "");
+        result = result.replace("]", "");
+        
+        return result;
     }
 
-    public static void bucketsToCsv(String filename) throws IOException, ParseException {
-        List<VaultEntry> data = StaticDataset.getStaticDataset();
-        List<String> dataString = new ArrayList<>();
-
-        for (VaultEntry entry : data) {
-            dataString.add(entry.toString());
-        }
+    public static void bucketsToCsv(List<BucketEntry> buckets, String filename) throws IOException, ParseException {
 
         FileWriter fw;
         fw = new FileWriter(filename);
-        fw.write(createHeader() + "\n");
+        fw.write("index, " + createHeader() + "\n");
         try {
-            for (String x : dataString) {
-                fw.write(x);
+            for (int i = 0; i < buckets.size(); i++) {
+                String line = Arrays.toString(buckets.get(i).getFullOnehotInformationArray());
+                line = line.replace("[", "");
+                line = line.replace("]", "");
+                fw.write(i + ", " + line);
                 fw.write(System.lineSeparator());
             }
         } catch (IOException ex) {
@@ -103,23 +84,15 @@ public class MLExporter {
     }
 
     public static void main(String[] args) throws ParseException, SQLException, IOException {
-        bucketsToCsv("toll.csv");
 
-//        VaultDao.initializeDb();
-//        VaultDao v = VaultDao.getInstance();
-//        Date from = new Date(100);
-//        Date to = new Date();
-//        List<VaultEntry> data = StaticDataset.getStaticDataset();
-//
-//        for (VaultEntry entry : data) {
-//            v.putEntry(entry);
-//        }
-//
-//        System.out.println(from);
-//        System.out.println(to);
-//
-//        ExporterOptions opt = new ExporterOptions(true, from, to);
-//        MLExporter mle = new MLExporter(opt, v, "lulz.csv");
-//        mle.exportDataToFile(data);
+        List<BucketEntry> buckets = new ArrayList<>();
+        buckets.add(new BucketEntry(0, StaticDataset.getStaticDataset().get(8)));
+        buckets.add(new BucketEntry(0, StaticDataset.getStaticDataset().get(9)));
+        buckets.add(new BucketEntry(0, StaticDataset.getStaticDataset().get(10)));
+        buckets.add(new BucketEntry(0, StaticDataset.getStaticDataset().get(11)));
+
+        bucketsToCsv(buckets, "toll.csv");
+
+
     }
 }
