@@ -74,7 +74,7 @@ public class TypeAbsenceFilter extends Filter {
         boolean result = true;
 
         //maybe buggy behaviour. Whole class better be refactored in separate filter, e.g. TypeFilter, groupFilter and ExclusionFilter
-        if ((types != null && types.contains(entry.getType())) || typeGroup == entry.getType().getGROUP()) {
+        if ((types != null && types.contains(entry.getType())) || typeGroup == entry.getType().getGroup()) {
             lastEntryTimeFound = entry.getTimestamp();
             result = false;
         } else if ((lastEntryTimeFound != null

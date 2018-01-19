@@ -24,63 +24,111 @@ import java.util.List;
 import javafx.util.Pair;
 
 /**
- *abstract Filter implements filter method for all Filters. All other Filter have to extend this Filter.
- * 
+ * abstract Filter implements filter method for all Filters. All other Filter
+ * have to extend this Filter.
+ *
  * @author Daniel
  */
 public abstract class Filter {
-    
+
     /**
      * Returns the name of the extended Filter
+     *
      * @return FilterType
      */
     abstract FilterType getType();
 
     /**
-     * Check if the given VaultEntry matches the given criteria. Needs to be implemented. Is used in Method filter. 
+     * Check if the given VaultEntry matches the given criteria. Needs to be
+     * implemented. Is used in Method filter.
+     *
      * @param entry
      * @return boolean
      */
     abstract boolean matchesFilterParameters(VaultEntry entry);
 
     /**
-     * Check if the given List of VaultEntrys matches the criteria of the Filter.
+     * Check if the given List of VaultEntrys matches the criteria of the
+     * Filter.
+     *
      * @param data
      * @return Filterresult
      */
     public FilterResult filter(List<VaultEntry> data) {
-
-        List<VaultEntry> result = new ArrayList<>();
+        FilterResult filterResult;
         List<Pair<Date, Date>> timeSeries = new ArrayList<>();
 
-        Date startOfCurentTimeSeries = null;
-        Date lastTimeStamp = null;
-        for (VaultEntry entry : data) {
-            if (matchesFilterParameters(entry)) {
-                result.add(entry);
-                if (startOfCurentTimeSeries == null) {
-                    startOfCurentTimeSeries = entry.getTimestamp();
-                }
-                lastTimeStamp = entry.getTimestamp();
-            } else if (startOfCurentTimeSeries != null) {
-                timeSeries.add(new Pair<>(startOfCurentTimeSeries, lastTimeStamp));
-                startOfCurentTimeSeries = null;
+        if (this.getType() == FilterType.NONE) {
+            //shortcut, since nothing has to be filtered
+            if (data != null && data.size() > 0) {
+                timeSeries.add(new Pair<>(data.get(0).getTimestamp(), data.get(data.size() - 1).getTimestamp()));
             }
-        }
+            filterResult = new FilterResult(data, timeSeries);
+        } else {
+            List<VaultEntry> entryResult = new ArrayList<>();
+            List<VaultEntry> preprocessedData = setUpBeforeFilter(data);
+            Date startOfCurentTimeSeries = null;
+            Date lastTimeStamp = null;
 
-        if (startOfCurentTimeSeries != null) {
-            timeSeries.add(new Pair<>(startOfCurentTimeSeries, lastTimeStamp));
-        }
+            for (VaultEntry entry : preprocessedData) {
+                if (matchesFilterParameters(entry)) {
+                    entryResult.add(entry);
+                    if (startOfCurentTimeSeries == null) {
+                        startOfCurentTimeSeries = entry.getTimestamp();
+                    }
+                    lastTimeStamp = entry.getTimestamp();
+                } else if (startOfCurentTimeSeries != null) {
+                    timeSeries.add(new Pair<>(startOfCurentTimeSeries, lastTimeStamp));
+                    startOfCurentTimeSeries = null;
+                }
+            }
 
-        return new FilterResult(result, timeSeries);
+            if (startOfCurentTimeSeries != null) {
+                timeSeries.add(new Pair<>(startOfCurentTimeSeries, lastTimeStamp));
+            }
+
+            filterResult = new FilterResult(entryResult, timeSeries);
+            filterResult = tearDownAfterFilter(filterResult);
+        }
+        return filterResult;
     }
 
     /**
-     * This Method returns a new Filter from extended Filter. The Filter is constructucted with the Data from the vaultEntry. 
-     * Example: TimeFilter Constructs a Filter with the startTime from the vaultEntry.
+     * This Method returns a new Filter from extended Filter. The Filter is
+     * constructucted with the Data from the vaultEntry. Example: TimeFilter
+     * Constructs a Filter with the startTime from the vaultEntry.
+     *
      * @param vaultEntry; Which the The Filter should work with
-     * @return 
+     * @return
      */
     abstract Filter update(VaultEntry vaultEntry);
-   
+
+    /**
+     * This method is run before the core filter process starts and CAN be
+     * overridden if the specific filter needs to prepare the given entry data
+     * to be filtered.<p>
+     * If other preparations are necessary, which don't affect the given entry
+     * data, just return it as it is.
+     *
+     * @param data the given initial entry data
+     * @return modified or unmodified entry data
+     */
+    protected List<VaultEntry> setUpBeforeFilter(List<VaultEntry> data) {
+        return data;
+    }
+
+    /**
+     * This method is run after the core filter process ends and CAN be
+     * overridden if the specific filter needs to prepare the FilterResult.
+     * <p>
+     * If other actions after filtering are necessary, which don't affect the
+     * given FilterResult , just return it as it is.
+     *
+     * @param givenResult data after the filter process was executed
+     * @return modified or unmodified FilterResult
+     */
+    protected FilterResult tearDownAfterFilter(FilterResult givenResult) {
+        return givenResult;
+    }
+
 }

@@ -48,7 +48,7 @@ public enum VaultEntryTypeGroup {
         //better performance if handled one-time in constructor, but leads to initialization Error
         List<VaultEntryType> result = new ArrayList<>();
         for (VaultEntryType type : VaultEntryType.values()) {
-            if (type.getGROUP() == this) {
+            if (type.getGroup() == this) {
                 result.add(type);
             }
         }
