@@ -57,16 +57,16 @@ public abstract class Filter {
     public FilterResult filter(List<VaultEntry> data) {
         FilterResult filterResult;
         List<Pair<Date, Date>> timeSeries = new ArrayList<>();
+        List<VaultEntry> preprocessedData = setUpBeforeFilter(data);
 
         if (this.getType() == FilterType.NONE) {
             //shortcut, since nothing has to be filtered
-            if (data != null && data.size() > 0) {
-                timeSeries.add(new Pair<>(data.get(0).getTimestamp(), data.get(data.size() - 1).getTimestamp()));
+            if (preprocessedData != null && preprocessedData.size() > 0) {
+                timeSeries.add(new Pair<>(preprocessedData.get(0).getTimestamp(), preprocessedData.get(data.size() - 1).getTimestamp()));
             }
-            filterResult = new FilterResult(data, timeSeries);
+            filterResult = new FilterResult(preprocessedData, timeSeries);
         } else {
             List<VaultEntry> entryResult = new ArrayList<>();
-            List<VaultEntry> preprocessedData = setUpBeforeFilter(data);
             Date startOfCurentTimeSeries = null;
             Date lastTimeStamp = null;
 
@@ -88,8 +88,8 @@ public abstract class Filter {
             }
 
             filterResult = new FilterResult(entryResult, timeSeries);
-            filterResult = tearDownAfterFilter(filterResult);
         }
+        filterResult = tearDownAfterFilter(filterResult);
         return filterResult;
     }
 

@@ -35,7 +35,7 @@ import javafx.util.Pair;
  */
 public class CombinationFilter1 extends Filter {
 
-    private List<VaultEntry> basicData;
+    private DatasetMarker dataPointer;
     private Filter firstFilter;
     private Filter secondFilter;
     private List<Filter> filters;
@@ -44,15 +44,13 @@ public class CombinationFilter1 extends Filter {
      * The Constructor will set the Filters and basic data, which will be used
      * later in the filter method.
      *
-     * @param data
+     * @param data original input entry data
      * @param firstFilter; first Filter from the data in the filter method
      * @param secondFilter; Filter mask for the list of Filters in the filter
      * method
      */
     public CombinationFilter1(List<VaultEntry> data, Filter firstFilter, Filter secondFilter) {
-        this.basicData = data;
-        this.firstFilter = firstFilter;
-        this.secondFilter = secondFilter;
+        this(new DatasetMarker(data), firstFilter, secondFilter);
     }
 
     /**
@@ -62,6 +60,20 @@ public class CombinationFilter1 extends Filter {
      */
     public CombinationFilter1(List<VaultEntry> data, Filter combinatedFilter) {
         this(data, new NoneFilter(), combinatedFilter);
+    }
+
+    /**
+     * The Constructor will set the Filters and basic data, which will be used
+     * later in the filter method.
+     *
+     * @param dataPointer pointer to the dataset to work on
+     * @param firstFilter first Filter from the data in the filter method
+     * @param secondFilter Filter mask for the list of Filters in the filter
+     */
+    public CombinationFilter1(DatasetMarker dataPointer, Filter firstFilter, Filter secondFilter) {
+        this.dataPointer = dataPointer;
+        this.firstFilter = firstFilter;
+        this.secondFilter = secondFilter;
     }
 
     @Override
@@ -79,7 +91,7 @@ public class CombinationFilter1 extends Filter {
         }
 
         //filters with the basic method
-        return basicData;
+        return dataPointer.getDataset();
     }
 
     @Override
@@ -105,7 +117,7 @@ public class CombinationFilter1 extends Filter {
     @Override
     Filter update(VaultEntry vaultEntry
     ) {
-        return new CombinationFilter1(basicData, firstFilter, secondFilter);
+        return new CombinationFilter1(dataPointer, firstFilter, secondFilter);
     }
 
 }

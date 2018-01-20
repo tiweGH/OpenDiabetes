@@ -76,14 +76,18 @@ public class Tester {
 
             List<VaultEntry> entryList = StaticDataset.getStaticDataset();
             FilterResult fr;
-            Filter f1 = new CombinationFilter1(entryList, new TypeGroupFilter(VaultEntryTypeGroup.BASAL), new TimePointFilter(LocalTime.MIN, 0, 10));
+            DatasetMarker f2 = new DatasetMarker(entryList);
+            fr = f2.filter(entryList);
+            fr = new DateTimeSpanFilter(TimestampUtils.createCleanTimestamp("2017.06.29-06:00", "yyyy.MM.dd-HH:mm"), TimestampUtils.createCleanTimestamp("2017.06.29-08:00", "yyyy.MM.dd-HH:mm")).filter(entryList);
+            Filter f1 = new CombinationFilter1(f2, new TypeGroupFilter(VaultEntryTypeGroup.BASAL), new TimePointFilter(LocalTime.MIN, 0, 10));
             //f1 = new NegateFilter(new TimePointFilter(TimestampUtils.dateToLocalTime(entryList.get(0).getTimestamp()), 20));
-            fr = f1.filter(entryList);
+            fr = f2.filter(fr.filteredData);
+            fr = f1.filter(fr.filteredData);
             for (VaultEntry entry : fr.filteredData) {
                 System.out.println(entry.getTimestamp().toString());
             }
-            System.out.println(LocalTime.MIN.plus(-2, ChronoUnit.MINUTES));
-            System.out.println(LocalTime.MIN.minus(2, ChronoUnit.MINUTES));
+            System.out.println(f2.getDataset().size());
+            System.out.println(fr.filteredData.size());
 
         } catch (ParseException ex) {
             Logger.getLogger(Tester.class.getName()).log(Level.SEVERE, null, ex);
