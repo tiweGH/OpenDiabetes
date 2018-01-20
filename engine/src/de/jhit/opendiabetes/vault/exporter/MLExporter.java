@@ -47,19 +47,19 @@ public class MLExporter {
 
         HashMap<VaultEntryType, Integer> oneHotHeader = BucketEventTriggers.ARRAY_ENTRY_TRIGGER_HASHMAP;
         String[] header = new String[oneHotHeader.size()];
-        
+
         int i = 0;
-        for(Map.Entry<VaultEntryType, Integer> entry : oneHotHeader.entrySet()){
+        for (Map.Entry<VaultEntryType, Integer> entry : oneHotHeader.entrySet()) {
             VaultEntryType key = entry.getKey();
             int value = entry.getValue();
             header[value] = key.toString();
             i++;
         }
-        
+
         String result = Arrays.toString(header);
         result = result.replace("[", "");
         result = result.replace("]", "");
-        
+
         return result;
     }
 
@@ -69,12 +69,18 @@ public class MLExporter {
         fw = new FileWriter(filename);
         fw.write("index, " + createHeader() + "\n");
         try {
-            for (int i = 0; i < buckets.size(); i++) {
-                String line = Arrays.toString(buckets.get(i).getFullOnehotInformationArray());
-                line = line.replace("[", "");
-                line = line.replace("]", "");
-                fw.write(i + ", " + line);
-                fw.write(System.lineSeparator());
+            int j = 0;
+            for (int i = 0; i < buckets.size()-1; i++) {
+                if (!buckets.get(i).getVaultEntry().getTimestamp().toString().equals(buckets.get(i + 1).getVaultEntry().getTimestamp().toString())) {
+                    String line = Arrays.toString(buckets.get(i).getFullOnehotInformationArray());
+                    line = line.replace("[", "");
+                    line = line.replace("]", "");
+                    line = line.replace("0.0", "0");
+                    line = line.replace("1.0", "1");
+                    fw.write(j + ", " + line);
+                    fw.write(System.lineSeparator());
+                    j++;
+                }
             }
         } catch (IOException ex) {
             Logger.getLogger(MLExporter.class.getName()).log(Level.SEVERE, null, ex);
@@ -86,13 +92,13 @@ public class MLExporter {
     public static void main(String[] args) throws ParseException, SQLException, IOException {
 
         List<BucketEntry> buckets = new ArrayList<>();
-        buckets.add(new BucketEntry(0, StaticDataset.getStaticDataset().get(8)));
-        buckets.add(new BucketEntry(0, StaticDataset.getStaticDataset().get(9)));
-        buckets.add(new BucketEntry(0, StaticDataset.getStaticDataset().get(10)));
-        buckets.add(new BucketEntry(0, StaticDataset.getStaticDataset().get(11)));
-
+         
+        for (int i = 0; i < StaticDataset.getStaticDataset().size(); i++) {
+            
+            buckets.add(new BucketEntry(0, StaticDataset.getStaticDataset().get(i)));
+        }
+        
         bucketsToCsv(buckets, "toll.csv");
-
 
     }
 }
