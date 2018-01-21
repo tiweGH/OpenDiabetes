@@ -30,9 +30,9 @@ public class TypeGroupFilter extends Filter {
     private VaultEntryTypeGroup entryTypeGroup;
 
     /**
-     * Constructor initialize Parameter for comparing later
+     * Filters entries with a type in the matching type-group
      *
-     * @param vaultEntryType
+     * @param entryTypeGroup
      */
     public TypeGroupFilter(VaultEntryTypeGroup entryTypeGroup) {
         this.entryTypeGroup = entryTypeGroup;
