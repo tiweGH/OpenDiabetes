@@ -30,6 +30,11 @@ import de.jhit.opendiabetes.vault.processing.filter.NoneFilter;
 import de.jhit.opendiabetes.vault.processing.filter.OverThresholdFilter;
 import de.jhit.opendiabetes.vault.processing.filter.TimePointFilter;
 import de.jhit.opendiabetes.vault.processing.filter.TypeAbsenceFilter;
+import de.jhit.opendiabetes.vault.testhelper.filterfactory.BolusCGMLess60;
+import de.jhit.opendiabetes.vault.testhelper.filterfactory.BolusGreater180NoMeal3h;
+import de.jhit.opendiabetes.vault.testhelper.filterfactory.FilterFactory;
+import de.jhit.opendiabetes.vault.testhelper.filterfactory.NigthAutoSuspendBolus4h;
+import de.jhit.opendiabetes.vault.testhelper.filterfactory.TypeAbsence;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.text.ParseException;
 import java.time.LocalTime;
@@ -76,19 +81,21 @@ public class Tester {
 
             List<VaultEntry> entryList = StaticDataset.getStaticDataset();
             FilterResult fr;
-            DatasetMarker f2 = new DatasetMarker(entryList);
-            fr = f2.filter(entryList);
-            fr = new DateTimeSpanFilter(TimestampUtils.createCleanTimestamp("2017.06.29-06:00", "yyyy.MM.dd-HH:mm"), TimestampUtils.createCleanTimestamp("2017.06.29-08:00", "yyyy.MM.dd-HH:mm")).filter(entryList);
-            Filter f1 = new CombinationFilter1(f2, new TypeGroupFilter(VaultEntryTypeGroup.BASAL), new TimePointFilter(LocalTime.MIN, 0, 10));
-            //f1 = new NegateFilter(new TimePointFilter(TimestampUtils.dateToLocalTime(entryList.get(0).getTimestamp()), 20));
-            fr = f2.filter(fr.filteredData);
-            fr = f1.filter(fr.filteredData);
-            for (VaultEntry entry : fr.filteredData) {
-                System.out.println(entry.getTimestamp().toString());
-            }
-            System.out.println(f2.getDataset().size());
-            System.out.println(fr.filteredData.size());
+            FilterFactory fac = new TypeAbsence(entryList, VaultEntryTypeGroup.GLUCOSE, 10);
+            List<Filter> fl = fac.createFilter();
+            FilterResult lastResult = null;
 
+            for (Filter filter : fl) {
+                if (lastResult == null) {
+                    lastResult = filter.filter(entryList);
+                } else {
+                    lastResult = filter.filter(lastResult.filteredData);
+                }
+            }
+
+            for (VaultEntry entry : lastResult.filteredData) {
+                System.out.println(entry.toString());
+            }
         } catch (ParseException ex) {
             Logger.getLogger(Tester.class.getName()).log(Level.SEVERE, null, ex);
         }

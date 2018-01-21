@@ -26,11 +26,11 @@ import java.util.List;
  */
 public abstract class FilterFactory {
 
-    public List<Filter> createFilter(List<VaultEntry> data) {
-        List<Filter> filters = factoryMethod(data);
+    public List<Filter> createFilter() {
+        List<Filter> filters = factoryMethod();
         //add general initialization here
         return filters;
     }
 
-    protected abstract List<Filter> factoryMethod(List<VaultEntry> data);
+    protected abstract List<Filter> factoryMethod();
 }

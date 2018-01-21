@@ -20,6 +20,7 @@ import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.container.VaultEntryTypeGroup;
 import de.jhit.opendiabetes.vault.processing.filter.CombinationFilter1;
+import de.jhit.opendiabetes.vault.processing.filter.DatasetMarker;
 import de.jhit.opendiabetes.vault.processing.filter.EventFilter;
 import de.jhit.opendiabetes.vault.processing.filter.Filter;
 import de.jhit.opendiabetes.vault.processing.filter.FilterType;
@@ -40,12 +41,19 @@ import java.util.List;
 public class NigthAutoSuspendBolus4h extends FilterFactory {
 //... nachts einen Autonomous Suspend haben bei dem innerhalb 4h vorher ein Bolus Event war.
 
+    List<Filter> filters = new ArrayList<>();
+
+    public NigthAutoSuspendBolus4h(List<VaultEntry> data, VaultEntryType searchedType, VaultEntryTypeGroup groupInMargin, int timeMarginMinutes, LocalTime startTime, LocalTime endTime) {
+        filters.add(new TimeSpanFilter(startTime, endTime));
+        DatasetMarker pointer = new DatasetMarker(data);
+        filters.add(pointer);
+        filters.add(new CombinationFilter1(pointer, new TypeGroupFilter(groupInMargin), new TimePointFilter(LocalTime.MIN, timeMarginMinutes)));
+        filters.add(new EventFilter(searchedType));
+    }
+
     @Override
-    protected List<Filter> factoryMethod(List<VaultEntry> data) {
-        List<Filter> filters = new ArrayList<>();
-        filters.add(new TimeSpanFilter(LocalTime.of(22, 0), LocalTime.of(6, 00)));
-        filters.add(new CombinationFilter1(data, new TypeGroupFilter(VaultEntryTypeGroup.BOLUS), new TimePointFilter(LocalTime.MIN, 4 * 60)));
-        filters.add(new EventFilter(VaultEntryType.PUMP_AUTONOMOUS_SUSPEND));
+    protected List<Filter> factoryMethod() {
+
         return filters;
     }
 }

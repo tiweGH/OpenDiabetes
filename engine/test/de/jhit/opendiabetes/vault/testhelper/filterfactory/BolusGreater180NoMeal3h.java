@@ -38,11 +38,16 @@ import java.util.List;
 public class BolusGreater180NoMeal3h extends FilterFactory {
 //... einen Bolus bei einem CGM Wert > 180 enthalten und 3h davor oder danach keine Meal-Events sind.
 
+    List<Filter> filters = new ArrayList<>();
+
+    public BolusGreater180NoMeal3h(List<VaultEntry> data, VaultEntryTypeGroup group, int absenceMargin, double value) {
+        filters.add(new NegateFilter(new CombinationFilter1(data, new TypeGroupFilter(group), new TimePointFilter(LocalTime.MIN, absenceMargin))));
+        filters.add(new OverThresholdFilter(VaultEntryType.BOLUS_NORMAL, value, FilterType.BOLUS_TH, FilterType.BOLUS_TH));
+    }
+
     @Override
-    protected List<Filter> factoryMethod(List<VaultEntry> data) {
-        List<Filter> filters = new ArrayList<>();
-        filters.add(new NegateFilter(new CombinationFilter1(data, new TypeGroupFilter(VaultEntryTypeGroup.MEAL), new TimePointFilter(LocalTime.MIN, 3 * 60))));
-        filters.add(new OverThresholdFilter(VaultEntryType.BOLUS_NORMAL, 180.0, FilterType.BOLUS_TH, FilterType.BOLUS_TH));
+    protected List<Filter> factoryMethod() {
+
         return filters;
     }
 }
