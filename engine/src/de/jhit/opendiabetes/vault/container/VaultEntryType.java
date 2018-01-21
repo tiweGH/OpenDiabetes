@@ -169,7 +169,7 @@ public enum VaultEntryType {
      *
      * @return the Group of the VaultEntryType
      */
-    public VaultEntryTypeGroup getGROUP() {
+    public VaultEntryTypeGroup getGroup() {
         return GROUP;
     }
 

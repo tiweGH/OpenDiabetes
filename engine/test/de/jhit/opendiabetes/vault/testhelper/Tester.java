@@ -19,17 +19,26 @@ package de.jhit.opendiabetes.vault.testhelper;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.container.VaultEntryTypeGroup;
+import de.jhit.opendiabetes.vault.processing.filter.CombinationFilter;
 import de.jhit.opendiabetes.vault.processing.filter.ContinuousWrapper;
 import de.jhit.opendiabetes.vault.processing.filter.EventFilter;
 import de.jhit.opendiabetes.vault.processing.filter.Filter;
 import de.jhit.opendiabetes.vault.processing.filter.FilterResult;
-import de.jhit.opendiabetes.vault.processing.filter.FilterType;
+import de.jhit.opendiabetes.vault.processing.filter.*;
 import de.jhit.opendiabetes.vault.processing.filter.MealAbsenceFilter;
 import de.jhit.opendiabetes.vault.processing.filter.NoneFilter;
 import de.jhit.opendiabetes.vault.processing.filter.OverThresholdFilter;
+import de.jhit.opendiabetes.vault.processing.filter.TimePointFilter;
 import de.jhit.opendiabetes.vault.processing.filter.TypeAbsenceFilter;
+import de.jhit.opendiabetes.vault.testhelper.filterfactory.BolusCGMLess60;
+import de.jhit.opendiabetes.vault.testhelper.filterfactory.BolusGreater180NoMeal3h;
+import de.jhit.opendiabetes.vault.testhelper.filterfactory.FilterFactory;
+import de.jhit.opendiabetes.vault.testhelper.filterfactory.NigthAutoSuspendBolus4h;
+import de.jhit.opendiabetes.vault.testhelper.filterfactory.TypeAbsence;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.text.ParseException;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -47,27 +56,45 @@ public class Tester {
 
     public static void main(String[] args) {
         try {
-            NoneFilter nf = new NoneFilter();
-            System.out.println(StaticDataset.getStaticDataset().size());
-            System.out.println(TimestampUtils.getNormalizedTimeSeries(StaticDataset.getStaticDataset(), 0).size());
-            System.out.println(nf.filter(StaticDataset.getStaticDataset()).timeSeries.size());
-            List<VaultEntry> entries = StaticDataset.getStaticDataset();
-            List<Pair<Date, Date>> result = TimestampUtils.getNormalizedTimeSeries(StaticDataset.getStaticDataset(), 0);
-            for (VaultEntry entry : entries) {
-                boolean isso = false;
-                for (Pair<Date, Date> pair : result) {
-                    isso = TimestampUtils.withinDateTimeSpan(pair.getKey(), pair.getValue(), entry.getTimestamp()) || isso;
-                    if (TimestampUtils.withinDateTimeSpan(pair.getKey(), pair.getValue(), entry.getTimestamp())) {
-                        if (!pair.getKey().equals(pair.getValue())) {
-                            System.out.println(entry.getTimestamp().toString() + " is in " + pair.toString());
-                        } else {
-                            System.out.println(pair.toString());
-                        }
-                    }
+//            NoneFilter nf = new NoneFilter();
+//            System.out.println(StaticDataset.getStaticDataset().size());
+//            System.out.println(TimestampUtils.getNormalizedTimeSeries(StaticDataset.getStaticDataset(), 0).size());
+//            System.out.println(nf.filter(StaticDataset.getStaticDataset()).timeSeries.size() + " " + nf.filter(StaticDataset.getStaticDataset()).filteredData.size());
+//            List<VaultEntry> entries = StaticDataset.getStaticDataset();
+//            List<Pair<Date, Date>> result = TimestampUtils.getNormalizedTimeSeries(StaticDataset.getStaticDataset(), 0);
+//            for (VaultEntry entry : entries) {
+//                boolean isso = false;
+//                for (Pair<Date, Date> pair : result) {
+//                    isso = TimestampUtils.withinDateTimeSpan(pair.getKey(), pair.getValue(), entry.getTimestamp()) || isso;
+//                    if (TimestampUtils.withinDateTimeSpan(pair.getKey(), pair.getValue(), entry.getTimestamp())) {
+//                        if (!pair.getKey().equals(pair.getValue())) {
+//                            System.out.println(entry.getTimestamp().toString() + " is in " + pair.toString());
+//                        } else {
+//                            System.out.println(pair.toString());
+//                        }
+//                    }
+//                }
+//                if (!isso) {
+//                    System.out.println(entry.getTimestamp().toString() + " has no result");
+//                }
+//            }
+
+            List<VaultEntry> entryList = StaticDataset.getStaticDataset();
+            FilterResult fr;
+            FilterFactory fac = new TypeAbsence(entryList, VaultEntryTypeGroup.GLUCOSE, 10);
+            List<Filter> fl = fac.createFilter();
+            FilterResult lastResult = null;
+
+            for (Filter filter : fl) {
+                if (lastResult == null) {
+                    lastResult = filter.filter(entryList);
+                } else {
+                    lastResult = filter.filter(lastResult.filteredData);
                 }
-                if (!isso) {
-                    System.out.println(entry.getTimestamp().toString() + " has no result");
-                }
+            }
+
+            for (VaultEntry entry : lastResult.filteredData) {
+                System.out.println(entry.toString());
             }
         } catch (ParseException ex) {
             Logger.getLogger(Tester.class.getName()).log(Level.SEVERE, null, ex);

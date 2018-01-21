@@ -31,12 +31,35 @@ public class DateTimePointFilter extends Filter {
 
     private Date startTime;
     private Date endTime;
-    private long margin;
-    
+    private long marginBefore;
+    private long marginAfter;
+
+    /**
+     * Initialize fields and calculates: startTime: date - marginInMinutes
+     * endTime: date + marginInMinutes
+     *
+     * @param dateTimePoint
+     * @param marginInMinutes
+     */
     public DateTimePointFilter(Date dateTimePoint, int marginInMinutes) {
-        margin = MILLISECONDS.convert(marginInMinutes, MINUTES);
-        startTime = new Date(dateTimePoint.getTime() - margin);
-        endTime = new Date(dateTimePoint.getTime() + margin);
+        this(dateTimePoint, marginInMinutes, marginInMinutes);
+    }
+
+    /**
+     * Initialize fields and calculates:
+     * <p>
+     * startTime: date - marginBeforeInMinutes<p>
+     * endTime: date + marginAfterInMinutes
+     *
+     * @param dateTimePoint
+     * @param marginBeforeInMinutes
+     * @param marginAfterInMinutes
+     */
+    public DateTimePointFilter(Date dateTimePoint, int marginBeforeInMinutes, int marginAfterInMinutes) {
+        marginBefore = MILLISECONDS.convert(marginBeforeInMinutes, MINUTES);
+        marginBefore = MILLISECONDS.convert(marginAfterInMinutes, MINUTES);
+        startTime = new Date(dateTimePoint.getTime() - marginBeforeInMinutes);
+        endTime = new Date(dateTimePoint.getTime() + marginAfterInMinutes);
     }
 
     @Override
@@ -52,7 +75,7 @@ public class DateTimePointFilter extends Filter {
 
     @Override
     Filter update(VaultEntry vaultEntry) {
-        return new DateTimePointFilter(vaultEntry.getTimestamp(), (int) margin);
+        return new DateTimePointFilter(vaultEntry.getTimestamp(), (int) marginBefore, (int) marginAfter);
     }
 
 }

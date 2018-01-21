@@ -22,25 +22,43 @@ import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 
 /**
- * This Filter checks if the given VaultEntry is in an given range of Time. 
+ * This Filter checks if the given VaultEntry is in an given range of Time.
+ *
  * @author Daniel
  */
 public class TimePointFilter extends Filter {
+
     private LocalTime endTime;
     private LocalTime startTime;
-    private final int marginInMinutes;
+    private final int marginBeforeInMinutes;
+    private final int marginAfterInMinutes;
+
+    /**
+     * Initialize fields and calculates: startTime: timepoint- marginInMinutes
+     * endTime: timepoint+ marginInMinutes
+     *
+     * @param timePoint
+     * @param marginInMinutes
+     */
+    public TimePointFilter(LocalTime timePoint, int marginInMinutes) {
+        this(timePoint, marginInMinutes, marginInMinutes);
+    }
 
     /**
      * Initialize fields and calculates:
-     * startTime: timepoint- marginInMinutes
-     * endTime: timepoint+ marginInMinutes
+     * <p>
+     * startTime: timepoint- marginBeforeInMinutes<p>
+     * endTime: timepoint+ marginAfterInMinutes
+     *
      * @param timePoint
-     * @param marginInMinutes 
+     * @param marginBeforeInMinutes
+     * @param marginAfterInMinutes
      */
-    public TimePointFilter(LocalTime timePoint, int marginInMinutes) {
-        this.marginInMinutes = marginInMinutes;
-        startTime = timePoint.minus(marginInMinutes, ChronoUnit.MINUTES);
-        endTime= timePoint.plus(marginInMinutes, ChronoUnit.MINUTES);
+    public TimePointFilter(LocalTime timePoint, int marginBeforeInMinutes, int marginAfterInMinutes) {
+        this.marginBeforeInMinutes = marginBeforeInMinutes;
+        this.marginAfterInMinutes = marginAfterInMinutes;
+        startTime = timePoint.minus(marginBeforeInMinutes, ChronoUnit.MINUTES);
+        endTime = timePoint.plus(marginAfterInMinutes, ChronoUnit.MINUTES);
     }
 
     @Override
@@ -50,12 +68,12 @@ public class TimePointFilter extends Filter {
 
     @Override
     boolean matchesFilterParameters(VaultEntry entry) {
-        return TimestampUtils.withinTimeSpan(startTime, endTime, entry.getTimestamp()); 
+        return TimestampUtils.withinTimeSpan(startTime, endTime, entry.getTimestamp());
     }
 
     @Override
     Filter update(VaultEntry vaultEntry) {
-    return new TimePointFilter(TimestampUtils.dateToLocalTime(vaultEntry.getTimestamp()), marginInMinutes);
+        return new TimePointFilter(TimestampUtils.dateToLocalTime(vaultEntry.getTimestamp()), marginBeforeInMinutes, marginAfterInMinutes);
     }
 
 }
