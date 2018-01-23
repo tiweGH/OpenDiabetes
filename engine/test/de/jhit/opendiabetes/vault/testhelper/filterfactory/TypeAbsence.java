@@ -20,7 +20,7 @@ import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.container.VaultEntryTypeGroup;
 import de.jhit.opendiabetes.vault.processing.filter.CombinationFilter;
-import de.jhit.opendiabetes.vault.processing.filter.CombinationFilter1;
+import de.jhit.opendiabetes.vault.processing.filter.CombinationFilter;
 import de.jhit.opendiabetes.vault.processing.filter.Filter;
 import de.jhit.opendiabetes.vault.processing.filter.FilterType;
 import de.jhit.opendiabetes.vault.processing.filter.NegateFilter;
@@ -41,7 +41,7 @@ public class TypeAbsence extends FilterFactory {
 
     public TypeAbsence(List<VaultEntry> data, VaultEntryTypeGroup group, int absenceMargin) {
         filters = new ArrayList<>();
-        filters.add(new NegateFilter(new CombinationFilter1(data, new TypeGroupFilter(group), new TimePointFilter(LocalTime.MIN, 0, absenceMargin))));
+        filters.add(new NegateFilter(new CombinationFilter(data, new TypeGroupFilter(group), new TimePointFilter(LocalTime.MIN, 0, absenceMargin))));
 
     }
 

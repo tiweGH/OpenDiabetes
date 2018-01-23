@@ -5,9 +5,11 @@ import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.processing.filter.EventFilter;
 import de.jhit.opendiabetes.vault.processing.filter.EventPointFilter;
 import de.jhit.opendiabetes.vault.processing.filter.FilterResult;
+import de.jhit.opendiabetes.vault.processing.filter.TimePointFilter;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -64,7 +66,7 @@ public class TestGui extends Application {
             int i = 0;
 
             for (VaultEntry entry : result.filteredData) {
-                
+
                 series.getData().add(new XYChart.Data(dateFormat.format(entry.getTimestamp()), entry.getValue()));
             }
             //Scene scene = new Scene(lineChart, 800, 600);
@@ -78,7 +80,8 @@ public class TestGui extends Application {
                             VaultEntryType.STRESS,
                             VaultEntryType.BOLUS_NORMAL,
                             VaultEntryType.PUMP_FILL,
-                            VaultEntryType.BASAL_INTERPRETER
+                            VaultEntryType.BASAL_INTERPRETER,
+                            VaultEntryType.GLUCOSE_BG
                     );
 
             final ComboBox comboBox = new ComboBox(options);
@@ -116,6 +119,31 @@ public class TestGui extends Application {
                 }
             });
 
+            Button filterTimePointButton = new Button("TimePointFilter");
+            filterTimePointButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent e) {
+                    try {
+                        List<VaultEntry> data = StaticDataset.getStaticDataset();
+                        TimePointFilter instance = new TimePointFilter(LocalTime.NOON, 60);
+                        FilterResult result = instance.filter(data);
+
+                        XYChart.Series newSeries = new XYChart.Series();
+                        series.setName("Timepoint Filter");
+
+                        for (VaultEntry entry : result.filteredData) {
+                            newSeries.getData().add(new XYChart.Data(dateFormat.format(entry.getTimestamp()), entry.getValue()));
+                        }
+                        //Scene scene = new Scene(lineChart, 800, 600);
+                        lineChart.getData().retainAll();
+                        lineChart.getData().add(newSeries);
+
+                    } catch (Throwable t) {
+                        t.printStackTrace();
+                    }
+                }
+            });
+
             grid.add(lineChart, 0, 0, 2, 1);
             grid.add(labelVaultEntryType, 0, 1);
             grid.add(comboBox, 1, 1);
@@ -124,6 +152,7 @@ public class TestGui extends Application {
             grid.add(labelMargin, 0, 3);
             grid.add(textFieldMargin, 1, 3);
             grid.add(filterDataButton, 0, 4);
+            grid.add(filterTimePointButton, 0, 5);
 
             Group root = (Group) scene.getRoot();
             root.getChildren().add(grid);

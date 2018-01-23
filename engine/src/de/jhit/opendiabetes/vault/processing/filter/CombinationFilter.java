@@ -23,42 +23,75 @@ import java.util.List;
 import javafx.util.Pair;
 
 /**
- * The CombinationFilter is a special kind of Filter. The CombinationFilter combines two Filter on different datasets. Another of it’s special Features is, that the CombinationFilter has two lists of VaultEntry, which will be used later in the .filter method. The first list of VaultEntry is set during the Constructor, this set is the basicData. The Second list is only used during the filter. In the Constructor there will also be set two Filter (firstFilter and secondFilter). 
+ * The CombinationFilter is a special kind of Filter. The CombinationFilter
+ * combines two Filter on different datasets. Another of it’s special Features
+ * is, that the CombinationFilter has two lists of VaultEntry, which will be
+ * used later in the .filter method. The first list of VaultEntry is set during
+ * the Constructor, this set is the basicData. The Second list is only used
+ * during the filter. In the Constructor there will also be set two Filter
+ * (firstFilter and secondFilter).
+ *
  * @author Daniel
  */
 public class CombinationFilter extends Filter {
 
-    private List<VaultEntry> basicData;
+    private DatasetMarker dataPointer;
     private Filter firstFilter;
     private Filter secondFilter;
     private List<Filter> filters;
 
     /**
-     * The Constructor will set the Filters and basic data, which will be used later in the filter method.
-     * @param data
+     * The Constructor will set the Filters and basic data, which will be used
+     * later in the filter method.
+     *
+     * @param data original input entry data
      * @param firstFilter; first Filter from the data in the filter method
-     * @param secondFilter; Filter mask for the list of Filters in the filter method
+     * @param secondFilter; Filter mask for the list of Filters in the filter
+     * method
      */
     public CombinationFilter(List<VaultEntry> data, Filter firstFilter, Filter secondFilter) {
-        this.basicData = data;
+        this(new DatasetMarker(data), firstFilter, secondFilter);
+    }
+
+    /**
+     *
+     * @param data original input entry data
+     * @param combinatedFilter Filter mask for the previous result
+     */
+    public CombinationFilter(List<VaultEntry> data, Filter combinatedFilter) {
+        this(data, new NoneFilter(), combinatedFilter);
+    }
+
+    /**
+     * The Constructor will set the Filters and basic data, which will be used
+     * later in the filter method.
+     *
+     * @param dataPointer pointer to the dataset to work on
+     * @param firstFilter first Filter from the data in the filter method
+     * @param secondFilter Filter mask for the list of Filters in the filter
+     */
+    public CombinationFilter(DatasetMarker dataPointer, Filter firstFilter, Filter secondFilter) {
+        this.dataPointer = dataPointer;
         this.firstFilter = firstFilter;
         this.secondFilter = secondFilter;
     }
 
     @Override
-    public FilterResult filter(List<VaultEntry> data) {
-        FilterResult result = firstFilter.filter(data);
+    protected List<VaultEntry> setUpBeforeFilter(List<VaultEntry> data) {
+        List<VaultEntry> firstResult = firstFilter.filter(data).filteredData;
 
+        Filter tempFilter;
         // generates an List of Filters from the first found dataset. The secondFilter will be used as Mask.
         filters = new ArrayList<>();
-        for (VaultEntry vaultEntry : result.filteredData) {
-            filters.add(secondFilter.update(vaultEntry));
+        for (VaultEntry vaultEntry : firstResult) {
+            tempFilter = secondFilter.update(vaultEntry);
+            filters.add(tempFilter);
+            //this can potentially slow down the process, if the setUp is complex and the dataset is big
+            tempFilter.setUpBeforeFilter(firstResult);
         }
-        
+
         //filters with the basic method
-        result = super.filter(basicData);
-        
-        return result;
+        return dataPointer.getDataset();
     }
 
     @Override
@@ -67,21 +100,24 @@ public class CombinationFilter extends Filter {
     }
 
     @Override
-    boolean matchesFilterParameters(VaultEntry entry) {
+    boolean matchesFilterParameters(VaultEntry entry
+    ) {
         boolean result = false;
-        
+
         //Checks if one of the new generated Filters is True
         for (Filter filter : filters) {
-            if(filter.matchesFilterParameters(entry))
-                result= true;
+            if (filter.matchesFilterParameters(entry)) {
+                result = true;
+            }
         }
-        
+
         return result;
     }
 
     @Override
-    Filter update(VaultEntry vaultEntry) {
-        return new CombinationFilter(basicData, firstFilter, secondFilter);
+    Filter update(VaultEntry vaultEntry
+    ) {
+        return new CombinationFilter(dataPointer, firstFilter, secondFilter);
     }
 
 }
