@@ -20,6 +20,7 @@ import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.container.VaultEntryTypeGroup;
 import de.jhit.opendiabetes.vault.processing.filter.CombinationFilter;
+import de.jhit.opendiabetes.vault.processing.filter.CombinationFilter;
 import de.jhit.opendiabetes.vault.processing.filter.Filter;
 import de.jhit.opendiabetes.vault.processing.filter.FilterType;
 import de.jhit.opendiabetes.vault.processing.filter.TypeGroupFilter;

@@ -37,8 +37,10 @@ import de.jhit.opendiabetes.vault.testhelper.filterfactory.NigthAutoSuspendBolus
 import de.jhit.opendiabetes.vault.testhelper.filterfactory.TypeAbsence;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.text.ParseException;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -56,28 +58,6 @@ public class Tester {
 
     public static void main(String[] args) {
         try {
-//            NoneFilter nf = new NoneFilter();
-//            System.out.println(StaticDataset.getStaticDataset().size());
-//            System.out.println(TimestampUtils.getNormalizedTimeSeries(StaticDataset.getStaticDataset(), 0).size());
-//            System.out.println(nf.filter(StaticDataset.getStaticDataset()).timeSeries.size() + " " + nf.filter(StaticDataset.getStaticDataset()).filteredData.size());
-//            List<VaultEntry> entries = StaticDataset.getStaticDataset();
-//            List<Pair<Date, Date>> result = TimestampUtils.getNormalizedTimeSeries(StaticDataset.getStaticDataset(), 0);
-//            for (VaultEntry entry : entries) {
-//                boolean isso = false;
-//                for (Pair<Date, Date> pair : result) {
-//                    isso = TimestampUtils.withinDateTimeSpan(pair.getKey(), pair.getValue(), entry.getTimestamp()) || isso;
-//                    if (TimestampUtils.withinDateTimeSpan(pair.getKey(), pair.getValue(), entry.getTimestamp())) {
-//                        if (!pair.getKey().equals(pair.getValue())) {
-//                            System.out.println(entry.getTimestamp().toString() + " is in " + pair.toString());
-//                        } else {
-//                            System.out.println(pair.toString());
-//                        }
-//                    }
-//                }
-//                if (!isso) {
-//                    System.out.println(entry.getTimestamp().toString() + " has no result");
-//                }
-//            }
 
             List<VaultEntry> entryList = StaticDataset.getStaticDataset();
             FilterResult fr;
@@ -94,7 +74,17 @@ public class Tester {
             }
 
             for (VaultEntry entry : lastResult.filteredData) {
-                System.out.println(entry.toString());
+                //System.out.println(entry.toString());
+            }
+            LocalDate localStart = TimestampUtils.dateToLocalDate(TimestampUtils.createCleanTimestamp("2017.06.20-04:53", "yyyy.MM.dd-HH:mm"));
+            LocalDate localEnd = TimestampUtils.dateToLocalDate(TimestampUtils.createCleanTimestamp("2017.06.30-04:53", "yyyy.MM.dd-HH:mm"));
+            if (localEnd.isAfter(localStart)) {
+                int yearOffset = 0;
+                //   LocalDate tempDate = localEnd.minus(localStart.toEpochDay(),);
+                int dayOffset = localEnd.minusDays(localStart.getDayOfYear()).getDayOfYear();
+                System.out.println(dayOffset + " " + yearOffset);
+                yearOffset = localEnd.minusYears(localStart.getYear()).getYear();
+                System.out.println(dayOffset + " " + yearOffset);
             }
         } catch (ParseException ex) {
             Logger.getLogger(Tester.class.getName()).log(Level.SEVERE, null, ex);

@@ -19,7 +19,7 @@ package de.jhit.opendiabetes.vault.testhelper.filterfactory;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.container.VaultEntryTypeGroup;
-import de.jhit.opendiabetes.vault.processing.filter.CombinationFilter1;
+import de.jhit.opendiabetes.vault.processing.filter.CombinationFilter;
 import de.jhit.opendiabetes.vault.processing.filter.DatasetMarker;
 import de.jhit.opendiabetes.vault.processing.filter.EventFilter;
 import de.jhit.opendiabetes.vault.processing.filter.Filter;
@@ -47,7 +47,7 @@ public class NigthAutoSuspendBolus4h extends FilterFactory {
         filters.add(new TimeSpanFilter(startTime, endTime));
         DatasetMarker pointer = new DatasetMarker(data);
         filters.add(pointer);
-        filters.add(new CombinationFilter1(pointer, new TypeGroupFilter(groupInMargin), new TimePointFilter(LocalTime.MIN, timeMarginMinutes)));
+        filters.add(new CombinationFilter(pointer, new TypeGroupFilter(groupInMargin), new TimePointFilter(LocalTime.MIN, timeMarginMinutes)));
         filters.add(new EventFilter(searchedType));
     }
 

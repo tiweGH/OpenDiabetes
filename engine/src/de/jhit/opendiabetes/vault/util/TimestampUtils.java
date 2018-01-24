@@ -80,6 +80,10 @@ public class TimestampUtils {
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(inputDate.getTime()), ZoneId.systemDefault()).toLocalTime();
     }
 
+    public static LocalDate dateToLocalDate(Date inputDate) {
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(inputDate.getTime()), ZoneId.systemDefault()).toLocalDate();
+    }
+
     public static Date fromLocalDate(LocalDate inputDate, long offestInMilliseconds) {
         Date tmpInputDate = Date.from(Instant.from(inputDate
                 .atStartOfDay(ZoneId.systemDefault())));
@@ -99,6 +103,36 @@ public class TimestampUtils {
         Calendar cal = Calendar.getInstance();
         cal.setTime(timestamp);
         return cal.get(Calendar.MINUTE);
+    }
+
+    /**
+     * Changes the day but keeps the time unchanged
+     *
+     * @param timestamp The day which will be changed
+     * @param source source for the new date
+     * @return a Date with a changed year_month_day but the same time
+     */
+    public static Date setDay(Date timestamp, Date source) {
+        Calendar calSource = Calendar.getInstance();
+        calSource.setTime(source);
+        return setDay(timestamp, calSource.get(Calendar.DAY_OF_YEAR), calSource.get(Calendar.YEAR));
+
+    }
+
+    /**
+     * Changes the day but keeps the time unchanged
+     *
+     * @param timestamp The day which will be changed
+     * @param sourceDay day-of-year for the new date
+     * @param sourceYear year for the new date
+     * @return
+     */
+    public static Date setDay(Date timestamp, int sourceDay, int sourceYear) {
+        Calendar calTimestamp = Calendar.getInstance();
+        calTimestamp.setTime(timestamp);
+        calTimestamp.set(Calendar.DAY_OF_YEAR, sourceDay);
+        calTimestamp.set(Calendar.YEAR, sourceYear);
+        return calTimestamp.getTime();
     }
 
     /**

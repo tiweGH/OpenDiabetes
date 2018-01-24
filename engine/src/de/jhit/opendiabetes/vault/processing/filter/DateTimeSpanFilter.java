@@ -18,7 +18,9 @@ package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import javafx.util.Pair;
@@ -36,6 +38,7 @@ public class DateTimeSpanFilter extends Filter {
         this.startTime = startTime;
         this.endTime = endTime;
     }
+
     @Override
     public FilterType getType() {
         return FilterType.DATE_TIME_SPAN;
@@ -48,7 +51,19 @@ public class DateTimeSpanFilter extends Filter {
 
     @Override
     Filter update(VaultEntry vaultEntry) {
-        return new DateTimeSpanFilter(vaultEntry.getTimestamp(), endTime);
+        Date tempStart = TimestampUtils.setDay(startTime, vaultEntry.getTimestamp());
+        Date tempEnd;
+        LocalDate localStart = TimestampUtils.dateToLocalDate(endTime);
+        LocalDate localEnd = TimestampUtils.dateToLocalDate(startTime);
+        if (localEnd.isAfter(localStart)) {
+            int dayOffset = localEnd.minusDays(localStart.getDayOfYear()).getDayOfYear();
+            int yearOffset = localEnd.minusYears(localStart.getYear()).getYear();
+            LocalDate tempEntry = TimestampUtils.dateToLocalDate(vaultEntry.getTimestamp());
+            tempEnd = TimestampUtils.setDay(endTime, tempEntry.getDayOfYear() + dayOffset, tempEntry.getYear() + yearOffset);
+        } else {
+            tempEnd = TimestampUtils.setDay(endTime, vaultEntry.getTimestamp());
+        }
+        return new DateTimeSpanFilter(tempStart, tempEnd);
     }
 
 }

@@ -21,9 +21,10 @@ import java.util.List;
 
 /**
  *
- * @author Daniel
- * This Filter is an Filter, which gains multiple Filter. These Filters will be combined by an or. 
- * This means,that if an matches Filterparameters method retursn true the vaultEntry will be in the result List.
+ * @author Daniel This Filter is an Filter, which gains multiple Filter. These
+ * Filters will be combined by an or. This means,that if an matches
+ * Filterparameters method retursn true the vaultEntry will be in the result
+ * List.
  */
 public class OrFilter extends Filter {
 
@@ -31,6 +32,7 @@ public class OrFilter extends Filter {
 
     /**
      * Constructor just set:
+     *
      * @param filters; These will used in the matchesFilterParameters Method
      */
     public OrFilter(List<Filter> filters) {
@@ -54,6 +56,14 @@ public class OrFilter extends Filter {
         }
 
         return result;
+    }
+
+    @Override
+    protected List<VaultEntry> setUpBeforeFilter(List<VaultEntry> data) {
+        for (Filter filter : filters) {
+            filter.setUpBeforeFilter(data);
+        }
+        return data;
     }
 
     @Override
