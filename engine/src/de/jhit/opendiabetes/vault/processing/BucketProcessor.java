@@ -263,11 +263,6 @@ public class BucketProcessor {
                         outputBucketList.add(newBucketEntry);
                         // update bucketEntryNumber
                         bucketEntryNumber++;
-
-                        // update timecounter
-                        timeCounter = addMinutesToTimestamp(timeCounter, 1);
-                        // move to the next VaultEntry in the list
-                        vaultEntryListPosition++;
                         
                         //
                         // TODO onehot - merge-to
@@ -276,6 +271,11 @@ public class BucketProcessor {
                         // reset newBucketEntry
                         newBucketEntry = null;
                         //
+
+                        // update timecounter
+                        timeCounter = addMinutesToTimestamp(timeCounter, 1);
+                        // move to the next VaultEntry in the list
+                        vaultEntryListPosition++;
                         
         if (DEBUG) {System.out.println("Date_equal_new_bucket_created"); System.out.println(bucketEntryNumber); System.out.println(vaultEntryListPosition); System.out.println(timeCounter); 
                     System.out.println("Bucket_output_size"); System.out.println(outputBucketList.size());
@@ -311,11 +311,6 @@ public class BucketProcessor {
                         outputBucketList.add(newBucketEntry);
                         // update bucketEntryNumber
                         bucketEntryNumber++;
-                        
-                        // update timecounter
-                        timeCounter = addMinutesToTimestamp(timeCounter, 1);
-                        // move to the next VaultEntry in the list
-                        vaultEntryListPosition++;
 
                         //
                         // TODO onehot - merge-to
@@ -324,6 +319,11 @@ public class BucketProcessor {
                         // reset newBucketEntry
                         newBucketEntry = null;
                         //
+                        
+                        // update timecounter
+                        timeCounter = addMinutesToTimestamp(timeCounter, 1);
+                        // move to the next VaultEntry in the list
+                        vaultEntryListPosition++;
                         
         if (DEBUG) {System.out.println("Date_equal_empty_bucket_created"); System.out.println(bucketEntryNumber); System.out.println(vaultEntryListPosition); System.out.println(timeCounter); 
                     System.out.println("Bucket_output_size"); System.out.println(outputBucketList.size());
@@ -341,11 +341,6 @@ public class BucketProcessor {
                     // update bucketEntryNumber
                     bucketEntryNumber++;
                     
-                    // update timecounter
-                    timeCounter = addMinutesToTimestamp(timeCounter, 1);
-                    
-                    // DO NOT UPDATE LIST POSITION! ... the given list position has not been reached yet
-                    
                     //
                     // TODO onehot - merge-to
                     // call this method BEFORE setting the new timeCounter date
@@ -353,6 +348,11 @@ public class BucketProcessor {
                     // reset newBucketEntry
                     newBucketEntry = null;
                     //
+                    
+                    // update timecounter
+                    timeCounter = addMinutesToTimestamp(timeCounter, 1);
+                    
+                    // DO NOT UPDATE LIST POSITION! ... the given list position has not been reached yet
                     
         if (DEBUG) {System.out.println("Date_after_empty_bucket_created"); System.out.println(bucketEntryNumber); System.out.println(vaultEntryListPosition); System.out.println(timeCounter); 
                     System.out.println("Bucket_output_size"); System.out.println(outputBucketList.size());
@@ -442,15 +442,37 @@ public class BucketProcessor {
             timeCountDownArray = bucket.getFullTimeCountDown();
             onehotInformationArray = bucket.getFullOnehotInformationArray();
             findNextArray = bucket.getFullFindNextArray();
+            
+        if (DEBUG) {System.out.println("Set_Bucket_Array_Information_Init");
+                    System.out.println("lastDate"); System.out.println(lastDate);
+                    System.out.println("Date"); System.out.println(date);
+                    System.out.println("timeCountDownArray_pos_0"); System.out.println(timeCountDownArray[0]);
+                    System.out.println("onehotInformationArray_pos_0"); System.out.println(onehotInformationArray[0]);
+                    System.out.println("findNextArray_pos_0"); System.out.println(findNextArray[0]);
+                    System.out.println("===============================================");}
+        
         } else {
             // after 1st BucketEntry
             for (int i = 0; i < timeCountDownArray.length; i++) {
                 // DO NOT REPEAT TIMER ARRAY UPDATES ON SAME TIMESTAMP
                 if (sameDatesGetNoTimerArrayUpdate) {
+                    
+        if (DEBUG) {System.out.println("Set_Bucket_Array_Information_first_timestamp");
+                    System.out.println("lastDate"); System.out.println(lastDate);
+                    System.out.println("Date"); System.out.println(date);
+                    System.out.println("timeCountDownArray_pos_0_old"); System.out.println(timeCountDownArray[i]);}
+        
                     // set false to not enter this part till lastDate update
                     sameDatesGetNoTimerArrayUpdate = false;
                     // set timers
                     if (timeCountDownArray[i] > 0) {timeCountDownArray[i] = timeCountDownArray[i] - 1;}
+                    
+        if (DEBUG) {System.out.println("Set_Bucket_Array_Information_first_timestamp");
+                    System.out.println("lastDate"); System.out.println(lastDate);
+                    System.out.println("Date"); System.out.println(date);
+                    System.out.println("timeCountDownArray_pos_0_new"); System.out.println(timeCountDownArray[i]);
+                    System.out.println("===============================================");}
+        
                 }
                 // 
                 // update info array stats
@@ -472,6 +494,14 @@ public class BucketProcessor {
                 if (!bucket.getFindNextArray(i).equals(VaultEntryType.EMPTY) && 
                     !bucket.getFindNextArray(i).equals(findNextArray[i])) {findNextArray[i] = bucket.getFindNextArray(i);}
                 
+        if (DEBUG) {System.out.println("Set_Bucket_Array_Information_update_info_array_stats");
+                    System.out.println("lastDate"); System.out.println(lastDate);
+                    System.out.println("Date"); System.out.println(date);
+                    System.out.println("timeCountDownArray_pos_i"); System.out.println(timeCountDownArray[i]);
+                    System.out.println("onehotInformationArray_pos_i"); System.out.println(onehotInformationArray[i]);
+                    System.out.println("findNextArray_pos_i"); System.out.println(findNextArray[i]);
+                    System.out.println("===============================================");}
+                
                 // 
                 // update BucketEntry arrays
                 // 
@@ -489,11 +519,28 @@ public class BucketProcessor {
                 // if findNextArray is EMPTY then it is filled with the needed information
                 // if findNextArray is filled with something else then nothing has to be done
                 if (bucket.getFindNextArray(i).equals(VaultEntryType.EMPTY)) {bucket.setFindNextArray(i, findNextArray[i]);}
+                
+        if (DEBUG) {System.out.println("Set_Bucket_Array_Information_update_BucketEntry_arrays");
+                    System.out.println("lastDate"); System.out.println(lastDate);
+                    System.out.println("Date"); System.out.println(date);
+                    System.out.println("timeCountDownArray_pos_i"); System.out.println(bucket.getTimeCountDown(i));
+                    System.out.println("onehotInformationArray_pos_i"); System.out.println(bucket.getOnehotInformationArray(i));
+                    System.out.println("findNextArray_pos_i"); System.out.println(bucket.getFindNextArray(i));
+                    System.out.println("===============================================");}
+        
             }
         }
         
+        if (DEBUG) {System.out.println("Set_Bucket_Array_Information_merge-to");
+                    System.out.println("lastDate"); System.out.println(lastDate);
+                    System.out.println("Date"); System.out.println(date);
+                    System.out.println("name_before"); System.out.println(bucket.getVaultEntry().getType());}
+        
         // merge-to
         bucket.getVaultEntry().setType(bucket.getVaultEntry().getType().mergeTo());
+        
+        if (DEBUG) {System.out.println("name_after"); System.out.println(bucket.getVaultEntry().getType().mergeTo());
+                    System.out.println("===============================================");}
         
         // onehot
         // TODO only one change for each timestamp 
@@ -501,7 +548,13 @@ public class BucketProcessor {
         
         // update info stats ... fill internal array with new info where needed ... update bucket arrays
         
-        
+        if (DEBUG && bucket.getBucketNumber() == BUCKET_START_NUMBER) {System.out.println("Set_Bucket_Array_Information_Init_array_inside");
+                    System.out.println("lastDate"); System.out.println(lastDate);
+                    System.out.println("Date"); System.out.println(date);
+                    System.out.println("timeCountDownArray_pos_0"); System.out.println(bucket.getTimeCountDown(0));
+                    System.out.println("onehotInformationArray_pos_0"); System.out.println(bucket.getOnehotInformationArray(0));
+                    System.out.println("findNextArray_pos_0"); System.out.println(bucket.getFindNextArray(0));
+                    System.out.println("===============================================");}
         
     }
 }
