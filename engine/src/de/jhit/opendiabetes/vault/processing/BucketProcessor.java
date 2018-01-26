@@ -52,7 +52,7 @@ public class BucketProcessor {
     // Date check for setBucketArrayInformation (merge-to and onehot)
     private Date lastDate = null;
     // boolean switch for setBucketArrayInformation (merge-to and onehot)
-    private boolean sameDatesGetNoTimerArrayUpdate = true;
+    private boolean sameDatesGetNoTimerArrayUpdate = false;
 
     // time countdown Array
     private double[] timeCountDownArray = new double[BucketEntry.getNumberOfVaultEntryTriggerTypes()];
@@ -421,6 +421,10 @@ public class BucketProcessor {
      */
     public void setBucketArrayInformation(Date date, BucketEntry bucket) {
         
+        // this prevents that the first BucketEntry has the chance of couting down the timer.
+        // sameDatesGetNoTimerArrayUpdate is initially set to false.
+        if (bucket.getBucketNumber() == BUCKET_START_NUMBER + 1) {sameDatesGetNoTimerArrayUpdate = true;}
+        
         // since it is possible to have multiple timestamps with the same date the timers should not be updated untill the next minute has started.
         // set lastDate on the first call
         if (lastDate == null) {lastDate = date;}
@@ -431,11 +435,6 @@ public class BucketProcessor {
         if (addMinutesToTimestamp(lastDate, 2).equals(date)) {lastDate = addMinutesToTimestamp(lastDate, 1);            // TODO not reached with EMPTY
                                                         sameDatesGetNoTimerArrayUpdate = true;}                         // TODO not reached with EMPTY
         
-        // initial onehots are set when the Bucket is created
-        
-        // 
-        // TODO CHECK FOR DATE TO PREVENT UPDATES IN THE SAME TIMESTAMP!!!!
-        // 
         
         // set internal arrays through 1st BucketEntry
         if (bucket.getBucketNumber() == BUCKET_START_NUMBER) {
@@ -465,7 +464,7 @@ public class BucketProcessor {
                     // set false to not enter this part till lastDate update
                     sameDatesGetNoTimerArrayUpdate = false;
                     // set timers
-                    if (timeCountDownArray[i] > 0) {timeCountDownArray[i] = timeCountDownArray[i] - 1;}
+                    if (timeCountDownArray[i] > 0) {timeCountDownArray[i] = timeCountDownArray[i] - 1;}                                 /////
                     
         if (DEBUG) {System.out.println("Set_Bucket_Array_Information_first_timestamp");
                     System.out.println("lastDate"); System.out.println(lastDate);
@@ -478,7 +477,9 @@ public class BucketProcessor {
                 // update info array stats
                 // 
                 // set timer
-                if (bucket.getTimeCountDown(i) > timeCountDownArray[i]) {timeCountDownArray[i] = bucket.getTimeCountDown(i);}
+                // initial onehots are set when the Bucket is created
+                if (bucket.getTimeCountDown(i) > timeCountDownArray[i]
+                        && ARRAY_ENTRY_TRIGGER_HASHMAP.get(bucket.getVaultEntry().getType()) == i) {timeCountDownArray[i] = bucket.getTimeCountDown(i);}           /////
                 
                 // set onehot to false
                 if (timeCountDownArray[i] == 0) {onehotInformationArray[i] = 0;}
