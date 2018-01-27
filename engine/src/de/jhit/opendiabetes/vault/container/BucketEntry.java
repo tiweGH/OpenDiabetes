@@ -61,12 +61,15 @@ public class BucketEntry {
     }
     
     // 
-    // GETTER bucket entry number
-    // only getter since bucket entry number is set when BucketEntry is created
+    // GETTER - SETTER bucket entry number
     // 
     // get bucket entry number
     public int getBucketNumber() {
         return bucketEntryNumber;
+    }
+    // set bucket entry number
+    public void setBucketNumber(int newNumber) {
+        bucketEntryNumber = newNumber;
     }
 
     //
