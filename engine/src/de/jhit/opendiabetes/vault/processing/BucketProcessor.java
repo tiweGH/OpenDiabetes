@@ -386,7 +386,7 @@ public class BucketProcessor {
      * @param listToCheckIn This is the list of BucketEntrys in which the BucketEntry will be taken out of.
      * @return This method returns true if the previous BucketEntry is not an empty BucketEntry and the Date matches and returns false if the previous BucketEntry is an empty BucketEntry.
      */
-    private static boolean checkPreviousBucketEntry(int bucketListPosition, Date date, List<BucketEntry> listToCheckIn) {
+    private boolean checkPreviousBucketEntry(int bucketListPosition, Date date, List<BucketEntry> listToCheckIn) {
         
         if (DEBUG) {System.out.println("check_prev_bucket");
                     System.out.println("incoming_bucket_position"); System.out.println(bucketListPosition + 1);
@@ -408,6 +408,12 @@ public class BucketProcessor {
         }
         
     }
+    
+    // 
+    // 
+    // TODO only update one hot with this method ... find a work around for ML-relevant but not one hot
+    // 
+    // 
 
     /**
      * This method sets the necessary information into the BucketEntry arrays and 
@@ -419,7 +425,7 @@ public class BucketProcessor {
      * @param date This is the current Date from the method createListOfBuckets (timecounter).
      * @param bucket This is the BucketEntry that will have it's arrays updated.
      */
-    public void setBucketArrayInformation(Date date, BucketEntry bucket) {
+    private void setBucketArrayInformation(Date date, BucketEntry bucket) {
         
         // this prevents that the first BucketEntry has the chance of couting down the timer.
         // sameDatesGetNoTimerArrayUpdate is initially set to false.
@@ -464,7 +470,7 @@ public class BucketProcessor {
                     // set false to not enter this part till lastDate update
                     sameDatesGetNoTimerArrayUpdate = false;
                     // set timers
-                    if (timeCountDownArray[i] > 0) {timeCountDownArray[i] = timeCountDownArray[i] - 1;}                                 /////
+                    if (timeCountDownArray[i] > 0) {timeCountDownArray[i] = timeCountDownArray[i] - 1;}                                                             /////
                     
         if (DEBUG) {System.out.println("Set_Bucket_Array_Information_first_timestamp");
                     System.out.println("lastDate"); System.out.println(lastDate);
@@ -479,7 +485,7 @@ public class BucketProcessor {
                 // set timer
                 // initial onehots are set when the Bucket is created
                 if (bucket.getTimeCountDown(i) > timeCountDownArray[i]
-                        && ARRAY_ENTRY_TRIGGER_HASHMAP.get(bucket.getVaultEntry().getType()) == i) {timeCountDownArray[i] = bucket.getTimeCountDown(i);}           /////
+                        && ARRAY_ENTRY_TRIGGER_HASHMAP.get(bucket.getVaultEntry().getType()) == i) {timeCountDownArray[i] = bucket.getTimeCountDown(i);}            /////
                 
                 // set onehot to false
                 if (timeCountDownArray[i] == 0) {onehotInformationArray[i] = 0;}
@@ -557,5 +563,64 @@ public class BucketProcessor {
                     System.out.println("findNextArray_pos_0"); System.out.println(bucket.getFindNextArray(0));
                     System.out.println("===============================================");}
         
+    }
+    
+    private void calculateAverageForSmallestBucketSize(BucketEntry bucket) {
+        
+    }
+    
+    /**
+     * This method iterates through all BucketEntrys of the given list of BucketEntrys and creates a new list of BucketEntrys 
+     * that only contains the last found BucketEntry of each timestamp foudn in the given list of BucketEntrys.
+     * All the BucketEntrys in the new created list of BucketEntrys will have the correct numeration set thier new position in the list.
+     * @param bucketList This is the list of BucketEntrys that will be used to create the new normalized (minimal) list of BucketEntrys.
+     * @return This method returns a list of BucketEntrys with only one BucketEntry per timestamp.
+     */
+    private List<BucketEntry> removeUnneededBucketEntrys(List<BucketEntry> bucketList) {
+        List<BucketEntry> outputBucketList = new ArrayList<>();
+        Date checkingThisBucketEntryDate = bucketList.get(0).getVaultEntry().getTimestamp();
+        Date lastBucketEntryDate = bucketList.get(bucketList.size() - 1).getVaultEntry().getTimestamp();
+        int currentBucketListPosition = 0;
+        int currentBucketOutputListPosition = BUCKET_START_NUMBER;
+        
+        // loop ends on Date.equals(last Date)
+        // leave loop when on last date to prevent NullPointerException
+        while (checkingThisBucketEntryDate.before(lastBucketEntryDate)) {
+            // move through the timestamps
+            while (checkingThisBucketEntryDate.equals(bucketList.get(currentBucketListPosition).getVaultEntry().getTimestamp())) {
+                currentBucketListPosition++;
+            }
+            // currentBucketListPosition is now the position of the needed BucketEntry
+            outputBucketList.add(bucketList.get(currentBucketListPosition));
+            // update the BucketEntryNumber to the new position
+            outputBucketList.get(outputBucketList.size() - 1).setBucketNumber(currentBucketOutputListPosition);
+            
+            // set checkingThisBucketEntryDate to the next minute
+            checkingThisBucketEntryDate = addMinutesToTimestamp(checkingThisBucketEntryDate, 1);
+            // set currentBucketListPosition to the next BucketEntry position
+            currentBucketListPosition++;
+            // update currentBucketOutputListPosition to the next BucketEntry number to be set
+            currentBucketOutputListPosition++;
+        }
+        // since on last date just take last entry
+        // add the last BucketEntry to the output list
+        outputBucketList.add(bucketList.get(bucketList.size() - 1));
+        // update the BucketEntryNumber to the new position
+        outputBucketList.get(outputBucketList.size() - 1).setBucketNumber(currentBucketOutputListPosition);
+        
+        return outputBucketList;
+    }
+    
+    public List<BucketEntry> processor(List<VaultEntry> entryList, int wantedBucketSize) throws ParseException {
+        // Bucket size == 1 min.
+        List<BucketEntry> listOfBucketEntries = createListOfBuckets(entryList);
+        // remove duplicate timestamp BucketEntrys
+        listOfBucketEntries = removeUnneededBucketEntrys(listOfBucketEntries);
+        // calculate averages
+        calculateAverageForSmallestBucketSize(listOfBucketEntries.get(0));  //TODO
+        // set to wanted bucket size
+        // TODO
+        
+        return listOfBucketEntries;
     }
 }
