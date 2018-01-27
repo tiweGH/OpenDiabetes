@@ -24,11 +24,10 @@ import java.util.HashSet;
  * @author aa80hifa
  */
 public class BucketEventTriggers {
-    
+
     // ArrayEntryTriggerHashMap
     public static final HashMap<VaultEntryType, Integer> ARRAY_ENTRY_TRIGGER_HASHMAP;
-    static
-    {  
+    static {
         ARRAY_ENTRY_TRIGGER_HASHMAP = new HashMap<>();
         ARRAY_ENTRY_TRIGGER_HASHMAP.put(VaultEntryType.GLUCOSE_CGM_ALERT, 0);
         ARRAY_ENTRY_TRIGGER_HASHMAP.put(VaultEntryType.CGM_SENSOR_FINISHED, 1);
@@ -55,12 +54,20 @@ public class BucketEventTriggers {
         ARRAY_ENTRY_TRIGGER_HASHMAP.put(VaultEntryType.PUMP_REWIND, 22);
         ARRAY_ENTRY_TRIGGER_HASHMAP.put(VaultEntryType.PUMP_FILL, 23);
         ARRAY_ENTRY_TRIGGER_HASHMAP.put(VaultEntryType.PUMP_SUSPEND, 24);
+        ARRAY_ENTRY_TRIGGER_HASHMAP.put(VaultEntryType.BASAL_INTERPRETER, 25);
+        ARRAY_ENTRY_TRIGGER_HASHMAP.put(VaultEntryType.GLUCOSE_CGM, 26);
+        ARRAY_ENTRY_TRIGGER_HASHMAP.put(VaultEntryType.BASAL_PROFILE, 27);
+        ARRAY_ENTRY_TRIGGER_HASHMAP.put(VaultEntryType.BASAL_MANUAL, 28);
+        ARRAY_ENTRY_TRIGGER_HASHMAP.put(VaultEntryType.BOLUS_NORMAL, 29);
+        ARRAY_ENTRY_TRIGGER_HASHMAP.put(VaultEntryType.BOLUS_SQARE, 30);
+        ARRAY_ENTRY_TRIGGER_HASHMAP.put(VaultEntryType.MEAL_BOLUS_CALCULATOR, 31);
+        ARRAY_ENTRY_TRIGGER_HASHMAP.put(VaultEntryType.MEAL_MANUAL, 32);
+        ARRAY_ENTRY_TRIGGER_HASHMAP.put(VaultEntryType.PUMP_UNSUSPEND, 33);
     }
-    
+
     // triggerEventActTimeGiven (Value given in VaultEntry)
     public static final HashSet<VaultEntryType> TRIGGER_EVENT_ACT_TIME_GIVEN;
-    static
-    {  
+    static {
         TRIGGER_EVENT_ACT_TIME_GIVEN = new HashSet<>();
         TRIGGER_EVENT_ACT_TIME_GIVEN.add(VaultEntryType.SLEEP_LIGHT);
         TRIGGER_EVENT_ACT_TIME_GIVEN.add(VaultEntryType.SLEEP_REM);
@@ -76,11 +83,10 @@ public class BucketEventTriggers {
         TRIGGER_EVENT_ACT_TIME_GIVEN.add(VaultEntryType.EXERCISE_RUN);
         TRIGGER_EVENT_ACT_TIME_GIVEN.add(VaultEntryType.EXERCISE_MANUAL);
     }
-    
+
     // triggerEventActTimeTillNextEvent
     public static final HashMap<VaultEntryType, VaultEntryType> TRIGGER_EVENT_ACT_TIME_TILL_NEXT_EVENT;
-    static
-    {  
+    static {
         TRIGGER_EVENT_ACT_TIME_TILL_NEXT_EVENT = new HashMap<>();
         TRIGGER_EVENT_ACT_TIME_TILL_NEXT_EVENT.put(VaultEntryType.CGM_CONNECTION_ERROR, VaultEntryType.GLUCOSE_CGM);
         TRIGGER_EVENT_ACT_TIME_TILL_NEXT_EVENT.put(VaultEntryType.CGM_CALIBRATION_ERROR, VaultEntryType.GLUCOSE_CGM_CALIBRATION);
@@ -88,19 +94,37 @@ public class BucketEventTriggers {
         TRIGGER_EVENT_ACT_TIME_TILL_NEXT_EVENT.put(VaultEntryType.PUMP_AUTONOMOUS_SUSPEND, VaultEntryType.PUMP_UNSUSPEND);
         TRIGGER_EVENT_ACT_TIME_TILL_NEXT_EVENT.put(VaultEntryType.PUMP_REWIND, VaultEntryType.PUMP_PRIME);
         TRIGGER_EVENT_ACT_TIME_TILL_NEXT_EVENT.put(VaultEntryType.PUMP_SUSPEND, VaultEntryType.PUMP_UNSUSPEND);
+
     }
-    
+
     // triggerEventActTimeOne (Alert for 1 Frame)
     public static final HashSet<VaultEntryType> TRIGGER_EVENT_ACT_TIME_ONE;
-    static
-    {  
+    static {
         TRIGGER_EVENT_ACT_TIME_ONE = new HashSet<>();
         TRIGGER_EVENT_ACT_TIME_ONE.add(VaultEntryType.GLUCOSE_CGM_ALERT);
         TRIGGER_EVENT_ACT_TIME_ONE.add(VaultEntryType.CGM_SENSOR_FINISHED);
         TRIGGER_EVENT_ACT_TIME_ONE.add(VaultEntryType.CGM_SENSOR_START);
         TRIGGER_EVENT_ACT_TIME_ONE.add(VaultEntryType.PUMP_FILL_INTERPRETER);
-    //    TRIGGER_EVENT_ACT_TIME_ONE.add(VaultEntryType.PUMP_NO_DELIVERY);
-        TRIGGER_EVENT_ACT_TIME_ONE.add(VaultEntryType.PUMP_FILL);
+        //    TRIGGER_EVENT_ACT_TIME_ONE.add(VaultEntryType.PUMP_NO_DELIVERY);
     }
-    
+
+    public static final HashSet<VaultEntryType> TRIGGER_NOT_ONE_HOT_ACT_TIME_ONE;
+    static {
+        TRIGGER_NOT_ONE_HOT_ACT_TIME_ONE = new HashSet<>();
+        TRIGGER_NOT_ONE_HOT_ACT_TIME_ONE.add(VaultEntryType.PUMP_FILL);
+        TRIGGER_NOT_ONE_HOT_ACT_TIME_ONE.add(VaultEntryType.GLUCOSE_CGM);
+    }
+
+    public static final HashMap<VaultEntryType, VaultEntryType> TRIGGER_NOT_ONE_HOT_EVENT_ACT_TIME_TILL_NEXT_EVENT;
+    static {
+        TRIGGER_NOT_ONE_HOT_EVENT_ACT_TIME_TILL_NEXT_EVENT = new HashMap<>();
+        TRIGGER_NOT_ONE_HOT_EVENT_ACT_TIME_TILL_NEXT_EVENT.put(VaultEntryType.BASAL_INTERPRETER, VaultEntryType.EMPTY);
+        TRIGGER_NOT_ONE_HOT_EVENT_ACT_TIME_TILL_NEXT_EVENT.put(VaultEntryType.BASAL_MANUAL, VaultEntryType.EMPTY);
+    }
+
+    public static final HashSet<VaultEntryType> TRIGGER_NOT_ONE_HOT_EVENT_ACT_TIME_GIVEN;
+    static {
+        TRIGGER_NOT_ONE_HOT_EVENT_ACT_TIME_GIVEN = new HashSet<>();
+        TRIGGER_NOT_ONE_HOT_EVENT_ACT_TIME_GIVEN.add(VaultEntryType.BASAL_PROFILE);
+    }
 }

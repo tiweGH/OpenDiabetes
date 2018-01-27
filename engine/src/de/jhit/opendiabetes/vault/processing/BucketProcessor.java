@@ -28,6 +28,7 @@ import static de.jhit.opendiabetes.vault.container.BucketEventTriggers.ARRAY_ENT
 import static de.jhit.opendiabetes.vault.container.BucketEventTriggers.TRIGGER_EVENT_ACT_TIME_GIVEN;
 import static de.jhit.opendiabetes.vault.container.BucketEventTriggers.TRIGGER_EVENT_ACT_TIME_TILL_NEXT_EVENT;
 import static de.jhit.opendiabetes.vault.container.BucketEventTriggers.TRIGGER_EVENT_ACT_TIME_ONE;
+import static de.jhit.opendiabetes.vault.container.BucketEventTriggers.*;
 
 /**
  *
@@ -111,7 +112,23 @@ public class BucketProcessor {
                 // set to EMPTY
             newBucket.setFindNextArray(arrayPosition, VaultEntryType.EMPTY);
                 
+            } else if(TRIGGER_NOT_ONE_HOT_ACT_TIME_ONE.contains(entry.getType())){
+                newBucket.setTimeCountDown(arrayPosition, 1);
+                newBucket.setOnehotInformationArray(arrayPosition, 0);
+                newBucket.setFindNextArray(arrayPosition, VaultEntryType.EMPTY);
+                
+            
+            } else if(TRIGGER_NOT_ONE_HOT_EVENT_ACT_TIME_GIVEN.contains(entry.getType())){
+                newBucket.setTimeCountDown(arrayPosition, bucketNumber);
+                newBucket.setOnehotInformationArray(arrayPosition, 0);
+                newBucket.setFindNextArray(arrayPosition, VaultEntryType.EMPTY);
+                
+            } else if (TRIGGER_NOT_ONE_HOT_EVENT_ACT_TIME_TILL_NEXT_EVENT.containsKey(entry.getType())){
+                newBucket.setTimeCountDown(arrayPosition, bucketNumber);
+                newBucket.setOnehotInformationArray(arrayPosition, 0);
+                newBucket.setFindNextArray(arrayPosition, VaultEntryType.EMPTY);
             }
+            
         }
         
         return newBucket;

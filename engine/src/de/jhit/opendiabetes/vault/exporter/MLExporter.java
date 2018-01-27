@@ -75,7 +75,7 @@ public class MLExporter {
                     String line = Arrays.toString(buckets.get(i).getFullOnehotInformationArray());
                     line = line.replace("[", "");
                     line = line.replace("]", "");
-                    line = line.replace("0.0", "0");
+                    line = line.replace("0.0", "0"); // hier muss noch ausgeschlossen werden, dass zB 0.02 erwischt wird
                     line = line.replace("1.0", "1");
                     fw.write(j + ", " + line);
                     fw.write(System.lineSeparator());
