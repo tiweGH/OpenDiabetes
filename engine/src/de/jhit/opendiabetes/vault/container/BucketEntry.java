@@ -24,12 +24,12 @@ import java.util.Arrays;
  * @author aa80hifa
  */
 public class BucketEntry {
-    
+
     private VaultEntry vaultEntry;
-    
+
     // BucketEntry list counter
     private int bucketEntryNumber;
-    
+
     // Array size settings
     // numberOfVaultEntryTriggerTypes
     private static final int NUMBER_OF_VAULT_ENTRY_TRIGGER_TYPES = ARRAY_ENTRY_TRIGGER_HASHMAP.size();
@@ -43,30 +43,30 @@ public class BucketEntry {
     // wait till next entry
     private VaultEntryType[] findNextArray;
 
-    
-    public BucketEntry(int bucketNumber,VaultEntry entry) {
+    public BucketEntry(int bucketNumber, VaultEntry entry) {
         vaultEntry = entry;
 
         // counter
         bucketEntryNumber = bucketNumber;
-        
+
         // Arrays containing OneHot information
         timeCountDownArray = new double[NUMBER_OF_VAULT_ENTRY_TRIGGER_TYPES];
         onehotInformationArray = new double[NUMBER_OF_VAULT_ENTRY_TRIGGER_TYPES];
 //        entryTypeArray = new VaultEntryType[NUMBEROFVAULTENTRYTRIGGERTYPES];
         findNextArray = new VaultEntryType[NUMBER_OF_VAULT_ENTRY_TRIGGER_TYPES];
-        
+
         // Fill findNextArray with EMPTY
         Arrays.fill(findNextArray, VaultEntryType.EMPTY);
     }
-    
-    // 
+
+    //
     // GETTER - SETTER bucket entry number
-    // 
+    //
     // get bucket entry number
     public int getBucketNumber() {
         return bucketEntryNumber;
     }
+
     // set bucket entry number
     public void setBucketNumber(int newNumber) {
         bucketEntryNumber = newNumber;
@@ -85,23 +85,25 @@ public class BucketEntry {
     public static int getNumberOfVaultEntryTriggerTypes() {
         return NUMBER_OF_VAULT_ENTRY_TRIGGER_TYPES;
     }
-    
-    // 
+
+    //
     // GETTER full arrays of a BucketEntry
-    // 
+    //
     // get full time countdown
     public double[] getFullTimeCountDown() {
-        return timeCountDownArray;
+        return timeCountDownArray.clone();
     }
+
     // get full time countdown
     public double[] getFullOnehotInformationArray() {
-        return onehotInformationArray;
+        return onehotInformationArray.clone();
     }
+
     // get full time countdown
     public VaultEntryType[] getFullFindNextArray() {
-        return findNextArray;
+        return findNextArray.clone();
     }
-    
+
     //
     // GETTER
     //
@@ -110,11 +112,13 @@ public class BucketEntry {
     public double getTimeCountDown(int position) {
         return timeCountDownArray[position];
     }
+
     // get boolean
     // ArrayOutOfBounds
     public double getOnehotInformationArray(int position) {
         return onehotInformationArray[position];
     }
+
     // get VaultEntryType
     // ArrayOutOfBounds
 //    public VaultEntryType getVaultEntryType(int position) {
@@ -134,11 +138,13 @@ public class BucketEntry {
     public void setTimeCountDown(int position, double time) {
         timeCountDownArray[position] = time;
     }
+
     // set boolean
     // ArrayOutOfBounds
     public void setOnehotInformationArray(int position, double bool) {
         onehotInformationArray[position] = bool;
     }
+
     // set VaultEntryType
     // ArrayOutOfBounds
 //    public void setVaultEntryType(int position, VaultEntryType entry) {
@@ -149,5 +155,5 @@ public class BucketEntry {
     public void setFindNextArray(int position, VaultEntryType entry) {
         findNextArray[position] = entry;
     }
-    
+
 }
