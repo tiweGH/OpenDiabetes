@@ -29,6 +29,8 @@ import static de.jhit.opendiabetes.vault.container.BucketEventTriggers.TRIGGER_E
 import static de.jhit.opendiabetes.vault.container.BucketEventTriggers.TRIGGER_EVENT_ACT_TIME_TILL_NEXT_EVENT;
 import static de.jhit.opendiabetes.vault.container.BucketEventTriggers.TRIGGER_EVENT_ACT_TIME_ONE;
 import static de.jhit.opendiabetes.vault.container.BucketEventTriggers.*;
+import de.jhit.opendiabetes.vault.container.FinalBucketEntry;
+import de.jhit.opendiabetes.vault.util.TimestampUtils;
 
 /**
  *
@@ -720,8 +722,14 @@ public class BucketProcessor {
 
     }
 
+    // set average for every BucketEntry(timestamp)
     private void calculateAverageForSmallestBucketSize(BucketEntry bucket) {
 
+    }
+    
+    // set average for the wanted BucketEntry size
+    private FinalBucketEntry calculateAverageForWantedBucketSize(int bucketNumber, List<BucketEntry> list) {
+        return new FinalBucketEntry(0);
     }
 
     /**
@@ -772,18 +780,92 @@ public class BucketProcessor {
         return outputBucketList;
     }
 
-    public List<BucketEntry> processor(List<VaultEntry> entryList, int wantedBucketSize) throws ParseException {
+    /**
+     * This method receives a list of VaultEntrys and a wanted step size (in minutes) for the resulting list of FinalBucketEntrys.
+     * In this method the given list of VaultEntrys will be transformed into a list of BucketEntrys through the createListOfBuckets method
+     * which will then be stripped-down to the necessary BucketEntrys via the removeUnneededBucketEntrys method.
+     * The list of BucketEntrys will then run through the calculateAverageForSmallestBucketSize method to set all of the needed average calculations.
+     * The last step is to transform the list of BucketEntrys into a list of FinalBucketEntrys.
+     * If the wanted bucket size is 1 the list will just be transformed.
+     * If the wanted bucket size is greater than 1 the list will be sent through the !!!average to the wanted bucket size!!! method and reduced to the needed FinalBucketEntrys.
+     * 
+     * If the given list of VaultEntrys results in a list of BucketEntrys that does not fulfill the given size % wanted size == 0 scheme the needed BucketEntrys 
+     * will be added as empty BucketEntrys at the end of the list of BucketEntrys.
+     * 
+     * @param entryList The list of VaultEntrys that will be transformed into a list of FinalBucketEntrys.
+     * @param wantedBucketSize  This is the wanted bucket size (in minutes).
+     * @return This method returns a list of FinalBucketEntrys in the desired bucket size (time step size).
+     * @throws ParseException 
+     */
+    // fill up end of the list with empty buckets if x % y != 0
+    public List<FinalBucketEntry> processor(List<VaultEntry> entryList, int wantedBucketSize) throws ParseException {
+        List<FinalBucketEntry> outputFinalBucketList = new ArrayList<>();
+        // FinalBucketEntry counter
+        int finalBucketEntryListCounter = BUCKET_START_NUMBER;
+        
         // Bucket size == 1 min.
         List<BucketEntry> listOfBucketEntries = createListOfBuckets(entryList);
         // remove duplicate timestamp BucketEntrys
         listOfBucketEntries = removeUnneededBucketEntrys(listOfBucketEntries);
         // calculate averages
         calculateAverageForSmallestBucketSize(listOfBucketEntries.get(0));  //TODO
-        // set to wanted bucket size
-        // TODO
-        // update average to the wanted bucket size
-        // TODO
+        
+        // if wantedBucketSize != 1 transform the list into the wanted size .. standard bucket size == 1
+        if (wantedBucketSize != 1){
+            
+            // set to wanted bucket size
+            // update average to the wanted bucket size
+            // TODO
 
-        return listOfBucketEntries;
+            // list of BucketEntrys to give average for wanted bucket size
+            List<BucketEntry> listOfWantedBucketSize = new ArrayList<>();
+            // bucketEntry counter
+
+            // for each BucketEntry
+            for (BucketEntry entry : listOfBucketEntries) {
+                // bucketNumber % wantedBucketSize
+                if (entry.getBucketNumber()% wantedBucketSize != 0){
+                    listOfWantedBucketSize.add(entry);
+                } else {
+                    // mod == 0 
+                    // call average to the wanted bucket size
+                    // save output in outputFinalBucketList
+                    // start new list for call
+                    
+                    // call <average to the wanted bucket size> method
+                    // 
+                    // TODO 
+                    // 
+                    outputFinalBucketList.add( calculateAverageForWantedBucketSize( finalBucketEntryListCounter, listOfWantedBucketSize ) );
+                    // update FinalBucketEntry counter
+                    finalBucketEntryListCounter++;
+                    // start new list
+                    listOfWantedBucketSize = new ArrayList<>();
+                    listOfWantedBucketSize.add(entry);
+                }
+            }
+            // fill up last list spaces with empty bucket entries containing the next BucketEntry number and the date of the last given BucketEntry
+            while (listOfWantedBucketSize.size() % wantedBucketSize != 0) {
+                listOfWantedBucketSize.add(createEmptyBucket(listOfWantedBucketSize.get(listOfWantedBucketSize.size() - 1).getBucketNumber() + 1, 
+                                                             listOfWantedBucketSize.get(listOfWantedBucketSize.size() - 1).getVaultEntry().getTimestamp()));
+            }
+            // last call of the <average to the wanted bucket size> method
+            // 
+            // TODO 
+            // 
+            outputFinalBucketList.add( calculateAverageForWantedBucketSize( finalBucketEntryListCounter, listOfWantedBucketSize ) );
+        } else {
+            // wantedBucketSize == 1
+            // transform all BucketEntrys into FinalBucketEntrys            
+            for (BucketEntry entry : listOfBucketEntries) {
+                outputFinalBucketList.add(new FinalBucketEntry(entry.getBucketNumber()));
+                // clone BucketEntry arrays into the new FinalBucketEntry arrays
+                outputFinalBucketList.get(outputFinalBucketList.size() - 1).setFullTimeCountDown(entry.getFullTimeCountDown());
+                outputFinalBucketList.get(outputFinalBucketList.size() - 1).setFullOnehotInformationArray(entry.getFullOnehotInformationArray());
+                outputFinalBucketList.get(outputFinalBucketList.size() - 1).setFullFindNextArray(entry.getFullFindNextArray());
+            }
+        }
+        
+        return outputFinalBucketList;
     }
 }
