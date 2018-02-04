@@ -40,25 +40,31 @@ public class UnderThresholdFilter extends ThresholdFilter {
 
             this.thresholdValue = thresholdValue;
             this.type = TH;
-            this.TH = TH;
+            this.filterType = TH;
             this.GenericType = GenericType;
             this.availabledatatype = availabledatatype;
 
         }
     }
 
+    public UnderThresholdFilter(Double thresholdValue) {
+        this.thresholdValue = thresholdValue;
+    }
+
     @Override
+
     public FilterType getType() {
-        return type;
+        return FilterType.UNDER_TH;
     }
 
     @Override
     boolean matchesFilterParameters(VaultEntry entry) {
-        return entry.getType() == GenericType && entry.getValue() < thresholdValue;
+        return //entry.getType() == GenericType &&
+                entry.getValue() < thresholdValue;
     }
 
     @Override
     Filter update(VaultEntry vaultEntry) {
-        return new UnderThresholdFilter(vaultEntry.getType(), thresholdValue, availabledatatype, TH);
+        return new UnderThresholdFilter(vaultEntry.getType(), thresholdValue, availabledatatype, filterType);
     }
 }

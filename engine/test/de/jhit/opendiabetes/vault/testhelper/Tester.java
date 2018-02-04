@@ -34,7 +34,9 @@ import de.jhit.opendiabetes.vault.testhelper.filterfactory.BolusCGMLess60;
 import de.jhit.opendiabetes.vault.testhelper.filterfactory.BolusGreater180NoMeal3h;
 import de.jhit.opendiabetes.vault.testhelper.filterfactory.FilterFactory;
 import de.jhit.opendiabetes.vault.testhelper.filterfactory.NigthAutoSuspendBolus4h;
+import de.jhit.opendiabetes.vault.testhelper.filterfactory.NoDateTimeSpansWithoutGroup;
 import de.jhit.opendiabetes.vault.testhelper.filterfactory.TypeAbsence;
+import de.jhit.opendiabetes.vault.testhelper.filterfactory.TypeAfterNthEventAfterEvent;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.text.ParseException;
 import java.time.LocalDate;
@@ -60,9 +62,17 @@ public class Tester {
         try {
 
             List<VaultEntry> entryList = StaticDataset.getStaticDataset();
+            //entryList.add(new VaultEntry(VaultEntryType.EXERCISE_RUN, TimestampUtils.createCleanTimestamp("2017.06.30-00:00", "yyyy.MM.dd-HH:mm"), 21.5));
             FilterResult fr;
-            FilterFactory fac = new TypeAbsence(entryList, VaultEntryTypeGroup.GLUCOSE, 10);
-            List<Filter> fl = fac.createFilter();
+            FilterFactory fac;
+            fac = new TypeAbsence(entryList, VaultEntryTypeGroup.GLUCOSE, 10);
+            fac = new NoDateTimeSpansWithoutGroup(entryList, VaultEntryTypeGroup.SLEEP,
+                    TimestampUtils.createCleanTimestamp("2017.06.20-00:00", "yyyy.MM.dd-HH:mm"),
+                    TimestampUtils.createCleanTimestamp("2017.06.20-23:59", "yyyy.MM.dd-HH:mm"));
+            fac = new TypeAfterNthEventAfterEvent(entryList);
+            List<Filter> fl = new ArrayList<>();
+            fl.add(new EventFilter(VaultEntryType.HEART_RATE));
+            fl = fac.createFilter();
             FilterResult lastResult = null;
 
             for (Filter filter : fl) {
@@ -74,18 +84,15 @@ public class Tester {
             }
 
             for (VaultEntry entry : lastResult.filteredData) {
-                //System.out.println(entry.toString());
+                System.out.println(entry.toString());
             }
-            LocalDate localStart = TimestampUtils.dateToLocalDate(TimestampUtils.createCleanTimestamp("2017.06.20-04:53", "yyyy.MM.dd-HH:mm"));
-            LocalDate localEnd = TimestampUtils.dateToLocalDate(TimestampUtils.createCleanTimestamp("2017.06.30-04:53", "yyyy.MM.dd-HH:mm"));
-            if (localEnd.isAfter(localStart)) {
-                int yearOffset = 0;
-                //   LocalDate tempDate = localEnd.minus(localStart.toEpochDay(),);
-                int dayOffset = localEnd.minusDays(localStart.getDayOfYear()).getDayOfYear();
-                System.out.println(dayOffset + " " + yearOffset);
-                yearOffset = localEnd.minusYears(localStart.getYear()).getYear();
-                System.out.println(dayOffset + " " + yearOffset);
-            }
+            System.out.println(entryList.size());
+            System.out.println(lastResult.filteredData.size() + " " + lastResult.timeSeries.size());
+            PositionFilter fruu = new PositionFilter(PositionFilter.DATE_MIDDLE);
+            System.out.println(fruu.filter(entryList).filteredData.get(0).getTimestamp());
+            System.out.println(TimestampUtils.getMidDate(
+                    entryList.get(0).getTimestamp(),
+                    entryList.get(entryList.size() - 1).getTimestamp()));
         } catch (ParseException ex) {
             Logger.getLogger(Tester.class.getName()).log(Level.SEVERE, null, ex);
         }

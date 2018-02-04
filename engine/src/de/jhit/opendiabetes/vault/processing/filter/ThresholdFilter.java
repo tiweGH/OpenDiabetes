@@ -44,7 +44,7 @@ public abstract class ThresholdFilter extends Filter {
     public List<VaultEntry> data;
     public VaultEntryType GenericType;
     public FilterType availabledatatype;
-    public FilterType TH;
+    public FilterType filterType;
 
     /**
      * Checks if the given parameters are a valid combination, which means

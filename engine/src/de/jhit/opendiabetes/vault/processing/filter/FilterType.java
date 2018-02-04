@@ -47,6 +47,8 @@ public enum FilterType {
     CGM_TH,
     HR_TH,
     STRESS_TH,
+    OVER_TH,
+    UNDER_TH,
     // filter nothing
     NONE, EVENT_SPAN_FILTER, BOLUS_SQARE, BOLUS_NORMAL, FILTER_DECORATOR, CONTINOUS_FILTER, COMBINATION_FILTER;
 

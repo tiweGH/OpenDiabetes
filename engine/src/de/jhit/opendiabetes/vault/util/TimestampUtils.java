@@ -136,6 +136,52 @@ public class TimestampUtils {
     }
 
     /**
+     * Calculates the Date in the exact middle between two given dates
+     *
+     * @param first
+     * @param second
+     * @return
+     */
+    public static Date getMidDate(Date first, Date second) {
+        long start;
+        long end;
+        if (first.before(second)) {
+            start = first.getTime();
+            end = second.getTime();
+        } else {
+            start = second.getTime();
+            end = first.getTime();
+        }
+        return new Date(start + (end - start) / 2);
+    }
+
+    /**
+     * Returns the VaultEntry with the timestamp located in the middle of the
+     * given entry-timestamps
+     *
+     * @param data contains sorted entries with timestamps, first with the
+     * oldest and last with the newest timestamp
+     * @return an entry with a timestamp nearest the actual middle of the first
+     * and the last timestamp
+     */
+    public static VaultEntry getNearestMidEntry(List<VaultEntry> data) {
+        VaultEntry result = null;
+        if (data != null) {
+            long actualMid = TimestampUtils.getMidDate(data.get(0).getTimestamp(), data.get(data.size() - 1).getTimestamp()).getTime();
+            long currentMin = Long.MAX_VALUE;
+            long temp;
+            for (VaultEntry vaultEntry : data) {
+                temp = Math.abs(actualMid - vaultEntry.getTimestamp().getTime());
+                if (temp < currentMin) {
+                    result = vaultEntry;
+                    currentMin = temp;
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
      *
      * @param startTime Start of the time span
      * @param endTime end of the time span

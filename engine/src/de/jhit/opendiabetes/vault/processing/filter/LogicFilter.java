@@ -23,7 +23,8 @@ import javax.naming.spi.DirStateFactory;
 
 /**
  *
- * @author Daniel This class extends filter and checks if the given Filters are positiv in the given order.
+ * @author Daniel This class extends filter and checks if the given Filters are
+ * positiv in the given order.
  */
 public class LogicFilter extends Filter {
 
@@ -33,6 +34,7 @@ public class LogicFilter extends Filter {
 
     /**
      * Standard Constructor
+     *
      * @param filters; Filters, which are in an specific order for checking
      * @param onlyOneResult; If there should be the first or all results.
      */
@@ -55,10 +57,11 @@ public class LogicFilter extends Filter {
 
             if (filters.size() - 1 == currentFilter) {
                 result = true;
-                
-                if(!onlyOneResult)
-                    currentFilter = 0;
-            } 
+
+                if (!onlyOneResult) {
+                    currentFilter = -1;
+                }
+            }
             currentFilter++;
         }
 
@@ -66,7 +69,16 @@ public class LogicFilter extends Filter {
     }
 
     @Override
-    Filter update(VaultEntry vaultEntry) {
+    protected List<VaultEntry> setUpBeforeFilter(List<VaultEntry> data) {
+        for (Filter filter : filters) {
+            filter.setUpBeforeFilter(data);
+        }
+        return data;
+    }
+
+    @Override
+    Filter update(VaultEntry vaultEntry
+    ) {
         return new LogicFilter(filters, onlyOneResult);
     }
 }
