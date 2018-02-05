@@ -203,12 +203,13 @@ public class DataSlicer {
                 
                 Date compareDate = new Date(startTime.getTime()+clusterTimeInMillis);
                 
-                if(compareDate.before(vaultEntry.getTimestamp()))
+                if(compareDate.before(vaultEntry.getTimestamp()) || result.indexOf(vaultEntry) == result.size()-1)
                 {
                     //clustertype?
                     VaultEntry tmpVaultEntry = new VaultEntry(VaultEntryType.CLUSTER, compareDate, sumOfValue);
                     sumOfValue = 0;
                     startTime = vaultEntry.getTimestamp();
+                    clusteredList.add(tmpVaultEntry);
                 }
                 
                 clusteredList.add(vaultEntry);
