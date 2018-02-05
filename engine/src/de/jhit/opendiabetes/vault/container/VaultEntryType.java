@@ -91,7 +91,7 @@ public enum VaultEntryType {
     // Date Mining
     DM_INSULIN_SENSITIVTY(VaultEntryTypeGroup.DATA_MINING, false, VaultEntryType.MAYBE),
     // More unspecific input
-    OTHER_ANNOTATION;
+    OTHER_ANNOTATION, CLUSTER;
 
     //current handling of MAYBE being true
     private final static boolean MAYBE = true;

@@ -18,6 +18,7 @@ package de.jhit.opendiabetes.vault.processing;
 
 import de.jhit.opendiabetes.vault.container.SliceEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
+import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.processing.filter.Filter;
 import de.jhit.opendiabetes.vault.processing.filter.FilterResult;
 import java.util.ArrayList;
@@ -47,6 +48,9 @@ public class DataSlicer {
      * empty list if no filter matches
      */
     public List<SliceEntry> sliceData(List<VaultEntry> data) {
+        
+        data = preprocessing(data);
+        
         List<SliceEntry> retVal = new ArrayList<>();
         FilterResult lastResult = null;
 
@@ -119,6 +123,103 @@ public class DataSlicer {
         } else {
             return null;
         }
+    }
+
+    
+    //Preprocessing start
+    private List<Filter> queryFilters;
+    
+    private long clusterTimeInMillis = 0;
+    private VaultEntryType clusterType; 
+    
+    public void setQuerying(List<Filter> queryFilters)
+    {
+        this.queryFilters = queryFilters;
+    }
+    
+    public void setCluserting(long clusterTimeInMillis, VaultEntryType clusterType)
+    {
+       this.clusterTimeInMillis = clusterTimeInMillis; 
+       this.clusterType = clusterType;
+    }
+    
+    /**
+     * Preprocessing for slicing. Prerocessing calls different Methods, which will be set specific sst methods.
+     * 
+     * @param data
+     * @return 
+     */
+    private List<VaultEntry> preprocessing(List<VaultEntry> data) {
+      
+        List<VaultEntry> result = data;
+        
+        result = query(result);
+        result = cluster(result);
+        
+        return result;
+    }
+
+    /**
+     * This Method checks if the given vaultEntry are correct with the given Querry. If the queery is wong the result will be null. 
+     * This method will only works, if the parameters are set correctly in the setQuerying method.
+     * 
+     * 
+     * @param data
+     * @return 
+     */
+    private List<VaultEntry> query(List<VaultEntry> data) {
+        List<VaultEntry> result = data;
+        
+        if(queryFilters != null && queryFilters.size() >0)
+        {
+            for (Filter queryFilter : queryFilters) {
+                
+                if(queryFilter.filter(data).size() == 0)
+                    result = null;
+            }
+        }        
+        return result;
+    }
+
+    /**
+     * This Method add clustered Vaultentry from the setType in the setClusteringMethod. This Method will only work if the parameters are set correctly.
+     * The clsteredVaultEntry is at the end of the clustered Series.
+     * 
+     * @param data
+     * @return 
+     */
+    private List<VaultEntry> cluster(List<VaultEntry> data) {
+        List<VaultEntry> result = data;
+        
+        if(clusterTimeInMillis >0 && clusterType != null)
+        {
+            List<VaultEntry> clusteredList = new ArrayList<VaultEntry>();
+            Date startTime = null;
+            double sumOfValue = 0;
+            
+            for (VaultEntry vaultEntry : result) {
+                if(startTime == null)
+                    startTime = vaultEntry.getTimestamp();
+                
+                Date compareDate = new Date(startTime.getTime()+clusterTimeInMillis);
+                
+                if(compareDate.before(vaultEntry.getTimestamp()))
+                {
+                    //clustertype?
+                    VaultEntry tmpVaultEntry = new VaultEntry(VaultEntryType.CLUSTER, compareDate, sumOfValue);
+                    sumOfValue = 0;
+                    startTime = vaultEntry.getTimestamp();
+                }
+                
+                clusteredList.add(vaultEntry);
+                sumOfValue+= vaultEntry.getValue();
+                
+            }
+            
+            result = clusteredList;
+        }        
+        
+        return result;        
     }
 
 }
