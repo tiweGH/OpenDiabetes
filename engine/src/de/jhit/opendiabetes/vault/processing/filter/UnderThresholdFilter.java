@@ -18,6 +18,7 @@ package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
+import de.jhit.opendiabetes.vault.container.VaultEntryTypeGroup;
 
 /**
  *
@@ -41,14 +42,30 @@ public class UnderThresholdFilter extends ThresholdFilter {
             this.thresholdValue = thresholdValue;
             this.type = TH;
             this.filterType = TH;
-            this.GenericType = GenericType;
+            this.filteredType = GenericType;
             this.availabledatatype = availabledatatype;
 
         }
     }
 
-    public UnderThresholdFilter(Double thresholdValue) {
+    public UnderThresholdFilter(VaultEntryTypeGroup filteredGroup, VaultEntryType fillteredType, Double thresholdValue) {
+        this.filteredType = fillteredType;
+        this.filteredGroup = filteredGroup;
         this.thresholdValue = thresholdValue;
+    }
+
+    public UnderThresholdFilter(VaultEntryType fillteredType, Double thresholdValue) {
+        this(null, fillteredType, thresholdValue);
+
+    }
+
+    public UnderThresholdFilter(VaultEntryTypeGroup filteredGroup, Double thresholdValue) {
+        this(filteredGroup, null, thresholdValue);
+
+    }
+
+    public UnderThresholdFilter(Double thresholdValue) {
+        this(null, null, thresholdValue);
     }
 
     @Override
@@ -59,12 +76,11 @@ public class UnderThresholdFilter extends ThresholdFilter {
 
     @Override
     boolean matchesFilterParameters(VaultEntry entry) {
-        return //entry.getType() == GenericType &&
-                entry.getValue() < thresholdValue;
+        return matchesThresholdFilter(entry, entry.getValue() < thresholdValue);
     }
 
     @Override
     Filter update(VaultEntry vaultEntry) {
-        return new UnderThresholdFilter(vaultEntry.getType(), thresholdValue, availabledatatype, filterType);
+        return new UnderThresholdFilter(vaultEntry.getType(), thresholdValue);
     }
 }

@@ -21,6 +21,9 @@ import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.processing.filter.Filter;
 import de.jhit.opendiabetes.vault.processing.filter.FilterResult;
+import de.jhit.opendiabetes.vault.util.SortVaultEntryByDate;
+import de.jhit.opendiabetes.vault.util.TimestampUtils;
+import de.jhit.opendiabetes.vault.util.VaultEntryUtils;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -31,7 +34,7 @@ import javafx.util.Pair;
  *
  * @author juehv
  */
-public class DataSlicer {
+public class DataSlicer extends VaultEntrySlicer {
 
     private final List<Filter> registeredFilter = new ArrayList<>();
     private final DataSlicerOptions options;
@@ -48,19 +51,9 @@ public class DataSlicer {
      * empty list if no filter matches
      */
     public List<SliceEntry> sliceData(List<VaultEntry> data) {
-        
-        data = preprocessing(data);
-        
-        List<SliceEntry> retVal = new ArrayList<>();
-        FilterResult lastResult = null;
 
-        for (Filter filter : registeredFilter) {
-            if (lastResult == null) {
-                lastResult = filter.filter(data);
-            } else {
-                lastResult = filter.filter(lastResult.filteredData);
-            }
-        }
+        List<SliceEntry> retVal = new ArrayList<>();
+        FilterResult lastResult = sliceEntries(data);
 
         if (lastResult != null) {
             for (Pair<Date, Date> item : lastResult.timeSeries) {
@@ -91,16 +84,6 @@ public class DataSlicer {
         return retVal;
     }
 
-    /**
-     * Registeres a filter for slicing. Should be called before slicing.
-     * Registered filteres are always combined as logical AND.
-     *
-     * @param filter
-     */
-    public void registerFilter(Filter filter) {
-        registeredFilter.add(filter);
-    }
-
     private Date generateMidPoint(FilterResult lastResult, Date temporary) {
         int localTempVar = -1;
         for (int i = 0; i < lastResult.filteredData.size(); i++) {
@@ -124,167 +107,5 @@ public class DataSlicer {
             return null;
         }
     }
-
-    
-    //Preprocessing start
-    private List<Filter> queryFilters;
-    
-    private long clusterTimeInMillis = 0;
-    private VaultEntryType clusterType; 
-    
-    
-    private long gapTimeInMillis = 0;
-    private VaultEntryType gapType; 
-    
-    public void setQuerying(List<Filter> queryFilters)
-    {
-        this.queryFilters = queryFilters;
-    }
-    
-    public void setCluserting(long clusterTimeInMillis, VaultEntryType clusterType)
-    {
-       this.clusterTimeInMillis = clusterTimeInMillis; 
-       this.clusterType = clusterType;
-    }
-    
-    public void setGapRemoving(long removeTimeInMillis, VaultEntryType removeType)
-    {
-       this.gapTimeInMillis = removeTimeInMillis; 
-       this.gapType = removeType;
-    }
-    
-    /**
-     * Preprocessing for slicing. Prerocessing calls different Methods, which will be set specific sst methods.
-     * 
-     * @param data
-     * @return 
-     */
-    private List<VaultEntry> preprocessing(List<VaultEntry> data) {
-      
-        List<VaultEntry> result = data;
-        
-        result = removeGaps(result);      
-        result = query(result);
-        result = cluster(result);
-        
-        return result;
-    }
-
-    /**
-     * This Method checks if the given vaultEntry are correct with the given Querry. If the queery is wong the result will be null. 
-     * This method will only works, if the parameters are set correctly in the setQuerying method.
-     * 
-     * 
-     * @param data
-     * @return 
-     */
-    private List<VaultEntry> query(List<VaultEntry> data) {
-        List<VaultEntry> result = data;
-        
-        if(queryFilters != null && queryFilters.size() >0)
-        {
-            for (Filter queryFilter : queryFilters) {
-                
-                if(queryFilter.filter(data).size() == 0)
-                    result = null;
-            }
-        }        
-        return result;
-    }
-
-    /**
-     * This Method add clustered Vaultentry from the setType in the setClusteringMethod. This Method will only work if the parameters are set correctly.
-     * The clsteredVaultEntry is at the end of the clustered Series.
-     * 
-     * @param data
-     * @return 
-     */
-    private List<VaultEntry> cluster(List<VaultEntry> data) {
-        List<VaultEntry> result = data;
-        
-        if(clusterTimeInMillis >0 && clusterType != null)
-        {
-            List<VaultEntry> clusteredList = new ArrayList<VaultEntry>();
-            Date startTime = null;
-            double sumOfValue = 0;
-            
-            for (VaultEntry vaultEntry : result) {
-                if(startTime == null)
-                    startTime = vaultEntry.getTimestamp();
-                
-                Date compareDate = new Date(startTime.getTime()+clusterTimeInMillis);
-                
-                if(compareDate.before(vaultEntry.getTimestamp()) || result.indexOf(vaultEntry) == result.size()-1)
-                {
-                    //clustertype?
-                    VaultEntry tmpVaultEntry = new VaultEntry(VaultEntryType.CLUSTER, compareDate, sumOfValue);
-                    sumOfValue = 0;
-                    startTime = vaultEntry.getTimestamp();
-                    clusteredList.add(tmpVaultEntry);
-                }
-                
-                clusteredList.add(vaultEntry);
-                sumOfValue+= vaultEntry.getValue();
-                
-            }
-            
-            result = clusteredList;
-        }        
-        
-        return result;        
-    }
-
-    /**
-     * This method will remove gaps between two timestamps from a given vaultentrytpye.
-     * If there is an vaultentry in the given timerange the new Vaultentry will be the start for the new gap.
-     * 
-     * @param result
-     * @return 
-     */
-    private List<VaultEntry> removeGaps(List<VaultEntry> vaultEntries) {
-        
-        List<VaultEntry> result =  new ArrayList<VaultEntry>();
-        List<VaultEntry> tempList =  new ArrayList<VaultEntry>();
-        Date startTime = null;
-        
-        if(gapType != null && gapTimeInMillis > 0)
-        {
-            for (VaultEntry vaultEntry : vaultEntries) {
-
-                if(vaultEntry.getType() == gapType && startTime == null)
-                {
-                    startTime = vaultEntry.getTimestamp();
-                    tempList.add(vaultEntry);
-                }
-                else if(vaultEntry.getType() == gapType && startTime != null)
-                {
-                    Date endDate =  new Date(startTime.getTime()+gapTimeInMillis);
-                    if(vaultEntry.getTimestamp().before(endDate))
-                    {
-                        startTime = vaultEntry.getTimestamp();
-                        result.addAll(tempList);
-
-                        tempList =  new ArrayList<>();
-                        tempList.add(vaultEntry);   
-                    }
-                }
-                else if(startTime == null && vaultEntry.getType() != gapType)
-                {
-                    result.add(vaultEntry);   
-                }          
-                else
-                {
-                    tempList.add(vaultEntry);
-                }
-            }
-        }
-        else
-            result= vaultEntries;
-        
-        return result;
-    }
-    
-    
-    
 
 }

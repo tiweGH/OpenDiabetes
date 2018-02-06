@@ -18,6 +18,8 @@ package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
+import de.jhit.opendiabetes.vault.container.VaultEntryTypeGroup;
+import de.jhit.opendiabetes.vault.util.VaultEntryUtils;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Date;
@@ -42,7 +44,8 @@ public abstract class ThresholdFilter extends Filter {
     FilterType type;
 
     public List<VaultEntry> data;
-    public VaultEntryType GenericType;
+    public VaultEntryType filteredType;
+    public VaultEntryTypeGroup filteredGroup;
     public FilterType availabledatatype;
     public FilterType filterType;
 
@@ -92,14 +95,19 @@ public abstract class ThresholdFilter extends Filter {
         return result;
     }
 
-//    @Override
-//    public FilterResult filter(List<VaultEntry> data) {
-//        FilterResult result;
-//        if (checkThresholdCombination(GenericType, availabledatatype, TH)) {
-//            result = super.filter(data);
-//        } else {
-//            result = new FilterResult();
-//        }
-//        return result;
-//    }
+    boolean matchesThresholdFilter(VaultEntry entry, boolean thresholdResult) {
+        return VaultEntryUtils.equalsTypeAndGroup(entry, filteredType, filteredGroup)
+                && thresholdResult;
+    }
+    //    @Override
+    //    public FilterResult filter(List<VaultEntry> data) {
+    //        FilterResult result;
+    //        if (checkThresholdCombination(GenericType, availabledatatype, TH)) {
+    //            result = super.filter(data);
+    //        } else {
+    //            result = new FilterResult();
+    //        }
+    //        return result;
+    //    }
+
 }

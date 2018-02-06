@@ -19,6 +19,7 @@ package de.jhit.opendiabetes.vault.processing.filter;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
+import de.jhit.opendiabetes.vault.util.VaultEntryUtils;
 import java.util.Date;
 import java.util.List;
 import javax.naming.spi.DirStateFactory;
@@ -104,7 +105,7 @@ public class PositionFilter extends Filter {
                 positionResult = tempData.get(tempData.size() / 2);
                 break;
             case (DATE_MIDDLE):
-                positionResult = TimestampUtils.getNearestMidEntry(tempData);
+                positionResult = VaultEntryUtils.getNearestMidEntry(tempData);
                 break;
             default:
                 break;

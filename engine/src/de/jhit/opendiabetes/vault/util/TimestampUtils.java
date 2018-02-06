@@ -155,31 +155,6 @@ public class TimestampUtils {
         return new Date(start + (end - start) / 2);
     }
 
-    /**
-     * Returns the VaultEntry with the timestamp located in the middle of the
-     * given entry-timestamps
-     *
-     * @param data contains sorted entries with timestamps, first with the
-     * oldest and last with the newest timestamp
-     * @return an entry with a timestamp nearest the actual middle of the first
-     * and the last timestamp
-     */
-    public static VaultEntry getNearestMidEntry(List<VaultEntry> data) {
-        VaultEntry result = null;
-        if (data != null) {
-            long actualMid = TimestampUtils.getMidDate(data.get(0).getTimestamp(), data.get(data.size() - 1).getTimestamp()).getTime();
-            long currentMin = Long.MAX_VALUE;
-            long temp;
-            for (VaultEntry vaultEntry : data) {
-                temp = Math.abs(actualMid - vaultEntry.getTimestamp().getTime());
-                if (temp < currentMin) {
-                    result = vaultEntry;
-                    currentMin = temp;
-                }
-            }
-        }
-        return result;
-    }
 
     /**
      *

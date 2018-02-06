@@ -19,6 +19,8 @@ package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
+import de.jhit.opendiabetes.vault.container.VaultEntryTypeGroup;
+import de.jhit.opendiabetes.vault.util.VaultEntryUtils;
 
 /**
  *
@@ -44,15 +46,31 @@ public class OverThresholdFilter extends ThresholdFilter {
             this.thresholdValue = thresholdValue;
             this.type = TH;
             this.filterType = TH;
-            this.GenericType = GenericType;
+            this.filteredType = GenericType;
             this.availabledatatype = availabledatatype;
 
         }
 
     }
 
-    public OverThresholdFilter(Double thresholdValue) {
+    public OverThresholdFilter(VaultEntryTypeGroup filteredGroup, VaultEntryType fillteredType, Double thresholdValue) {
+        this.filteredType = fillteredType;
+        this.filteredGroup = filteredGroup;
         this.thresholdValue = thresholdValue;
+    }
+
+    public OverThresholdFilter(VaultEntryType fillteredType, Double thresholdValue) {
+        this(null, fillteredType, thresholdValue);
+
+    }
+
+    public OverThresholdFilter(VaultEntryTypeGroup filteredGroup, Double thresholdValue) {
+        this(filteredGroup, null, thresholdValue);
+
+    }
+
+    public OverThresholdFilter(Double thresholdValue) {
+        this(null, null, thresholdValue);
     }
 
     @Override
@@ -62,12 +80,11 @@ public class OverThresholdFilter extends ThresholdFilter {
 
     @Override
     boolean matchesFilterParameters(VaultEntry entry) {
-        return //entry.getType() == GenericType &&
-                entry.getValue() > thresholdValue;
+        return matchesThresholdFilter(entry, entry.getValue() > thresholdValue);
     }
 
     @Override
     Filter update(VaultEntry vaultEntry) {
-        return new OverThresholdFilter(vaultEntry.getType(), thresholdValue, availabledatatype, filterType);
+        return new OverThresholdFilter(vaultEntry.getType(), thresholdValue);
     }
 }

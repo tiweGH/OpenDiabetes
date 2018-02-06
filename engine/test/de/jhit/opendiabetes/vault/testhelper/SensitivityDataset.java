@@ -23,15 +23,17 @@ import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+
 /**
  *
  * @author gizem
  */
 public class SensitivityDataset {
+
     public static List<VaultEntry> getSensitivityDataset() throws ParseException {
         List<VaultEntry> vaultEntries = new ArrayList<>();
         List<VaultEntryAnnotation> tmpAnnotations;
-        
+
         vaultEntries.add(new VaultEntry(VaultEntryType.GLUCOSE_BG_MANUAL, TimestampUtils.createCleanTimestamp("2016.04.18-06:48", "yyyy.MM.dd-HH:mm"), 288));
         vaultEntries.add(new VaultEntry(VaultEntryType.BOLUS_NORMAL, TimestampUtils.createCleanTimestamp("2016.04.18-06:48", "yyyy.MM.dd-HH:mm"), 6.2));
         tmpAnnotations = new ArrayList<>();
@@ -67,6 +69,7 @@ public class SensitivityDataset {
         vaultEntries.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_ALERT, TimestampUtils.createCleanTimestamp("2016.04.18-10:52", "yyyy.MM.dd-HH:mm"), 169));
         vaultEntries.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TimestampUtils.createCleanTimestamp("2016.04.18-10:59", "yyyy.MM.dd-HH:mm"), 100));
         vaultEntries.add(new VaultEntry(VaultEntryType.BASAL_PROFILE, TimestampUtils.createCleanTimestamp("2016.04.18-11:00", "yyyy.MM.dd-HH:mm"), 1.1));
+        vaultEntries.add(new VaultEntry(VaultEntryType.GLUCOSE_ELEVATION_30, TimestampUtils.createCleanTimestamp("2016.04.18-11:01", "yyyy.MM.dd-HH:mm"), 70));
         vaultEntries.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_ALERT, TimestampUtils.createCleanTimestamp("2016.04.18-11:01", "yyyy.MM.dd-HH:mm"), 170));
         vaultEntries.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_ALERT, TimestampUtils.createCleanTimestamp("2016.04.18-10:13", "yyyy.MM.dd-HH:mm"), 182));
         vaultEntries.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TimestampUtils.createCleanTimestamp("2016.04.18-11:14", "yyyy.MM.dd-HH:mm"), 120));
@@ -77,5 +80,5 @@ public class SensitivityDataset {
         vaultEntries.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TimestampUtils.createCleanTimestamp("2016.04.18-11:44", "yyyy.MM.dd-HH:mm"), 198));
         return vaultEntries;
     }
-    
+
 }

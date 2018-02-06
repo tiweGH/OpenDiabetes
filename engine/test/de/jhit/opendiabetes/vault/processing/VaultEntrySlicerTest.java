@@ -73,7 +73,7 @@ public class VaultEntrySlicerTest extends Assert {
         instance.registerFilter(filter);
         instance.registerFilter(secondFilter);
 
-        FilterResult result = instance.sliceData(StaticDataset.getStaticDataset());
+        FilterResult result = instance.sliceEntries(StaticDataset.getStaticDataset());
         assertTrue(result.size() == 2);
     }
 
