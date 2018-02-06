@@ -132,6 +132,10 @@ public class DataSlicer {
     private long clusterTimeInMillis = 0;
     private VaultEntryType clusterType; 
     
+    
+    private long gapTimeInMillis = 0;
+    private VaultEntryType gapType; 
+    
     public void setQuerying(List<Filter> queryFilters)
     {
         this.queryFilters = queryFilters;
@@ -141,6 +145,12 @@ public class DataSlicer {
     {
        this.clusterTimeInMillis = clusterTimeInMillis; 
        this.clusterType = clusterType;
+    }
+    
+    public void setGapRemoving(long removeTimeInMillis, VaultEntryType removeType)
+    {
+       this.gapTimeInMillis = removeTimeInMillis; 
+       this.gapType = removeType;
     }
     
     /**
@@ -153,6 +163,7 @@ public class DataSlicer {
       
         List<VaultEntry> result = data;
         
+        result = removeGaps(result);      
         result = query(result);
         result = cluster(result);
         
@@ -222,5 +233,58 @@ public class DataSlicer {
         
         return result;        
     }
+
+    /**
+     * This method will remove gaps between two timestamps from a given vaultentrytpye.
+     * If there is an vaultentry in the given timerange the new Vaultentry will be the start for the new gap.
+     * 
+     * @param result
+     * @return 
+     */
+    private List<VaultEntry> removeGaps(List<VaultEntry> vaultEntries) {
+        
+        List<VaultEntry> result =  new ArrayList<VaultEntry>();
+        List<VaultEntry> tempList =  new ArrayList<VaultEntry>();
+        Date startTime = null;
+        
+        if(gapType != null && gapTimeInMillis > 0)
+        {
+            for (VaultEntry vaultEntry : vaultEntries) {
+
+                if(vaultEntry.getType() == gapType && startTime == null)
+                {
+                    startTime = vaultEntry.getTimestamp();
+                    tempList.add(vaultEntry);
+                }
+                else if(vaultEntry.getType() == gapType && startTime != null)
+                {
+                    Date endDate =  new Date(startTime.getTime()+gapTimeInMillis);
+                    if(vaultEntry.getTimestamp().before(endDate))
+                    {
+                        startTime = vaultEntry.getTimestamp();
+                        result.addAll(tempList);
+
+                        tempList =  new ArrayList<>();
+                        tempList.add(vaultEntry);   
+                    }
+                }
+                else if(startTime == null && vaultEntry.getType() != gapType)
+                {
+                    result.add(vaultEntry);   
+                }          
+                else
+                {
+                    tempList.add(vaultEntry);
+                }
+            }
+        }
+        else
+            result= vaultEntries;
+        
+        return result;
+    }
+    
+    
+    
 
 }
