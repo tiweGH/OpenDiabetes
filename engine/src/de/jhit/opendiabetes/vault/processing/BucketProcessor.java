@@ -727,9 +727,64 @@ public class BucketProcessor {
 
     }
     
-    // set average for the wanted BucketEntry size
-    private FinalBucketEntry calculateAverageForWantedBucketSize(int bucketNumber, List<BucketEntry> list) {
-        return new FinalBucketEntry(0);
+    /**
+     * This methods gets the number of the wanted finalbucket and the complete list, which should be averaged.
+     * In the beginning the method sums up all entries from OneHotInformation and Timecountdown.
+     * After that the method will average the given entries.
+     * 
+     * @param bucketNumber
+     * @param bucketsToMerge
+     * @return 
+     */
+    private FinalBucketEntry calculateAverageForWantedBucketSize(int bucketNumber, List<BucketEntry> bucketsToMerge) {
+    
+        int bucketSize = bucketsToMerge.size();
+        FinalBucketEntry result = new FinalBucketEntry(bucketNumber);
+        
+        // Set the finalBucketentry for only one entry
+        if(bucketSize == 1)
+        {
+            result.setFindNextArray(bucketSize, VaultEntryType.EMPTY);
+            result.setFullOnehotInformationArray(bucketsToMerge.get(0).getFullOnehotInformationArray());
+            result.setFullTimeCountDown(bucketsToMerge.get(0).getFullTimeCountDown());
+            result.setFullFindNextArray(bucketsToMerge.get(0).getFullFindNextArray());
+        }
+        
+        //sums up all values (OneHotInformation and  TimeCountdown) and calculate the average
+        if (bucketSize > 1)
+        {
+            // sum up all entries 
+            //average OneHot (if > bucketsize / 2 ==> 1) and TimeCountdown / bucketsize
+            
+            for (int index = 0; index < result.getFullOnehotInformationArray().length; index++) {
+                for (BucketEntry bucketEntry : bucketsToMerge) {
+                    if(bucketsToMerge.indexOf(bucketEntry) != 0)
+                    {
+                        result.setOnehotInformationArray(index, result.getOnehotInformationArray(index)+bucketEntry.getOnehotInformationArray(index));
+                    }
+                }
+                
+                if(result.getOnehotInformationArray(index) >= bucketSize /2)
+                    result.setOnehotInformationArray(index, 1);
+                else
+                    result.setOnehotInformationArray(index, 0);
+            }
+            
+            for (int index = 0; index < result.getFullTimeCountDown().length; index++) {
+                for (BucketEntry bucketEntry : bucketsToMerge) {
+                    if(bucketsToMerge.indexOf(bucketEntry) != 0)
+                    {
+                        result.setTimeCountDown(index, result.getTimeCountDown(index)+bucketEntry.getTimeCountDown(index));
+                    }
+                }
+                
+                result.setTimeCountDown(index, result.getTimeCountDown(index) / bucketSize);
+            }
+            //ToDO FindNextVaultEntry???            
+            
+        }
+        
+        return result;
     }
 
     /**
