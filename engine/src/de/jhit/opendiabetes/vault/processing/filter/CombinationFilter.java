@@ -76,6 +76,18 @@ public class CombinationFilter extends Filter {
         this.secondFilter = secondFilter;
     }
 
+    /**
+     * Doesn't work on the original dataset but on the previous result.
+     *
+     * @param firstFilter first Filter from the data in the filter method
+     * @param secondFilter Filter mask for the list of Filters in the filter
+     */
+    public CombinationFilter(Filter firstFilter, Filter secondFilter) {
+        this.dataPointer = null;
+        this.firstFilter = firstFilter;
+        this.secondFilter = secondFilter;
+    }
+
     @Override
     protected List<VaultEntry> setUpBeforeFilter(List<VaultEntry> data) {
         List<VaultEntry> firstResult = firstFilter.filter(data).filteredData;
@@ -91,7 +103,7 @@ public class CombinationFilter extends Filter {
         }
 
         //filters with the basic method
-        return dataPointer.getDataset();
+        return dataPointer != null ? dataPointer.getDataset() : data;
     }
 
     @Override

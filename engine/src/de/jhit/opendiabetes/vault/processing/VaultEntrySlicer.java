@@ -82,6 +82,16 @@ public class VaultEntrySlicer {
         registeredFilter.add(filter);
     }
 
+    /**
+     * Registeres a filter for slicing. Should be called before slicing.
+     * Registered filteres are always combined as logical AND.
+     *
+     * @param filters
+     */
+    public void registerFilter(List<Filter> filters) {
+        registeredFilter.addAll(filters);
+    }
+
     public void setGapRemoving(long removeTimeInMillis, VaultEntryType removeType) {
         this.gapTimeInMillis = removeTimeInMillis;
         this.gapType = removeType;
@@ -101,6 +111,7 @@ public class VaultEntrySlicer {
         Date startTime = null;
         Date endDate = null;
         if (gapType != null && gapTimeInMillis > 0) {
+            System.out.println("Preprocessing: Removing Gaps");
             for (VaultEntry vaultEntry : vaultEntries) {
                 if (vaultEntry.getType() == gapType && startTime == null) {
                     startTime = vaultEntry.getTimestamp();
@@ -143,6 +154,7 @@ public class VaultEntrySlicer {
     public List<VaultEntry> query(List<VaultEntry> data) {
         List<VaultEntry> result = data;
         if (queryFilters != null && queryFilters.size() > 0) {
+            System.out.println("Preprocessing: Query pre filter");
             for (Filter queryFilter : queryFilters) {
                 if (queryFilter.filter(data).size() == 0) {
                     result = null;
@@ -176,6 +188,7 @@ public class VaultEntrySlicer {
     public List<VaultEntry> cluster(List<VaultEntry> data, long clusterTimeInMillis, VaultEntryType searchedType, VaultEntryType clusterType) {
         List<VaultEntry> result = data;
         if (clusterTimeInMillis > 0 && searchedType != null) {
+            System.out.println("Preprocessing: Clustering");
             List<VaultEntry> clusteredList = new ArrayList<>();
             Date startTime = null;
             double sumOfValue = 0;

@@ -38,11 +38,23 @@ import javafx.util.Pair;
 public class TimestampUtils {
 
     public static final String TIME_FORMAT_LIBRE_DE = "yyyy.MM.dd HH:mm";
+    public static final String TIME_FORMAT_DATASETS = "yyyy.MM.dd-HH:mm";
 
     public static Date createCleanTimestamp(String dateTime, String format) throws ParseException {
         SimpleDateFormat df = new SimpleDateFormat(format);
         Date rawDate = df.parse(dateTime);
         return createCleanTimestamp(rawDate);
+    }
+
+    /**
+     * creates a timestamp with the format "yyyy.MM.dd-HH:mm"
+     *
+     * @param dateTime
+     * @return
+     * @throws ParseException
+     */
+    public static Date createCleanTimestamp(String dateTime) throws ParseException {
+        return createCleanTimestamp(dateTime, TIME_FORMAT_DATASETS);
     }
 
     public static String timestampToString(Date timestamp, String format) {
@@ -154,7 +166,6 @@ public class TimestampUtils {
         }
         return new Date(start + (end - start) / 2);
     }
-
 
     /**
      *

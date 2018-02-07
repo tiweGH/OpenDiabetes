@@ -51,6 +51,7 @@ public class OrFilter extends Filter {
         for (Filter filter : filters) {
             if (filter.matchesFilterParameters(vaultEntry)) {
                 result = true;
+                break;
             }
 
         }
