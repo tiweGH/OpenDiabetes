@@ -33,4 +33,5 @@ public abstract class FilterFactory {
     }
 
     protected abstract List<Filter> factoryMethod();
+   
 }
