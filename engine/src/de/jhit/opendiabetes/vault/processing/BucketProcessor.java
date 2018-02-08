@@ -724,7 +724,19 @@ public class BucketProcessor {
 
     // set average for every BucketEntry(timestamp)
     private void calculateAverageForSmallestBucketSize(BucketEntry bucket) {
+        
+            // first off just set all the values from the VaultEntrys into the one hot array ... this might have to be done in update info array method ... TODO
+            // update info array method has to be set so that it is possible for the method to see what has to be done with the given VaultEntry found ... ML-rev but not OH
+            // in some cases timer countdown is needed
 
+            // TODO if in this category then do this
+            //      add
+            //      average
+            
+            // TODO this calculation is only done within a certain array position
+            
+            // processor method hast to redo the merge-to since the data is lost through the removal of unneeded bucketEntrys TODO
+            // create a new hashmap consisting of only the after merge-to entries and set the array in the finalBucketEntry to his array TODO
     }
     
     /**
@@ -879,23 +891,23 @@ public class BucketProcessor {
             // for each BucketEntry
             for (BucketEntry entry : listOfBucketEntries) {
                 // bucketNumber % wantedBucketSize
-                if (entry.getBucketNumber()% wantedBucketSize != 0){
-                    listOfWantedBucketSize.add(entry);
-                } else {
+                if (listOfWantedBucketSize.size() % wantedBucketSize == 0 && !listOfWantedBucketSize.isEmpty()){
                     // mod == 0 
                     // call average to the wanted bucket size
                     // save output in outputFinalBucketList
                     // start new list for call
                     
                     // call <average to the wanted bucket size> method
-                    // 
-                    // TODO 
+                    //
+                    // TODO
                     // 
                     outputFinalBucketList.add( calculateAverageForWantedBucketSize( finalBucketEntryListCounter, listOfWantedBucketSize ) );
                     // update FinalBucketEntry counter
                     finalBucketEntryListCounter++;
                     // start new list
                     listOfWantedBucketSize = new ArrayList<>();
+                    listOfWantedBucketSize.add(entry);
+                } else {
                     listOfWantedBucketSize.add(entry);
                 }
             }
