@@ -26,6 +26,10 @@ import java.util.HashSet;
 public class BucketEventTriggers {
 
     // ArrayEntryTriggerHashMap
+    // FIRST
+    //      ML-relevant and one hot
+    // SECOND
+    //      ML-relevant and not one hot
     public static final HashMap<VaultEntryType, Integer> ARRAY_ENTRY_TRIGGER_HASHMAP;
     static {
         ARRAY_ENTRY_TRIGGER_HASHMAP = new HashMap<>();
@@ -52,6 +56,7 @@ public class BucketEventTriggers {
         ARRAY_ENTRY_TRIGGER_HASHMAP.put(VaultEntryType.EXERCISE_RUN, 20);
         ARRAY_ENTRY_TRIGGER_HASHMAP.put(VaultEntryType.EXERCISE_MANUAL, 21);
         ARRAY_ENTRY_TRIGGER_HASHMAP.put(VaultEntryType.PUMP_REWIND, 22);
+        
         ARRAY_ENTRY_TRIGGER_HASHMAP.put(VaultEntryType.PUMP_FILL, 23);
         ARRAY_ENTRY_TRIGGER_HASHMAP.put(VaultEntryType.PUMP_SUSPEND, 24);
         ARRAY_ENTRY_TRIGGER_HASHMAP.put(VaultEntryType.BASAL_INTERPRETER, 25);
