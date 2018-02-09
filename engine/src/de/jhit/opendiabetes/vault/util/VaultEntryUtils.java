@@ -19,6 +19,8 @@ package de.jhit.opendiabetes.vault.util;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.container.VaultEntryTypeGroup;
+import de.jhit.opendiabetes.vault.processing.filter.Filter;
+import de.jhit.opendiabetes.vault.processing.filter.FilterResult;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -51,11 +53,20 @@ public class VaultEntryUtils {
     public static VaultEntry getNearestMidEntry(List<VaultEntry> data) {
         VaultEntry result = null;
         if (data != null) {
-            long actualMid = TimestampUtils.getMidDate(data.get(0).getTimestamp(), data.get(data.size() - 1).getTimestamp()).getTime();
+            Date actualMid = TimestampUtils.getMidDate(data.get(0).getTimestamp(), data.get(data.size() - 1).getTimestamp());
+            result = getNearestEntryAt(data, actualMid);
+        }
+        return result;
+    }
+
+    public static VaultEntry getNearestEntryAt(List<VaultEntry> data, Date timestamp) {
+        VaultEntry result = null;
+        if (data != null && timestamp != null) {
+            long searchedTime = timestamp.getTime();
             long currentMin = Long.MAX_VALUE;
             long temp;
             for (VaultEntry vaultEntry : data) {
-                temp = Math.abs(actualMid - vaultEntry.getTimestamp().getTime());
+                temp = Math.abs(searchedTime - vaultEntry.getTimestamp().getTime());
                 if (temp < currentMin) {
                     result = vaultEntry;
                     currentMin = temp;
@@ -65,6 +76,99 @@ public class VaultEntryUtils {
         return result;
     }
 
+    public static int getIndexOfNearestEntryAt(List<VaultEntry> data, Date timestamp) {
+        int result = -1;
+        if (data != null && timestamp != null) {
+            long searchedTime = timestamp.getTime();
+            long currentMin = Long.MAX_VALUE;
+            long temp;
+            int i = 0;
+            for (VaultEntry vaultEntry : data) {
+                temp = Math.abs(searchedTime - vaultEntry.getTimestamp().getTime());
+                if (temp < currentMin) {
+                    result = i;
+                    currentMin = temp;
+                }
+                i++;
+            }
+        }
+        return result;
+    }
+
+    public static int getIndexOfNearestEntryBefore(List<VaultEntry> data, Date timestamp) {
+        int result = -1;
+        if (data != null && timestamp != null) {
+
+            int i = 0;
+            for (VaultEntry vaultEntry : data) {
+                //if timestamp < entry return entry-1
+                if (timestamp.before(vaultEntry.getTimestamp())) {
+                    result = i - 1;
+                    break;
+                }
+                i++;
+            }
+        }
+        return result;
+    }
+
+    public static int getIndexOfNearestEntryAfter(List<VaultEntry> data, Date timestamp) {
+        int result = -1;
+        if (data != null && timestamp != null) {
+
+            int i = 0;
+            for (VaultEntry vaultEntry : data) {
+                //if timestamp <= entry return entry
+                if (!vaultEntry.getTimestamp().before(timestamp)) {
+                    result = i;
+                    break;
+                }
+                i++;
+            }
+        }
+        return result;
+    }
+
+    public static Date getWeightedMiddle(List<VaultEntry> data, VaultEntryType type) {
+        Date result = null;
+        if (data != null) {
+            long weightedTimeSum = 0;
+            long weightSum = 0;
+            for (VaultEntry vaultEntry : data) {
+                if (vaultEntry.getType() == type) {
+                    //(calculation is (elem1*weight1 + elem2*weight2+...) / (weight1 + weight2 + ...)
+                    weightedTimeSum += (vaultEntry.getTimestamp().getTime()) * (long) vaultEntry.getValue();
+                    weightSum += (long) vaultEntry.getValue();
+                }
+            }
+
+            if (weightSum != 0) {
+                result = TimestampUtils.createCleanTimestamp(new Date((weightedTimeSum / weightSum)));
+                //System.out.println(result);
+            }
+            if (result == null) {
+                System.out.println("NULL");
+                for (VaultEntry vaultEntry : data) {
+                    System.out.println(vaultEntry.toString());
+                }
+                System.out.println("size = " + data.size());
+                System.out.println("weightedTimeSum = " + weightedTimeSum);
+                System.out.println("weightSum = " + weightSum);
+
+            }
+        }
+
+        return result;
+    }
+
+    public static List<VaultEntry> subList(List<VaultEntry> data, VaultEntry fromIndex, VaultEntry toIndex) {
+        return data.subList(data.indexOf(fromIndex), data.indexOf(toIndex));
+    }
+
+    public static List<VaultEntry> subList(List<VaultEntry> data, Date fromTimestamp, Date toTimestamp) {
+        return data.subList(getIndexOfNearestEntryAt(data, fromTimestamp), getIndexOfNearestEntryAt(data, toTimestamp));
+    }
+
     public static boolean equalsTypeAndGroup(VaultEntry entry, VaultEntryType type, VaultEntryTypeGroup group) {
         boolean result;
         result = (type == null || entry.getType() == type) && (group == null || entry.getType().getGroup() == group);
@@ -72,7 +176,27 @@ public class VaultEntryUtils {
     }
 
     public static List<VaultEntry> sort(List<VaultEntry> data) {
-        data.sort(new SortVaultEntryByDate());
+        if (data != null) {
+            data.sort(new SortVaultEntryByDate());
+        }
         return data;
+    }
+
+    public static FilterResult slice(List<VaultEntry> data, List<Filter> filters) {
+        FilterResult result = new FilterResult();
+        if (data != null && filters != null) {
+            FilterResult lastResult = null;
+            for (Filter filter : filters) {
+                //System.out.println(filter);
+                if (lastResult == null) {
+                    lastResult = filter.filter(data);
+                } else {
+                    lastResult = filter.filter(lastResult.filteredData);
+                }
+            }
+            result = lastResult;
+        }
+
+        return result;
     }
 }

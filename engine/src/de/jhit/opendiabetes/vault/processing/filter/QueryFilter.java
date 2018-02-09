@@ -33,7 +33,7 @@ import javafx.util.Pair;
  *
  * @author Daniel
  */
-public class ConditionalExclusionFilter extends Filter {
+public class QueryFilter extends Filter {
 
 //    private DatasetMarker dataPointer;
     private Filter mainFilter;
@@ -53,7 +53,7 @@ public class ConditionalExclusionFilter extends Filter {
      * @param minSize minimum size of the result. use "-1" for don't care
      * @param maxSize maximum size of the result. use "-1" for don't care
      */
-    public ConditionalExclusionFilter(Filter mainFilter, Filter innerFilter, int minSize, int maxSize) {
+    public QueryFilter(Filter mainFilter, Filter innerFilter, int minSize, int maxSize) {
         this.mainFilter = mainFilter;
         this.innerFilter = innerFilter;
         this.minSize = minSize;
@@ -70,7 +70,7 @@ public class ConditionalExclusionFilter extends Filter {
      * @param minSize minimum size of the result. use "-1" for don't care
      * @param maxSize maximum size of the result. use "-1" for don't care
      */
-    public ConditionalExclusionFilter(Filter innerFilter, int minSize, int maxSize) {
+    public QueryFilter(Filter innerFilter, int minSize, int maxSize) {
         this(new NoneFilter(), innerFilter, minSize, maxSize);
     }
 
@@ -98,7 +98,7 @@ public class ConditionalExclusionFilter extends Filter {
 
     @Override
     Filter update(VaultEntry vaultEntry) {
-        return new ConditionalExclusionFilter(mainFilter.update(vaultEntry), innerFilter, minSize, maxSize);
+        return new QueryFilter(mainFilter.update(vaultEntry), innerFilter, minSize, maxSize);
     }
 
 }

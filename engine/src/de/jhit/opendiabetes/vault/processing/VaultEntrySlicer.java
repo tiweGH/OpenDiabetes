@@ -180,28 +180,41 @@ public class VaultEntrySlicer {
      * correctly. The clsteredVaultEntry is at the end of the clustered Series.
      *
      * @param data
-     * @param clusterTimeInMillis
+     * @param clusterTimeInMinutes
      * @param searchedType
      * @param clusterType
      * @return
      */
-    public List<VaultEntry> cluster(List<VaultEntry> data, long clusterTimeInMillis, VaultEntryType searchedType, VaultEntryType clusterType) {
+    public List<VaultEntry> cluster(List<VaultEntry> data, long clusterTimeInMinutes, VaultEntryType searchedType, VaultEntryType clusterType) {
+        long temp1, temp2;
+        temp1 = System.nanoTime();
+
         List<VaultEntry> result = data;
-        if (clusterTimeInMillis > 0 && searchedType != null) {
+        if (clusterTimeInMinutes > 0 && searchedType != null) {
             System.out.println("Preprocessing: Clustering");
             List<VaultEntry> clusteredList = new ArrayList<>();
             Date startTime = null;
+            Date compareDate = null;
+            Date tmp;
             double sumOfValue = 0;
             for (VaultEntry vaultEntry : result) {
                 if (startTime == null) {
                     startTime = vaultEntry.getTimestamp();
+                    compareDate = TimestampUtils.addMinutesToTimestamp(startTime, clusterTimeInMinutes);
                 }
-                Date compareDate = new Date(startTime.getTime() + clusterTimeInMillis);
+                //compareDate = TimestampUtils.addMinutesToTimestamp(startTime, clusterTimeInMinutes);
                 if (compareDate.before(vaultEntry.getTimestamp()) || result.indexOf(vaultEntry) == result.size() - 1) {
                     //clustertype?
-                    VaultEntry tmpVaultEntry = new VaultEntry(clusterType, TimestampUtils.getMidDate(startTime, compareDate), sumOfValue);
-                    clusteredList.add(tmpVaultEntry);
-                    startTime = vaultEntry.getTimestamp();
+                    tmp = VaultEntryUtils.getWeightedMiddle(VaultEntryUtils.subList(data, startTime, compareDate), searchedType);
+                    // tmp =
+                    if (tmp != null) {
+                        VaultEntry tmpVaultEntry = new VaultEntry(clusterType, tmp, sumOfValue);
+                        System.out.println("New Cluster between " + startTime + " and " + compareDate + " : " + tmpVaultEntry.getTimestamp());
+                        clusteredList.add(tmpVaultEntry);
+                    }
+                    //Alternative cluster the day in whole blocks, starting with 00:00 and not with the first entry
+                    startTime = compareDate;//vaultEntry.getTimestamp();
+                    compareDate = TimestampUtils.addMinutesToTimestamp(startTime, clusterTimeInMinutes);
                     sumOfValue = 0;
                 }
                 clusteredList.add(vaultEntry);
@@ -212,6 +225,8 @@ public class VaultEntrySlicer {
             result = clusteredList;
             result = VaultEntryUtils.sort(result);
         }
+        temp2 = System.nanoTime();
+        System.out.println(temp2 - temp1);
         return result;
     }
 

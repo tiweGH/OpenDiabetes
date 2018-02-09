@@ -51,7 +51,7 @@ public class DateTimeSpanFilter extends Filter {
 
     @Override
     Filter update(VaultEntry vaultEntry) {
-        Date tempStart = TimestampUtils.setDay(startTime, vaultEntry.getTimestamp());
+        Date tempStart = TimestampUtils.setDayOfDate(startTime, vaultEntry.getTimestamp());
         Date tempEnd;
         LocalDate localStart = TimestampUtils.dateToLocalDate(endTime);
         LocalDate localEnd = TimestampUtils.dateToLocalDate(startTime);
@@ -59,9 +59,9 @@ public class DateTimeSpanFilter extends Filter {
             int dayOffset = localEnd.minusDays(localStart.getDayOfYear()).getDayOfYear();
             int yearOffset = localEnd.minusYears(localStart.getYear()).getYear();
             LocalDate tempEntry = TimestampUtils.dateToLocalDate(vaultEntry.getTimestamp());
-            tempEnd = TimestampUtils.setDay(endTime, tempEntry.getDayOfYear() + dayOffset, tempEntry.getYear() + yearOffset);
+            tempEnd = TimestampUtils.setDayOfDate(endTime, tempEntry.getDayOfYear() + dayOffset, tempEntry.getYear() + yearOffset);
         } else {
-            tempEnd = TimestampUtils.setDay(endTime, vaultEntry.getTimestamp());
+            tempEnd = TimestampUtils.setDayOfDate(endTime, vaultEntry.getTimestamp());
         }
         return new DateTimeSpanFilter(tempStart, tempEnd);
     }

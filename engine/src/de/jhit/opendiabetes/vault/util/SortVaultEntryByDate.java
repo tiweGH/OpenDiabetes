@@ -30,5 +30,4 @@ public class SortVaultEntryByDate implements Comparator<VaultEntry> {
         return o1.getTimestamp().compareTo(o2.getTimestamp());
     }
 
-    
 }

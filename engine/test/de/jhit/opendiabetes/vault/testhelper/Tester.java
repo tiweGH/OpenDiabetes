@@ -37,12 +37,13 @@ import de.jhit.opendiabetes.vault.testhelper.filterfactory.BolusCGMLess60;
 import de.jhit.opendiabetes.vault.testhelper.filterfactory.BolusGreater180NoMeal3h;
 import de.jhit.opendiabetes.vault.testhelper.filterfactory.FilterFactory;
 import de.jhit.opendiabetes.vault.testhelper.filterfactory.GlucoseElevation;
-import de.jhit.opendiabetes.vault.testhelper.filterfactory.GlucoseElevation1;
+import de.jhit.opendiabetes.vault.testhelper.filterfactory.ExcludeTimespanWithCriteria;
 import de.jhit.opendiabetes.vault.testhelper.filterfactory.NigthAutoSuspendBolus4h;
 import de.jhit.opendiabetes.vault.testhelper.filterfactory.NoDateTimeSpansWithoutGroup;
 import de.jhit.opendiabetes.vault.testhelper.filterfactory.TypeAbsence;
 import de.jhit.opendiabetes.vault.testhelper.filterfactory.TypeAfterNthEventAfterEvent;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
+import de.jhit.opendiabetes.vault.util.VaultEntryUtils;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -70,19 +71,39 @@ public class Tester {
             List<VaultEntry> sensyList = SensitivityDataset.getSensitivityDataset();
             List<VaultEntry> custSet = CustomDataset.getCustomDataset();
             List<VaultEntry> workingSet = custSet;
+            List<Filter> fl = new ArrayList<>();
+            FilterResult res;
 
             Filter fil
                     = new NegateFilter(
-                            new ConditionalExclusionFilter(new TimeSpanFilter(LocalTime.of(6, 0), LocalTime.of(8, 0)), new EventFilter(VaultEntryType.GLUCOSE_CGM), 5, -1));
+                            new QueryFilter(new TimeSpanFilter(LocalTime.of(6, 0), LocalTime.of(8, 0)), new EventFilter(VaultEntryType.GLUCOSE_CGM), 5, -1));
             VaultEntrySlicer slic = new VaultEntrySlicer();
-            FilterFactory fac = new GlucoseElevation1(workingSet, TimestampUtils.createCleanTimestamp("2016.04.18-11:00"), TimestampUtils.createCleanTimestamp("2016.04.18-12:00"));
-            slic.registerFilter(fac.createFilter());
-            FilterResult res = slic.sliceEntries(workingSet);
+            FilterFactory fac = new ExcludeTimespanWithCriteria(LocalTime.of(11, 0), 120);
+
+            slic.registerFilter(fac.createFilter());//new TypeGroupFilter(VaultEntryTypeGroup.GLUCOSE) );
+            //   slic.addClustering(2 * 60, VaultEntryType.GLUCOSE_CGM, VaultEntryType.CLUSTER_GLUCOSE_CGM);
+
+            res = slic.sliceEntries(workingSet);
+            fl.add(new PositionFilter(PositionFilter.DATE_MIDDLE));
+            fil = new TimeClusterFilter(fl, 120, 60);
+            //res = fil.filter(workingSet);
             for (VaultEntry vaultEntry : res.filteredData) {
                 System.out.println(vaultEntry.toString());
             }
             System.out.println(workingSet.size());
             System.out.println(res.size() + " " + res.timeSeries.size());
+            long temp1, temp2;
+            //VaultEntry tmp = res.filteredData.get(res.filteredData.size() - 1);
+
+//            System.out.println("Missing: ");
+//            for (VaultEntry vaultEntry : workingSet) {
+//                if (!res.filteredData.contains(vaultEntry)) {
+//                    System.out.println(vaultEntry.getTimestamp());
+//                }
+//            }
+//            Date tmp = VaultEntryUtils.getWeightedMiddle(workingSet, VaultEntryType.GLUCOSE_CGM);
+//            System.out.println(TimestampUtils.getMidDate(workingSet.get(0).getTimestamp(), workingSet.get(workingSet.size() - 1).getTimestamp()));
+//            System.out.println(tmp);
         } catch (ParseException ex) {
             Logger.getLogger(Tester.class.getName()).log(Level.SEVERE, null, ex);
         }
