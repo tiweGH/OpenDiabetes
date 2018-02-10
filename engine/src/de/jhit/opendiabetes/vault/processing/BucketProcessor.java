@@ -50,11 +50,6 @@ public class BucketProcessor {
     // start BucketEntry number ... needed in createListOfBuckets and setBucketArrayInformation
     // if changed to 0 then checkPreviousBucketEntry must be changed as well
     final int BUCKET_START_NUMBER = 1;
-    
-    //
-    // System.out mode (for debugging)
-    private static final boolean DEBUG = true;
-    //
 
     // Date check for setBucketArrayInformation (merge-to and onehot)
     private Date lastDate = null;
@@ -258,36 +253,10 @@ public class BucketProcessor {
         // position in the VaultEntry list
         int vaultEntryListPosition = 0;
 
-        if (DEBUG) {
-            System.out.println("===============================================");
-            System.out.println("===============================================");
-            System.out.println("init");
-            System.out.println(bucketEntryNumber);
-            System.out.println(vaultEntryListPosition);
-            System.out.println(timeCounter);
-            System.out.println("Bucket_output_size");
-            System.out.println(outputBucketList.size());
-            System.out.println("Bucket_input_size");
-            System.out.println(entryList.size());
-            System.out.println("===============================================");
-        }
-
         // compare Trigger (time or Event) with EventType before starting a new Trigger
         //
         // timeCounter == last timestamp
         while (vaultEntryListPosition < entryList.size()) {
-
-            if (DEBUG) {
-                System.out.println("While_new_loop_start");
-                System.out.println(bucketEntryNumber);
-                System.out.println(vaultEntryListPosition);
-                System.out.println(timeCounter);
-                System.out.println("Bucket_output_size");
-                System.out.println(outputBucketList.size());
-                System.out.println("Bucket_input_size");
-                System.out.println(entryList.size());
-                System.out.println("===============================================");
-            }
 
             // found an earlier Date
             // e.g. given 2000.01.01-00:01 is earlier than the timeCounter date 2000.01.01-00:02
@@ -305,29 +274,7 @@ public class BucketProcessor {
                         // update bucketEntryNumber
                         bucketEntryNumber++;
 
-                        if (DEBUG) {
-                            System.out.println("Date_before_new_bucket_created");
-                            System.out.println(bucketEntryNumber);
-                            System.out.println(vaultEntryListPosition);
-                            System.out.println(timeCounter);
-                            System.out.println("Bucket_output_size");
-                            System.out.println(outputBucketList.size());
-                            System.out.println("Bucket_input_size");
-                            System.out.println(entryList.size());
-                            System.out.println("===============================================");
-                        }
-
                     } else {
-
-                        if (DEBUG) {
-                            System.out.println("===============================================");
-                            System.out.println("Date_before_remove_and_new_bucket_created");
-                            System.out.println("Date_before_remove_bucket_entry_being_removed");
-                            System.out.println(bucketEntryNumber - 1);
-                            System.out.println("Date_before_remove_removing_bucket_entry_from_array_size");
-                            System.out.println(outputBucketList.size());
-                            System.out.println("===============================================");
-                        }
 
                         // the last BucketEntry is invalid and should be overwritten
                         // outputBucketEntry.size() - 1 == bucketEntryNumber - 1
@@ -338,17 +285,6 @@ public class BucketProcessor {
                         outputBucketList.add(newBucketEntry);
 
                         // DO NOT UPDATE THE BUCKETENTRYNUMBER SINCE THE LAST POSITION HAS BEEN OVERWRITTEN
-                        if (DEBUG) {
-                            System.out.println("Date_before_remove_and_new_bucket_created");
-                            System.out.println(bucketEntryNumber);
-                            System.out.println(vaultEntryListPosition);
-                            System.out.println(timeCounter);
-                            System.out.println("Bucket_output_size");
-                            System.out.println(outputBucketList.size());
-                            System.out.println("Bucket_input_size");
-                            System.out.println(entryList.size());
-                            System.out.println("===============================================");
-                        }
                     }
 
                     //      ???
@@ -364,18 +300,6 @@ public class BucketProcessor {
                 // DO NOT UPDATE TIMECOUNTER! entryList may contain more VaultEntrys with the same timestamp
                 // move to the next VaultEntry in the list
                 vaultEntryListPosition++;
-
-                if (DEBUG) {
-                    System.out.println("Date_before_end");
-                    System.out.println(bucketEntryNumber);
-                    System.out.println(vaultEntryListPosition);
-                    System.out.println(timeCounter);
-                    System.out.println("Bucket_output_size");
-                    System.out.println(outputBucketList.size());
-                    System.out.println("Bucket_input_size");
-                    System.out.println(entryList.size());
-                    System.out.println("===============================================");
-                }
 
                 // found the same Date
                 // e.g. given 2000.01.01-00:01 is equal to the timeCounter date 2000.01.01-00:01
@@ -407,18 +331,6 @@ public class BucketProcessor {
                     timeCounter = addMinutesToTimestamp(timeCounter, 1);
                     // move to the next VaultEntry in the list
                     vaultEntryListPosition++;
-
-                    if (DEBUG) {
-                        System.out.println("Date_equal_new_bucket_created");
-                        System.out.println(bucketEntryNumber);
-                        System.out.println(vaultEntryListPosition);
-                        System.out.println(timeCounter);
-                        System.out.println("Bucket_output_size");
-                        System.out.println(outputBucketList.size());
-                        System.out.println("Bucket_input_size");
-                        System.out.println(entryList.size());
-                        System.out.println("===============================================");
-                    }
 
                     // create a new empty Bucket because VaultEntry is not ML-relevant
                 } else {
@@ -453,19 +365,6 @@ public class BucketProcessor {
                     timeCounter = addMinutesToTimestamp(timeCounter, 1);
                     // move to the next VaultEntry in the list
                     vaultEntryListPosition++;
-
-                    if (DEBUG) {
-                        System.out.println("Date_equal_empty_bucket_created");
-                        System.out.println(bucketEntryNumber);
-                        System.out.println(vaultEntryListPosition);
-                        System.out.println(timeCounter);
-                        System.out.println("Bucket_output_size");
-                        System.out.println(outputBucketList.size());
-                        System.out.println("Bucket_input_size");
-                        System.out.println(entryList.size());
-                        System.out.println("===============================================");
-                    }
-
                 }
 
                 // found a later Date
@@ -489,33 +388,15 @@ public class BucketProcessor {
                 timeCounter = addMinutesToTimestamp(timeCounter, 1);
 
                 // DO NOT UPDATE LIST POSITION! ... the given list position has not been reached yet
-                if (DEBUG) {
-                    System.out.println("Date_after_empty_bucket_created");
-                    System.out.println(bucketEntryNumber);
-                    System.out.println(vaultEntryListPosition);
-                    System.out.println(timeCounter);
-                    System.out.println("Bucket_output_size");
-                    System.out.println(outputBucketList.size());
-                    System.out.println("Bucket_input_size");
-                    System.out.println(entryList.size());
-                    System.out.println("===============================================");
-                }
 
                 // Date not found
             } else {
 
-                if (DEBUG) {
-                    System.out.println("dead_lock");
-                }
+                // SHOULD NEVER BE ENTERED
+                System.out.println("dead_lock");
 
             }
 
-        }
-
-        if (DEBUG) {
-            System.out.println("///////////////////////////////////////////////");
-            System.out.println("create_list_of_buckets_end");
-            System.out.println("///////////////////////////////////////////////");
         }
 
         return outputBucketList;
@@ -540,18 +421,6 @@ public class BucketProcessor {
      * BucketEntry is an empty BucketEntry.
      */
     private boolean checkPreviousBucketEntry(int bucketListPosition, Date date, List<BucketEntry> listToCheckIn) {
-
-        if (DEBUG) {
-            System.out.println("check_prev_bucket");
-            System.out.println("incoming_bucket_position");
-            System.out.println(bucketListPosition + 1);
-            System.out.println("inside");
-            System.out.println(bucketListPosition);
-            System.out.println(date);
-            System.out.println("check_prev_output_bucket_size");
-            System.out.println(listToCheckIn.size());
-            System.out.println("===============================================");
-        }
 
         // get position - 1 since entry x in the list is at the position x-1
         if (listToCheckIn.get(bucketListPosition - 1).getVaultEntry().getType() != VaultEntryType.EMPTY
