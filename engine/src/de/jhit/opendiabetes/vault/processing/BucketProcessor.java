@@ -62,8 +62,8 @@ public class BucketProcessor {
     // onehot information Array
     private double[] onehotInformationArray = new double[BucketEntry.getNumberOfVaultEntryTriggerTypes()];
     // arrays for ML-rev and NOT one hot - parallel computing act times
-    // first double == timer
-    // second double == value
+    //      first double == timer
+    //      second double == value
     private List<Pair<VaultEntryTypeGroup, Pair<Double, Double>>> runningComputation = new ArrayList<>();
     // till next entry
     private VaultEntryType[] findNextArray = new VaultEntryType[BucketEntry.getNumberOfVaultEntryTriggerTypes()];
@@ -80,9 +80,11 @@ public class BucketProcessor {
      * @param entry The VaultEntry that will be stored inside the BucketEntry.
      * @return This method returns a newly created BucketEntry
      */
-    // TODO till now only onehot boolean is being set ... the standard vaules of other VaultEntryTypes still have to be set!!
-    public BucketEntry createNewBucket(int bucketNumber, VaultEntry entry) {
+    protected BucketEntry createNewBucket(int bucketNumber, VaultEntry entry) {
 
+        // placeholder 
+        final double KEEP_EMPTY_FOR_FOLLOWING_CALCULATION = 0;
+        
         // create new BucketEntry
         BucketEntry newBucket = new BucketEntry(bucketNumber, entry);
 
@@ -133,7 +135,7 @@ public class BucketProcessor {
                 // set act time to set act time in hashmap
                 newBucket.setTimeCountDown(arrayPosition, TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_SET.get(entry.getType()));
                 // set value
-                newBucket.setOnehotInformationArray(arrayPosition, entry.getValue());
+                newBucket.setOnehotInformationArray(arrayPosition, KEEP_EMPTY_FOR_FOLLOWING_CALCULATION);
                 
                 // new entries are added to the runningComputation list in the Bucket
                 // first part of the pair == VaultEntryTypeGroup for later calculation
@@ -141,7 +143,7 @@ public class BucketProcessor {
                 //          first double == timer       (in VaultEntry value2)
                 //          second double == value      (in VaultEntry value1)
                 List<Pair<VaultEntryTypeGroup, Pair<Double, Double>>> tempList = new ArrayList<>();
-                tempList.add(new Pair(entry.getType().getGroup(), new Pair(newBucket.getTimeCountDown(arrayPosition), newBucket.getOnehotInformationArray(arrayPosition))));
+                tempList.add(new Pair(entry.getType().getGroup(), new Pair(newBucket.getTimeCountDown(arrayPosition), entry.getValue())));
                 newBucket.setRunningComputation(tempList);
                 
                 // set to EMPTY
@@ -152,7 +154,7 @@ public class BucketProcessor {
                 // set act time
                 newBucket.setTimeCountDown(arrayPosition, entry.getValue2());
                 // set value
-                newBucket.setOnehotInformationArray(arrayPosition, entry.getValue());
+                newBucket.setOnehotInformationArray(arrayPosition, KEEP_EMPTY_FOR_FOLLOWING_CALCULATION);
                 
                 // new entries are added to the runningComputation list in the Bucket
                 // first part of the pair == VaultEntryTypeGroup for later calculation
@@ -160,7 +162,7 @@ public class BucketProcessor {
                 //          first double == timer       (in VaultEntry value2)
                 //          second double == value      (in VaultEntry value1)
                 List<Pair<VaultEntryTypeGroup, Pair<Double, Double>>> tempList = new ArrayList<>();
-                tempList.add(new Pair(entry.getType().getGroup(), new Pair(newBucket.getTimeCountDown(arrayPosition), newBucket.getOnehotInformationArray(arrayPosition))));
+                tempList.add(new Pair(entry.getType().getGroup(), new Pair(newBucket.getTimeCountDown(arrayPosition), entry.getValue())));
                 newBucket.setRunningComputation(tempList);
                 
                 // set to EMPTY
@@ -213,7 +215,7 @@ public class BucketProcessor {
      * @return This method returns an newly created 'empty' BucketEntry.
      * @throws ParseException
      */
-    public BucketEntry createEmptyBucket(int bucketNumber, Date date) throws ParseException {
+    protected BucketEntry createEmptyBucket(int bucketNumber, Date date) throws ParseException {
 
         BucketEntry newBucket = new BucketEntry(bucketNumber, new VaultEntry(VaultEntryType.EMPTY, date));
         return newBucket;
@@ -420,7 +422,7 @@ public class BucketProcessor {
      * empty BucketEntry and the Date matches and returns false if the previous
      * BucketEntry is an empty BucketEntry.
      */
-    private boolean checkPreviousBucketEntry(int bucketListPosition, Date date, List<BucketEntry> listToCheckIn) {
+    protected boolean checkPreviousBucketEntry(int bucketListPosition, Date date, List<BucketEntry> listToCheckIn) {
 
         // get position - 1 since entry x in the list is at the position x-1
         if (listToCheckIn.get(bucketListPosition - 1).getVaultEntry().getType() != VaultEntryType.EMPTY
@@ -448,7 +450,7 @@ public class BucketProcessor {
      * (timecounter).
      * @param bucket This is the BucketEntry that will have it's arrays updated.
      */
-    private void setBucketArrayInformation(Date date, BucketEntry bucket) {
+    protected void setBucketArrayInformation(Date date, BucketEntry bucket) {
 
         // this prevents that the first BucketEntry has the chance of couting down the timer.
         // sameDatesGetNoTimerArrayUpdate_MLRevAndOneHot is initially set to false.
@@ -686,39 +688,72 @@ public class BucketProcessor {
 
     // set average for every BucketEntry(timestamp)
     
-        // TODO if in this category then do this
-        //      add
-        //      average
-    private void calculateAverageForSmallestBucketSize(BucketEntry bucket) {
+    // just add up ... values have already been set
+    protected void calculateAverageForSmallestBucketSize(BucketEntry bucket) {
         
-        // temp int to sum up values
-        double temp = 0;
-
-        // just add up ... values have already been set
+        // ===== just for info
+        // first part of the pair == VaultEntryTypeGroup
+        // second part 
+        //          first double == timer
+        //          second double == value
+        // ===== just for info
         
-        // everything within 0 till ML_REV_AND_ONE_HOT - 1 is just onehot and not a real value
-    //for (int i = ML_REV_AND_ONE_HOT; i < ML_REV_AND_NOT_ONE_HOT + ML_REV_AND_ONE_HOT; i++) {
-    //}
+        // this list contains all calculated values before they are set into the FinalBucketEntrys
+        List<Pair<VaultEntryTypeGroup, Double>> listOfComputedValues = new ArrayList<>();
         
-        // add up BASAL
-        for (VaultEntryType type : BASAL_HASHSET) {
-            int pos = ARRAY_ENTRY_TRIGGER_HASHMAP.get(type);
-            temp = temp + bucket.getOnehotInformationArray(pos);
-        }
-        
-        // TODO save in array
-        temp = 0;
-        
-        // add up MEAL
-        for (VaultEntryType type : MEAL_HASHSET) {
-            int pos = ARRAY_ENTRY_TRIGGER_HASHMAP.get(type);
-            temp = temp + bucket.getOnehotInformationArray(pos);
-        }
+        // iterate over all given pairs in the runningComputation list and add them up acording to their VaultEntryTypeGroup
+        for (Pair<VaultEntryTypeGroup, Pair<Double, Double>> iteratorPair : bucket.getRunningComputation()) {
+            VaultEntryTypeGroup groupType = iteratorPair.getKey();
             
-        // TODO save in array
-        temp = 0;
+            if (listOfComputedValues.contains(groupType)){                                                          // TODO could cause an error???
+                // a pair for the given type is already created
+                // sum up values
+                
+                // first get the needed pair out of the list ... remove it during the process the replace it later
+                Pair<VaultEntryTypeGroup, Double> tempPair = listOfComputedValues.remove(listOfComputedValues.indexOf(iteratorPair.getKey()));
+                // create a new pair with the summed up values
+                tempPair = new Pair(tempPair.getKey(), tempPair.getValue() + iteratorPair.getValue().getValue());
+                // now put the pair back into the list
+                listOfComputedValues.add(tempPair);
+            } else {
+                // create a new pair for the given type
+                Pair<VaultEntryTypeGroup, Double> tempPair = new Pair(groupType, iteratorPair.getValue().getValue());
+                // add the pair to the list
+                listOfComputedValues.add(tempPair);
+            }
+        }
         
+        // now get all entries from the onehot array that should be summed up too
+        for (VaultEntryType vaultEntryType : HASHSETS_TO_SUM_UP) {
+            VaultEntryTypeGroup groupType = vaultEntryType.getGroup();
+            
+            if (listOfComputedValues.contains(groupType)){                                                          // TODO could cause an error???
+                // add the rest into this pair
+                Pair<VaultEntryTypeGroup, Double> tempPair = listOfComputedValues.remove(listOfComputedValues.indexOf(groupType));
+                // sum up the value in the pair with that in the bucket from the given type
+                tempPair = new Pair(tempPair.getKey(), tempPair.getValue() + bucket.getOnehotInformationArray(ARRAY_ENTRY_TRIGGER_HASHMAP.get(vaultEntryType)));
+                // put the pair bach into the list of computed values 
+                listOfComputedValues.add(tempPair);
+            } else {
+                // check if there is a value for the wanted type 
+                // ... if there is create a new pair 
+                // ... if not then move on
+                if (bucket.getOnehotInformationArray(ARRAY_ENTRY_TRIGGER_HASHMAP.get(vaultEntryType)) != 0.0) {
+                    // create a new pair
+                    Pair<VaultEntryTypeGroup, Double> tempPair = new Pair(groupType, bucket.getOnehotInformationArray(ARRAY_ENTRY_TRIGGER_HASHMAP.get(vaultEntryType)));
+                    // add to the list of computed values 
+                    listOfComputedValues.add(tempPair);
+                } // no value no pair needed                
+                
+            }
+        }
+        
+        // TODO
         // lineare interpolation
+        // TODO
+        
+        // save the generated list of values inside the BucketEntry for later use
+        bucket.setListOfComputedValuesForTheFinalBucketEntry(listOfComputedValues);
     }
     
     /**
@@ -730,7 +765,7 @@ public class BucketProcessor {
      * @param bucketsToMerge
      * @return 
      */
-    private FinalBucketEntry calculateAverageForWantedBucketSize(int bucketNumber, List<BucketEntry> bucketsToMerge) {
+    protected FinalBucketEntry calculateAverageForWantedBucketSize(int bucketNumber, List<BucketEntry> bucketsToMerge) {
     
         int bucketSize = bucketsToMerge.size();
         FinalBucketEntry result = new FinalBucketEntry(bucketNumber);
@@ -794,7 +829,7 @@ public class BucketProcessor {
      * @return This method returns a list of BucketEntrys with only one
      * BucketEntry per timestamp.
      */
-    private List<BucketEntry> removeUnneededBucketEntrys(List<BucketEntry> bucketList) {
+    protected List<BucketEntry> removeUnneededBucketEntrys(List<BucketEntry> bucketList) {
         List<BucketEntry> outputBucketList = new ArrayList<>();
         Date checkingThisBucketEntryDate = bucketList.get(0).getVaultEntry().getTimestamp();
         Date lastBucketEntryDate = bucketList.get(bucketList.size() - 1).getVaultEntry().getTimestamp();
