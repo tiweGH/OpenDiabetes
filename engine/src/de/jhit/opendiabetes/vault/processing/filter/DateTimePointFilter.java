@@ -57,7 +57,7 @@ public class DateTimePointFilter extends Filter {
      */
     public DateTimePointFilter(Date dateTimePoint, int marginBeforeInMinutes, int marginAfterInMinutes) {
         marginBefore = MILLISECONDS.convert(marginBeforeInMinutes, MINUTES);
-        marginBefore = MILLISECONDS.convert(marginAfterInMinutes, MINUTES);
+        marginAfter = MILLISECONDS.convert(marginAfterInMinutes, MINUTES);
         startTime = new Date(dateTimePoint.getTime() - marginBeforeInMinutes);
         endTime = new Date(dateTimePoint.getTime() + marginAfterInMinutes);
     }

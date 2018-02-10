@@ -124,10 +124,10 @@ public class TimestampUtils {
      * @param source source for the new date
      * @return a Date with a changed year_month_day but the same time
      */
-    public static Date setDay(Date timestamp, Date source) {
+    public static Date setDayOfDate(Date timestamp, Date source) {
         Calendar calSource = Calendar.getInstance();
         calSource.setTime(source);
-        return setDay(timestamp, calSource.get(Calendar.DAY_OF_YEAR), calSource.get(Calendar.YEAR));
+        return setDayOfDate(timestamp, calSource.get(Calendar.DAY_OF_YEAR), calSource.get(Calendar.YEAR));
 
     }
 
@@ -139,12 +139,24 @@ public class TimestampUtils {
      * @param sourceYear year for the new date
      * @return
      */
-    public static Date setDay(Date timestamp, int sourceDay, int sourceYear) {
+    public static Date setDayOfDate(Date timestamp, int sourceDay, int sourceYear) {
         Calendar calTimestamp = Calendar.getInstance();
         calTimestamp.setTime(timestamp);
         calTimestamp.set(Calendar.DAY_OF_YEAR, sourceDay);
         calTimestamp.set(Calendar.YEAR, sourceYear);
         return calTimestamp.getTime();
+    }
+
+    public static Date setTimeOfDate(Date timestamp, int newHour, int newMinutes) {
+        Calendar calTimestamp = Calendar.getInstance();
+        calTimestamp.setTime(timestamp);
+        calTimestamp.set(Calendar.HOUR_OF_DAY, newHour);
+        calTimestamp.set(Calendar.MINUTE, newMinutes);
+        return calTimestamp.getTime();
+    }
+
+    public static Date setTimeOfDate(Date timestamp, LocalTime newTime) {
+        return setTimeOfDate(timestamp, newTime.getHour(), newTime.getMinute());
     }
 
     /**
@@ -164,7 +176,7 @@ public class TimestampUtils {
             start = second.getTime();
             end = first.getTime();
         }
-        return new Date(start + (end - start) / 2);
+        return createCleanTimestamp(new Date(start + (end - start) / 2));
     }
 
     /**
@@ -226,11 +238,11 @@ public class TimestampUtils {
         for (Pair<Date, Date> p : timeSeries) {
             if (startOfCurentTimeSeries == null) {
                 //initial run of the loop
-                startOfCurentTimeSeries = TimestampUtils.addMinutesToTimestamp(p.getKey(), -1 * marginBefore);
+                startOfCurentTimeSeries = TimestampUtils.addMinutesToTimestamp(p.getKey(), (long) -1 * marginBefore);
                 lastTimeStamp = TimestampUtils.addMinutesToTimestamp(p.getValue(), marginAfter);
                 //for the comparison, adds 1 to lastTimeStamp to include Timestamps starting directly the minute after the last
             } else if (TimestampUtils.withinDateTimeSpan(startOfCurentTimeSeries, TimestampUtils.addMinutesToTimestamp(lastTimeStamp, 1), p.getKey())
-                    || TimestampUtils.withinDateTimeSpan(startOfCurentTimeSeries, TimestampUtils.addMinutesToTimestamp(lastTimeStamp, 1), TimestampUtils.addMinutesToTimestamp(p.getKey(), -1 * marginBefore))) {
+                    || TimestampUtils.withinDateTimeSpan(startOfCurentTimeSeries, TimestampUtils.addMinutesToTimestamp(lastTimeStamp, 1), TimestampUtils.addMinutesToTimestamp(p.getKey(), (long) -1 * marginBefore))) {
                 //Dates which start within the current time span, or would start within after margin has been applied
                 tempTimeStamp = TimestampUtils.addMinutesToTimestamp(p.getValue(), marginAfter);
                 if (!(TimestampUtils.withinDateTimeSpan(startOfCurentTimeSeries, lastTimeStamp, tempTimeStamp))) {
@@ -301,6 +313,19 @@ public class TimestampUtils {
      */
     public static List<Pair<Date, Date>> getNormalizedTimeSeries(List<VaultEntry> data, int margin) {
         return getNormalizedTimeSeries(data, margin, margin);
+    }
+
+    public static boolean withinTimeSeries(List<Pair<Date, Date>> timeSeries, Date date) {
+        boolean result = false;
+        if (timeSeries != null) {
+            for (Pair<Date, Date> p : timeSeries) {
+                if (TimestampUtils.withinDateTimeSpan(p.getKey(), p.getValue(), date)) {
+                    result = true;
+                    break;
+                }
+            }
+        }
+        return result;
     }
 
 }
