@@ -125,6 +125,63 @@ public class BucketEventTriggers {
         ARRAY_ENTRY_TRIGGER_HASHMAP.put(VaultEntryType.PUMP_TIME_SYNC,              43);
     }
     
+    // ArrayEntrysAfterMergeTo
+    
+    
+    // FIRST
+    //      ML-relevant and one hot
+    // SECOND
+    //      ML-relevant and NOT one hot
+    
+    
+    // 
+    // HashMap key   == VaultEntryType
+    // HashMap value == position in the info array (array used in BucketEntry)
+    public static final HashMap<VaultEntryType, Integer> ARRAY_ENTRIES_AFTER_MERGE_TO;
+    static {
+        ARRAY_ENTRIES_AFTER_MERGE_TO = new HashMap<>();
+        // ML-relevant and one hot
+        ARRAY_ENTRIES_AFTER_MERGE_TO.put(VaultEntryType.GLUCOSE_CGM_ALERT,            0);
+        ARRAY_ENTRIES_AFTER_MERGE_TO.put(VaultEntryType.CGM_SENSOR_FINISHED,          1);
+        ARRAY_ENTRIES_AFTER_MERGE_TO.put(VaultEntryType.CGM_SENSOR_START,             2);
+        ARRAY_ENTRIES_AFTER_MERGE_TO.put(VaultEntryType.CGM_CONNECTION_ERROR,         3);
+        ARRAY_ENTRIES_AFTER_MERGE_TO.put(VaultEntryType.CGM_CALIBRATION_ERROR,        4);
+        ARRAY_ENTRIES_AFTER_MERGE_TO.put(VaultEntryType.PUMP_FILL,                    5);
+        ARRAY_ENTRIES_AFTER_MERGE_TO.put(VaultEntryType.PUMP_NO_DELIVERY,             6);
+        ARRAY_ENTRIES_AFTER_MERGE_TO.put(VaultEntryType.PUMP_RESERVOIR_EMPTY,         7);
+        ARRAY_ENTRIES_AFTER_MERGE_TO.put(VaultEntryType.PUMP_SUSPEND,                 8);
+        ARRAY_ENTRIES_AFTER_MERGE_TO.put(VaultEntryType.SLEEP,                        9);
+        ARRAY_ENTRIES_AFTER_MERGE_TO.put(VaultEntryType.LOC_TRANSISTION,             10);
+        ARRAY_ENTRIES_AFTER_MERGE_TO.put(VaultEntryType.LOC_HOME,                    11);
+        ARRAY_ENTRIES_AFTER_MERGE_TO.put(VaultEntryType.LOC_WORK,                    12);
+        ARRAY_ENTRIES_AFTER_MERGE_TO.put(VaultEntryType.LOC_FOOD,                    13);
+        ARRAY_ENTRIES_AFTER_MERGE_TO.put(VaultEntryType.LOC_SPORTS,                  14);
+        ARRAY_ENTRIES_AFTER_MERGE_TO.put(VaultEntryType.EXERCISE_OTHER,              15);
+        ARRAY_ENTRIES_AFTER_MERGE_TO.put(VaultEntryType.EXERCISE_WALK,               16);
+        ARRAY_ENTRIES_AFTER_MERGE_TO.put(VaultEntryType.EXERCISE_BICYCLE,            17);
+        ARRAY_ENTRIES_AFTER_MERGE_TO.put(VaultEntryType.EXERCISE_RUN,                18);
+        ARRAY_ENTRIES_AFTER_MERGE_TO.put(VaultEntryType.EXERCISE_MANUAL,             19);
+        ARRAY_ENTRIES_AFTER_MERGE_TO.put(VaultEntryType.PUMP_REWIND,                 20);
+        
+        // ML-relevant but NOT one hot
+        ARRAY_ENTRIES_AFTER_MERGE_TO.put(VaultEntryType.BASAL,                       21);
+        ARRAY_ENTRIES_AFTER_MERGE_TO.put(VaultEntryType.BOLUS,                       22);
+        ARRAY_ENTRIES_AFTER_MERGE_TO.put(VaultEntryType.GLUCOSE_CGM,                 23);
+        ARRAY_ENTRIES_AFTER_MERGE_TO.put(VaultEntryType.MEAL_BOLUS_CALCULATOR,       24);
+        ARRAY_ENTRIES_AFTER_MERGE_TO.put(VaultEntryType.MEAL_MANUAL,                 25);
+        ARRAY_ENTRIES_AFTER_MERGE_TO.put(VaultEntryType.PUMP_UNSUSPEND,              26);
+        ARRAY_ENTRIES_AFTER_MERGE_TO.put(VaultEntryType.CGM_TIME_SYNC,               27);
+        ARRAY_ENTRIES_AFTER_MERGE_TO.put(VaultEntryType.DM_INSULIN_SENSITIVTY,       28);
+        ARRAY_ENTRIES_AFTER_MERGE_TO.put(VaultEntryType.GLUCOSE_BG,                  29);
+        ARRAY_ENTRIES_AFTER_MERGE_TO.put(VaultEntryType.GLUCOSE_BG_MANUAL,           30);
+        ARRAY_ENTRIES_AFTER_MERGE_TO.put(VaultEntryType.GLUCOSE_BOLUS_CALCULATION,   31);
+        ARRAY_ENTRIES_AFTER_MERGE_TO.put(VaultEntryType.GLUCOSE_CGM_CALIBRATION,     32);
+        ARRAY_ENTRIES_AFTER_MERGE_TO.put(VaultEntryType.HEART_RATE,                  33);
+        ARRAY_ENTRIES_AFTER_MERGE_TO.put(VaultEntryType.HEART_RATE_VARIABILITY,      34);
+        ARRAY_ENTRIES_AFTER_MERGE_TO.put(VaultEntryType.PUMP_PRIME,                  35);
+        ARRAY_ENTRIES_AFTER_MERGE_TO.put(VaultEntryType.PUMP_TIME_SYNC,              36);
+    }
+    
     // ======================================
     // single hashmaps for ML-rev and one hot
     // ======================================
@@ -239,6 +296,10 @@ public class BucketEventTriggers {
     // Hashsets average or sum calculation
     // 
     
+    // !!!
+    // IF NEW HASHSETS ARE ADDED PLEASE ALSO ADD THE NEW HASHSETS INTO THE HASHSETS_TO_SUM_UP HASHSET BELOW !!!
+    // !!!
+    
     // basalHashset
     public static final HashSet<VaultEntryType> BASAL_HASHSET;
     static {
@@ -254,6 +315,17 @@ public class BucketEventTriggers {
         MEAL_HASHSET = new HashSet<>();
         MEAL_HASHSET.add(VaultEntryType.MEAL_BOLUS_CALCULATOR);
         MEAL_HASHSET.add(VaultEntryType.MEAL_MANUAL);
+    }
+    
+    // !!!
+    // NEW HASHSETS ARE ADDED HERE !!!
+    // !!!
+    
+    public static final HashSet<VaultEntryType> HASHSETS_TO_SUM_UP;
+    static {
+        HASHSETS_TO_SUM_UP = new HashSet<>();
+        MEAL_HASHSET.addAll(BASAL_HASHSET);
+        MEAL_HASHSET.addAll(MEAL_HASHSET);
     }
     
     // hashset für lineare interpolation
