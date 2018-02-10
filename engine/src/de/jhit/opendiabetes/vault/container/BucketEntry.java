@@ -47,6 +47,9 @@ public class BucketEntry {
     private List<Pair<VaultEntryTypeGroup, Pair<Double, Double>>> runningComputation;
     // wait till next entry
     private VaultEntryType[] findNextArray;
+    
+    // this is the list of final sum and avg calculations
+    private List<Pair<VaultEntryTypeGroup, Double>> listOfComputedValuesForTheFinalBucketEntry;
 
     public BucketEntry(int bucketNumber, VaultEntry entry) {
         vaultEntry = entry;
@@ -59,6 +62,8 @@ public class BucketEntry {
         onehotInformationArray = new double[NUMBER_OF_VAULT_ENTRY_TRIGGER_TYPES];
         runningComputation = new ArrayList<>();
         findNextArray = new VaultEntryType[NUMBER_OF_VAULT_ENTRY_TRIGGER_TYPES];
+        
+        listOfComputedValuesForTheFinalBucketEntry = new ArrayList<>();
 
         // Fill findNextArray with EMPTY
         Arrays.fill(findNextArray, VaultEntryType.EMPTY);
@@ -134,6 +139,11 @@ public class BucketEntry {
     public VaultEntryType getFindNextArray(int position) {
         return findNextArray[position];
     }
+    
+    // get list of computed values for the final bucket entry
+    public List<Pair<VaultEntryTypeGroup, Double>> getListOfComputedValuesForTheFinalBucketEntry(){
+        return listOfComputedValuesForTheFinalBucketEntry;
+    }
 
     //
     // SETTER
@@ -161,6 +171,11 @@ public class BucketEntry {
     // ArrayOutOfBounds
     public void setFindNextArray(int position, VaultEntryType entry) {
         findNextArray[position] = entry;
+    }
+    
+    // set list of computed values for the final bucket entry
+    public void setListOfComputedValuesForTheFinalBucketEntry(List<Pair<VaultEntryTypeGroup, Double>> list){
+        listOfComputedValuesForTheFinalBucketEntry = list;
     }
 
 }
