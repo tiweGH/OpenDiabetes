@@ -17,7 +17,10 @@
 package de.jhit.opendiabetes.vault.container;
 
 import static de.jhit.opendiabetes.vault.container.BucketEventTriggers.ARRAY_ENTRY_TRIGGER_HASHMAP;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import javafx.util.Pair;
 
 /**
  *
@@ -38,8 +41,10 @@ public class BucketEntry {
     private double[] timeCountDownArray;
     // onehot information Array
     private double[] onehotInformationArray;
-    // onehot trigger
-//    private VaultEntryType[] entryTypeArray;
+    // arrays for ML-rev and NOT one hot - parallel computing act times
+    // first double == timer
+    // second double == value
+    private List<Pair<VaultEntryTypeGroup, Pair<Double, Double>>> runningComputation;
     // wait till next entry
     private VaultEntryType[] findNextArray;
 
@@ -52,7 +57,7 @@ public class BucketEntry {
         // Arrays containing OneHot information
         timeCountDownArray = new double[NUMBER_OF_VAULT_ENTRY_TRIGGER_TYPES];
         onehotInformationArray = new double[NUMBER_OF_VAULT_ENTRY_TRIGGER_TYPES];
-//        entryTypeArray = new VaultEntryType[NUMBEROFVAULTENTRYTRIGGERTYPES];
+        runningComputation = new ArrayList<>();
         findNextArray = new VaultEntryType[NUMBER_OF_VAULT_ENTRY_TRIGGER_TYPES];
 
         // Fill findNextArray with EMPTY
@@ -119,11 +124,11 @@ public class BucketEntry {
         return onehotInformationArray[position];
     }
 
-    // get VaultEntryType
-    // ArrayOutOfBounds
-//    public VaultEntryType getVaultEntryType(int position) {
-//        return entryTypeArray[position];
-//    }
+    // get runningComputations
+    public List<Pair<VaultEntryTypeGroup, Pair<Double, Double>>> getRunningComputation() {
+        return runningComputation;
+    }
+    
     // get find next
     // ArrayOutOfBounds
     public VaultEntryType getFindNextArray(int position) {
@@ -145,11 +150,13 @@ public class BucketEntry {
         onehotInformationArray[position] = bool;
     }
 
-    // set VaultEntryType
-    // ArrayOutOfBounds
-//    public void setVaultEntryType(int position, VaultEntryType entry) {
-//        entryTypeArray[position] = entry;
-//    }
+    // set runningComputations
+    // list will be newly generated with the given input
+    public void setRunningComputation(List<Pair<VaultEntryTypeGroup, Pair<Double, Double>>> newList) {
+        runningComputation =  new ArrayList<>();
+        runningComputation = newList;
+    }
+    
     // set find next
     // ArrayOutOfBounds
     public void setFindNextArray(int position, VaultEntryType entry) {
