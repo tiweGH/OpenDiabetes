@@ -24,13 +24,10 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import static de.jhit.opendiabetes.vault.container.BucketEventTriggers.ARRAY_ENTRY_TRIGGER_HASHMAP;
-import static de.jhit.opendiabetes.vault.container.BucketEventTriggers.TRIGGER_EVENT_ACT_TIME_GIVEN;
-import static de.jhit.opendiabetes.vault.container.BucketEventTriggers.TRIGGER_EVENT_ACT_TIME_TILL_NEXT_EVENT;
-import static de.jhit.opendiabetes.vault.container.BucketEventTriggers.TRIGGER_EVENT_ACT_TIME_ONE;
 import static de.jhit.opendiabetes.vault.container.BucketEventTriggers.*;
 import de.jhit.opendiabetes.vault.container.FinalBucketEntry;
-import de.jhit.opendiabetes.vault.util.TimestampUtils;
+import de.jhit.opendiabetes.vault.container.VaultEntryTypeGroup;
+import javafx.util.Pair;
 
 /**
  *
@@ -40,11 +37,20 @@ import de.jhit.opendiabetes.vault.util.TimestampUtils;
 // timestamp = counter == create bucket / count up
 // timestamp > counder == create emtpy bucket / count up
 public class BucketProcessor {
-
+    
+    // part of the information array for ML-rev + one hot
+    private final int ML_REV_AND_ONE_HOT = TRIGGER_EVENT_ACT_TIME_GIVEN.size() + TRIGGER_EVENT_ACT_TIME_TILL_NEXT_EVENT.size() 
+                                    + TRIGGER_EVENT_ACT_TIME_ONE.size() + TRIGGER_EVENTS_NOT_YET_SET.size();
+    // part of the information array for ML-rev + NOT one hot
+    // this part comes after the ML_REV_AND_ONE_HOT part
+    private final int ML_REV_AND_NOT_ONE_HOT = TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_SET.size() + TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_GIVEN.size() 
+                                        + TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_TILL_NEXT_EVENT.size() + TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_ONE.size() 
+                                        + TRIGGER_EVENT_NOT_ONE_HOT_VALUE_IS_A_TIMESTAMP.size();
+    
     // start BucketEntry number ... needed in createListOfBuckets and setBucketArrayInformation
     // if changed to 0 then checkPreviousBucketEntry must be changed as well
     final int BUCKET_START_NUMBER = 1;
-
+    
     //
     // System.out mode (for debugging)
     private static final boolean DEBUG = true;
@@ -53,15 +59,18 @@ public class BucketProcessor {
     // Date check for setBucketArrayInformation (merge-to and onehot)
     private Date lastDate = null;
     // boolean switch for setBucketArrayInformation (merge-to and onehot)
-    private boolean sameDatesGetNoTimerArrayUpdate = false;
+    private boolean sameDatesGetNoTimerArrayUpdate_MLRevAndOneHot = false;
+    private boolean sameDatesGetNoTimerArrayUpdate_MLRevAndNOTOneHot = false;
 
     // time countdown Array
     private double[] timeCountDownArray = new double[BucketEntry.getNumberOfVaultEntryTriggerTypes()];
     // onehot information Array
     private double[] onehotInformationArray = new double[BucketEntry.getNumberOfVaultEntryTriggerTypes()];
-    // onehot Annotaion
-//    private VaultEntryType[] entryTypeArray = new VaultEntryType[BucketEntry.getNumberOfVaultEntryTriggerTypes()];
-    // TODO missing wait till next entry
+    // arrays for ML-rev and NOT one hot - parallel computing act times
+    // first double == timer
+    // second double == value
+    private List<Pair<VaultEntryTypeGroup, Pair<Double, Double>>> runningComputation = new ArrayList<>();
+    // till next entry
     private VaultEntryType[] findNextArray = new VaultEntryType[BucketEntry.getNumberOfVaultEntryTriggerTypes()];
 
     /**
@@ -83,22 +92,26 @@ public class BucketProcessor {
         BucketEntry newBucket = new BucketEntry(bucketNumber, entry);
 
         // set Array information accroding to the VaultEntryType
-        // is this a Trigger Event?
+        // is this a trigger event?
         if (ARRAY_ENTRY_TRIGGER_HASHMAP.containsKey(entry.getType())) {
 
             // get VaultEntryType position from the HashMap
             int arrayPosition = ARRAY_ENTRY_TRIGGER_HASHMAP.get(entry.getType());
 
-            // is the Act Time given?
+            // 
+            // ML-rev + one hot
+            // 
+            
+            // is the act time given?
             if (TRIGGER_EVENT_ACT_TIME_GIVEN.contains(entry.getType())) {
-                // set Act Time
+                // set act time
                 newBucket.setTimeCountDown(arrayPosition, entry.getValue());
                 // set boolean true
-                newBucket.setOnehotInformationArray(arrayPosition, 1);
+                newBucket.setOnehotInformationArray(arrayPosition, 1);                            
                 // set to EMPTY
                 newBucket.setFindNextArray(arrayPosition, VaultEntryType.EMPTY);
 
-                // is the the Act Time till some next Event?
+            // is the the act time till some next event?
             } else if (TRIGGER_EVENT_ACT_TIME_TILL_NEXT_EVENT.containsKey(entry.getType())) {
                 // set to 0 (no direct Act Time)
                 newBucket.setTimeCountDown(arrayPosition, 0);
@@ -107,31 +120,85 @@ public class BucketProcessor {
                 // set find next to the needed VaultEntryType
                 newBucket.setFindNextArray(arrayPosition, TRIGGER_EVENT_ACT_TIME_TILL_NEXT_EVENT.get(entry.getType()));
 
-                // is the Act Time just for one Frame?
+            // is the act time just for one frame?
             } else if (TRIGGER_EVENT_ACT_TIME_ONE.contains(entry.getType())) {
-                // set Act Time to 1 Frame
+                // set act time to 1 minute
                 newBucket.setTimeCountDown(arrayPosition, 1);
                 // set boolean true
                 newBucket.setOnehotInformationArray(arrayPosition, 1);
                 // set to EMPTY
                 newBucket.setFindNextArray(arrayPosition, VaultEntryType.EMPTY);
 
-            } else if (TRIGGER_NOT_ONE_HOT_ACT_TIME_ONE.contains(entry.getType())) {
+            // 
+            // ML-rev + NOT one hot
+            // 
+            
+            // is the act time set?
+            } else if (TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_SET.containsKey(entry.getType())) {
+                // set act time to set act time in hashmap
+                newBucket.setTimeCountDown(arrayPosition, TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_SET.get(entry.getType()));
+                // set value
+                newBucket.setOnehotInformationArray(arrayPosition, entry.getValue());
+                
+                // new entries are added to the runningComputation list in the Bucket
+                // first part of the pair == VaultEntryTypeGroup for later calculation
+                // second part 
+                //          first double == timer       (in VaultEntry value2)
+                //          second double == value      (in VaultEntry value1)
+                List<Pair<VaultEntryTypeGroup, Pair<Double, Double>>> tempList = new ArrayList<>();
+                tempList.add(new Pair(entry.getType().getGroup(), new Pair(newBucket.getTimeCountDown(arrayPosition), newBucket.getOnehotInformationArray(arrayPosition))));
+                newBucket.setRunningComputation(tempList);
+                
+                // set to EMPTY
+                newBucket.setFindNextArray(arrayPosition, VaultEntryType.EMPTY);
+
+            // is the act time given?
+            } else if (TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_GIVEN.contains(entry.getType())) {
+                // set act time
+                newBucket.setTimeCountDown(arrayPosition, entry.getValue2());
+                // set value
+                newBucket.setOnehotInformationArray(arrayPosition, entry.getValue());
+                
+                // new entries are added to the runningComputation list in the Bucket
+                // first part of the pair == VaultEntryTypeGroup for later calculation
+                // second part 
+                //          first double == timer       (in VaultEntry value2)
+                //          second double == value      (in VaultEntry value1)
+                List<Pair<VaultEntryTypeGroup, Pair<Double, Double>>> tempList = new ArrayList<>();
+                tempList.add(new Pair(entry.getType().getGroup(), new Pair(newBucket.getTimeCountDown(arrayPosition), newBucket.getOnehotInformationArray(arrayPosition))));
+                newBucket.setRunningComputation(tempList);
+                
+                // set to EMPTY
+                newBucket.setFindNextArray(arrayPosition, VaultEntryType.EMPTY);
+
+            // is the act time till some next event?
+            } else if (TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_TILL_NEXT_EVENT.contains(entry.getType())) {
+                // set to 0 (no direct Act Time)
+                newBucket.setTimeCountDown(arrayPosition, 0);
+                // set value
+                newBucket.setOnehotInformationArray(arrayPosition, entry.getValue());
+                // set to ??? TODO
+        //        newBucket.setFindNextArray(arrayPosition, );
+                
+            // is the act time just for one frame?
+            } else if (TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_ONE.contains(entry.getType())) {
+                // set act time to 1 minute
                 newBucket.setTimeCountDown(arrayPosition, 1);
-                newBucket.setOnehotInformationArray(arrayPosition, 0);
+                // set value
+                newBucket.setOnehotInformationArray(arrayPosition, entry.getValue());
+                // set to EMPTY
                 newBucket.setFindNextArray(arrayPosition, VaultEntryType.EMPTY);
-
-            } else if (TRIGGER_NOT_ONE_HOT_EVENT_ACT_TIME_GIVEN.contains(entry.getType())) {
-                newBucket.setTimeCountDown(arrayPosition, bucketNumber);
-                newBucket.setOnehotInformationArray(arrayPosition, 0);
+                
+            // is the given value a timestamp?
+            } else if (TRIGGER_EVENT_NOT_ONE_HOT_VALUE_IS_A_TIMESTAMP.contains(entry.getType())) {
+                // set to 0 (no direct Act Time)
+                newBucket.setTimeCountDown(arrayPosition, 0);
+                // set 
+        //        newBucket.setOnehotInformationArray(arrayPosition, );
+                // set to EMPTY
                 newBucket.setFindNextArray(arrayPosition, VaultEntryType.EMPTY);
-
-            } else if (TRIGGER_NOT_ONE_HOT_EVENT_ACT_TIME_TILL_NEXT_EVENT.containsKey(entry.getType())) {
-                newBucket.setTimeCountDown(arrayPosition, bucketNumber);
-                newBucket.setOnehotInformationArray(arrayPosition, 0);
-                newBucket.setFindNextArray(arrayPosition, VaultEntryType.EMPTY);
+                
             }
-
         }
 
         return newBucket;
@@ -499,11 +566,6 @@ public class BucketProcessor {
 
     }
 
-    //
-    //
-    // TODO only update one hot with this method ... find a work around for ML-relevant but not one hot
-    //
-    //
     /**
      * This method sets the necessary information into the BucketEntry arrays
      * and manages the onehot markers, onehot timers, and merge-tos. The Date
@@ -520,9 +582,10 @@ public class BucketProcessor {
     private void setBucketArrayInformation(Date date, BucketEntry bucket) {
 
         // this prevents that the first BucketEntry has the chance of couting down the timer.
-        // sameDatesGetNoTimerArrayUpdate is initially set to false.
+        // sameDatesGetNoTimerArrayUpdate_MLRevAndOneHot is initially set to false.
         if (bucket.getBucketNumber() == BUCKET_START_NUMBER + 1) {
-            sameDatesGetNoTimerArrayUpdate = true;
+            sameDatesGetNoTimerArrayUpdate_MLRevAndOneHot = true;
+            sameDatesGetNoTimerArrayUpdate_MLRevAndNOTOneHot = true;
         }
 
         // since it is possible to have multiple timestamps with the same date the timers should not be updated untill the next minute has started.
@@ -536,77 +599,65 @@ public class BucketProcessor {
         //          are being created and that's why lastdate need to be updated.
         if (addMinutesToTimestamp(lastDate, 2).equals(date)) {
             lastDate = addMinutesToTimestamp(lastDate, 1);            // TODO not reached with EMPTY
-            sameDatesGetNoTimerArrayUpdate = true;
+            sameDatesGetNoTimerArrayUpdate_MLRevAndOneHot = true;
+            sameDatesGetNoTimerArrayUpdate_MLRevAndNOTOneHot = true;
         }                         // TODO not reached with EMPTY
 
         // set internal arrays through 1st BucketEntry
         if (bucket.getBucketNumber() == BUCKET_START_NUMBER) {
             timeCountDownArray = bucket.getFullTimeCountDown();
             onehotInformationArray = bucket.getFullOnehotInformationArray();
+            runningComputation.addAll(bucket.getRunningComputation());
             findNextArray = bucket.getFullFindNextArray();
-
-            if (DEBUG) {
-                System.out.println("Set_Bucket_Array_Information_Init");
-                System.out.println("lastDate");
-                System.out.println(lastDate);
-                System.out.println("Date");
-                System.out.println(date);
-                System.out.println("timeCountDownArray_pos_0");
-                System.out.println(timeCountDownArray[0]);
-                System.out.println("onehotInformationArray_pos_0");
-                System.out.println(onehotInformationArray[0]);
-                System.out.println("findNextArray_pos_0");
-                System.out.println(findNextArray[0]);
-                System.out.println("===============================================");
-            }
 
         } else {
             // after 1st BucketEntry
-            for (int i = 0; i < timeCountDownArray.length; i++) {
-                // DO NOT REPEAT TIMER ARRAY UPDATES ON SAME TIMESTAMP
-                if (sameDatesGetNoTimerArrayUpdate) {
-
-                    if (DEBUG) {
-                        System.out.println("Set_Bucket_Array_Information_first_timestamp");
-                        System.out.println("lastDate");
-                        System.out.println(lastDate);
-                        System.out.println("Date");
-                        System.out.println(date);
-                        System.out.println("timeCountDownArray_pos_0_old");
-                        System.out.println(timeCountDownArray[i]);
+            
+            // timer countdown for all entries inside the runningComputation list this is only done here before adding new upcoming entries
+            if (!runningComputation.isEmpty()) {
+                // new temp list with timer - 1
+                List<Pair<VaultEntryTypeGroup, Pair<Double, Double>>> tempList = new ArrayList<>();
+                for (Pair<VaultEntryTypeGroup, Pair<Double, Double>> pair : runningComputation) {
+                    // first part of the pair == VaultEntryTypeGroup for later calculation
+                    // second part 
+                    //          first double == timer - 1
+                    //          second double == value
+                    Pair<Double, Double> tempPair = new Pair(pair.getValue().getKey() - 1, pair.getValue().getValue());             // TODO CHECK IF new Pair IS OK LIKE THIS
+                    if (tempPair.getKey() > 0) {
+                        // new valid pair
+                        tempList.add(new Pair(pair.getKey(), tempPair));                                                            // TODO CHECK IF new Pair IS OK LIKE THIS
+                    } else {
+                        // do nothing pair is obsolete since timer is 0 or less
                     }
+                }
+                runningComputation = tempList;              // TODO might be a .clone()
+            }
+            
+            // this part only goes through the ML-rev and one hot part
+            for (int i = 0; i < ML_REV_AND_ONE_HOT; i++) {
+                // DO NOT REPEAT TIMER ARRAY UPDATES ON SAME TIMESTAMP
+                if (sameDatesGetNoTimerArrayUpdate_MLRevAndOneHot) {
 
                     // set false to not enter this part till lastDate update
-                    sameDatesGetNoTimerArrayUpdate = false;
+                    // set this after the first run of all array positions
+                    if (i == ML_REV_AND_ONE_HOT - 1) {sameDatesGetNoTimerArrayUpdate_MLRevAndOneHot = false;}
                     // set timers
                     if (timeCountDownArray[i] > 0) {
                         timeCountDownArray[i] = timeCountDownArray[i] - 1;
-                    }                                                             /////
-
-                    if (DEBUG) {
-                        System.out.println("Set_Bucket_Array_Information_first_timestamp");
-                        System.out.println("lastDate");
-                        System.out.println(lastDate);
-                        System.out.println("Date");
-                        System.out.println(date);
-                        System.out.println("timeCountDownArray_pos_0_new");
-                        System.out.println(timeCountDownArray[i]);
-                        System.out.println("===============================================");
                     }
-
                 }
                 //
                 // update info array stats
+                // initial onehots are set when the Bucket is created
                 //
                 // set timer
-                // initial onehots are set when the Bucket is created
                 if (bucket.getTimeCountDown(i) > timeCountDownArray[i]
                         && ARRAY_ENTRY_TRIGGER_HASHMAP.get(bucket.getVaultEntry().getType()) == i) {
                     timeCountDownArray[i] = bucket.getTimeCountDown(i);
                 }            /////
 
                 // set onehot to false
-                if (timeCountDownArray[i] == 0) {
+                if (timeCountDownArray[i] == 0 && findNextArray[i].equals(VaultEntryType.EMPTY)) {
                     onehotInformationArray[i] = 0;
                 }
                 // set onehot to true
@@ -625,21 +676,6 @@ public class BucketProcessor {
                 if (!bucket.getFindNextArray(i).equals(VaultEntryType.EMPTY)
                         && !bucket.getFindNextArray(i).equals(findNextArray[i])) {
                     findNextArray[i] = bucket.getFindNextArray(i);
-                }
-
-                if (DEBUG) {
-                    System.out.println("Set_Bucket_Array_Information_update_info_array_stats");
-                    System.out.println("lastDate");
-                    System.out.println(lastDate);
-                    System.out.println("Date");
-                    System.out.println(date);
-                    System.out.println("timeCountDownArray_pos_i");
-                    System.out.println(timeCountDownArray[i]);
-                    System.out.println("onehotInformationArray_pos_i");
-                    System.out.println(onehotInformationArray[i]);
-                    System.out.println("findNextArray_pos_i");
-                    System.out.println(findNextArray[i]);
-                    System.out.println("===============================================");
                 }
 
                 //
@@ -663,80 +699,157 @@ public class BucketProcessor {
                 if (bucket.getFindNextArray(i).equals(VaultEntryType.EMPTY)) {
                     bucket.setFindNextArray(i, findNextArray[i]);
                 }
+            }
+            
+            // this part only goes through the ML-rev and NOT one hot part
+            for (int i = ML_REV_AND_ONE_HOT; i < ML_REV_AND_NOT_ONE_HOT + ML_REV_AND_ONE_HOT; i++) {
+                // DO NOT REPEAT TIMER ARRAY UPDATES ON SAME TIMESTAMP
+                if (sameDatesGetNoTimerArrayUpdate_MLRevAndNOTOneHot) {
 
-                if (DEBUG) {
-                    System.out.println("Set_Bucket_Array_Information_update_BucketEntry_arrays");
-                    System.out.println("lastDate");
-                    System.out.println(lastDate);
-                    System.out.println("Date");
-                    System.out.println(date);
-                    System.out.println("timeCountDownArray_pos_i");
-                    System.out.println(bucket.getTimeCountDown(i));
-                    System.out.println("onehotInformationArray_pos_i");
-                    System.out.println(bucket.getOnehotInformationArray(i));
-                    System.out.println("findNextArray_pos_i");
-                    System.out.println(bucket.getFindNextArray(i));
-                    System.out.println("===============================================");
+                    // set false to not enter this part till lastDate update
+                    // set this after the first run of all array positions
+                    if (i == ML_REV_AND_ONE_HOT - 1) {sameDatesGetNoTimerArrayUpdate_MLRevAndNOTOneHot = false;}
+                    // set timers
+                    if (timeCountDownArray[i] > 0) {
+                        timeCountDownArray[i] = timeCountDownArray[i] - 1;
+                    }
+                }
+                // =======================================
+                // calculateAverageForSmallestBucketSize()
+                // =======================================
+                // ML-rev NOT one hot array positions need a differentiated handling
+                // =================================================================
+                //
+                // update info array stats
+                // initial Values are set when the Bucket is created
+                //
+                // set timer
+                if (bucket.getTimeCountDown(i) > timeCountDownArray[i]
+                        && ARRAY_ENTRY_TRIGGER_HASHMAP.get(bucket.getVaultEntry().getType()) == i) {
+                    timeCountDownArray[i] = bucket.getTimeCountDown(i);
+                }
+                
+                // set Vaule to 0
+                if (timeCountDownArray[i] == 0 && findNextArray[i].equals(VaultEntryType.EMPTY)) {
+                    onehotInformationArray[i] = 0;
+                }
+                
+                // check for "till next array" <in case of TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_TILL_NEXT_EVENT>
+                // VaultEntryType is the standard for an empty BucketEntry
+                if (!findNextArray[i].equals(VaultEntryType.EMPTY)
+                        && findNextArray[i].equals(bucket.getVaultEntry().getType())) {
+                    onehotInformationArray[i] = 0;
+                    findNextArray[i] = VaultEntryType.EMPTY;
+                }
+                        
+                // set the needed value 
+                // the original BucketEntry will contain the VaultEntry with the VaultEntryType
+                // on first call of this method with a new event the needed values are set
+                if (timeCountDownArray[i] >= 1 || !findNextArray[i].equals(VaultEntryType.EMPTY)) {
+                    // this is the first encounter of this entry so all average must be set
+                    if (ARRAY_ENTRY_TRIGGER_HASHMAP.get(bucket.getVaultEntry().getType()) == i){
+                        // 
+                        // check which VaultEntryType is given and calculate as intended
+                        // atm this timer will be reseted every time a new (same)event is started
+                        // 
+                        if (TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_SET.containsKey(bucket.getVaultEntry().getType())) {
+                            // new entries are set in the createNewBucket method
+                            // add them to the internal runningComputation list
+                            runningComputation.addAll(bucket.getRunningComputation());
+                            // DO NOT SET onehotInformationArray[i] HERE BECAUSE THE VALUE HAS TO BE COMPUTED (calculateAverageForSmallestBucketSize method)
+                        } else if (TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_GIVEN.contains(bucket.getVaultEntry().getType())) {
+                            // new entries are set in the createNewBucket method
+                            // add them to the internal runningComputation list
+                            runningComputation.addAll(bucket.getRunningComputation());
+                            // DO NOT SET onehotInformationArray[i] HERE BECAUSE THE VALUE HAS TO BE COMPUTED (calculateAverageForSmallestBucketSize method)
+                        } else if (TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_TILL_NEXT_EVENT.contains(bucket.getVaultEntry().getType())) {
+                            // TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_TILL_NEXT_EVENT : value is set when BucketEntry is created
+                            onehotInformationArray[i] = bucket.getOnehotInformationArray(i);
+                        } else if (TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_ONE.contains(bucket.getVaultEntry().getType())) {
+                            // TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_ONE : value is set when BucketEntry is created
+                            onehotInformationArray[i] = bucket.getOnehotInformationArray(i);
+                        } else if (TRIGGER_EVENT_NOT_ONE_HOT_VALUE_IS_A_TIMESTAMP.contains(bucket.getVaultEntry().getType())) {
+                            // onehotInformationArray[i] = ???
+                        }
+                        
+                    }
+                } else {
+                    // there is no new value in this BucketEntry position
+                    onehotInformationArray[i] = bucket.getOnehotInformationArray(i);
+                }
+                
+                // set findNextEntry <in case of TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_TILL_NEXT_EVENT>
+                if (!bucket.getFindNextArray(i).equals(VaultEntryType.EMPTY)
+                        && !bucket.getFindNextArray(i).equals(findNextArray[i])) {
+                    findNextArray[i] = bucket.getFindNextArray(i);
+                }
+                
+                //
+                // update BucketEntry arrays
+                //
+                // set timer
+                // TODO if case is wrong???
+                // if this timer is longer than the one saved in the BucketEntry take this one
+                // if this timer is equal to the one saven in the BucketEntry - 1
+                //      and this VaultEntryType is not onehot then update the BucketEntry (onehot might have just been set during the creation of the new BucketEntry).
+                if (timeCountDownArray[i] > bucket.getTimeCountDown(i)
+                        || timeCountDownArray[i] == bucket.getTimeCountDown(i) - 1 && !ARRAY_ENTRY_TRIGGER_HASHMAP.containsKey(bucket.getVaultEntry().getType())) {
+                    bucket.setTimeCountDown(i, timeCountDownArray[i]);
                 }
 
+                // set onehotInformationArray
+                bucket.setOnehotInformationArray(i, onehotInformationArray[i]);
+                // set findNextArray
+                // if findNextArray is EMPTY then it is filled with the needed information
+                // if findNextArray is filled with something else then nothing has to be done
+                if (bucket.getFindNextArray(i).equals(VaultEntryType.EMPTY)) {
+                    bucket.setFindNextArray(i, findNextArray[i]);
+                }
             }
-        }
-
-        if (DEBUG) {
-            System.out.println("Set_Bucket_Array_Information_merge-to");
-            System.out.println("lastDate");
-            System.out.println(lastDate);
-            System.out.println("Date");
-            System.out.println(date);
-            System.out.println("name_before");
-            System.out.println(bucket.getVaultEntry().getType());
         }
 
         // merge-to
         bucket.getVaultEntry().setType(bucket.getVaultEntry().getType().mergeTo());
-
-        if (DEBUG) {
-            System.out.println("name_after");
-            System.out.println(bucket.getVaultEntry().getType().mergeTo());
-            System.out.println("===============================================");
-        }
-
-        // onehot
-        // TODO only one change for each timestamp
-        //          same timestamps will have the same information in the Arrays
-        // update info stats ... fill internal array with new info where needed ... update bucket arrays
-        if (DEBUG && bucket.getBucketNumber() == BUCKET_START_NUMBER) {
-            System.out.println("Set_Bucket_Array_Information_Init_array_inside");
-            System.out.println("lastDate");
-            System.out.println(lastDate);
-            System.out.println("Date");
-            System.out.println(date);
-            System.out.println("timeCountDownArray_pos_0");
-            System.out.println(bucket.getTimeCountDown(0));
-            System.out.println("onehotInformationArray_pos_0");
-            System.out.println(bucket.getOnehotInformationArray(0));
-            System.out.println("findNextArray_pos_0");
-            System.out.println(bucket.getFindNextArray(0));
-            System.out.println("===============================================");
-        }
-
+        
+        // save the new created list of runningComputation
+        bucket.setRunningComputation(runningComputation);
     }
 
     // set average for every BucketEntry(timestamp)
+    
+        // TODO if in this category then do this
+        //      add
+        //      average
     private void calculateAverageForSmallestBucketSize(BucketEntry bucket) {
         
-            // first off just set all the values from the VaultEntrys into the one hot array ... this might have to be done in update info array method ... TODO
-            // update info array method has to be set so that it is possible for the method to see what has to be done with the given VaultEntry found ... ML-rev but not OH
-            // in some cases timer countdown is needed
+        // temp int to sum up values
+        double temp = 0;
 
-            // TODO if in this category then do this
-            //      add
-            //      average
+        // just add up ... values have already been set
+        
+        // everything within 0 till ML_REV_AND_ONE_HOT - 1 is just onehot and not a real value
+    //for (int i = ML_REV_AND_ONE_HOT; i < ML_REV_AND_NOT_ONE_HOT + ML_REV_AND_ONE_HOT; i++) {
+    //}
+        
+        // add up BASAL
+        for (VaultEntryType type : BASAL_HASHSET) {
+            int pos = ARRAY_ENTRY_TRIGGER_HASHMAP.get(type);
+            temp = temp + bucket.getOnehotInformationArray(pos);
+        }
+        
+        // TODO save in array
+        temp = 0;
+        
+        // add up MEAL
+        for (VaultEntryType type : MEAL_HASHSET) {
+            int pos = ARRAY_ENTRY_TRIGGER_HASHMAP.get(type);
+            temp = temp + bucket.getOnehotInformationArray(pos);
+        }
             
-            // TODO this calculation is only done within a certain array position
-            
-            // processor method hast to redo the merge-to since the data is lost through the removal of unneeded bucketEntrys TODO
-            // create a new hashmap consisting of only the after merge-to entries and set the array in the finalBucketEntry to his array TODO
+        // TODO save in array
+        temp = 0;
+        
+        // lineare interpolation
     }
     
     /**
@@ -875,7 +988,18 @@ public class BucketProcessor {
         // remove duplicate timestamp BucketEntrys
         listOfBucketEntries = removeUnneededBucketEntrys(listOfBucketEntries);
         // calculate averages
-        calculateAverageForSmallestBucketSize(listOfBucketEntries.get(0));  //TODO
+        for (BucketEntry entry : listOfBucketEntries) {calculateAverageForSmallestBucketSize(entry);}
+        
+        
+        
+        
+            // processor method hast to redo the merge-to since the data is lost through the removal of unneeded bucketEntrys TODO
+            // create a new hashmap consisting of only the after merge-to entries and set the array in the finalBucketEntry to his array TODO
+            
+            
+            
+            
+            
         
         // if wantedBucketSize != 1 transform the list into the wanted size .. standard bucket size == 1
         if (wantedBucketSize != 1){
@@ -910,11 +1034,6 @@ public class BucketProcessor {
                 } else {
                     listOfWantedBucketSize.add(entry);
                 }
-            }
-            // fill up last list spaces with empty bucket entries containing the next BucketEntry number and the date of the last given BucketEntry
-            while (listOfWantedBucketSize.size() % wantedBucketSize != 0) {
-                listOfWantedBucketSize.add(createEmptyBucket(listOfWantedBucketSize.get(listOfWantedBucketSize.size() - 1).getBucketNumber() + 1, 
-                                                             listOfWantedBucketSize.get(listOfWantedBucketSize.size() - 1).getVaultEntry().getTimestamp()));
             }
             // last call of the <average to the wanted bucket size> method
             // 
