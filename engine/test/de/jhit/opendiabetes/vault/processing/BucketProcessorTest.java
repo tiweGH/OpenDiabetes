@@ -61,7 +61,7 @@ public class BucketProcessorTest extends Assert {
     }
 
     // use this instead of assert
-    private void testBucketInformation(List<BucketEntry> result, List<BucketEntry> wantedListOfBuckets) {
+    private void testBucketInformation(List<BucketEntry> wantedListOfBuckets, List<BucketEntry> result) {
         // assertEquals(result, wantedListOfBuckets);
         int i;
         for (i = 0; i < wantedListOfBuckets.size(); i++) {
@@ -124,7 +124,7 @@ public class BucketProcessorTest extends Assert {
         wantedListOfBuckets.get(0).setTimeCountDown(0, 1);
         wantedListOfBuckets.get(0).setOnehotInformationArray(0, 1);
 
-        testBucketInformation(result, wantedListOfBuckets);
+        testBucketInformation(wantedListOfBuckets, result);
     }
 
     @Test
@@ -145,7 +145,7 @@ public class BucketProcessorTest extends Assert {
         wantedListOfBuckets.get(1).setTimeCountDown(0, 1);
         wantedListOfBuckets.get(1).setOnehotInformationArray(0, 1);
 
-        testBucketInformation(result, wantedListOfBuckets);
+        testBucketInformation(wantedListOfBuckets, result);
     }
 
     @Test
@@ -166,7 +166,7 @@ public class BucketProcessorTest extends Assert {
         wantedListOfBuckets.get(1).setTimeCountDown(0, 1);
         wantedListOfBuckets.get(1).setOnehotInformationArray(0, 1);
 
-        testBucketInformation(result, wantedListOfBuckets);
+        testBucketInformation(wantedListOfBuckets, result);
     }
 
     @Test
@@ -191,7 +191,7 @@ public class BucketProcessorTest extends Assert {
         wantedListOfBuckets.get(2).setTimeCountDown(0, 1);
         wantedListOfBuckets.get(2).setOnehotInformationArray(0, 1);
 
-        testBucketInformation(result, wantedListOfBuckets);
+        testBucketInformation(wantedListOfBuckets, result);
     }
 
     @Test
@@ -215,14 +215,19 @@ public class BucketProcessorTest extends Assert {
         tmpAnnotations = new ArrayList<>();
         tmpAnnotations.add(new VaultEntryAnnotation(VaultEntryAnnotation.TYPE.GLUCOSE_BG_METER_SERIAL).setValue("BG1140084B"));
         wantedListOfBuckets.add(new BucketEntry(2, new VaultEntry(VaultEntryType.GLUCOSE_BG, TestFunctions.creatNewDateToCheckFor("2000.01.01-00:02"), 109.0, tmpAnnotations)));
+        wantedListOfBuckets.get(1).setTimeCountDown(36, 1);
+        wantedListOfBuckets.get(1).setOnehotInformationArray(36, 109);
         // reset onehot and timer
         wantedListOfBuckets.get(1).setTimeCountDown(0, 0);
         wantedListOfBuckets.get(1).setOnehotInformationArray(0, 0);
         wantedListOfBuckets.add(new BucketEntry(3, new VaultEntry(VaultEntryType.GLUCOSE_CGM_ALERT, TestFunctions.creatNewDateToCheckFor("2000.01.01-00:03"), 182)));
         wantedListOfBuckets.get(2).setTimeCountDown(0, 1);
         wantedListOfBuckets.get(2).setOnehotInformationArray(0, 1);
+        // reset onehot and timer
+        wantedListOfBuckets.get(2).setTimeCountDown(36, 0);
+        wantedListOfBuckets.get(2).setOnehotInformationArray(36, 0);
 
-        testBucketInformation(result, wantedListOfBuckets);
+        testBucketInformation(wantedListOfBuckets, result);
     }
 
     @Test
@@ -241,7 +246,7 @@ public class BucketProcessorTest extends Assert {
         wantedListOfBuckets.get(0).setTimeCountDown(0, 1);
         wantedListOfBuckets.get(0).setOnehotInformationArray(0, 1);
 
-        testBucketInformation(result, wantedListOfBuckets);
+        testBucketInformation(wantedListOfBuckets, result);
     }
 
     @Test
@@ -296,7 +301,7 @@ public class BucketProcessorTest extends Assert {
         wantedListOfBuckets.get(8).setTimeCountDown(0, 1);
         wantedListOfBuckets.get(8).setOnehotInformationArray(0, 1);
 
-        testBucketInformation(result, wantedListOfBuckets);
+        testBucketInformation(wantedListOfBuckets, result);
     }
 
     @Test
@@ -351,7 +356,7 @@ public class BucketProcessorTest extends Assert {
         wantedListOfBuckets.get(8).setTimeCountDown(0, 1);
         wantedListOfBuckets.get(8).setOnehotInformationArray(0, 1);
 
-        testBucketInformation(result, wantedListOfBuckets);
+        testBucketInformation(wantedListOfBuckets, result);
     }
 
     //
@@ -376,7 +381,7 @@ public class BucketProcessorTest extends Assert {
         wantedListOfBuckets.get(1).setTimeCountDown(0, 1);
         wantedListOfBuckets.get(1).setOnehotInformationArray(0, 1);
 
-        testBucketInformation(result, wantedListOfBuckets);
+        testBucketInformation(wantedListOfBuckets, result);
     }
 
     @Test
@@ -398,7 +403,7 @@ public class BucketProcessorTest extends Assert {
         wantedListOfBuckets.get(1).setTimeCountDown(0, 1);
         wantedListOfBuckets.get(1).setOnehotInformationArray(0, 1);
 
-        testBucketInformation(result, wantedListOfBuckets);
+        testBucketInformation(wantedListOfBuckets, result);
     }
 
     @Test
@@ -420,7 +425,7 @@ public class BucketProcessorTest extends Assert {
         wantedListOfBuckets.get(1).setTimeCountDown(0, 1);
         wantedListOfBuckets.get(1).setOnehotInformationArray(0, 1);
 
-        testBucketInformation(result, wantedListOfBuckets);
+        testBucketInformation(wantedListOfBuckets, result);
     }
 
     @Test
@@ -464,7 +469,7 @@ public class BucketProcessorTest extends Assert {
         wantedListOfBuckets.get(5).setTimeCountDown(0, 1);
         wantedListOfBuckets.get(5).setOnehotInformationArray(0, 1);
 
-        testBucketInformation(result, wantedListOfBuckets);
+        testBucketInformation(wantedListOfBuckets, result);
     }
 
     @Test
@@ -511,7 +516,7 @@ public class BucketProcessorTest extends Assert {
         wantedListOfBuckets.get(6).setTimeCountDown(0, 0);
         wantedListOfBuckets.get(6).setOnehotInformationArray(0, 0);
 
-        testBucketInformation(result, wantedListOfBuckets);
+        testBucketInformation(wantedListOfBuckets, result);
     }
 
     @Test
@@ -647,7 +652,7 @@ public class BucketProcessorTest extends Assert {
         wantedListOfBuckets.get(29).setTimeCountDown(0, 0);
         wantedListOfBuckets.get(29).setOnehotInformationArray(0, 0);
 
-        testBucketInformation(result, wantedListOfBuckets);
+        testBucketInformation(wantedListOfBuckets, result);
     }
 
     @Test
@@ -781,7 +786,7 @@ public class BucketProcessorTest extends Assert {
         wantedListOfBuckets.get(29).setTimeCountDown(0, 1);
         wantedListOfBuckets.get(29).setOnehotInformationArray(0, 1);
 
-        testBucketInformation(result, wantedListOfBuckets);
+        testBucketInformation(wantedListOfBuckets, result);
     }
 
     @Test
@@ -793,7 +798,7 @@ public class BucketProcessorTest extends Assert {
 
         List<BucketEntry> wantedListOfBuckets = new ArrayList<>();
 
-        testBucketInformation(result, wantedListOfBuckets);
+        testBucketInformation(wantedListOfBuckets, result);
     }
 
     @Test(expected = NullPointerException.class)
@@ -805,6 +810,6 @@ public class BucketProcessorTest extends Assert {
 
         List<BucketEntry> wantedListOfBuckets = new ArrayList<>();
 
-        testBucketInformation(result, wantedListOfBuckets);
+        testBucketInformation(wantedListOfBuckets, result);
     }
 }
