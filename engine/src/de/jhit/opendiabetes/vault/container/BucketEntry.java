@@ -44,7 +44,7 @@ public class BucketEntry {
     // arrays for ML-rev and NOT one hot - parallel computing act times
     // first double == timer
     // second double == value
-    private List<Pair<VaultEntryTypeGroup, Pair<Double, Double>>> runningComputation;
+    private List<Pair<VaultEntryType, Pair<Double, Double>>> runningComputation;
     // wait till next entry
     private VaultEntryType[] findNextArray;
     
@@ -130,7 +130,7 @@ public class BucketEntry {
     }
 
     // get runningComputations
-    public List<Pair<VaultEntryTypeGroup, Pair<Double, Double>>> getRunningComputation() {
+    public List<Pair<VaultEntryType, Pair<Double, Double>>> getRunningComputation() {
         return runningComputation;
     }
     
@@ -162,7 +162,7 @@ public class BucketEntry {
 
     // set runningComputations
     // list will be newly generated with the given input
-    public void setRunningComputation(List<Pair<VaultEntryTypeGroup, Pair<Double, Double>>> newList) {
+    public void setRunningComputation(List<Pair<VaultEntryType, Pair<Double, Double>>> newList) {
         runningComputation =  new ArrayList<>();
         runningComputation = newList;
     }
