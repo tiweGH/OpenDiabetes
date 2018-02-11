@@ -27,10 +27,6 @@ public enum VaultEntryType {
 
     // Empty Type for BucketEntry
     EMPTY,
-    // types for merge-to that are missing
-    SLEEP,
-    BOLUS,
-    BASAL,
     // Bolus
     BOLUS_NORMAL(VaultEntryTypeGroup.BOLUS, false, true),
     BOLUS_SQARE(VaultEntryTypeGroup.BOLUS, false, true),
