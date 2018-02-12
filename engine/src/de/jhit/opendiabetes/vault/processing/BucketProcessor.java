@@ -26,7 +26,7 @@ import java.util.Date;
 import java.util.List;
 import static de.jhit.opendiabetes.vault.container.BucketEventTriggers.*;
 import de.jhit.opendiabetes.vault.container.FinalBucketEntry;
-import de.jhit.opendiabetes.vault.container.VaultEntryTypeGroup;
+import java.util.Arrays;
 import javafx.util.Pair;
 
 /**
@@ -64,7 +64,7 @@ public class BucketProcessor {
     // arrays for ML-rev and NOT one hot - parallel computing act times
     //      first double == timer
     //      second double == value
-    private List<Pair<VaultEntryTypeGroup, Pair<Double, Double>>> runningComputation = new ArrayList<>();
+    private List<Pair<VaultEntryType, Pair<Double, Double>>> runningComputation = new ArrayList<>();
     // till next entry
     private VaultEntryType[] findNextArray = new VaultEntryType[BucketEntry.getNumberOfVaultEntryTriggerTypes()];
 
@@ -138,12 +138,12 @@ public class BucketProcessor {
                 newBucket.setOnehotInformationArray(arrayPosition, KEEP_EMPTY_FOR_FOLLOWING_CALCULATION);
                 
                 // new entries are added to the runningComputation list in the Bucket
-                // first part of the pair == VaultEntryTypeGroup for later calculation
+                // first part of the pair == VaultEntryType for later calculation
                 // second part 
                 //          first double == timer       (in VaultEntry value2)
                 //          second double == value      (in VaultEntry value1)
-                List<Pair<VaultEntryTypeGroup, Pair<Double, Double>>> tempList = new ArrayList<>();
-                tempList.add(new Pair(entry.getType().getGroup(), new Pair(newBucket.getTimeCountDown(arrayPosition), entry.getValue())));
+                List<Pair<VaultEntryType, Pair<Double, Double>>> tempList = new ArrayList<>();
+                tempList.add(new Pair(entry.getType().mergeTo(), new Pair(newBucket.getTimeCountDown(arrayPosition), entry.getValue())));
                 newBucket.setRunningComputation(tempList);
                 
                 // set to EMPTY
@@ -157,12 +157,12 @@ public class BucketProcessor {
                 newBucket.setOnehotInformationArray(arrayPosition, KEEP_EMPTY_FOR_FOLLOWING_CALCULATION);
                 
                 // new entries are added to the runningComputation list in the Bucket
-                // first part of the pair == VaultEntryTypeGroup for later calculation
+                // first part of the pair == VaultEntryType for later calculation
                 // second part 
                 //          first double == timer       (in VaultEntry value2)
                 //          second double == value      (in VaultEntry value1)
-                List<Pair<VaultEntryTypeGroup, Pair<Double, Double>>> tempList = new ArrayList<>();
-                tempList.add(new Pair(entry.getType().getGroup(), new Pair(newBucket.getTimeCountDown(arrayPosition), entry.getValue())));
+                List<Pair<VaultEntryType, Pair<Double, Double>>> tempList = new ArrayList<>();
+                tempList.add(new Pair(entry.getType().mergeTo(), new Pair(newBucket.getTimeCountDown(arrayPosition), entry.getValue())));
                 newBucket.setRunningComputation(tempList);
                 
                 // set to EMPTY
@@ -487,9 +487,9 @@ public class BucketProcessor {
             // timer countdown for all entries inside the runningComputation list this is only done here before adding new upcoming entries
             if (!runningComputation.isEmpty()) {
                 // new temp list with timer - 1
-                List<Pair<VaultEntryTypeGroup, Pair<Double, Double>>> tempList = new ArrayList<>();
-                for (Pair<VaultEntryTypeGroup, Pair<Double, Double>> pair : runningComputation) {
-                    // first part of the pair == VaultEntryTypeGroup for later calculation
+                List<Pair<VaultEntryType, Pair<Double, Double>>> tempList = new ArrayList<>();
+                for (Pair<VaultEntryType, Pair<Double, Double>> pair : runningComputation) {
+                    // first part of the pair == VaultEntryType for later calculation
                     // second part 
                     //          first double == timer - 1
                     //          second double == value
@@ -686,38 +686,46 @@ public class BucketProcessor {
         bucket.setRunningComputation(runningComputation);
     }
 
-    // set average for every BucketEntry(timestamp)
-    
-    // just add up ... values have already been set
+    /**
+     * This method computes the values taken from the runningComputation array in the given BucketEntry.
+     * The values are calculated according to the set HASHSETS_TO_SUM_UP hashset which contains all VaultEntryTypes that are to be sumed up.
+     * If there are VaultEntryTypes that are to be merged this will also be done in the process of totaling the found values.
+     * The results are saved into the listOfComputedValuesForTheFinalBucketEntry array of the same BucketEntry.
+     * 
+     * This method is called for each BucketEntry after the unneeded BucketEntrys are removed.
+     * 
+     * @param bucket This is the BucketEntry in which the found values are sumed up and saved into.
+     */
     protected void calculateAverageForSmallestBucketSize(BucketEntry bucket) {
+    // just add up ... values have already been set
         
         // ===== just for info
-        // first part of the pair == VaultEntryTypeGroup
+        // first part of the pair == VaultEntryType
         // second part 
         //          first double == timer
         //          second double == value
         // ===== just for info
         
         // this list contains all calculated values before they are set into the FinalBucketEntrys
-        List<Pair<VaultEntryTypeGroup, Double>> listOfComputedValues = new ArrayList<>();
+        List<Pair<VaultEntryType, Double>> listOfComputedValues = new ArrayList<>();
         
-        // iterate over all given pairs in the runningComputation list and add them up acording to their VaultEntryTypeGroup
-        for (Pair<VaultEntryTypeGroup, Pair<Double, Double>> iteratorPair : bucket.getRunningComputation()) {
-            VaultEntryTypeGroup groupType = iteratorPair.getKey();
+        // iterate over all given pairs in the runningComputation list and add them up acording to their VaultEntryType
+        for (Pair<VaultEntryType, Pair<Double, Double>> iteratorPair : bucket.getRunningComputation()) {
+            VaultEntryType type = iteratorPair.getKey();
             
-            if (listOfComputedValues.contains(groupType)){                                                          // TODO could cause an error???
+            if (listOfComputedValues.contains(type)){                                                          // TODO could cause an error???
                 // a pair for the given type is already created
                 // sum up values
                 
                 // first get the needed pair out of the list ... remove it during the process the replace it later
-                Pair<VaultEntryTypeGroup, Double> tempPair = listOfComputedValues.remove(listOfComputedValues.indexOf(iteratorPair.getKey()));
+                Pair<VaultEntryType, Double> tempPair = listOfComputedValues.remove(listOfComputedValues.indexOf(iteratorPair.getKey()));
                 // create a new pair with the summed up values
                 tempPair = new Pair(tempPair.getKey(), tempPair.getValue() + iteratorPair.getValue().getValue());
                 // now put the pair back into the list
                 listOfComputedValues.add(tempPair);
             } else {
                 // create a new pair for the given type
-                Pair<VaultEntryTypeGroup, Double> tempPair = new Pair(groupType, iteratorPair.getValue().getValue());
+                Pair<VaultEntryType, Double> tempPair = new Pair(type, iteratorPair.getValue().getValue());
                 // add the pair to the list
                 listOfComputedValues.add(tempPair);
             }
@@ -725,11 +733,11 @@ public class BucketProcessor {
         
         // now get all entries from the onehot array that should be summed up too
         for (VaultEntryType vaultEntryType : HASHSETS_TO_SUM_UP) {
-            VaultEntryTypeGroup groupType = vaultEntryType.getGroup();
+            VaultEntryType type = vaultEntryType.mergeTo();
             
-            if (listOfComputedValues.contains(groupType)){                                                          // TODO could cause an error???
+            if (listOfComputedValues.contains(type)){                                                          // TODO could cause an error???
                 // add the rest into this pair
-                Pair<VaultEntryTypeGroup, Double> tempPair = listOfComputedValues.remove(listOfComputedValues.indexOf(groupType));
+                Pair<VaultEntryType, Double> tempPair = listOfComputedValues.remove(listOfComputedValues.indexOf(type));
                 // sum up the value in the pair with that in the bucket from the given type
                 tempPair = new Pair(tempPair.getKey(), tempPair.getValue() + bucket.getOnehotInformationArray(ARRAY_ENTRY_TRIGGER_HASHMAP.get(vaultEntryType)));
                 // put the pair bach into the list of computed values 
@@ -740,7 +748,7 @@ public class BucketProcessor {
                 // ... if not then move on
                 if (bucket.getOnehotInformationArray(ARRAY_ENTRY_TRIGGER_HASHMAP.get(vaultEntryType)) != 0.0) {
                     // create a new pair
-                    Pair<VaultEntryTypeGroup, Double> tempPair = new Pair(groupType, bucket.getOnehotInformationArray(ARRAY_ENTRY_TRIGGER_HASHMAP.get(vaultEntryType)));
+                    Pair<VaultEntryType, Double> tempPair = new Pair(type, bucket.getOnehotInformationArray(ARRAY_ENTRY_TRIGGER_HASHMAP.get(vaultEntryType)));
                     // add to the list of computed values 
                     listOfComputedValues.add(tempPair);
                 } // no value no pair needed                
@@ -757,61 +765,89 @@ public class BucketProcessor {
     }
     
     /**
-     * This methods gets the number of the wanted finalbucket and the complete list, which should be averaged.
-     * In the beginning the method sums up all entries from OneHotInformation and Timecountdown.
-     * After that the method will average the given entries.
+     * 
+     * 
+     * 
      * 
      * @param bucketNumber
      * @param bucketsToMerge
      * @return 
      */
     protected FinalBucketEntry calculateAverageForWantedBucketSize(int bucketNumber, List<BucketEntry> bucketsToMerge) {
-    
-        int bucketSize = bucketsToMerge.size();
+        // the list of BucketEntrys contains all entries that are relavent for the average computation
+        final int MAX_ARRAY_SIZE = ARRAY_ENTRIES_AFTER_MERGE_TO.size();
+        final double LIST_OF_BUCKETENTRYS_SIZE = bucketsToMerge.size();
+        
+        double[] valueComputaion = new double[MAX_ARRAY_SIZE];
+        // Fill valueComputaion with 0
+        Arrays.fill(valueComputaion, 0.0);
+        
+        for (BucketEntry entry : bucketsToMerge) {
+            
+            // temp array to save the BucketEntry information
+            double[] tempValue = new double[MAX_ARRAY_SIZE];
+        
+            // set all BucketEntry information into the tempValue array
+            // go through all arrays / lists containing information (listOfComputedValuesForTheFinalBucketEntry and onehotInformationArray)
+            // first run through the full length of the onehotInformationArray and set the entries into the after merge-to array form
+            for (VaultEntryType type : ARRAY_ENTRY_TRIGGER_HASHMAP.keySet()){
+
+                // check if a merge-to VaultEntryType is found or not
+                if (ARRAY_ENTRIES_AFTER_MERGE_TO.containsKey(type)){
+                    // not a merged type
+                    tempValue[ARRAY_ENTRIES_AFTER_MERGE_TO.get(type)] = entry.getOnehotInformationArray(ARRAY_ENTRY_TRIGGER_HASHMAP.get(type));
+                } else {
+                    // a merged type
+
+                    // ignore for now since listOfComputedValuesForTheFinalBucketEntry contains the valid values
+                }
+            }
+
+            // second run through the whole listOfComputedValuesForTheFinalBucketEntry
+            for (Pair<VaultEntryType, Double> pair : entry.getListOfComputedValuesForTheFinalBucketEntry()){
+                // place found entries into the right array position
+                // look for the position of the entry that matches this merge-to VaultEntryType
+                // 
+                tempValue[ARRAY_ENTRIES_AFTER_MERGE_TO.get(pair.getKey())] = pair.getValue();
+            }
+            
+            // fill the valueComputation Array with the new data (add them up)
+            for (int i = 0; i < MAX_ARRAY_SIZE - 1; i++) {
+                valueComputaion[i] = valueComputaion[i] + tempValue[i];
+            }
+        }
+        
+        // all sumed up values are now inside the valueComputaion array
+        // check what value gets saved inside the FinalBucketEntry
+        for (VaultEntryType type : ARRAY_ENTRIES_AFTER_MERGE_TO.keySet()) {
+            // array position according to the ARRAY_ENTRIES_AFTER_MERGE_TO hashmap
+            int arrayPos = ARRAY_ENTRIES_AFTER_MERGE_TO.get(type);
+            
+            // comput the average Value
+            double avgValue = valueComputaion[arrayPos] / LIST_OF_BUCKETENTRYS_SIZE;                // onehot is OK ... check for other normal values and avg values TODO
+            
+            // one hots ... if avgValue >= 1 then 1 else 0
+            if (type.isOneHot()) {
+                if (avgValue >= 1) {
+                    valueComputaion[arrayPos] = 1;
+                } else {
+                    valueComputaion[arrayPos] = 0;
+                }
+            } else {
+                
+                // other values
+                valueComputaion[arrayPos] = avgValue;                                               // other values TODO check
+                
+                // 
+                // evtl. hier lineare interpolation??? TODO
+                // 
+            }
+        }
+        
+        // create FinalBucketEntry
         FinalBucketEntry result = new FinalBucketEntry(bucketNumber);
-        
-        // Set the finalBucketentry for only one entry
-        if(bucketSize == 1)
-        {
-            result.setFindNextArray(bucketSize, VaultEntryType.EMPTY);
-            result.setFullOnehotInformationArray(bucketsToMerge.get(0).getFullOnehotInformationArray());
-            result.setFullTimeCountDown(bucketsToMerge.get(0).getFullTimeCountDown());
-            result.setFullFindNextArray(bucketsToMerge.get(0).getFullFindNextArray());
-        }
-        
-        //sums up all values (OneHotInformation and  TimeCountdown) and calculate the average
-        if (bucketSize > 1)
-        {
-            // sum up all entries 
-            //average OneHot (if > bucketsize / 2 ==> 1) and TimeCountdown / bucketsize
-            
-            for (int index = 0; index < result.getFullOnehotInformationArray().length; index++) {
-                for (BucketEntry bucketEntry : bucketsToMerge) {
-                    if(bucketsToMerge.indexOf(bucketEntry) != 0)
-                    {
-                        result.setOnehotInformationArray(index, result.getOnehotInformationArray(index)+bucketEntry.getOnehotInformationArray(index));
-                    }
-                }
-                
-                if(result.getOnehotInformationArray(index) >= bucketSize /2)
-                    result.setOnehotInformationArray(index, 1);
-                else
-                    result.setOnehotInformationArray(index, 0);
-            }
-            
-            for (int index = 0; index < result.getFullTimeCountDown().length; index++) {
-                for (BucketEntry bucketEntry : bucketsToMerge) {
-                    if(bucketsToMerge.indexOf(bucketEntry) != 0)
-                    {
-                        result.setTimeCountDown(index, result.getTimeCountDown(index)+bucketEntry.getTimeCountDown(index));
-                    }
-                }
-                
-                result.setTimeCountDown(index, result.getTimeCountDown(index) / bucketSize);
-            }
-            //ToDO FindNextVaultEntry???            
-            
-        }
+        // clone the computed Values into the FinalBucketEntry
+        result.setFullOnehotInformationArray(valueComputaion.clone());
         
         return result;
     }
@@ -863,7 +899,7 @@ public class BucketProcessor {
 
         return outputBucketList;
     }
-
+    
     /**
      * This method receives a list of VaultEntrys and a wanted step size (in minutes) for the resulting list of FinalBucketEntrys.
      * In this method the given list of VaultEntrys will be transformed into a list of BucketEntrys through the createListOfBuckets method
@@ -892,18 +928,8 @@ public class BucketProcessor {
         // remove duplicate timestamp BucketEntrys
         listOfBucketEntries = removeUnneededBucketEntrys(listOfBucketEntries);
         // calculate averages
+        // for each BucketEntry in the list
         for (BucketEntry entry : listOfBucketEntries) {calculateAverageForSmallestBucketSize(entry);}
-        
-        
-        
-        
-            // processor method hast to redo the merge-to since the data is lost through the removal of unneeded bucketEntrys TODO
-            // create a new hashmap consisting of only the after merge-to entries and set the array in the finalBucketEntry to his array TODO
-            
-            
-            
-            
-            
         
         // if wantedBucketSize != 1 transform the list into the wanted size .. standard bucket size == 1
         if (wantedBucketSize != 1){
@@ -926,9 +952,6 @@ public class BucketProcessor {
                     // start new list for call
                     
                     // call <average to the wanted bucket size> method
-                    //
-                    // TODO
-                    // 
                     outputFinalBucketList.add( calculateAverageForWantedBucketSize( finalBucketEntryListCounter, listOfWantedBucketSize ) );
                     // update FinalBucketEntry counter
                     finalBucketEntryListCounter++;
@@ -940,19 +963,36 @@ public class BucketProcessor {
                 }
             }
             // last call of the <average to the wanted bucket size> method
-            // 
-            // TODO 
-            // 
-            outputFinalBucketList.add( calculateAverageForWantedBucketSize( finalBucketEntryListCounter, listOfWantedBucketSize ) );
+            outputFinalBucketList.add( calculateAverageForWantedBucketSize( finalBucketEntryListCounter, listOfWantedBucketSize ) );            // last call will treat this list not like the other lists
         } else {
             // wantedBucketSize == 1
             // transform all BucketEntrys into FinalBucketEntrys            
             for (BucketEntry entry : listOfBucketEntries) {
                 outputFinalBucketList.add(new FinalBucketEntry(entry.getBucketNumber()));
-                // clone BucketEntry arrays into the new FinalBucketEntry arrays
-                outputFinalBucketList.get(outputFinalBucketList.size() - 1).setFullTimeCountDown(entry.getFullTimeCountDown());
-                outputFinalBucketList.get(outputFinalBucketList.size() - 1).setFullOnehotInformationArray(entry.getFullOnehotInformationArray());
-                outputFinalBucketList.get(outputFinalBucketList.size() - 1).setFullFindNextArray(entry.getFullFindNextArray());
+                // set all BucketEntry information into the new FinalBucketEntry array
+                
+                // go through all arrays / lists containing information (listOfComputedValuesForTheFinalBucketEntry and onehotInformationArray)
+                // first run through the full length of the onehotInformationArray and set the entries into the after merge-to array form
+                for (VaultEntryType type : ARRAY_ENTRY_TRIGGER_HASHMAP.keySet()){
+                    
+                    // check if a merge-to VaultEntryType is found or not
+                    if (ARRAY_ENTRIES_AFTER_MERGE_TO.containsKey(type)){
+                        // not a merged type
+                        outputFinalBucketList.get(outputFinalBucketList.size() - 1).setOnehotInformationArray(ARRAY_ENTRIES_AFTER_MERGE_TO.get(type), entry.getOnehotInformationArray(ARRAY_ENTRY_TRIGGER_HASHMAP.get(type)));
+                    } else {
+                        // a merged type
+                        
+                        // ignore for now since listOfComputedValuesForTheFinalBucketEntry contains the valid values
+                    }
+                }
+                
+                // second run through the whole listOfComputedValuesForTheFinalBucketEntry
+                for (Pair<VaultEntryType, Double> pair : entry.getListOfComputedValuesForTheFinalBucketEntry()){
+                    // place found entries into the right array position
+                    // look for the position of the entry that matches this merge-to VaultEntryType
+                    // 
+                    outputFinalBucketList.get(outputFinalBucketList.size() - 1).setOnehotInformationArray(ARRAY_ENTRIES_AFTER_MERGE_TO.get(pair.getKey()), pair.getValue());
+                }
             }
         }
         
