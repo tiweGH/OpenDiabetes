@@ -766,8 +766,9 @@ public class BucketProcessor {
     
     /**
      * 
-     * 
-     * 
+     * collects data out of array / list
+     * computes avg over given list size
+     * creates FinalBucketEntry and sets the computed and needed values
      * 
      * @param bucketNumber
      * @param bucketsToMerge
