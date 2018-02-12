@@ -177,7 +177,8 @@ public class VaultEntrySlicer {
     /**
      * This Method add clustered Vaultentry from the setType in the
      * setClusteringMethod. This Method will only work if the parameters are set
-     * correctly. The clsteredVaultEntry is at the end of the clustered Series.
+     * correctly. The clsteredVaultEntry is at the end of the clustered Series. 
+     * This method sums up all entries ind the given Timerange and creates a new Vaultentry.
      *
      * @param data
      * @param clusterTimeInMinutes
