@@ -310,6 +310,14 @@ public class BucketEventTriggers {
         BASAL_PROFILE_HASHSET.add(VaultEntryType.BASAL_PROFILE);
     }
     
+    // bolusHashset
+    public static final HashSet<VaultEntryType> BOLUS_HASHSET;
+    static {
+        BOLUS_HASHSET = new HashSet<>();
+        BOLUS_HASHSET.add(VaultEntryType.BOLUS_NORMAL);
+        BOLUS_HASHSET.add(VaultEntryType.BOLUS_SQARE);
+    }
+    
     // mealHashset
     public static final HashSet<VaultEntryType> MEAL_BOLUS_CALCULATOR_HASHSET;
     static {
@@ -326,6 +334,7 @@ public class BucketEventTriggers {
         // NEW HASHSETS ARE ADDED HERE !!!
         // !!!
         HASHSETS_TO_SUM_UP.addAll(BASAL_PROFILE_HASHSET);
+        HASHSETS_TO_SUM_UP.addAll(BOLUS_HASHSET);
         HASHSETS_TO_SUM_UP.addAll(MEAL_BOLUS_CALCULATOR_HASHSET);
     }
     
