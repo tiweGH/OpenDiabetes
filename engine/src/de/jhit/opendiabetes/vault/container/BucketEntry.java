@@ -49,7 +49,7 @@ public class BucketEntry {
     private VaultEntryType[] findNextArray;
     
     // this is the list of final sum and avg calculations
-    private List<Pair<VaultEntryTypeGroup, Double>> listOfComputedValuesForTheFinalBucketEntry;
+    private List<Pair<VaultEntryType, Double>> listOfComputedValuesForTheFinalBucketEntry;
 
     public BucketEntry(int bucketNumber, VaultEntry entry) {
         vaultEntry = entry;
@@ -141,7 +141,7 @@ public class BucketEntry {
     }
     
     // get list of computed values for the final bucket entry
-    public List<Pair<VaultEntryTypeGroup, Double>> getListOfComputedValuesForTheFinalBucketEntry(){
+    public List<Pair<VaultEntryType, Double>> getListOfComputedValuesForTheFinalBucketEntry(){
         return listOfComputedValuesForTheFinalBucketEntry;
     }
 
@@ -174,7 +174,7 @@ public class BucketEntry {
     }
     
     // set list of computed values for the final bucket entry
-    public void setListOfComputedValuesForTheFinalBucketEntry(List<Pair<VaultEntryTypeGroup, Double>> list){
+    public void setListOfComputedValuesForTheFinalBucketEntry(List<Pair<VaultEntryType, Double>> list){
         listOfComputedValuesForTheFinalBucketEntry = list;
     }
 
