@@ -24,7 +24,7 @@ import javax.naming.spi.DirStateFactory;
 /**
  *
  * @author Daniel This class extends filter and checks if the given Filter hits
- * an specific amount, after a result the hitcounter gets reset.
+ * an specific amount, after a result the hitcounter will be reset.
  */
 public class CounterFilter extends Filter {
 
