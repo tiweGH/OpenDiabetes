@@ -174,8 +174,8 @@ public class BucketProcessor {
                 newBucket.setTimeCountDown(arrayPosition, 0);
                 // set value
                 newBucket.setOnehotInformationArray(arrayPosition, entry.getValue());
-                // set to ??? TODO
-        //        newBucket.setFindNextArray(arrayPosition, );
+                // set to same VaultEntryType
+                newBucket.setFindNextArray(arrayPosition, entry.getType());
                 
             // is the act time just for one frame?
             } else if (TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_ONE.contains(entry.getType())) {
@@ -827,7 +827,7 @@ public class BucketProcessor {
             // comput the average Value
             double avgValue = valueComputaion[arrayPos] / LIST_OF_BUCKETENTRYS_SIZE;                // onehot is OK ... check for other normal values and avg values TODO
             
-            // one hots ... if avgValue >= 1 then 1 else 0
+            // one hots ... if avgValue >= 1 then 1 else 0                                          // TODO if over 0,5????
             if (type.isOneHot()) {
                 if (avgValue >= 1) {
                     valueComputaion[arrayPos] = 1;
@@ -998,5 +998,26 @@ public class BucketProcessor {
         }
         
         return outputFinalBucketList;
+    }
+    
+    /**
+     * 
+     * This method receives a list that begins with a 
+     * liste beinhält alles vom ersten auftretten eines wertes bis zum letzten vorkommenden wert 
+     * anfang ohne NULL und ende ohne NULL
+     * 
+     * 
+     * TODO für Adrian:
+     * Im averageForSmallesBucketSize werden alle werte die für diese methode benötigt werden in eine liste gepackt und später in teil listen unterteilt um dieser methode übergeben zu werden.
+     * Die werte werden willkührlich nach fund in die liste aufgenommen und vor der übergabe zwischen den einzelnen werten mit sinn vollen listen einträgen befüllt die mit NULL symbolisieren das noch kein double Wert für diesen BucketEntry vorhanden ist.
+     * Die rückgabe dieser methode wird dann zurück in die zugehörigen BucketEntrys (anhand der bucketNumber) in die arrays an der richtigen position eingetragen ... ggf. erst im FinalBucketEntry.
+     * 
+     * 
+     * 
+     * @param input
+     * @return 
+     */
+    protected List<Pair<Integer, Pair<VaultEntryType, Double>>> dummyMethod(List<Pair<Integer, Pair<VaultEntryType, Double>>> input){
+        return input;
     }
 }
