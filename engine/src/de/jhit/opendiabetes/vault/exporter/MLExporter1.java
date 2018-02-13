@@ -18,6 +18,7 @@ package de.jhit.opendiabetes.vault.exporter;
 
 import de.jhit.opendiabetes.vault.container.BucketEntry;
 import de.jhit.opendiabetes.vault.container.BucketEventTriggers;
+import de.jhit.opendiabetes.vault.container.FinalBucketEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.processing.BucketProcessor;
@@ -64,22 +65,21 @@ public class MLExporter1 {
         return result;
     }
 
-    public static void bucketsToCsv(List<BucketEntry> buckets, String filename) throws IOException, ParseException {
+    public static void bucketsToCsv(List<FinalBucketEntry> buckets, String filename) throws IOException, ParseException {
 
         FileWriter fw;
         fw = new FileWriter(filename);
         fw.write("index, " + createHeader() + "\n");
         try {
             int j = 0;
-            for (int i = 0; i < buckets.size() - 1; i++) {
-                if (!buckets.get(i).getVaultEntry().getTimestamp().toString().equals(buckets.get(i + 1).getVaultEntry().getTimestamp().toString())) {
-                    String line = Arrays.toString(buckets.get(i).getFullOnehotInformationArray());
-                    line = line.replace("[", "");
-                    line = line.replace("]", "");
-                    fw.write(j + ", " + line);
-                    fw.write(System.lineSeparator());
-                    j++;
-                }
+            for (FinalBucketEntry bucket:buckets) {
+                String line = bucket.getFullOnehotInformationArray().toString();
+                line = line.replace("[", "");
+                line = line.replace("]", "");
+                fw.write(j + ", " + line);
+                fw.write(System.lineSeparator());
+                j++;
+                
             }
         } catch (IOException ex) {
             Logger.getLogger(MLExporter1.class.getName()).log(Level.SEVERE, null, ex);
@@ -90,7 +90,7 @@ public class MLExporter1 {
 
     public static void main(String[] args) throws ParseException, SQLException, IOException {
 
-        List<BucketEntry> buckets = new BucketProcessor().createListOfBuckets(StaticDataset.getStaticDataset());
+        List<FinalBucketEntry> buckets = new BucketProcessor().processor(StaticDataset.getStaticDataset(), 1);
 //        for (int i = 0; i < StaticDataset.getStaticDataset().size(); i++) {
 //
 //            buckets.add(new BucketEntry(0, StaticDataset.getStaticDataset().get(i)));
