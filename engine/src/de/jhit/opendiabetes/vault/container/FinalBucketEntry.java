@@ -91,7 +91,7 @@ public class FinalBucketEntry {
     //
     // set boolean
     // ArrayOutOfBounds
-    public void setOnehotInformationArray(int position, double bool) {
-        onehotInformationArray[position] = bool;
+    public void setOnehotInformationArray(int position, double value) {
+        onehotInformationArray[position] = value;
     }
 }
