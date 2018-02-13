@@ -50,6 +50,9 @@ public class BucketEntry {
     
     // this is the list of final sum and avg calculations
     private List<Pair<VaultEntryType, Double>> listOfComputedValuesForTheFinalBucketEntry;
+    // this list is for calculating the linear interpolator
+    // this list must be sorted for each VaultEntryType and filled will NULLs to show the interpolateGaps method what needs to be calculated
+    private List<Pair<Integer, Pair<VaultEntryType, Double>>> listOfValuesForTheInterpolator;
 
     public BucketEntry(int bucketNumber, VaultEntry entry) {
         vaultEntry = entry;
@@ -64,6 +67,7 @@ public class BucketEntry {
         findNextArray = new VaultEntryType[NUMBER_OF_VAULT_ENTRY_TRIGGER_TYPES];
         
         listOfComputedValuesForTheFinalBucketEntry = new ArrayList<>();
+        listOfValuesForTheInterpolator = new ArrayList<>();
 
         // Fill findNextArray with EMPTY
         Arrays.fill(findNextArray, VaultEntryType.EMPTY);
@@ -144,6 +148,12 @@ public class BucketEntry {
     public List<Pair<VaultEntryType, Double>> getListOfComputedValuesForTheFinalBucketEntry(){
         return listOfComputedValuesForTheFinalBucketEntry;
     }
+    
+    // get list of values for the interpolator
+    public List<Pair<Integer, Pair<VaultEntryType, Double>>> getListOfValuesForTheInterpolator(){
+        return listOfValuesForTheInterpolator;
+    }
+
 
     //
     // SETTER
@@ -156,8 +166,8 @@ public class BucketEntry {
 
     // set boolean
     // ArrayOutOfBounds
-    public void setOnehotInformationArray(int position, double bool) {
-        onehotInformationArray[position] = bool;
+    public void setOnehotInformationArray(int position, double value) {
+        onehotInformationArray[position] = value;
     }
 
     // set runningComputations
@@ -175,7 +185,13 @@ public class BucketEntry {
     
     // set list of computed values for the final bucket entry
     public void setListOfComputedValuesForTheFinalBucketEntry(List<Pair<VaultEntryType, Double>> list){
+        listOfComputedValuesForTheFinalBucketEntry =  new ArrayList<>();
         listOfComputedValuesForTheFinalBucketEntry = list;
     }
 
+    // set list of values for the interpolator
+    public void setListOfValuesForTheInterpolator(List<Pair<Integer, Pair<VaultEntryType, Double>>> list){
+        listOfValuesForTheInterpolator =  new ArrayList<>();
+        listOfValuesForTheInterpolator = list;
+    }
 }
