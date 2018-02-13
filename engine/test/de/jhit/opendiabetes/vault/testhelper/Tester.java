@@ -104,6 +104,7 @@ public class Tester {
 //            Date tmp = VaultEntryUtils.getWeightedMiddle(workingSet, VaultEntryType.GLUCOSE_CGM);
 //            System.out.println(TimestampUtils.getMidDate(workingSet.get(0).getTimestamp(), workingSet.get(workingSet.size() - 1).getTimestamp()));
 //            System.out.println(tmp);
+
         } catch (ParseException ex) {
             Logger.getLogger(Tester.class.getName()).log(Level.SEVERE, null, ex);
         }

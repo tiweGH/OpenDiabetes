@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.List;
 import static de.jhit.opendiabetes.vault.container.BucketEventTriggers.*;
 import de.jhit.opendiabetes.vault.container.FinalBucketEntry;
+import de.jhit.opendiabetes.vault.util.SplineInterpolator;
 import java.util.Arrays;
 import javafx.util.Pair;
 
@@ -1012,12 +1013,47 @@ public class BucketProcessor {
      * Die werte werden willkührlich nach fund in die liste aufgenommen und vor der übergabe zwischen den einzelnen werten mit sinn vollen listen einträgen befüllt die mit NULL symbolisieren das noch kein double Wert für diesen BucketEntry vorhanden ist.
      * Die rückgabe dieser methode wird dann zurück in die zugehörigen BucketEntrys (anhand der bucketNumber) in die arrays an der richtigen position eingetragen ... ggf. erst im FinalBucketEntry.
      * 
-     * 
+     * Anmerkung von Timm: wegen der Art und weise wie wir die Methode benutzen (Dh wir überprüfen ja nicht nochmal ob die liste korrekt ist, also ob alle typen gleich sind)
+     * Sollten wir die Methode vllt private machen
      * 
      * @param input
      * @return 
      */
-    protected List<Pair<Integer, Pair<VaultEntryType, Double>>> dummyMethod(List<Pair<Integer, Pair<VaultEntryType, Double>>> input){
-        return input;
+    protected List<Pair<Integer, Pair<VaultEntryType, Double>>> interpolateGaps(List<Pair<Integer, Pair<VaultEntryType, Double>>> input){
+        List<Pair<Double, Double>> calcValues = new ArrayList<>();
+        List<Pair<Integer, Pair<VaultEntryType, Double>>> result = new ArrayList<>();
+        VaultEntryType resultType = null;
+        Double tmpValue;
+        Integer tmpIndex;
+        
+        //prepare the input data for interpolation, exclude null-values
+        for (Pair<Integer, Pair<VaultEntryType, Double>> pair : input) {
+            if(pair!=null && pair.getValue()!=null && pair.getKey()!=null){
+                tmpIndex = pair.getKey();
+                tmpValue = pair.getValue().getValue();
+                resultType = pair.getValue().getKey();
+                
+                if(tmpValue != null){
+                    calcValues.add(new Pair(tmpIndex.doubleValue(), tmpValue));
+                }
+            }
+        }
+        SplineInterpolator sI = new SplineInterpolator(calcValues);
+
+        //compute each value that is null
+        for (Pair<Integer, Pair<VaultEntryType, Double>> pair : input) {
+            if(pair!=null && pair.getValue()!=null && pair.getKey()!=null){
+                tmpIndex = pair.getKey();
+                tmpValue = pair.getValue().getValue();
+                
+                if(tmpValue == null){
+            //interpolation call: tmpValue = interpolate(tmpIndex.doubleValue()); vllt mit Runden?
+                    tmpValue = sI.interpolate(tmpIndex.doubleValue());
+                }
+                result.add(new Pair(tmpIndex, new Pair(resultType, tmpValue)));
+            }
+        }
+        
+        return result;
     }
 }
