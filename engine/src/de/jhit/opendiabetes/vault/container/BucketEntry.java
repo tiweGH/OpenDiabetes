@@ -194,4 +194,18 @@ public class BucketEntry {
         listOfValuesForTheInterpolator =  new ArrayList<>();
         listOfValuesForTheInterpolator = list;
     }
+    
+    @Override
+    public String toString(){
+        String result = "BucketEntry{id="+this.getBucketNumber()
+                +", "+this.getVaultEntry().toString()
+                +", findNextArray="+Arrays.toString(this.findNextArray)
+                +", onehotInformationArray="+Arrays.toString(this.onehotInformationArray)
+                +", timeCountDownArray="+Arrays.toString(this.timeCountDownArray)
+                +", runningComputation="+this.runningComputation.toString()
+                +", listOfComputedValuesForTheFinalBucketEntry="+this.listOfComputedValuesForTheFinalBucketEntry.toString()
+                +", listOfValuesForTheInterpolator="+this.listOfValuesForTheInterpolator.toString()
+                +"}";
+        return result;//System.lineSeparator();
+    }
 }

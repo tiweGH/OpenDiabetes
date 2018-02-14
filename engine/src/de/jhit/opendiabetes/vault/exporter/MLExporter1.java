@@ -22,6 +22,7 @@ import de.jhit.opendiabetes.vault.container.FinalBucketEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.processing.BucketProcessor;
+import de.jhit.opendiabetes.vault.processing.BucketProcessor_running;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -47,7 +48,7 @@ public class MLExporter1 {
 
     protected static String createHeader() {
 
-        HashMap<VaultEntryType, Integer> oneHotHeader = BucketEventTriggers.ARRAY_ENTRY_TRIGGER_HASHMAP;
+        HashMap<VaultEntryType, Integer> oneHotHeader = BucketEventTriggers.ARRAY_ENTRIES_AFTER_MERGE_TO;
         String[] header = new String[oneHotHeader.size()];
 
         int i = 0;
@@ -73,7 +74,8 @@ public class MLExporter1 {
         try {
             int j = 0;
             for (FinalBucketEntry bucket:buckets) {
-                String line = bucket.getFullOnehotInformationArray().toString();
+                //String line = bucket.getFullOnehotInformationArray().toString();
+                String line = Arrays.toString(bucket.getFullOnehotInformationArray());
                 line = line.replace("[", "");
                 line = line.replace("]", "");
                 fw.write(j + ", " + line);
@@ -90,7 +92,7 @@ public class MLExporter1 {
 
     public static void main(String[] args) throws ParseException, SQLException, IOException {
 
-        List<FinalBucketEntry> buckets = new BucketProcessor().processor(StaticDataset.getStaticDataset(), 1);
+        List<FinalBucketEntry> buckets = new BucketProcessor_running().processor(StaticDataset.getStaticDataset(), 1);
 //        for (int i = 0; i < StaticDataset.getStaticDataset().size(); i++) {
 //
 //            buckets.add(new BucketEntry(0, StaticDataset.getStaticDataset().get(i)));
