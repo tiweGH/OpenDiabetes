@@ -24,7 +24,7 @@ import de.jhit.opendiabetes.vault.processing.BucketProcessor;
 
 import de.jhit.opendiabetes.vault.exporter.MLExporter1;
 import de.jhit.opendiabetes.vault.processing.BucketProcessor;
-import de.jhit.opendiabetes.vault.processing.BucketProcessor_running;
+import de.jhit.opendiabetes.vault.processing.BucketProcessor_runable;
 import de.jhit.opendiabetes.vault.processing.DataSlicer;
 import de.jhit.opendiabetes.vault.processing.DataSlicerOptions;
 import de.jhit.opendiabetes.vault.processing.VaultEntrySlicer;
@@ -111,7 +111,7 @@ public class Tester {
 //            System.out.println(TimestampUtils.getMidDate(workingSet.get(0).getTimestamp(), workingSet.get(workingSet.size() - 1).getTimestamp()));
 //            System.out.println(tmp);
             MLExporter1 mle = new MLExporter1();
-            BucketProcessor_running bp = new BucketProcessor_running();
+            BucketProcessor_runable bp = new BucketProcessor_runable();
             List<FinalBucketEntry> buckets = bp.processor(workingSet, 1);
             MLExporter1.bucketsToCsv(buckets, "odv_export.csv");
             long minutes = (workingSet.get(workingSet.size()-1).getTimestamp().getTime()-workingSet.get(0).getTimestamp().getTime())/(60*1000);
