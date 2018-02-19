@@ -17,7 +17,10 @@
 package de.jhit.opendiabetes.vault.container;
 
 import static de.jhit.opendiabetes.vault.container.BucketEventTriggers.ARRAY_ENTRY_TRIGGER_HASHMAP;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import javafx.util.Pair;
 
 /**
  *
@@ -38,10 +41,18 @@ public class BucketEntry {
     private double[] timeCountDownArray;
     // onehot information Array
     private double[] onehotInformationArray;
-    // onehot trigger
-//    private VaultEntryType[] entryTypeArray;
+    // arrays for ML-rev and NOT one hot - parallel computing act times
+    // first double == timer
+    // second double == value
+    private List<Pair<VaultEntryType, Pair<Double, Double>>> runningComputation;
     // wait till next entry
     private VaultEntryType[] findNextArray;
+    
+    // this is the list of final sum and avg calculations
+    private List<Pair<VaultEntryType, Double>> listOfComputedValuesForTheFinalBucketEntry;
+    // this list is for calculating the linear interpolator
+    // this list must be sorted for each VaultEntryType and filled will NULLs to show the interpolateGaps method what needs to be calculated
+    private List<Pair<Integer, Pair<VaultEntryType, Double>>> listOfValuesForTheInterpolator;
 
     public BucketEntry(int bucketNumber, VaultEntry entry) {
         vaultEntry = entry;
@@ -52,8 +63,11 @@ public class BucketEntry {
         // Arrays containing OneHot information
         timeCountDownArray = new double[NUMBER_OF_VAULT_ENTRY_TRIGGER_TYPES];
         onehotInformationArray = new double[NUMBER_OF_VAULT_ENTRY_TRIGGER_TYPES];
-//        entryTypeArray = new VaultEntryType[NUMBEROFVAULTENTRYTRIGGERTYPES];
+        runningComputation = new ArrayList<>();
         findNextArray = new VaultEntryType[NUMBER_OF_VAULT_ENTRY_TRIGGER_TYPES];
+        
+        listOfComputedValuesForTheFinalBucketEntry = new ArrayList<>();
+        listOfValuesForTheInterpolator = new ArrayList<>();
 
         // Fill findNextArray with EMPTY
         Arrays.fill(findNextArray, VaultEntryType.EMPTY);
@@ -119,16 +133,27 @@ public class BucketEntry {
         return onehotInformationArray[position];
     }
 
-    // get VaultEntryType
-    // ArrayOutOfBounds
-//    public VaultEntryType getVaultEntryType(int position) {
-//        return entryTypeArray[position];
-//    }
+    // get runningComputations
+    public List<Pair<VaultEntryType, Pair<Double, Double>>> getRunningComputation() {
+        return runningComputation;
+    }
+    
     // get find next
     // ArrayOutOfBounds
     public VaultEntryType getFindNextArray(int position) {
         return findNextArray[position];
     }
+    
+    // get list of computed values for the final bucket entry
+    public List<Pair<VaultEntryType, Double>> getListOfComputedValuesForTheFinalBucketEntry(){
+        return listOfComputedValuesForTheFinalBucketEntry;
+    }
+    
+    // get list of values for the interpolator
+    public List<Pair<Integer, Pair<VaultEntryType, Double>>> getListOfValuesForTheInterpolator(){
+        return listOfValuesForTheInterpolator;
+    }
+
 
     //
     // SETTER
@@ -141,19 +166,46 @@ public class BucketEntry {
 
     // set boolean
     // ArrayOutOfBounds
-    public void setOnehotInformationArray(int position, double bool) {
-        onehotInformationArray[position] = bool;
+    public void setOnehotInformationArray(int position, double value) {
+        onehotInformationArray[position] = value;
     }
 
-    // set VaultEntryType
-    // ArrayOutOfBounds
-//    public void setVaultEntryType(int position, VaultEntryType entry) {
-//        entryTypeArray[position] = entry;
-//    }
+    // set runningComputations
+    // list will be newly generated with the given input
+    public void setRunningComputation(List<Pair<VaultEntryType, Pair<Double, Double>>> newList) {
+        runningComputation =  new ArrayList<>();
+        runningComputation = newList;
+    }
+    
     // set find next
     // ArrayOutOfBounds
     public void setFindNextArray(int position, VaultEntryType entry) {
         findNextArray[position] = entry;
     }
+    
+    // set list of computed values for the final bucket entry
+    public void setListOfComputedValuesForTheFinalBucketEntry(List<Pair<VaultEntryType, Double>> list){
+        listOfComputedValuesForTheFinalBucketEntry =  new ArrayList<>();
+        listOfComputedValuesForTheFinalBucketEntry = list;
+    }
 
+    // set list of values for the interpolator
+    public void setListOfValuesForTheInterpolator(List<Pair<Integer, Pair<VaultEntryType, Double>>> list){
+        listOfValuesForTheInterpolator =  new ArrayList<>();
+        listOfValuesForTheInterpolator = list;
+    }
+    
+    @Override
+    public String toString(){
+        String result = "BucketEntry{id="+this.getBucketNumber()
+                +", "+this.getVaultEntry().toString()
+                +", findNextArray="+Arrays.toString(this.findNextArray)
+                +", onehotInformationArray="+Arrays.toString(this.onehotInformationArray)
+                +", timeCountDownArray="+Arrays.toString(this.timeCountDownArray)
+                +", runningComputation="+this.runningComputation.toString()
+                +", listOfComputedValuesForTheFinalBucketEntry="+this.listOfComputedValuesForTheFinalBucketEntry.toString()
+                +", listOfValuesForTheInterpolator="+this.listOfValuesForTheInterpolator.toString()
+                +"}";
+        return result;//System.lineSeparator();
+    }
 }

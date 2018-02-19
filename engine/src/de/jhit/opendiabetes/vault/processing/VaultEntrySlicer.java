@@ -38,7 +38,7 @@ public class VaultEntrySlicer {
     private final List<Filter> registeredFilter = new ArrayList<>();
     //    private long clusterTimeInMillis = 0;
     //    private VaultEntryType clusterType;
-    private long gapTimeInMillis = 0;
+    private long gapTimeInMinutes = 0;
     //Preprocessing start
     private List<Filter> queryFilters;
     private List<Pair<Long, Pair<VaultEntryType, VaultEntryType>>> clusterParams = new ArrayList<>();
@@ -92,8 +92,8 @@ public class VaultEntrySlicer {
         registeredFilter.addAll(filters);
     }
 
-    public void setGapRemoving(long removeTimeInMillis, VaultEntryType removeType) {
-        this.gapTimeInMillis = removeTimeInMillis;
+    public void setGapRemoving(long gapTimeInMinutes, VaultEntryType removeType) {
+        this.gapTimeInMinutes = gapTimeInMinutes;
         this.gapType = removeType;
     }
 
@@ -102,7 +102,7 @@ public class VaultEntrySlicer {
      * vaultentrytpye. If there is an vaultentry in the given timerange the new
      * Vaultentry will be the start for the new gap.
      *
-     * @param result
+     * @param vaultEntries
      * @return
      */
     public List<VaultEntry> removeGaps(List<VaultEntry> vaultEntries) {
@@ -110,13 +110,13 @@ public class VaultEntrySlicer {
         List<VaultEntry> tempList = new ArrayList<VaultEntry>();
         Date startTime = null;
         Date endDate = null;
-        if (gapType != null && gapTimeInMillis > 0) {
+        if (gapType != null && gapTimeInMinutes > 0) {
             System.out.println("Preprocessing: Removing Gaps");
             for (VaultEntry vaultEntry : vaultEntries) {
                 if (vaultEntry.getType() == gapType && startTime == null) {
                     startTime = vaultEntry.getTimestamp();
                     tempList.add(vaultEntry);
-                    endDate = new Date(startTime.getTime() + gapTimeInMillis);
+                    endDate = TimestampUtils.addMinutesToTimestamp(startTime, gapTimeInMinutes);//new Date(startTime.getTime() + gapTimeInMinutes);
                 } else if (vaultEntry.getType() == gapType && startTime != null) {
                     if (TimestampUtils.withinDateTimeSpan(startTime, endDate, vaultEntry.getTimestamp())) {
                         tempList.add(vaultEntry);
@@ -124,7 +124,7 @@ public class VaultEntrySlicer {
                     }
                     tempList = new ArrayList<>();
                     startTime = vaultEntry.getTimestamp();
-                    endDate = new Date(startTime.getTime() + gapTimeInMillis);
+                    endDate = TimestampUtils.addMinutesToTimestamp(startTime, gapTimeInMinutes);//new Date(startTime.getTime() + gapTimeInMinutes);
                 } else if (startTime == null && vaultEntry.getType() != gapType) {
                     result.add(vaultEntry);
                 } else {
@@ -177,7 +177,8 @@ public class VaultEntrySlicer {
     /**
      * This Method add clustered Vaultentry from the setType in the
      * setClusteringMethod. This Method will only work if the parameters are set
-     * correctly. The clsteredVaultEntry is at the end of the clustered Series.
+     * correctly. The clsteredVaultEntry is at the end of the clustered Series. 
+     * This method sums up all entries ind the given Timerange and creates a new Vaultentry.
      *
      * @param data
      * @param clusterTimeInMinutes

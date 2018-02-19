@@ -29,7 +29,7 @@ public enum VaultEntryType {
     EMPTY,
     // Bolus
     BOLUS_NORMAL(VaultEntryTypeGroup.BOLUS, false, true),
-    BOLUS_SQARE(VaultEntryTypeGroup.BOLUS, false, true),
+    BOLUS_SQARE(VaultEntryTypeGroup.BOLUS, false, true, BOLUS_NORMAL),
     // Basal
     BASAL_PROFILE(VaultEntryTypeGroup.BASAL, false, true),
     BASAL_MANUAL(VaultEntryTypeGroup.BASAL, false, true, BASAL_PROFILE),

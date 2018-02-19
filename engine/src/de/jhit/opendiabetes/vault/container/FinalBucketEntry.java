@@ -16,8 +16,7 @@
  */
 package de.jhit.opendiabetes.vault.container;
 
-import static de.jhit.opendiabetes.vault.container.BucketEventTriggers.ARRAY_ENTRY_TRIGGER_HASHMAP;
-import java.util.Arrays;
+import static de.jhit.opendiabetes.vault.container.BucketEventTriggers.ARRAY_ENTRIES_AFTER_MERGE_TO;
 
 /**
  *
@@ -30,14 +29,10 @@ public class FinalBucketEntry {
 
     // Array size settings
     // numberOfVaultEntryTriggerTypes
-    private static final int NUMBER_OF_VAULT_ENTRY_TRIGGER_TYPES = ARRAY_ENTRY_TRIGGER_HASHMAP.size();
+    private static final int NUMBER_OF_VAULT_ENTRY_TRIGGER_TYPES_AFTER_MERGE = ARRAY_ENTRIES_AFTER_MERGE_TO.size();
 
-    // time countdown Array
-    private double[] timeCountDownArray;
     // onehot information Array
     private double[] onehotInformationArray;
-    // wait till next entry
-    private VaultEntryType[] findNextArray;
 
     public FinalBucketEntry(int bucketNumber) {
 
@@ -45,13 +40,8 @@ public class FinalBucketEntry {
         bucketEntryNumber = bucketNumber;
 
         // Arrays containing OneHot information
-        timeCountDownArray = new double[NUMBER_OF_VAULT_ENTRY_TRIGGER_TYPES];
-        onehotInformationArray = new double[NUMBER_OF_VAULT_ENTRY_TRIGGER_TYPES];
-//        entryTypeArray = new VaultEntryType[NUMBEROFVAULTENTRYTRIGGERTYPES];
-        findNextArray = new VaultEntryType[NUMBER_OF_VAULT_ENTRY_TRIGGER_TYPES];
-
-        // Fill findNextArray with EMPTY
-        Arrays.fill(findNextArray, VaultEntryType.EMPTY);
+        onehotInformationArray = new double[NUMBER_OF_VAULT_ENTRY_TRIGGER_TYPES_AFTER_MERGE];
+        
     }
 
     //
@@ -71,30 +61,15 @@ public class FinalBucketEntry {
     // GETTER onehotArraySize
     //
     public static int getNumberOfVaultEntryTriggerTypes() {
-        return NUMBER_OF_VAULT_ENTRY_TRIGGER_TYPES;
+        return NUMBER_OF_VAULT_ENTRY_TRIGGER_TYPES_AFTER_MERGE;
     }
 
     //
     // GETTER - SETTER full arrays of a BucketEntry
     //
     // get full time countdown
-    public double[] getFullTimeCountDown() {
-        return timeCountDownArray.clone();
-    }
-
-    // get full time countdown
     public double[] getFullOnehotInformationArray() {
         return onehotInformationArray.clone();
-    }
-
-    // get full time countdown
-    public VaultEntryType[] getFullFindNextArray() {
-        return findNextArray.clone();
-    }
-    
-    // set full time countdown
-    public void setFullTimeCountDown(double[] array) {
-        timeCountDownArray = array;
     }
 
     // set full time countdown
@@ -102,50 +77,21 @@ public class FinalBucketEntry {
         onehotInformationArray = array;
     }
 
-    // set full time countdown
-    public void setFullFindNextArray(VaultEntryType[] array) {
-        findNextArray = array;
-    }
-
     //
     // GETTER
     //
-    // get time countdown
-    // ArrayOutOfBounds
-    public double getTimeCountDown(int position) {
-        return timeCountDownArray[position];
-    }
-
     // get boolean
     // ArrayOutOfBounds
     public double getOnehotInformationArray(int position) {
         return onehotInformationArray[position];
     }
-    
-    // get find next
-    // ArrayOutOfBounds
-    public VaultEntryType getFindNextArray(int position) {
-        return findNextArray[position];
-    }
 
     //
     // SETTER
     //
-    // set time countdown
-    // ArrayOutOfBounds
-    public void setTimeCountDown(int position, double time) {
-        timeCountDownArray[position] = time;
-    }
-
     // set boolean
     // ArrayOutOfBounds
-    public void setOnehotInformationArray(int position, double bool) {
-        onehotInformationArray[position] = bool;
-    }
-
-    // set find next
-    // ArrayOutOfBounds
-    public void setFindNextArray(int position, VaultEntryType entry) {
-        findNextArray[position] = entry;
+    public void setOnehotInformationArray(int position, double value) {
+        onehotInformationArray[position] = value;
     }
 }
