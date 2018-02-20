@@ -25,6 +25,8 @@ import de.jhit.opendiabetes.vault.processing.BucketProcessor;
 import de.jhit.opendiabetes.vault.processing.BucketProcessor_runable;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -65,15 +67,41 @@ public class MLExporter1 {
 
         return result;
     }
+    
+        private static void shortenValues(List<FinalBucketEntry> buckets) throws ParseException {
+        int x = buckets.get(1).getFullOnehotInformationArray().length;
+        for (FinalBucketEntry bucket : buckets) {
+            for (int i = 0; i < x; i++) {
+
+                if ((bucket.getOnehotInformationArray(i) != 0.0) && (bucket.getOnehotInformationArray(i) != 1.0)) {
+                    BigDecimal bd = new BigDecimal(bucket.getOnehotInformationArray(i));
+                    bd = bd.setScale(2, RoundingMode.HALF_UP);
+                    bucket.setOnehotInformationArray(i, bd.doubleValue());
+                    //System.out.println(bucket.getOnehotInformationArray(i));
+                }
+            }
+        }
+    }
+    
 
     public static void bucketsToCsv(List<FinalBucketEntry> buckets, String filename) throws IOException, ParseException {
-
+        int x = buckets.get(1).getFullOnehotInformationArray().length;
         FileWriter fw;
         fw = new FileWriter(filename);
         fw.write("index, " + createHeader() + "\n");
         try {
             int j = 0;
             for (FinalBucketEntry bucket:buckets) {
+//                for (int i = 0; i < x; i++) {
+//
+//                if ((bucket.getOnehotInformationArray(i) != 0.0) && (bucket.getOnehotInformationArray(i) != 1.0)) {
+//                    BigDecimal bd = new BigDecimal(bucket.getOnehotInformationArray(i));
+//                    bd = bd.setScale(2, RoundingMode.HALF_UP);
+//                    bucket.setOnehotInformationArray(i, bd.doubleValue());
+//                    //System.out.println(bucket.getOnehotInformationArray(i));
+//                }
+//            }
+                
                 //String line = bucket.getFullOnehotInformationArray().toString();
                 String line = Arrays.toString(bucket.getFullOnehotInformationArray());
                 line = line.replace("[", "");
