@@ -18,13 +18,16 @@ package de.jhit.opendiabetes.vault.processing;
 
 import de.jhit.opendiabetes.vault.container.BucketEntry;
 import static de.jhit.opendiabetes.vault.container.BucketEntry.getNumberOfVaultEntryTriggerTypes;
+import de.jhit.opendiabetes.vault.container.FinalBucketEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryAnnotation;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.processing.filter.TestFunctions;
+import de.jhit.opendiabetes.vault.testhelper.StaticDataset;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.util.Pair;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -811,5 +814,37 @@ public class BucketProcessorTest extends Assert {
         List<BucketEntry> wantedListOfBuckets = new ArrayList<>();
 
         testBucketInformation(wantedListOfBuckets, result);
+    }
+    
+    // ======================================
+    // ======================================
+    // ======================================
+    
+    @Test
+    public void testBucketProcessor_runable() throws ParseException {
+        List<VaultEntry> vaultEntries = new ArrayList<>();
+        
+        vaultEntries = StaticDataset.getStaticDataset();
+
+        BucketProcessor_runable instance_runable = new BucketProcessor_runable();
+        List<FinalBucketEntry> result_runable = instance_runable.processor(vaultEntries, 1);
+
+        List<FinalBucketEntry> wantedListOfBuckets = null;
+
+    //    testBucketInformation(wantedListOfBuckets, result_runable);
+    }
+    
+    @Test
+    public void testBucketProcessor_original() throws ParseException {
+        List<VaultEntry> vaultEntries = new ArrayList<>();
+        
+        vaultEntries = StaticDataset.getStaticDataset();
+
+        BucketProcessor instance = new BucketProcessor();
+        List<FinalBucketEntry> result = instance.processor(vaultEntries, 1);
+
+        List<FinalBucketEntry> wantedListOfBuckets = null;
+
+    //    testBucketInformation(wantedListOfBuckets, result_runable);
     }
 }
