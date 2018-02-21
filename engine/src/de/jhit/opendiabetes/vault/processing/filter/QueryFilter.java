@@ -23,15 +23,7 @@ import java.util.List;
 import javafx.util.Pair;
 
 /**
- * The CombinationFilter is a special kind of Filter. The CombinationFilter
- * combines two Filter on different datasets. Another of it’s special Features
- * is, that the CombinationFilter has two lists of VaultEntry, which will be
- * used later in the .filter method. The first list of VaultEntry is set during
- * the Constructor, this set is the basicData. The Second list is only used
- * during the filter. In the Constructor there will also be set two Filter
- * (firstFilter and secondFilter).
- *
- * @author Daniel
+ * @author tiweGH
  */
 public class QueryFilter extends Filter {
 

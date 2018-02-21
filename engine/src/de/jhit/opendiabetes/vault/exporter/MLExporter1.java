@@ -82,7 +82,7 @@ public class MLExporter1 {
         fw = new FileWriter(filename);
         fw.write("index, " + createHeader() + "\n");
         try {
-            int j = 0;
+            //int j = 0;
             for (FinalBucketEntry bucket : buckets) {
                 for (int i = 0; i < x; i++) {
                     shortenValues(bucket, i);
@@ -90,9 +90,9 @@ public class MLExporter1 {
                 String line = Arrays.toString(bucket.getFullOnehotInformationArray());
                 line = line.replace("[", "");
                 line = line.replace("]", "");
-                fw.write(j + ", " + line);
+                fw.write(bucket.getBucketNumber() + ", " + line);
                 fw.write(System.lineSeparator());
-                j++;
+                //j++;
             }
         } catch (IOException ex) {
             Logger.getLogger(MLExporter1.class.getName()).log(Level.SEVERE, null, ex);

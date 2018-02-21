@@ -1086,18 +1086,9 @@ public class BucketProcessor_runable {
 //            }
             //--------------------------
             //tiweGH hotfix: data ISN'T YET READY!
-            int lastType = 0;
-            for (int i = listOfBucketEntries.size() - 1; i > 0; i--) {
-                BucketEntry entry = listOfBucketEntries.get(i);
-                if (entry.getVaultEntry().getType() == type) {
-                    lastType = i;
-                    break;
-                }
-            }
-            for (int i = BUCKET_START_NUMBER; i <= lastType; i++) {
-                BucketEntry tmpBuck = listOfBucketEntries.get(i);
-                if (tmpBuck.getVaultEntry().getType() == type) {
-                    sortedData.add(new Pair(tmpBuck.getBucketNumber(), new Pair(type, tmpBuck.getVaultEntry().getValue())));
+            for (BucketEntry bucket : listOfBucketEntries) {
+                if (bucket.getVaultEntry().getType() == type) {
+                    sortedData.add(new Pair(bucket.getBucketNumber(), new Pair(type, bucket.getVaultEntry().getValue())));
                 }
             }
 
@@ -1139,14 +1130,14 @@ public class BucketProcessor_runable {
                 tmpLast++;
             }
 
-            for (int i = 0; i < sortedDataFilledGaps.size(); i++) {
-                if (i > 0 && sortedDataFilledGaps.get(i - 1).getKey().intValue() + 1 != sortedDataFilledGaps.get(i).getKey().intValue()) {
-                    System.out.println("NEIN");
-                    System.out.println("erst " + sortedDataFilledGaps.get(i - 1).getKey());
-                    System.out.println("zweit " + sortedDataFilledGaps.get(i).getKey());
-                }
-
-            }
+//            for (int i = 0; i < sortedDataFilledGaps.size(); i++) {
+//                if (i > 0 && sortedDataFilledGaps.get(i - 1).getKey().intValue() + 1 != sortedDataFilledGaps.get(i).getKey().intValue()) {
+//                    System.out.println("NEIN");
+//                    System.out.println("erst " + sortedDataFilledGaps.get(i - 1).getKey());
+//                    System.out.println("zweit " + sortedDataFilledGaps.get(i).getKey());
+//                }
+//
+//            }
             //---------------------------------
 
             // data is now ready for the interpolateGaps method
@@ -1395,7 +1386,7 @@ public class BucketProcessor_runable {
         for (int i = 0; i < input.size(); i++) {
             Pair<Integer, Pair<VaultEntryType, Double>> tmp1 = input.get(i);
             Pair<Integer, Pair<VaultEntryType, Double>> tmp2 = result.get(i);
-            System.out.println(tmp1.getKey() + " " + tmp1.getValue().getValue() + " " + tmp2.getValue().getValue());
+            //System.out.println(tmp1.getKey() + " " + tmp1.getValue().getValue() + " " + tmp2.getValue().getValue());
 
         }
         System.out.println("interpolation end");

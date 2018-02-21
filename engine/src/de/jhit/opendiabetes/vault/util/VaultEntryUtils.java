@@ -59,6 +59,16 @@ public class VaultEntryUtils {
         return result;
     }
 
+    /**
+     * Returns the VaultEntry with the timestamp located nearest to the given
+     * timestamp
+     *
+     * @param data contains sorted entries with timestamps, first with the
+     * oldest and last with the newest timestamp
+     * @param timestamp
+     * @return an entry with a timestamp nearest the actual middle of the first
+     * and the last timestamp
+     */
     public static VaultEntry getNearestEntryAt(List<VaultEntry> data, Date timestamp) {
         VaultEntry result = null;
         if (data != null && timestamp != null) {
