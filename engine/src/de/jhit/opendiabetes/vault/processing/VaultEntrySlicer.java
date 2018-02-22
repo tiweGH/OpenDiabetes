@@ -16,6 +16,7 @@
  */
 package de.jhit.opendiabetes.vault.processing;
 
+import com.j256.ormlite.logger.Log;
 import de.jhit.opendiabetes.vault.container.SliceEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
@@ -26,6 +27,7 @@ import de.jhit.opendiabetes.vault.util.VaultEntryUtils;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.util.Pair;
 
@@ -43,6 +45,8 @@ public class VaultEntrySlicer {
     private List<Filter> queryFilters;
     private List<Pair<Long, Pair<VaultEntryType, VaultEntryType>>> clusterParams = new ArrayList<>();
     private VaultEntryType gapType;
+
+    private static final Logger LOG = Logger.getLogger(VaultEntrySlicer.class.getName());
 
     public VaultEntrySlicer() {
     }
@@ -177,8 +181,9 @@ public class VaultEntrySlicer {
     /**
      * This Method add clustered Vaultentry from the setType in the
      * setClusteringMethod. This Method will only work if the parameters are set
-     * correctly. The clsteredVaultEntry is at the end of the clustered Series. 
-     * This method sums up all entries ind the given Timerange and creates a new Vaultentry.
+     * correctly. The clsteredVaultEntry is at the end of the clustered Series.
+     * This method sums up all entries ind the given Timerange and creates a new
+     * Vaultentry.
      *
      * @param data
      * @param clusterTimeInMinutes
@@ -210,7 +215,7 @@ public class VaultEntrySlicer {
                     // tmp =
                     if (tmp != null) {
                         VaultEntry tmpVaultEntry = new VaultEntry(clusterType, tmp, sumOfValue);
-                        System.out.println("New Cluster between " + startTime + " and " + compareDate + " : " + tmpVaultEntry.getTimestamp());
+                        LOG.log(Level.INFO, "New Cluster between {0} and {1} : {2}", new Object[]{startTime, compareDate, tmpVaultEntry.getTimestamp()});
                         clusteredList.add(tmpVaultEntry);
                     }
                     //Alternative cluster the day in whole blocks, starting with 00:00 and not with the first entry

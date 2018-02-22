@@ -77,7 +77,7 @@ public class Tester {
             List<VaultEntry> entryList = StaticDataset.getStaticDataset();
             List<VaultEntry> sensyList = SensitivityDataset.getSensitivityDataset();
             List<VaultEntry> custSet = CustomDataset.getCustomDataset();
-            List<VaultEntry> workingSet = entryList;
+            List<VaultEntry> workingSet = sensyList;
             List<Filter> fl = new ArrayList<>();
             FilterResult res;
 
@@ -115,7 +115,7 @@ public class Tester {
 //            BucketProcessor_runable bp = new BucketProcessor_runable();
             List<FinalBucketEntry> buckets = bp.processor(workingSet, 1);
             MLExporter1.bucketsToCsv(buckets, "odv_export.csv");
-            long minutes = (workingSet.get(workingSet.size()-1).getTimestamp().getTime()-workingSet.get(0).getTimestamp().getTime())/(60*1000);
+            long minutes = (workingSet.get(workingSet.size() - 1).getTimestamp().getTime() - workingSet.get(0).getTimestamp().getTime()) / (60 * 1000);
             System.out.println("Test_end_output_minutes_:");
             System.out.println(minutes);
 
