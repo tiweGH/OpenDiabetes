@@ -21,7 +21,7 @@ import java.util.List;
 
 /**
  *
- * @author mswin, tiweGH, aa80hifa
+ * @author mswin, tiweGH, a.a.aponte
  */
 public enum VaultEntryType {
 
