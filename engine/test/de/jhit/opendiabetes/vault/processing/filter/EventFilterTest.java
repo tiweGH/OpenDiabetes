@@ -36,7 +36,7 @@ import org.junit.Test;
 
 /**
  * Test of filter method, of class EventFilter.
- * @author juehv, aa80hifa
+ * @author juehv, a.a.aponte
  */
 public class EventFilterTest extends Assert {
 
@@ -59,7 +59,7 @@ public class EventFilterTest extends Assert {
     
     /**
      * Test of filter method, of class EventFilter.
-     * @author juehv, aa80hifa
+     * @author juehv, a.a.aponte
      */
     @Test
     public void testEventFilter_STRESS() throws ParseException {
