@@ -67,22 +67,14 @@ public class MLExporter1 {
 
         return result;
     }
-    
-        private static void shortenValues(List<FinalBucketEntry> buckets) throws ParseException {
-        int x = buckets.get(1).getFullOnehotInformationArray().length;
-        for (FinalBucketEntry bucket : buckets) {
-            for (int i = 0; i < x; i++) {
 
+    private static void shortenValues(FinalBucketEntry bucket, int i) throws ParseException {
                 if ((bucket.getOnehotInformationArray(i) != 0.0) && (bucket.getOnehotInformationArray(i) != 1.0)) {
                     BigDecimal bd = new BigDecimal(bucket.getOnehotInformationArray(i));
                     bd = bd.setScale(2, RoundingMode.HALF_UP);
                     bucket.setOnehotInformationArray(i, bd.doubleValue());
-                    //System.out.println(bucket.getOnehotInformationArray(i));
                 }
             }
-        }
-    }
-    
 
     public static void bucketsToCsv(List<FinalBucketEntry> buckets, String filename) throws IOException, ParseException {
         int x = buckets.get(1).getFullOnehotInformationArray().length;
@@ -90,26 +82,17 @@ public class MLExporter1 {
         fw = new FileWriter(filename);
         fw.write("index, " + createHeader() + "\n");
         try {
-            int j = 0;
-            for (FinalBucketEntry bucket:buckets) {
-//                for (int i = 0; i < x; i++) {
-//
-//                if ((bucket.getOnehotInformationArray(i) != 0.0) && (bucket.getOnehotInformationArray(i) != 1.0)) {
-//                    BigDecimal bd = new BigDecimal(bucket.getOnehotInformationArray(i));
-//                    bd = bd.setScale(2, RoundingMode.HALF_UP);
-//                    bucket.setOnehotInformationArray(i, bd.doubleValue());
-//                    //System.out.println(bucket.getOnehotInformationArray(i));
-//                }
-//            }
-                
-                //String line = bucket.getFullOnehotInformationArray().toString();
+            //int j = 0;
+            for (FinalBucketEntry bucket : buckets) {
+                for (int i = 0; i < x; i++) {
+                    shortenValues(bucket, i);
+                }
                 String line = Arrays.toString(bucket.getFullOnehotInformationArray());
                 line = line.replace("[", "");
                 line = line.replace("]", "");
-                fw.write(j + ", " + line);
+                fw.write(bucket.getBucketNumber() + ", " + line);
                 fw.write(System.lineSeparator());
-                j++;
-                
+                //j++;
             }
         } catch (IOException ex) {
             Logger.getLogger(MLExporter1.class.getName()).log(Level.SEVERE, null, ex);
@@ -125,7 +108,7 @@ public class MLExporter1 {
 //
 //            buckets.add(new BucketEntry(0, StaticDataset.getStaticDataset().get(i)));
 //        }
-        bucketsToCsv(buckets, "odv_export.csv");
+        bucketsToCsv(buckets, "odv_exportxx.csv");
 
     }
 }

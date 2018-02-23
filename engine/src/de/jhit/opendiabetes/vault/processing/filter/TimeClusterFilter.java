@@ -26,15 +26,17 @@ import java.util.List;
 import javafx.util.Pair;
 
 /**
- * The CombinationFilter is a special kind of Filter. The CombinationFilter
- * combines two Filter on different datasets. Another of it’s special Features
- * is, that the CombinationFilter has two lists of VaultEntry, which will be
- * used later in the .filter method. The first list of VaultEntry is set during
- * the Constructor, this set is the basicData. The Second list is only used
- * during the filter. In the Constructor there will also be set two Filter
- * (firstFilter and secondFilter).
+ * The TimeClusterFilter is a more complex timespan-filter, filters given to the
+ * TimeClusterFilter will be applied to each timespan seperately, similar to the
+ * slicing process.<br>
+ * The timespans can be a fragmentation of the whole entry dataset, or, with a
+ * gap greater than 0, spans between the clusters will be excluded from
+ * filtering.<p>
+ * For example, use <code>TimeClusterFilter.DAY</code> for
+ * <code>clusterSpacing</code>, to filter the same timespan of each day
+ * independently.
  *
- * @author Daniel
+ * @author tiweGH
  */
 public class TimeClusterFilter extends Filter {
 
@@ -46,10 +48,26 @@ public class TimeClusterFilter extends Filter {
     private long clusterSpacing;
 
     public static final long HOUR = 60;
-    public static final long DAY = 24 * 60;
+    public static final long DAY = 24 * HOUR;
     public static final long WEEK = 7 * DAY;
     public static final long YEAR = 365 * DAY;
 
+    /**
+     * Filters given to the TimeClusterFilter will be applied to each timespan
+     * seperately. <br>
+     * The timespans can be a fragmentation of the whole entry dataset, or, with
+     * a gap greater than 0, spans between the clusters will be excluded from
+     * filtering.<p>
+     * For example, use <code>TimeClusterFilter.DAY</code> for
+     * <code>clusterSpacing</code>, to filter the same timespan of each day
+     * independently.
+     *
+     * @param filters list of filters, which will be applied to each timespan in
+     * a slicing process.
+     * @param startTime start time of the timespan
+     * @param clusterTimeInMinutes length of the timespan in minutes
+     * @param clusterSpacing length of the gaps between each timespan in minutes
+     */
     public TimeClusterFilter(List<Filter> filters, LocalTime startTime, long clusterTimeInMinutes, long clusterSpacing) {
         this.filters = filters;
         this.clusterTimeInMinutes = clusterTimeInMinutes;
@@ -57,6 +75,21 @@ public class TimeClusterFilter extends Filter {
         this.clusterSpacing = clusterSpacing;
     }
 
+    /**
+     * Filters given to the TimeClusterFilter will be applied to each timespan
+     * seperately<br>
+     * The timespans can be a fragmentation of the whole entry dataset, or, with
+     * a gap greater than 0, spans between the clusters will be excluded from
+     * filtering.<p>
+     * For example, use <code>TimeClusterFilter.DAY</code> for
+     * <code>clusterSpacing</code>, to filter the same timespan of each day
+     * independently.
+     *
+     * @param filters list of filters, which will be applied to each timespan in
+     * a slicing process.
+     * @param clusterTimeInMinutes length of the timespan in minutes
+     * @param clusterSpacing length of the gaps between each timespan in minutes
+     */
     public TimeClusterFilter(List<Filter> filters, long clusterTimeInMinutes, long clusterSpacing) {
         this.filters = filters;
         this.clusterTimeInMinutes = clusterTimeInMinutes;
@@ -90,18 +123,19 @@ public class TimeClusterFilter extends Filter {
                 if (isLastIndex || !vaultEntry.getTimestamp().before(compareDate)) {
 
                     if (clusteredList.size() > 0) {
-                        System.out.println("New Cluster between " + startTimestamp + " and " + compareDate);
-                        System.out.println("with " + clusteredList.size() + " entries");
-                        System.out.println("first " + clusteredList.get(0).getTimestamp() + " last " + clusteredList.get(clusteredList.size() - 1).getTimestamp());
-                        System.out.println();
+//                        System.out.println("New Cluster between " + startTimestamp + " and " + compareDate);
+//                        System.out.println("with " + clusteredList.size() + " entries");
+//                        System.out.println("first " + clusteredList.get(0).getTimestamp() + " last " + clusteredList.get(clusteredList.size() - 1).getTimestamp());
+//                        System.out.println();
                         clusteredList = VaultEntryUtils.slice(clusteredList, filters).filteredData;
-                    } else {
-                        System.out.println("wo? " + vaultEntry.getTimestamp());
                     }
+//                    else {
+//                        System.out.println("wo? " + vaultEntry.getTimestamp());
+//                    }
 
                     startTimestamp = TimestampUtils.addMinutesToTimestamp(compareDate, clusterSpacing);
-                    System.out.println("new start: " + startTimestamp);
-                    System.out.println("we're here: " + vaultEntry.getTimestamp());
+//                    System.out.println("new start: " + startTimestamp);
+//                    System.out.println("we're here: " + vaultEntry.getTimestamp());
                     compareDate = TimestampUtils.addMinutesToTimestamp(startTimestamp, clusterTimeInMinutes);
                     clusterResult.addAll(clusteredList);
                     clusteredList = new ArrayList<>();
@@ -111,10 +145,10 @@ public class TimeClusterFilter extends Filter {
                         if (isLastIndex && !clusterResult.contains(vaultEntry)) {
                             clusteredList = VaultEntryUtils.slice(clusteredList, filters).filteredData;
                             clusterResult.addAll(clusteredList);
-                            System.out.println("New Cluster between " + startTimestamp + " and " + compareDate);
-                            System.out.println("with " + clusteredList.size() + " entries");
-                            System.out.println("first " + clusteredList.get(0).getTimestamp() + " last " + clusteredList.get(clusteredList.size() - 1).getTimestamp());
-                            System.out.println();
+//                            System.out.println("New Cluster between " + startTimestamp + " and " + compareDate);
+//                            System.out.println("with " + clusteredList.size() + " entries");
+//                            System.out.println("first " + clusteredList.get(0).getTimestamp() + " last " + clusteredList.get(clusteredList.size() - 1).getTimestamp());
+//                            System.out.println();
                         }
                     }
                 }

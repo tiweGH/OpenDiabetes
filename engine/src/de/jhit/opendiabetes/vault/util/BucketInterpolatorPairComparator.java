@@ -23,7 +23,7 @@ import javafx.util.Pair;
 
 /**
  *
- * @author Jens
+ * @author tiweGH
  */
 public class BucketInterpolatorPairComparator implements Comparator<Pair<Integer, Pair<VaultEntryType, Double>>> {
 
