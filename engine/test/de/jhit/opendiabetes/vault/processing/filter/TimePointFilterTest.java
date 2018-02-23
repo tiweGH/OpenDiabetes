@@ -37,7 +37,7 @@ import org.junit.Test;
 
 /**
  *
- * @author juehv, aa80hifa
+ * @author juehv, a.a.aponte
  */
 public class TimePointFilterTest extends Assert {
     
@@ -69,7 +69,7 @@ public class TimePointFilterTest extends Assert {
 
     /**
      * Test of filter method, of class TimePointFilterTest.
-     * @author juehv, aa80hifa
+     * @author juehv, a.a.aponte
      */
     @Test
     public void testTimePointFilter_1200_15() throws ParseException {
