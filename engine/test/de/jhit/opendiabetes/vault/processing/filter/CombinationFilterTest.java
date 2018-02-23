@@ -37,7 +37,7 @@ import org.junit.Test;
 /**
  * Test of filter method, of class EventFilter.
  *
- * @author juehv, aa80hifa
+ * @author juehv, a.a.aponte
  */
 public class CombinationFilterTest extends Assert {
 
@@ -60,7 +60,7 @@ public class CombinationFilterTest extends Assert {
     /**
      * Test of filter method, of class EventFilter.
      *
-     * @author juehv, aa80hifa
+     * @author juehv, a.a.aponte
      */
     @Test
     public void testCombinationFilter() throws ParseException {
