@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 aa80hifa
+ * Copyright (C) 2018 a.a.aponte
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ import static de.jhit.opendiabetes.vault.container.BucketEventTriggers.ARRAY_ENT
 
 /**
  *
- * @author aa80hifa
+ * @author a.a.aponte
  */
 public class FinalBucketEntry {
     
