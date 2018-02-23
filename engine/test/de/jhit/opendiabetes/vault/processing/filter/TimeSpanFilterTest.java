@@ -38,7 +38,7 @@ import org.junit.Test;
 
 /**
  *
- * @author juehv, aa80hifa
+ * @author juehv, a.a.aponte
  */
 public class TimeSpanFilterTest extends Assert {
     
@@ -69,7 +69,7 @@ public class TimeSpanFilterTest extends Assert {
 
     /**
      * Test of filter method, of class TimeSpanFilter.
-     * @author juehv, aa80hifa
+     * @author juehv, a.a.aponte
      */
     
     @Test
