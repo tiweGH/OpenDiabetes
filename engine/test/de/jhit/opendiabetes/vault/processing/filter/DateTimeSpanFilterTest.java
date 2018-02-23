@@ -39,7 +39,7 @@ import org.junit.Test;
 
 /**
  *
- * @author gizem, aa80hifa
+ * @author gizem, a.a.aponte
  */
 public class DateTimeSpanFilterTest extends Assert {
     
@@ -69,7 +69,7 @@ public class DateTimeSpanFilterTest extends Assert {
 
     /**
      * Test of filter method, of class DateTimeSpanFilter.
-     * @author gizem, aa80hifa
+     * @author gizem, a.a.aponte
      */
     @Test
     public void testDateTimeSpanFilterTest_0107_0122() throws ParseException {
