@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 aa80hifa
+ * Copyright (C) 2017 a.a.aponte
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ import static org.junit.Assert.assertTrue;
 
 /**
  *
- * @author aa80hifa
+ * @author a.a.aponte
  */
 public class TestFunctions {
     
