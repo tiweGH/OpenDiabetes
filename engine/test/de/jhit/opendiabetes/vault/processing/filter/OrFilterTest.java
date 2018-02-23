@@ -36,7 +36,7 @@ import org.junit.Test;
 
 /**
  *
- * @author aa80hifa
+ * @author a.a.aponte
  */
 public class OrFilterTest extends Assert {
 
@@ -60,7 +60,7 @@ public class OrFilterTest extends Assert {
     
     /**
      * Test of filter method, of class FilterDecoratorTest.
-     * @author daniel, aa80hifa
+     * @author daniel, a.a.aponte
      */
     @Test
     public void checkFilterMethod() throws ParseException{
