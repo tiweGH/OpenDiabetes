@@ -42,7 +42,7 @@ public class BucketProcessor_new_all_tests extends Assert {
     
     List<BucketEntry> resultBuckets;
     List<FinalBucketEntry> resultFinalBuckets;
-    BucketProcessor_new bp;
+    BucketProcessor bp;
     CreateListOfBucketEntries lbe;
 
     public BucketProcessor_new_all_tests() {

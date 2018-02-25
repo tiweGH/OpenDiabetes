@@ -20,11 +20,11 @@ import de.jhit.opendiabetes.vault.container.FinalBucketEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.container.VaultEntryTypeGroup;
-import de.jhit.opendiabetes.vault.processing.BucketProcessor;
+import de.jhit.opendiabetes.vault.processing.BucketProcessor_old;
 
 import de.jhit.opendiabetes.vault.exporter.MLExporter1;
+import de.jhit.opendiabetes.vault.processing.BucketProcessor_old;
 import de.jhit.opendiabetes.vault.processing.BucketProcessor;
-import de.jhit.opendiabetes.vault.processing.BucketProcessor_new;
 import de.jhit.opendiabetes.vault.processing.BucketProcessor_runable;
 import de.jhit.opendiabetes.vault.processing.DataSlicer;
 import de.jhit.opendiabetes.vault.processing.DataSlicerOptions;
@@ -112,8 +112,8 @@ public class Tester {
 //            System.out.println(TimestampUtils.getMidDate(workingSet.get(0).getTimestamp(), workingSet.get(workingSet.size() - 1).getTimestamp()));
 //            System.out.println(tmp);
             MLExporter1 mle = new MLExporter1();
-            BucketProcessor_new bp = new BucketProcessor_new();
-//            BucketProcessor bp = new BucketProcessor();
+            BucketProcessor bp = new BucketProcessor();
+//            BucketProcessor_old bp = new BucketProcessor_old();
 //            BucketProcessor_runable bp = new BucketProcessor_runable();
               List<FinalBucketEntry> buckets = bp.bucketProcessing(0, workingSet, 1);
     //        List<FinalBucketEntry> buckets = bp.processor(workingSet, 1);

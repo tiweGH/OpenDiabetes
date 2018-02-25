@@ -21,7 +21,7 @@ import de.jhit.opendiabetes.vault.container.BucketEventTriggers;
 import de.jhit.opendiabetes.vault.container.FinalBucketEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
-import de.jhit.opendiabetes.vault.processing.BucketProcessor;
+import de.jhit.opendiabetes.vault.processing.BucketProcessor_old;
 import de.jhit.opendiabetes.vault.processing.BucketProcessor_runable;
 import java.io.FileWriter;
 import java.io.IOException;

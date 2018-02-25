@@ -42,7 +42,7 @@ import org.junit.Test;
 public class BucketProcessorTest extends Assert {
 
     List<BucketEntry> result;
-    BucketProcessor instance;
+    BucketProcessor_old instance;
 
     public BucketProcessorTest() {
     }
@@ -119,7 +119,7 @@ public class BucketProcessorTest extends Assert {
         List<VaultEntry> vaultEntries = new ArrayList<>();
         vaultEntries.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_ALERT, TestFunctions.creatNewDateToCheckFor("2000.01.01-00:01"), 170));
 
-        instance = new BucketProcessor();
+        instance = new BucketProcessor_old();
         result = instance.createListOfBuckets(vaultEntries);
 
         List<BucketEntry> wantedListOfBuckets = new ArrayList<>();
@@ -137,7 +137,7 @@ public class BucketProcessorTest extends Assert {
         vaultEntries.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_ALERT, TestFunctions.creatNewDateToCheckFor("2000.01.01-00:01"), 170));
         vaultEntries.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_ALERT, TestFunctions.creatNewDateToCheckFor("2000.01.01-00:01"), 182));
 
-        instance = new BucketProcessor();
+        instance = new BucketProcessor_old();
         result = instance.createListOfBuckets(vaultEntries);
 
         List<BucketEntry> wantedListOfBuckets = new ArrayList<>();
@@ -158,7 +158,7 @@ public class BucketProcessorTest extends Assert {
         vaultEntries.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_ALERT, TestFunctions.creatNewDateToCheckFor("2000.01.01-00:01"), 170));
         vaultEntries.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_ALERT, TestFunctions.creatNewDateToCheckFor("2000.01.01-00:02"), 182));
 
-        instance = new BucketProcessor();
+        instance = new BucketProcessor_old();
         result = instance.createListOfBuckets(vaultEntries);
 
         List<BucketEntry> wantedListOfBuckets = new ArrayList<>();
@@ -179,7 +179,7 @@ public class BucketProcessorTest extends Assert {
         vaultEntries.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_ALERT, TestFunctions.creatNewDateToCheckFor("2000.01.01-00:01"), 170));
         vaultEntries.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_ALERT, TestFunctions.creatNewDateToCheckFor("2000.01.01-00:03"), 182));
 
-        instance = new BucketProcessor();
+        instance = new BucketProcessor_old();
         result = instance.createListOfBuckets(vaultEntries);
 
         List<BucketEntry> wantedListOfBuckets = new ArrayList<>();
@@ -208,7 +208,7 @@ public class BucketProcessorTest extends Assert {
         vaultEntries.add(new VaultEntry(VaultEntryType.GLUCOSE_BG, TestFunctions.creatNewDateToCheckFor("2000.01.01-00:02"), 109.0, tmpAnnotations));
         vaultEntries.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_ALERT, TestFunctions.creatNewDateToCheckFor("2000.01.01-00:03"), 182));
 
-        instance = new BucketProcessor();
+        instance = new BucketProcessor_old();
         result = instance.createListOfBuckets(vaultEntries);
 
         List<BucketEntry> wantedListOfBuckets = new ArrayList<>();
@@ -240,7 +240,7 @@ public class BucketProcessorTest extends Assert {
         vaultEntries.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_ALERT, TestFunctions.creatNewDateToCheckFor("2000.01.01-00:08"), 170));
         vaultEntries.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2000.01.01-00:08"), 21, 5));
 
-        instance = new BucketProcessor();
+        instance = new BucketProcessor_old();
         result = instance.createListOfBuckets(vaultEntries);
 
         List<BucketEntry> wantedListOfBuckets = new ArrayList<>();
@@ -267,7 +267,7 @@ public class BucketProcessorTest extends Assert {
         vaultEntries.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_ALERT, TestFunctions.creatNewDateToCheckFor("2000.01.01-00:08"), 170));
         vaultEntries.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2000.01.01-00:08"), 21, 5));
 
-        instance = new BucketProcessor();
+        instance = new BucketProcessor_old();
         result = instance.createListOfBuckets(vaultEntries);
 
         // 9 BucketEntrys -- 1 replaced and 3 timestamps missing -- 5 ML-relevant
@@ -322,7 +322,7 @@ public class BucketProcessorTest extends Assert {
         vaultEntries.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2000.01.01-00:08"), 21, 5));
         vaultEntries.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_ALERT, TestFunctions.creatNewDateToCheckFor("2000.01.01-00:08"), 170));
 
-        instance = new BucketProcessor();
+        instance = new BucketProcessor_old();
         result = instance.createListOfBuckets(vaultEntries);
 
         // 9 BucketEntrys -- 2 replaced and 3 timestamps missing -- 5 ML-relevant
@@ -373,7 +373,7 @@ public class BucketProcessorTest extends Assert {
         vaultEntries.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_ALERT, TestFunctions.creatNewDateToCheckFor("2000.01.01-00:01"), 170));
         vaultEntries.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_ALERT, TestFunctions.creatNewDateToCheckFor("2000.01.01-00:01"), 170));
 
-        instance = new BucketProcessor();
+        instance = new BucketProcessor_old();
         result = instance.createListOfBuckets(vaultEntries);
 
         List<BucketEntry> wantedListOfBuckets = new ArrayList<>();
@@ -395,7 +395,7 @@ public class BucketProcessorTest extends Assert {
         vaultEntries.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2000.01.01-00:02"), 21, 5));
         vaultEntries.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_ALERT, TestFunctions.creatNewDateToCheckFor("2000.01.01-00:02"), 170));
 
-        instance = new BucketProcessor();
+        instance = new BucketProcessor_old();
         result = instance.createListOfBuckets(vaultEntries);
 
         List<BucketEntry> wantedListOfBuckets = new ArrayList<>();
@@ -417,7 +417,7 @@ public class BucketProcessorTest extends Assert {
         vaultEntries.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_ALERT, TestFunctions.creatNewDateToCheckFor("2000.01.01-00:03"), 170));
         vaultEntries.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2000.01.01-00:03"), 21, 5));
 
-        instance = new BucketProcessor();
+        instance = new BucketProcessor_old();
         result = instance.createListOfBuckets(vaultEntries);
 
         List<BucketEntry> wantedListOfBuckets = new ArrayList<>();
@@ -447,7 +447,7 @@ public class BucketProcessorTest extends Assert {
         vaultEntries.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_ALERT, TestFunctions.creatNewDateToCheckFor("2000.01.01-00:03"), 170));
         vaultEntries.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2000.01.01-00:03"), 21, 5));
 
-        instance = new BucketProcessor();
+        instance = new BucketProcessor_old();
         result = instance.createListOfBuckets(vaultEntries);
 
         List<BucketEntry> wantedListOfBuckets = new ArrayList<>();
@@ -491,7 +491,7 @@ public class BucketProcessorTest extends Assert {
         vaultEntries.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_ALERT, TestFunctions.creatNewDateToCheckFor("2000.01.01-00:04"), 170));
         vaultEntries.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2000.01.01-00:05"), 21, 5));
 
-        instance = new BucketProcessor();
+        instance = new BucketProcessor_old();
         result = instance.createListOfBuckets(vaultEntries);
 
         List<BucketEntry> wantedListOfBuckets = new ArrayList<>();
@@ -530,7 +530,7 @@ public class BucketProcessorTest extends Assert {
         // missing timestamps will be filled
         vaultEntries.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2000.01.01-00:30"), 21, 5));
 
-        instance = new BucketProcessor();
+        instance = new BucketProcessor_old();
         result = instance.createListOfBuckets(vaultEntries);
 
         List<BucketEntry> wantedListOfBuckets = new ArrayList<>();
@@ -666,7 +666,7 @@ public class BucketProcessorTest extends Assert {
         // missing timestamps will be filled
         vaultEntries.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_ALERT, TestFunctions.creatNewDateToCheckFor("2000.01.01-00:030"), 170));
 
-        instance = new BucketProcessor();
+        instance = new BucketProcessor_old();
         result = instance.createListOfBuckets(vaultEntries);
 
         List<BucketEntry> wantedListOfBuckets = new ArrayList<>();
@@ -796,7 +796,7 @@ public class BucketProcessorTest extends Assert {
     public void testBucketProcessor_EMPTY_TEST() throws ParseException {
         List<VaultEntry> vaultEntries = new ArrayList<>();
 
-        instance = new BucketProcessor();
+        instance = new BucketProcessor_old();
         result = instance.createListOfBuckets(vaultEntries);
 
         List<BucketEntry> wantedListOfBuckets = new ArrayList<>();
@@ -808,7 +808,7 @@ public class BucketProcessorTest extends Assert {
     public void testBucketProcessor_NULL_TEST() throws ParseException {
         List<VaultEntry> vaultEntries = null;
 
-        instance = new BucketProcessor();
+        instance = new BucketProcessor_old();
         result = instance.createListOfBuckets(vaultEntries);
 
         List<BucketEntry> wantedListOfBuckets = new ArrayList<>();
@@ -840,7 +840,7 @@ public class BucketProcessorTest extends Assert {
         
         vaultEntries = StaticDataset.getStaticDataset();
 
-        BucketProcessor instance = new BucketProcessor();
+        BucketProcessor_old instance = new BucketProcessor_old();
         List<FinalBucketEntry> result = instance.processor(vaultEntries, 1);
 
         List<FinalBucketEntry> wantedListOfBuckets = null;
