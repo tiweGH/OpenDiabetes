@@ -162,7 +162,7 @@ public enum VaultEntryType {
      *
      * @return the merge type
      */
-    public VaultEntryType mergeTo() {
+    public VaultEntryType getMergeTo() {
         return MERGETYPE;
     }
 

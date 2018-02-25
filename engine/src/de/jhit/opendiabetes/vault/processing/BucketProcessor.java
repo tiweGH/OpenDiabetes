@@ -110,29 +110,29 @@ public class BucketProcessor {
             // is the act time given?
             if (TRIGGER_EVENT_ACT_TIME_GIVEN.contains(entry.getType())) {
                 // set act time
-                newBucket.setTimeCountDown(arrayPosition, entry.getValue());
+                newBucket.setValueTimer(arrayPosition, entry.getValue());
                 // set boolean true
-                newBucket.setOnehotInformationArray(arrayPosition, 1);
+                newBucket.setValues(arrayPosition, 1);
                 // set to EMPTY
-                newBucket.setFindNextArray(arrayPosition, VaultEntryType.EMPTY);
+                newBucket.setFindNextVaultEntryType(arrayPosition, VaultEntryType.EMPTY);
 
                 // is the the act time till some next event?
             } else if (TRIGGER_EVENT_ACT_TIME_TILL_NEXT_EVENT.containsKey(entry.getType())) {
                 // set to 0 (no direct Act Time)
-                newBucket.setTimeCountDown(arrayPosition, 0);
+                newBucket.setValueTimer(arrayPosition, 0);
                 // set boolean true
-                newBucket.setOnehotInformationArray(arrayPosition, 1);
+                newBucket.setValues(arrayPosition, 1);
                 // set find next to the needed VaultEntryType
-                newBucket.setFindNextArray(arrayPosition, TRIGGER_EVENT_ACT_TIME_TILL_NEXT_EVENT.get(entry.getType()));
+                newBucket.setFindNextVaultEntryType(arrayPosition, TRIGGER_EVENT_ACT_TIME_TILL_NEXT_EVENT.get(entry.getType()));
 
                 // is the act time just for one frame?
             } else if (TRIGGER_EVENT_ACT_TIME_ONE.contains(entry.getType())) {
                 // set act time to 1 minute
-                newBucket.setTimeCountDown(arrayPosition, 1);
+                newBucket.setValueTimer(arrayPosition, 1);
                 // set boolean true
-                newBucket.setOnehotInformationArray(arrayPosition, 1);
+                newBucket.setValues(arrayPosition, 1);
                 // set to EMPTY
-                newBucket.setFindNextArray(arrayPosition, VaultEntryType.EMPTY);
+                newBucket.setFindNextVaultEntryType(arrayPosition, VaultEntryType.EMPTY);
 
                 //
                 // ML-rev + NOT one hot
@@ -140,9 +140,9 @@ public class BucketProcessor {
                 // catch VaultEntryTypes that have to be interpolated
             } else if (HASHSET_FOR_LINEAR_INTERPOLATION.contains(entry.getType())) {
                 // at the moment the act time for there VaultEntryTypes are only 1 frame ... this might change later on if new types are added to the hashset
-                newBucket.setTimeCountDown(arrayPosition, 1);
+                newBucket.setValueTimer(arrayPosition, 1);
                 // set value
-                newBucket.setOnehotInformationArray(arrayPosition, KEEP_EMPTY_FOR_FOLLOWING_CALCULATION);
+                newBucket.setValues(arrayPosition, KEEP_EMPTY_FOR_FOLLOWING_CALCULATION);
 
                 // new entries for this category are added to the listOfValuesForTheInterpolator list in the Bucket
                 // first part of the pair == bucket number for later placement
@@ -151,17 +151,17 @@ public class BucketProcessor {
                 //          second Double == value      (in VaultEntry value1)
                 List<Pair<Integer, Pair<VaultEntryType, Double>>> tempList = new ArrayList<>();
                 tempList.add(new Pair(bucketNumber, new Pair(entry.getType(), entry.getValue())));
-                newBucket.setListOfValuesForTheInterpolator(tempList);
+                newBucket.setValuesForTheInterpolator(tempList);
 
                 // set to EMPTY
-                newBucket.setFindNextArray(arrayPosition, VaultEntryType.EMPTY);
+                newBucket.setFindNextVaultEntryType(arrayPosition, VaultEntryType.EMPTY);
 
                 // is the act time set?
             } else if (TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_SET.containsKey(entry.getType())) {
                 // set act time to set act time in hashmap
-                newBucket.setTimeCountDown(arrayPosition, TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_SET.get(entry.getType()));
+                newBucket.setValueTimer(arrayPosition, TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_SET.get(entry.getType()));
                 // set value
-                newBucket.setOnehotInformationArray(arrayPosition, KEEP_EMPTY_FOR_FOLLOWING_CALCULATION);
+                newBucket.setValues(arrayPosition, KEEP_EMPTY_FOR_FOLLOWING_CALCULATION);
 
                 // new entries are added to the runningComputation list in the Bucket
                 // first part of the pair == VaultEntryType for later calculation
@@ -169,18 +169,18 @@ public class BucketProcessor {
                 //          first double == timer       (in VaultEntry value2)
                 //          second double == value      (in VaultEntry value1)
                 List<Pair<VaultEntryType, Pair<Double, Double>>> tempList = new ArrayList<>();
-                tempList.add(new Pair(entry.getType().mergeTo(), new Pair(newBucket.getTimeCountDown(arrayPosition), entry.getValue())));
-                newBucket.setRunningComputation(tempList);
+                tempList.add(new Pair(entry.getType().getMergeTo(), new Pair(newBucket.getValueTimer(arrayPosition), entry.getValue())));
+                newBucket.setValuesForRunningComputation(tempList);
 
                 // set to EMPTY
-                newBucket.setFindNextArray(arrayPosition, VaultEntryType.EMPTY);
+                newBucket.setFindNextVaultEntryType(arrayPosition, VaultEntryType.EMPTY);
 
                 // is the act time given?
             } else if (TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_GIVEN.contains(entry.getType())) {
                 // set act time
-                newBucket.setTimeCountDown(arrayPosition, entry.getValue2());
+                newBucket.setValueTimer(arrayPosition, entry.getValue2());
                 // set value
-                newBucket.setOnehotInformationArray(arrayPosition, KEEP_EMPTY_FOR_FOLLOWING_CALCULATION);
+                newBucket.setValues(arrayPosition, KEEP_EMPTY_FOR_FOLLOWING_CALCULATION);
 
                 // new entries are added to the runningComputation list in the Bucket
                 // first part of the pair == VaultEntryType for later calculation
@@ -188,39 +188,39 @@ public class BucketProcessor {
                 //          first double == timer       (in VaultEntry value2)
                 //          second double == value      (in VaultEntry value1)
                 List<Pair<VaultEntryType, Pair<Double, Double>>> tempList = new ArrayList<>();
-                tempList.add(new Pair(entry.getType().mergeTo(), new Pair(newBucket.getTimeCountDown(arrayPosition), entry.getValue())));
-                newBucket.setRunningComputation(tempList);
+                tempList.add(new Pair(entry.getType().getMergeTo(), new Pair(newBucket.getValueTimer(arrayPosition), entry.getValue())));
+                newBucket.setValuesForRunningComputation(tempList);
 
                 // set to EMPTY
-                newBucket.setFindNextArray(arrayPosition, VaultEntryType.EMPTY);
+                newBucket.setFindNextVaultEntryType(arrayPosition, VaultEntryType.EMPTY);
 
                 // is the act time till some next event?
             } else if (TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_TILL_NEXT_EVENT.contains(entry.getType())) {
                 // set to 0 (no direct Act Time)
-                newBucket.setTimeCountDown(arrayPosition, 0);
+                newBucket.setValueTimer(arrayPosition, 0);
                 // set value
-                newBucket.setOnehotInformationArray(arrayPosition, entry.getValue());
+                newBucket.setValues(arrayPosition, entry.getValue());
                 // set to same VaultEntryType
-                newBucket.setFindNextArray(arrayPosition, entry.getType());
+                newBucket.setFindNextVaultEntryType(arrayPosition, entry.getType());
 
                 // is the act time just for one frame?
             } else if (TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_ONE.contains(entry.getType())) {
                 // set act time to 1 minute
-                newBucket.setTimeCountDown(arrayPosition, 1);
+                newBucket.setValueTimer(arrayPosition, 1);
                 // set value
-                newBucket.setOnehotInformationArray(arrayPosition, entry.getValue());
+                newBucket.setValues(arrayPosition, entry.getValue());
                 // set to EMPTY
-                newBucket.setFindNextArray(arrayPosition, VaultEntryType.EMPTY);
+                newBucket.setFindNextVaultEntryType(arrayPosition, VaultEntryType.EMPTY);
 
                 // is the given value a timestamp?
             } else if (TRIGGER_EVENT_NOT_ONE_HOT_VALUE_IS_A_TIMESTAMP.contains(entry.getType())) {
                 // set to 0 (no direct Act Time)
-                newBucket.setTimeCountDown(arrayPosition, 0);
+                newBucket.setValueTimer(arrayPosition, 0);
                 // set ???
-                newBucket.setOnehotInformationArray(arrayPosition, 0);
-                //        newBucket.setOnehotInformationArray(arrayPosition, ???);
+                newBucket.setValues(arrayPosition, 0);
+                //        newBucket.setValues(arrayPosition, ???);
                 // set to EMPTY
-                newBucket.setFindNextArray(arrayPosition, VaultEntryType.EMPTY);
+                newBucket.setFindNextVaultEntryType(arrayPosition, VaultEntryType.EMPTY);
 
             }
         }
@@ -504,26 +504,26 @@ public class BucketProcessor {
 
         // set internal arrays through 1st BucketEntry
         if (bucket.getBucketNumber() == BUCKET_START_NUMBER) {
-            timeCountDownArray = bucket.getFullTimeCountDown();
-            onehotInformationArray = bucket.getFullOnehotInformationArray();
-            if (!bucket.getRunningComputation().isEmpty()) {
-                runningComputation.addAll(bucket.getRunningComputation());
+            timeCountDownArray = bucket.getFullValueTimer();
+            onehotInformationArray = bucket.getFullValues();
+            if (!bucket.getValuesForRunningComputation().isEmpty()) {
+                runningComputation.addAll(bucket.getValuesForRunningComputation());
             }
-            findNextArray = bucket.getFullFindNextArray();
-            if (!bucket.getListOfValuesForTheInterpolator().isEmpty()) {
-                listOfValuesForTheInterpolator.addAll(bucket.getListOfValuesForTheInterpolator());
+            findNextArray = bucket.getFullFindNextVaultEntryType();
+            if (!bucket.getValuesForTheInterpolator().isEmpty()) {
+                listOfValuesForTheInterpolator.addAll(bucket.getValuesForTheInterpolator());
             }
 
         } else {
             // after 1st BucketEntry
 
             // check for new values inside the listOfValuesForTheInterpolator list in the BucketEntry
-            if (!bucket.getListOfValuesForTheInterpolator().isEmpty()) {
-                listOfValuesForTheInterpolator.addAll(bucket.getListOfValuesForTheInterpolator());
+            if (!bucket.getValuesForTheInterpolator().isEmpty()) {
+                listOfValuesForTheInterpolator.addAll(bucket.getValuesForTheInterpolator());
             }
             // transfer the data from the last BucketEntrys with the same timestamp into the current BucketEntry
             if (!listOfValuesForTheInterpolator.isEmpty()) {
-                bucket.setListOfValuesForTheInterpolator(listOfValuesForTheInterpolator);
+                bucket.setValuesForTheInterpolator(listOfValuesForTheInterpolator);
             }
 
             // timer countdown for all entries inside the runningComputation list this is only done here before adding new upcoming entries
@@ -566,9 +566,9 @@ public class BucketProcessor {
                 // initial onehots are set when the Bucket is created
                 //
                 // set timer
-                if (bucket.getTimeCountDown(i) > timeCountDownArray[i]
+                if (bucket.getValueTimer(i) > timeCountDownArray[i]
                         && ARRAY_ENTRY_TRIGGER_HASHMAP.get(bucket.getVaultEntry().getType()) == i) {
-                    timeCountDownArray[i] = bucket.getTimeCountDown(i);
+                    timeCountDownArray[i] = bucket.getValueTimer(i);
                 }            /////
 
                 // set onehot to false
@@ -588,9 +588,9 @@ public class BucketProcessor {
                 }
 
                 // set findNextEntry
-                if (!bucket.getFindNextArray(i).equals(VaultEntryType.EMPTY)
-                        && !bucket.getFindNextArray(i).equals(findNextArray[i])) {
-                    findNextArray[i] = bucket.getFindNextArray(i);
+                if (!bucket.getFindNextVaultEntryType(i).equals(VaultEntryType.EMPTY)
+                        && !bucket.getFindNextVaultEntryType(i).equals(findNextArray[i])) {
+                    findNextArray[i] = bucket.getFindNextVaultEntryType(i);
                 }
 
                 //
@@ -601,18 +601,18 @@ public class BucketProcessor {
                 // if this timer is longer than the one saved in the BucketEntry take this one
                 // if this timer is equal to the one saven in the BucketEntry - 1
                 //      and this VaultEntryType is not onehot then update the BucketEntry (onehot might have just been set during the creation of the new BucketEntry).
-                if (timeCountDownArray[i] > bucket.getTimeCountDown(i)
-                        || timeCountDownArray[i] == bucket.getTimeCountDown(i) - 1 && !ARRAY_ENTRY_TRIGGER_HASHMAP.containsKey(bucket.getVaultEntry().getType())) {
-                    bucket.setTimeCountDown(i, timeCountDownArray[i]);
+                if (timeCountDownArray[i] > bucket.getValueTimer(i)
+                        || timeCountDownArray[i] == bucket.getValueTimer(i) - 1 && !ARRAY_ENTRY_TRIGGER_HASHMAP.containsKey(bucket.getVaultEntry().getType())) {
+                    bucket.setValueTimer(i, timeCountDownArray[i]);
                 }
 
                 // set onehotInformationArray
-                bucket.setOnehotInformationArray(i, onehotInformationArray[i]);
+                bucket.setValues(i, onehotInformationArray[i]);
                 // set findNextArray
                 // if findNextArray is EMPTY then it is filled with the needed information
                 // if findNextArray is filled with something else then nothing has to be done
-                if (bucket.getFindNextArray(i).equals(VaultEntryType.EMPTY)) {
-                    bucket.setFindNextArray(i, findNextArray[i]);
+                if (bucket.getFindNextVaultEntryType(i).equals(VaultEntryType.EMPTY)) {
+                    bucket.setFindNextVaultEntryType(i, findNextArray[i]);
                 }
             }
 
@@ -641,10 +641,10 @@ public class BucketProcessor {
                 // initial Values are set when the Bucket is created
                 //
                 // set timer
-                if (bucket.getTimeCountDown(i) > timeCountDownArray[i]
+                if (bucket.getValueTimer(i) > timeCountDownArray[i]
                         && !bucket.getVaultEntry().getType().equals(VaultEntryType.EMPTY)
                         && ARRAY_ENTRY_TRIGGER_HASHMAP.get(bucket.getVaultEntry().getType()) == i) {
-                    timeCountDownArray[i] = bucket.getTimeCountDown(i);
+                    timeCountDownArray[i] = bucket.getValueTimer(i);
                 }
 
                 // set Vaule to 0
@@ -674,34 +674,34 @@ public class BucketProcessor {
                         if (TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_SET.containsKey(bucket.getVaultEntry().getType())) {
                             // new entries are set in the createNewBucket method
                             // add them to the internal runningComputation list
-                            runningComputation.addAll(bucket.getRunningComputation());
+                            runningComputation.addAll(bucket.getValuesForRunningComputation());
                             // DO NOT SET onehotInformationArray[i] HERE BECAUSE THE VALUE HAS TO BE COMPUTED (calculateAverageForSmallestBucketSize method)
                         } else if (TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_GIVEN.contains(bucket.getVaultEntry().getType())) {
                             // new entries are set in the createNewBucket method
                             // add them to the internal runningComputation list
-                            runningComputation.addAll(bucket.getRunningComputation());
+                            runningComputation.addAll(bucket.getValuesForRunningComputation());
                             // DO NOT SET onehotInformationArray[i] HERE BECAUSE THE VALUE HAS TO BE COMPUTED (calculateAverageForSmallestBucketSize method)
                         } else if (TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_TILL_NEXT_EVENT.contains(bucket.getVaultEntry().getType())) {
                             // TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_TILL_NEXT_EVENT : value is set when BucketEntry is created
-                            onehotInformationArray[i] = bucket.getOnehotInformationArray(i);
+                            onehotInformationArray[i] = bucket.getValues(i);
                         } else if (TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_ONE.contains(bucket.getVaultEntry().getType())) {
                             // TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_ONE : value is set when BucketEntry is created
-                            onehotInformationArray[i] = bucket.getOnehotInformationArray(i);
+                            onehotInformationArray[i] = bucket.getValues(i);
                         } else if (TRIGGER_EVENT_NOT_ONE_HOT_VALUE_IS_A_TIMESTAMP.contains(bucket.getVaultEntry().getType())) {
-                            onehotInformationArray[i] = bucket.getOnehotInformationArray(i);
+                            onehotInformationArray[i] = bucket.getValues(i);
                             // onehotInformationArray[i] = ???
                         }
 
                     }
                 } else {
                     // there is no new value in this BucketEntry position
-                    onehotInformationArray[i] = bucket.getOnehotInformationArray(i);
+                    onehotInformationArray[i] = bucket.getValues(i);
                 }
 
                 // set findNextEntry <in case of TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_TILL_NEXT_EVENT>
-                if (!bucket.getFindNextArray(i).equals(VaultEntryType.EMPTY)
-                        && !bucket.getFindNextArray(i).equals(findNextArray[i])) {
-                    findNextArray[i] = bucket.getFindNextArray(i);
+                if (!bucket.getFindNextVaultEntryType(i).equals(VaultEntryType.EMPTY)
+                        && !bucket.getFindNextVaultEntryType(i).equals(findNextArray[i])) {
+                    findNextArray[i] = bucket.getFindNextVaultEntryType(i);
                 }
 
                 //
@@ -712,28 +712,28 @@ public class BucketProcessor {
                 // if this timer is longer than the one saved in the BucketEntry take this one
                 // if this timer is equal to the one saven in the BucketEntry - 1
                 //      and this VaultEntryType is not onehot then update the BucketEntry (onehot might have just been set during the creation of the new BucketEntry).
-                if ((timeCountDownArray[i] > bucket.getTimeCountDown(i) || timeCountDownArray[i] == bucket.getTimeCountDown(i) - 1) // this seems unnecessary if so delete
+                if ((timeCountDownArray[i] > bucket.getValueTimer(i) || timeCountDownArray[i] == bucket.getValueTimer(i) - 1) // this seems unnecessary if so delete
                         //               && !ARRAY_ENTRY_TRIGGER_HASHMAP.containsKey(bucket.getVaultEntry().getType())
                         ) {
-                    bucket.setTimeCountDown(i, timeCountDownArray[i]);
+                    bucket.setValueTimer(i, timeCountDownArray[i]);
                 }
 
                 // set onehotInformationArray
-                bucket.setOnehotInformationArray(i, onehotInformationArray[i]);
+                bucket.setValues(i, onehotInformationArray[i]);
                 // set findNextArray
                 // if findNextArray is EMPTY then it is filled with the needed information
                 // if findNextArray is filled with something else then nothing has to be done
-                if (bucket.getFindNextArray(i).equals(VaultEntryType.EMPTY)) {
-                    bucket.setFindNextArray(i, findNextArray[i]);
+                if (bucket.getFindNextVaultEntryType(i).equals(VaultEntryType.EMPTY)) {
+                    bucket.setFindNextVaultEntryType(i, findNextArray[i]);
                 }
             }
         }
 
         // merge-to
-        bucket.getVaultEntry().setType(bucket.getVaultEntry().getType().mergeTo());
+        bucket.getVaultEntry().setType(bucket.getVaultEntry().getType().getMergeTo());
 
         // save the new created list of runningComputation
-        bucket.setRunningComputation(runningComputation);
+        bucket.setValuesForRunningComputation(runningComputation);
     }
 
     /**
@@ -766,7 +766,7 @@ public class BucketProcessor {
         List<Pair<VaultEntryType, Double>> listOfComputedValues = new ArrayList<>();
 
         // iterate over all given pairs in the runningComputation list and add them up acording to their VaultEntryType
-        for (Pair<VaultEntryType, Pair<Double, Double>> iteratorPair : bucket.getRunningComputation()) {
+        for (Pair<VaultEntryType, Pair<Double, Double>> iteratorPair : bucket.getValuesForRunningComputation()) {
             VaultEntryType type = iteratorPair.getKey();
 
             doesListOfComputedValuesContainOutput = doesListOfComputedValuesContain(type, listOfComputedValues);
@@ -792,7 +792,7 @@ public class BucketProcessor {
 
         // now get all entries from the onehot array that should be summed up too
         for (VaultEntryType vaultEntryType : HASHSETS_TO_SUM_UP) {
-            VaultEntryType mergeToThisType = vaultEntryType.mergeTo();
+            VaultEntryType mergeToThisType = vaultEntryType.getMergeTo();
             int hashMapArrayPosition = ARRAY_ENTRY_TRIGGER_HASHMAP.get(vaultEntryType);
 
             doesListOfComputedValuesContainOutput = doesListOfComputedValuesContain(mergeToThisType, listOfComputedValues);
@@ -802,14 +802,14 @@ public class BucketProcessor {
                 int removeEntryAtThisPosition = doesListOfComputedValuesContainOutput.getValue();
                 Pair<VaultEntryType, Double> tempPair = listOfComputedValues.remove(removeEntryAtThisPosition);
                 // sum up the value in the pair with that in the bucket from the given mergeToThisType
-                tempPair = new Pair(tempPair.getKey(), tempPair.getValue() + bucket.getOnehotInformationArray(hashMapArrayPosition));
+                tempPair = new Pair(tempPair.getKey(), tempPair.getValue() + bucket.getValues(hashMapArrayPosition));
                 // put the pair bach into the list of computed values
                 listOfComputedValues.add(tempPair);
             } else {
                 // check if there is a value for the wanted mergeToThisType
                 // ... if there is create a new pair
                 // ... if not then move on
-                double valueInsideTheBucketEntry = bucket.getOnehotInformationArray(hashMapArrayPosition);
+                double valueInsideTheBucketEntry = bucket.getValues(hashMapArrayPosition);
                 if (valueInsideTheBucketEntry != 0.0) {
                     // create a new pair
                     Pair<VaultEntryType, Double> tempPair = new Pair(mergeToThisType, valueInsideTheBucketEntry);
@@ -823,7 +823,7 @@ public class BucketProcessor {
         // lineare interpolation
         // this is done in the processor method after all values have been collected from the BucketEntrys
         // save the generated list of values inside the BucketEntry for later use
-        bucket.setListOfComputedValuesForTheFinalBucketEntry(listOfComputedValues);
+        bucket.setComputedValuesForTheFinalBucketEntry(listOfComputedValues);
     }
 
     /**
@@ -887,7 +887,7 @@ public class BucketProcessor {
                 // check if a merge-to VaultEntryType is found or not
                 if (ARRAY_ENTRIES_AFTER_MERGE_TO.containsKey(type)) {
                     // not a merged mergeToThisType
-                    tempValue[ARRAY_ENTRIES_AFTER_MERGE_TO.get(type)] = entry.getOnehotInformationArray(ARRAY_ENTRY_TRIGGER_HASHMAP.get(type));
+                    tempValue[ARRAY_ENTRIES_AFTER_MERGE_TO.get(type)] = entry.getValues(ARRAY_ENTRY_TRIGGER_HASHMAP.get(type));
                 } else {
                     // a merged mergeToThisType
 
@@ -896,7 +896,7 @@ public class BucketProcessor {
             }
 
             // second run through the whole listOfComputedValuesForTheFinalBucketEntry
-            for (Pair<VaultEntryType, Double> pair : entry.getListOfComputedValuesForTheFinalBucketEntry()) {
+            for (Pair<VaultEntryType, Double> pair : entry.getComputedValuesForTheFinalBucketEntry()) {
                 // place found entries into the right array position
                 // look for the position of the entry that matches this merge-to VaultEntryType
                 //
@@ -982,9 +982,9 @@ public class BucketProcessor {
             // ==INTERPOLATOR UPDATE==
             // =======================
             // the bucketNumer of all entries inside the listOfValuesForTheInterpolator list must be updated to the new bucket number
-            if (!outputBucketList.get(outputBucketList.size() - 1).getListOfValuesForTheInterpolator().isEmpty()) {
+            if (!outputBucketList.get(outputBucketList.size() - 1).getValuesForTheInterpolator().isEmpty()) {
                 // input
-                List<Pair<Integer, Pair<VaultEntryType, Double>>> updateThisList = outputBucketList.get(outputBucketList.size() - 1).getListOfValuesForTheInterpolator();
+                List<Pair<Integer, Pair<VaultEntryType, Double>>> updateThisList = outputBucketList.get(outputBucketList.size() - 1).getValuesForTheInterpolator();
                 // output
                 List<Pair<Integer, Pair<VaultEntryType, Double>>> updatedList = new ArrayList<>();
                 // run through the list that has to be updated pair by pair
@@ -993,7 +993,7 @@ public class BucketProcessor {
                     updatedList.add(updatedPair);
                 }
                 // update the BucketEntry listOfValuesForTheInterpolator list
-                outputBucketList.get(outputBucketList.size() - 1).setListOfValuesForTheInterpolator(updatedList);
+                outputBucketList.get(outputBucketList.size() - 1).setValuesForTheInterpolator(updatedList);
             }
 
             // =======================
@@ -1019,9 +1019,9 @@ public class BucketProcessor {
         // ==INTERPOLATOR UPDATE==
         // =======================
         // the bucketNumer of all entries inside the listOfValuesForTheInterpolator list must be updated to the new bucket number
-        if (!outputBucketList.get(outputBucketList.size() - 1).getListOfValuesForTheInterpolator().isEmpty()) {
+        if (!outputBucketList.get(outputBucketList.size() - 1).getValuesForTheInterpolator().isEmpty()) {
             // input
-            List<Pair<Integer, Pair<VaultEntryType, Double>>> updateThisList = outputBucketList.get(outputBucketList.size() - 1).getListOfValuesForTheInterpolator();
+            List<Pair<Integer, Pair<VaultEntryType, Double>>> updateThisList = outputBucketList.get(outputBucketList.size() - 1).getValuesForTheInterpolator();
             // output
             List<Pair<Integer, Pair<VaultEntryType, Double>>> updatedList = new ArrayList<>();
             // run through the list that has to be updated pair by pair
@@ -1030,7 +1030,7 @@ public class BucketProcessor {
                 updatedList.add(updatedPair);
             }
             // update the BucketEntry listOfValuesForTheInterpolator list
-            outputBucketList.get(outputBucketList.size() - 1).setListOfValuesForTheInterpolator(updatedList);
+            outputBucketList.get(outputBucketList.size() - 1).setValuesForTheInterpolator(updatedList);
         }
 
         // =======================
@@ -1176,11 +1176,11 @@ public class BucketProcessor {
                 // mergeToThisType position inside of the matrix
                 int typePositionInsideTheMatrix = tempHashMapForMatrixPositionsOfTheVaultEntryTypes.get(type);
 
-                bucket.setOnehotInformationArray(ARRAY_ENTRY_TRIGGER_HASHMAP.get(type), interpolationMatrix[typePositionInsideTheMatrix][bucketNumber - 1]);
+                bucket.setValues(ARRAY_ENTRY_TRIGGER_HASHMAP.get(type), interpolationMatrix[typePositionInsideTheMatrix][bucketNumber - 1]);
             }
         }
 
-        // now all BucketEntrys have the interpolated values inside there setOnehotInformationArray
+        // now all BucketEntrys have the interpolated values inside there setValues
         // if wantedBucketSize != 1 transform the list into the wanted size .. standard bucket size == 1
         if (wantedBucketSize != 1) {
 
@@ -1227,7 +1227,7 @@ public class BucketProcessor {
                     // check if a merge-to VaultEntryType is found or not
                     if (ARRAY_ENTRIES_AFTER_MERGE_TO.containsKey(type)) {
                         // not a merged mergeToThisType
-                        outputFinalBucketList.get(outputFinalBucketList.size() - 1).setOnehotInformationArray(ARRAY_ENTRIES_AFTER_MERGE_TO.get(type), entry.getOnehotInformationArray(ARRAY_ENTRY_TRIGGER_HASHMAP.get(type)));
+                        outputFinalBucketList.get(outputFinalBucketList.size() - 1).setOnehotInformationArray(ARRAY_ENTRIES_AFTER_MERGE_TO.get(type), entry.getValues(ARRAY_ENTRY_TRIGGER_HASHMAP.get(type)));
                     } else {
                         // a merged mergeToThisType
 
@@ -1236,7 +1236,7 @@ public class BucketProcessor {
                 }
 
                 // second run through the whole listOfComputedValuesForTheFinalBucketEntry
-                for (Pair<VaultEntryType, Double> pair : entry.getListOfComputedValuesForTheFinalBucketEntry()) {
+                for (Pair<VaultEntryType, Double> pair : entry.getComputedValuesForTheFinalBucketEntry()) {
                     // place found entries into the right array position
                     // look for the position of the entry that matches this merge-to VaultEntryType
                     //
@@ -1263,8 +1263,8 @@ public class BucketProcessor {
 
         for (BucketEntry bucket : listOfBucketEntrys) {
             // collect all Data from each bucket that has data stored
-            if (!bucket.getListOfValuesForTheInterpolator().isEmpty()) {
-                outputList.addAll(bucket.getListOfValuesForTheInterpolator());
+            if (!bucket.getValuesForTheInterpolator().isEmpty()) {
+                outputList.addAll(bucket.getValuesForTheInterpolator());
             }
             // if no data saved then move to the next bucket
         }

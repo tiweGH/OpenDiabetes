@@ -44,7 +44,7 @@ public class CreateBucketEntries {
      * @param entry The VaultEntry that will be stored inside the BucketEntry.
      * @return This method returns a newly created BucketEntry
      */
-    protected BucketEntry createNewBucket(int bucketNumber, VaultEntry entry) {
+    protected BucketEntry createNewBucketEntry(int bucketNumber, VaultEntry entry) {
 
         // placeholder
         final double KEEP_EMPTY_FOR_FOLLOWING_CALCULATION = 0.0;
@@ -66,29 +66,29 @@ public class CreateBucketEntries {
             // is the act time given?
             if (TRIGGER_EVENT_ACT_TIME_GIVEN.contains(entry.getType())) {
                 // set act time
-                newBucket.setTimeCountDown(arrayPosition, entry.getValue());
+                newBucket.setValueTimer(arrayPosition, entry.getValue());
                 // set boolean true
-                newBucket.setOnehotInformationArray(arrayPosition, 1);
+                newBucket.setValues(arrayPosition, 1);
                 // set to EMPTY
-                newBucket.setFindNextArray(arrayPosition, VaultEntryType.EMPTY);
+                newBucket.setFindNextVaultEntryType(arrayPosition, VaultEntryType.EMPTY);
 
                 // is the the act time till some next event?
             } else if (TRIGGER_EVENT_ACT_TIME_TILL_NEXT_EVENT.containsKey(entry.getType())) {
                 // set to 0 (no direct Act Time)
-                newBucket.setTimeCountDown(arrayPosition, 0);
+                newBucket.setValueTimer(arrayPosition, 0);
                 // set boolean true
-                newBucket.setOnehotInformationArray(arrayPosition, 1);
+                newBucket.setValues(arrayPosition, 1);
                 // set find next to the needed VaultEntryType
-                newBucket.setFindNextArray(arrayPosition, TRIGGER_EVENT_ACT_TIME_TILL_NEXT_EVENT.get(entry.getType()));
+                newBucket.setFindNextVaultEntryType(arrayPosition, TRIGGER_EVENT_ACT_TIME_TILL_NEXT_EVENT.get(entry.getType()));
 
                 // is the act time just for one frame?
             } else if (TRIGGER_EVENT_ACT_TIME_ONE.contains(entry.getType())) {
                 // set act time to 1 minute
-                newBucket.setTimeCountDown(arrayPosition, 1);
+                newBucket.setValueTimer(arrayPosition, 1);
                 // set boolean true
-                newBucket.setOnehotInformationArray(arrayPosition, 1);
+                newBucket.setValues(arrayPosition, 1);
                 // set to EMPTY
-                newBucket.setFindNextArray(arrayPosition, VaultEntryType.EMPTY);
+                newBucket.setFindNextVaultEntryType(arrayPosition, VaultEntryType.EMPTY);
 
                 // ======================
                 // =ML-rev + NOT one hot=
@@ -97,18 +97,18 @@ public class CreateBucketEntries {
                 // catch VaultEntryTypes that have to be interpolated
             } else if (HASHSET_FOR_LINEAR_INTERPOLATION.contains(entry.getType())) {
                 // at the moment the act time for there VaultEntryTypes are only 1 frame ... this might change later on if new types are added to the hashset
-                newBucket.setTimeCountDown(arrayPosition, 1);
+                newBucket.setValueTimer(arrayPosition, 1);
                 // set value
-                newBucket.setOnehotInformationArray(arrayPosition, KEEP_EMPTY_FOR_FOLLOWING_CALCULATION);
+                newBucket.setValues(arrayPosition, KEEP_EMPTY_FOR_FOLLOWING_CALCULATION);
 
                 // new entries for this category are added to the listOfValuesForTheInterpolator list in the Bucket
                 // Pair< BucketEntryNumber, new Pair< VaultEntryType, Value >>
                 List<Pair<Integer, Pair<VaultEntryType, Double>>> tempList = new ArrayList<>();
                 tempList.add(new Pair(bucketNumber, new Pair(entry.getType(), entry.getValue())));
-                newBucket.setListOfValuesForTheInterpolator(tempList);
+                newBucket.setValuesForTheInterpolator(tempList);
 
                 // set to EMPTY
-                newBucket.setFindNextArray(arrayPosition, VaultEntryType.EMPTY);
+                newBucket.setFindNextVaultEntryType(arrayPosition, VaultEntryType.EMPTY);
 
                 // is the act time set?
             } else if (TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_SET.containsKey(entry.getType())) {
@@ -120,11 +120,11 @@ public class CreateBucketEntries {
                     // ************************************************************************************************************
                     
                     // set act time to set act time in hashmap
-                    newBucket.setTimeCountDown(arrayPosition, TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_SET.get(entry.getType()));
+                    newBucket.setValueTimer(arrayPosition, TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_SET.get(entry.getType()));
                     // set value
-                    newBucket.setOnehotInformationArray(arrayPosition, entry.getValue());
+                    newBucket.setValues(arrayPosition, entry.getValue());
                     // set to EMPTY
-                    newBucket.setFindNextArray(arrayPosition, VaultEntryType.EMPTY);
+                    newBucket.setFindNextVaultEntryType(arrayPosition, VaultEntryType.EMPTY);
                     
                 } else {
                     // *************************************************************************************************************************
@@ -132,20 +132,20 @@ public class CreateBucketEntries {
                     // *************************************************************************************************************************
                 
                     // set act time to set act time in hashmap
-                    newBucket.setTimeCountDown(arrayPosition, TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_SET.get(entry.getType()));
+                    newBucket.setValueTimer(arrayPosition, TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_SET.get(entry.getType()));
                     // set value
-                    newBucket.setOnehotInformationArray(arrayPosition, KEEP_EMPTY_FOR_FOLLOWING_CALCULATION);
+                    newBucket.setValues(arrayPosition, KEEP_EMPTY_FOR_FOLLOWING_CALCULATION);
 
                     // new entries are added to the runningComputation list in the Bucket
-                    // Pair< VaultEntrytype (mergeTo), new Pair< ValueTimer, Value >>
+                    // Pair< VaultEntrytype (getMergeTo), new Pair< ValueTimer, Value >>
                     // ValueTimer is in VaultEntry value2
                     // Value is in VaultEntry value1
                     List<Pair<VaultEntryType, Pair<Double, Double>>> tempList = new ArrayList<>();
-                    tempList.add(new Pair(entry.getType().mergeTo(), new Pair(newBucket.getTimeCountDown(arrayPosition), entry.getValue())));
-                    newBucket.setRunningComputation(tempList);
+                    tempList.add(new Pair(entry.getType().getMergeTo(), new Pair(newBucket.getValueTimer(arrayPosition), entry.getValue())));
+                    newBucket.setValuesForRunningComputation(tempList);
 
                     // set to EMPTY
-                    newBucket.setFindNextArray(arrayPosition, VaultEntryType.EMPTY);
+                    newBucket.setFindNextVaultEntryType(arrayPosition, VaultEntryType.EMPTY);
                     
                 }
 
@@ -156,20 +156,20 @@ public class CreateBucketEntries {
                 // is the act time given?
             } else if (TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_GIVEN.contains(entry.getType())) {
                 // set act time
-                newBucket.setTimeCountDown(arrayPosition, entry.getValue2());
+                newBucket.setValueTimer(arrayPosition, entry.getValue2());
                 // set value
-                newBucket.setOnehotInformationArray(arrayPosition, KEEP_EMPTY_FOR_FOLLOWING_CALCULATION);
+                newBucket.setValues(arrayPosition, KEEP_EMPTY_FOR_FOLLOWING_CALCULATION);
 
                 // new entries are added to the runningComputation list in the Bucket
-                // Pair< VaultEntrytype (mergeTo), new Pair< ValueTimer, Value >>
+                // Pair< VaultEntrytype (getMergeTo), new Pair< ValueTimer, Value >>
                 // ValueTimer is in VaultEntry value2
                 // Value is in VaultEntry value1
                 List<Pair<VaultEntryType, Pair<Double, Double>>> tempList = new ArrayList<>();
-                tempList.add(new Pair(entry.getType().mergeTo(), new Pair(newBucket.getTimeCountDown(arrayPosition), entry.getValue())));
-                newBucket.setRunningComputation(tempList);
+                tempList.add(new Pair(entry.getType().getMergeTo(), new Pair(newBucket.getValueTimer(arrayPosition), entry.getValue())));
+                newBucket.setValuesForRunningComputation(tempList);
 
                 // set to EMPTY
-                newBucket.setFindNextArray(arrayPosition, VaultEntryType.EMPTY);
+                newBucket.setFindNextVaultEntryType(arrayPosition, VaultEntryType.EMPTY);
                 
                 // ===
                 // TODO CHECK
@@ -178,30 +178,30 @@ public class CreateBucketEntries {
                 // is the act time till some next event?
             } else if (TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_TILL_NEXT_EVENT.contains(entry.getType())) {
                 // set to 0 (no direct Act Time)
-                newBucket.setTimeCountDown(arrayPosition, 0);
+                newBucket.setValueTimer(arrayPosition, 0);
                 // set value
-                newBucket.setOnehotInformationArray(arrayPosition, entry.getValue());
+                newBucket.setValues(arrayPosition, entry.getValue());
                 // set to same VaultEntryType
-                newBucket.setFindNextArray(arrayPosition, entry.getType());
+                newBucket.setFindNextVaultEntryType(arrayPosition, entry.getType());
 
                 // is the act time just for one frame?
             } else if (TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_ONE.contains(entry.getType())) {
                 // set act time to 1 minute
-                newBucket.setTimeCountDown(arrayPosition, 1);
+                newBucket.setValueTimer(arrayPosition, 1);
                 // set value
-                newBucket.setOnehotInformationArray(arrayPosition, entry.getValue());
+                newBucket.setValues(arrayPosition, entry.getValue());
                 // set to EMPTY
-                newBucket.setFindNextArray(arrayPosition, VaultEntryType.EMPTY);
+                newBucket.setFindNextVaultEntryType(arrayPosition, VaultEntryType.EMPTY);
 
                 // is the given value a timestamp?
             } else if (TRIGGER_EVENT_NOT_ONE_HOT_VALUE_IS_A_TIMESTAMP.contains(entry.getType())) {
                 // set to 0 (no direct Act Time)
-                newBucket.setTimeCountDown(arrayPosition, 0);
+                newBucket.setValueTimer(arrayPosition, 0);
                 // set ???
-                newBucket.setOnehotInformationArray(arrayPosition, 0);
-                //        newBucket.setOnehotInformationArray(arrayPosition, ???);
+                newBucket.setValues(arrayPosition, 0);
+                //        newBucket.setValues(arrayPosition, ???);
                 // set to EMPTY
-                newBucket.setFindNextArray(arrayPosition, VaultEntryType.EMPTY);
+                newBucket.setFindNextVaultEntryType(arrayPosition, VaultEntryType.EMPTY);
 
             }
         }
@@ -223,7 +223,7 @@ public class CreateBucketEntries {
      * @return This method returns an newly created 'empty' BucketEntry.
      * @throws ParseException
      */
-    protected BucketEntry createEmptyBucket(int bucketNumber, Date date) throws ParseException {
+    protected BucketEntry createEmptyBucketEntry(int bucketNumber, Date date) throws ParseException {
 
         BucketEntry newBucket = new BucketEntry(bucketNumber, new VaultEntry(VaultEntryType.EMPTY, date));
         return newBucket;

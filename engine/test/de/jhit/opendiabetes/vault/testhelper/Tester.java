@@ -115,7 +115,7 @@ public class Tester {
             BucketProcessor_new bp = new BucketProcessor_new();
 //            BucketProcessor bp = new BucketProcessor();
 //            BucketProcessor_runable bp = new BucketProcessor_runable();
-              List<FinalBucketEntry> buckets = bp.bucketProcessor(0, workingSet, 1);
+              List<FinalBucketEntry> buckets = bp.bucketProcessing(0, workingSet, 1);
     //        List<FinalBucketEntry> buckets = bp.processor(workingSet, 1);
             MLExporter1.bucketsToCsv(buckets, "odv_export.csv");
             long minutes = (workingSet.get(workingSet.size() - 1).getTimestamp().getTime() - workingSet.get(0).getTimestamp().getTime()) / (60 * 1000);
