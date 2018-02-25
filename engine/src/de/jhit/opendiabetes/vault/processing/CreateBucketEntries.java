@@ -102,10 +102,7 @@ public class CreateBucketEntries {
                 newBucket.setOnehotInformationArray(arrayPosition, KEEP_EMPTY_FOR_FOLLOWING_CALCULATION);
 
                 // new entries for this category are added to the listOfValuesForTheInterpolator list in the Bucket
-                // first part of the pair == bucket number for later placement
-                // second part
-                //          first VaultEntryType == mergeToThisType contained inside the hashset
-                //          second Double == value      (in VaultEntry value1)
+                // Pair< BucketEntryNumber, new Pair< VaultEntryType, Value >>
                 List<Pair<Integer, Pair<VaultEntryType, Double>>> tempList = new ArrayList<>();
                 tempList.add(new Pair(bucketNumber, new Pair(entry.getType(), entry.getValue())));
                 newBucket.setListOfValuesForTheInterpolator(tempList);
@@ -115,22 +112,42 @@ public class CreateBucketEntries {
 
                 // is the act time set?
             } else if (TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_SET.containsKey(entry.getType())) {
-                // set act time to set act time in hashmap
-                newBucket.setTimeCountDown(arrayPosition, TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_SET.get(entry.getType()));
-                // set value
-                newBucket.setOnehotInformationArray(arrayPosition, KEEP_EMPTY_FOR_FOLLOWING_CALCULATION);
+                
+                if (entry.getType().equals(VaultEntryType.BASAL_PROFILE)) {
+                    
+                    // ************************************************************************************************************
+                    // BASAL_PROFILE is resetable ... this means new values and value timers will overwrite the previous valid ones
+                    // ************************************************************************************************************
+                    
+                    // set act time to set act time in hashmap
+                    newBucket.setTimeCountDown(arrayPosition, TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_SET.get(entry.getType()));
+                    // set value
+                    newBucket.setOnehotInformationArray(arrayPosition, entry.getValue());
+                    // set to EMPTY
+                    newBucket.setFindNextArray(arrayPosition, VaultEntryType.EMPTY);
+                    
+                } else {
+                    // *************************************************************************************************************************
+                    // at the moment BASAL_PROFILE is the only type in this hashset ... this might change and this might be the correct handling
+                    // *************************************************************************************************************************
+                
+                    // set act time to set act time in hashmap
+                    newBucket.setTimeCountDown(arrayPosition, TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_SET.get(entry.getType()));
+                    // set value
+                    newBucket.setOnehotInformationArray(arrayPosition, KEEP_EMPTY_FOR_FOLLOWING_CALCULATION);
 
-                // new entries are added to the runningComputation list in the Bucket
-                // first part of the pair == VaultEntryType for later calculation
-                // second part
-                //          first double == timer       (in VaultEntry value2)
-                //          second double == value      (in VaultEntry value1)
-                List<Pair<VaultEntryType, Pair<Double, Double>>> tempList = new ArrayList<>();
-                tempList.add(new Pair(entry.getType().mergeTo(), new Pair(newBucket.getTimeCountDown(arrayPosition), entry.getValue())));
-                newBucket.setRunningComputation(tempList);
+                    // new entries are added to the runningComputation list in the Bucket
+                    // Pair< VaultEntrytype (mergeTo), new Pair< ValueTimer, Value >>
+                    // ValueTimer is in VaultEntry value2
+                    // Value is in VaultEntry value1
+                    List<Pair<VaultEntryType, Pair<Double, Double>>> tempList = new ArrayList<>();
+                    tempList.add(new Pair(entry.getType().mergeTo(), new Pair(newBucket.getTimeCountDown(arrayPosition), entry.getValue())));
+                    newBucket.setRunningComputation(tempList);
 
-                // set to EMPTY
-                newBucket.setFindNextArray(arrayPosition, VaultEntryType.EMPTY);
+                    // set to EMPTY
+                    newBucket.setFindNextArray(arrayPosition, VaultEntryType.EMPTY);
+                    
+                }
 
                 // ===
                 // TODO CHECK
@@ -144,10 +161,9 @@ public class CreateBucketEntries {
                 newBucket.setOnehotInformationArray(arrayPosition, KEEP_EMPTY_FOR_FOLLOWING_CALCULATION);
 
                 // new entries are added to the runningComputation list in the Bucket
-                // first part of the pair == VaultEntryType for later calculation
-                // second part
-                //          first double == timer       (in VaultEntry value2)
-                //          second double == value      (in VaultEntry value1)
+                // Pair< VaultEntrytype (mergeTo), new Pair< ValueTimer, Value >>
+                // ValueTimer is in VaultEntry value2
+                // Value is in VaultEntry value1
                 List<Pair<VaultEntryType, Pair<Double, Double>>> tempList = new ArrayList<>();
                 tempList.add(new Pair(entry.getType().mergeTo(), new Pair(newBucket.getTimeCountDown(arrayPosition), entry.getValue())));
                 newBucket.setRunningComputation(tempList);

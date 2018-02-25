@@ -24,6 +24,7 @@ import static de.jhit.opendiabetes.vault.util.TimestampUtils.addMinutesToTimesta
 import static de.jhit.opendiabetes.vault.util.TimestampUtils.createCleanTimestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import javafx.util.Pair;
@@ -135,7 +136,7 @@ public class CreateListOfBucketEntries {
                             }
                             
                             // call this method BEFORE setting the new lookForThisDateInsideTheGivenVaultEntryList date
-                            setBucketArrayInformation(firstBucketNumber, lookForThisDateInsideTheGivenVaultEntryList, newBucketEntry);
+            //                setBucketArrayInformation(firstBucketNumber, lookForThisDateInsideTheGivenVaultEntryList, newBucketEntry);
                             
                         } // else not ML-rev
                         
@@ -158,7 +159,7 @@ public class CreateListOfBucketEntries {
                             currentBucketEntryNumber++;
 
                             // call this method BEFORE setting the new lookForThisDateInsideTheGivenVaultEntryList date
-                            setBucketArrayInformation(firstBucketNumber, lookForThisDateInsideTheGivenVaultEntryList, newBucketEntry);
+            //                setBucketArrayInformation(firstBucketNumber, lookForThisDateInsideTheGivenVaultEntryList, newBucketEntry);
 
                             // update lookForThisDateInsideTheGivenVaultEntryList
                             lookForThisDateInsideTheGivenVaultEntryList = addMinutesToTimestamp(lookForThisDateInsideTheGivenVaultEntryList, 1);
@@ -174,7 +175,7 @@ public class CreateListOfBucketEntries {
                             currentBucketEntryNumber++;
 
                             // call this method BEFORE setting the new lookForThisDateInsideTheGivenVaultEntryList date
-                            setBucketArrayInformation(firstBucketNumber, lookForThisDateInsideTheGivenVaultEntryList, newBucketEntry);
+            //                setBucketArrayInformation(firstBucketNumber, lookForThisDateInsideTheGivenVaultEntryList, newBucketEntry);
 
                             // update lookForThisDateInsideTheGivenVaultEntryList
                             lookForThisDateInsideTheGivenVaultEntryList = addMinutesToTimestamp(lookForThisDateInsideTheGivenVaultEntryList, 1);
@@ -195,12 +196,15 @@ public class CreateListOfBucketEntries {
                         currentBucketEntryNumber++;
 
                         // call this method BEFORE setting the new lookForThisDateInsideTheGivenVaultEntryList date
-                        setBucketArrayInformation(firstBucketNumber, lookForThisDateInsideTheGivenVaultEntryList, newBucketEntry);
+            //            setBucketArrayInformation(firstBucketNumber, lookForThisDateInsideTheGivenVaultEntryList, newBucketEntry);
 
                         // update lookForThisDateInsideTheGivenVaultEntryList
                         lookForThisDateInsideTheGivenVaultEntryList = addMinutesToTimestamp(lookForThisDateInsideTheGivenVaultEntryList, 1);
 
                         // DO NOT UPDATE vaultEntryListPosition! ... the given list position has not been reached yet
+                        
+                        // listPosition is counted up every iteration ... subtract 1 to not move on in the list
+                        listPosition--;
                         
                         break;
                         
@@ -266,6 +270,282 @@ public class CreateListOfBucketEntries {
         
     }
     
+    
+    /**
+     * 
+     * @param listOfBuckets 
+     */
+    protected void setBucketArrayInformation_new(List<BucketEntry> listOfBuckets) {
+        final int maxArraySize = ARRAY_ENTRY_TRIGGER_HASHMAP.size();
+        
+        // *******************************
+        // INTERNAL VALUE HANDLING - START
+        // *******************************
+        
+        // timer
+        double[] tempValueTimer = new double[maxArraySize];
+        // values
+        double[] tempValues = new double[maxArraySize];
+        // till next thisBucketEntry
+        VaultEntryType[] tempFindNextVaultEntryType = new VaultEntryType[maxArraySize];
+        // Fill findNextArray with EMPTY
+        Arrays.fill(tempFindNextVaultEntryType, VaultEntryType.EMPTY);
+        
+        // for parallel act times computing
+        // Pair< VaultEntryType , Pair< ValueTimer, Value >>
+        List<Pair<VaultEntryType, Pair<Double, Double>>> valuesForRunningComputation = new ArrayList<>();
+        // list of values for the interpolation
+        // Pair< BucketEntryNumber, Pair< VaultEntryType, Value >>
+        List<Pair<Integer, Pair<VaultEntryType, Double>>> valuesForTheInterpolator = new ArrayList<>();
+        
+        // *****************************
+        // INTERNAL VALUE HANDLING - END
+        // *****************************
+        
+        Date lastFoundDate = null;
+        boolean newDateFound = false;
+        final int firstBucketEntryNumber = listOfBuckets.get(0).getBucketNumber();
+
+        // get the BucketEntry
+        for (BucketEntry thisBucketEntry : listOfBuckets) {
+
+            // get VaultEntry information from the BucketEntry
+            VaultEntryType thisVaultEntryType = thisBucketEntry.getVaultEntry().getType();
+            Date thisBucketEntryTimestamp = thisBucketEntry.getVaultEntry().getTimestamp();
+            
+            if (lastFoundDate == null) {lastFoundDate = thisBucketEntryTimestamp; newDateFound = true;}
+            if (lastFoundDate.before(thisBucketEntryTimestamp)) {
+                // reset valuesForTheInterpolator
+                valuesForTheInterpolator = new ArrayList<>();
+                // set lastFoundDate
+                lastFoundDate = thisBucketEntryTimestamp;
+                // set newDateFound
+                newDateFound = true;
+            }
+            
+            // ***********************************
+            //  VALUES FOR THE INTERPOLATOR UPDATE
+            // ***********************************
+            
+            // check for new values inside the valuesForTheInterpolator list in the BucketEntry
+            if (!thisBucketEntry.getListOfValuesForTheInterpolator().isEmpty()) {
+                List<Pair<Integer, Pair<VaultEntryType, Double>>> tempList = new ArrayList<>();
+                for (Pair<Integer, Pair<VaultEntryType, Double>> pair : thisBucketEntry.getListOfValuesForTheInterpolator()){
+                    Pair<Integer, Pair<VaultEntryType, Double>> tempPair;
+                    tempPair = new Pair(pair.getKey(), new Pair(pair.getValue().getKey(), pair.getValue().getValue()));
+                    tempList.add(tempPair);
+                }
+                valuesForTheInterpolator.addAll(tempList);
+            }
+            // transfer the data from the last BucketEntrys with the same timestamp into the current BucketEntry
+            if (!valuesForTheInterpolator.isEmpty()) {
+                List<Pair<Integer, Pair<VaultEntryType, Double>>> tempList = new ArrayList<>();
+                for (Pair<Integer, Pair<VaultEntryType, Double>> pair : valuesForTheInterpolator){
+                    Pair<Integer, Pair<VaultEntryType, Double>> tempPair;
+                    tempPair = new Pair(pair.getKey(), new Pair(pair.getValue().getKey(), pair.getValue().getValue()));
+                    tempList.add(tempPair);
+                }
+                thisBucketEntry.setListOfValuesForTheInterpolator(tempList);
+            }
+            
+            // **************************
+            // RUNNING COMPUTAIONS UPDATE
+            // **************************
+
+            // update all value timers inside each entry before adding new entries
+            if (!valuesForRunningComputation.isEmpty()) {
+                // new temp list with value timer - 1
+                List<Pair<VaultEntryType, Pair<Double, Double>>> tempList = new ArrayList<>();
+                for (Pair<VaultEntryType, Pair<Double, Double>> pair : valuesForRunningComputation) {
+                    // Pair< VaultEntryType , Pair< ValueTimer, Value >>
+                    Pair<VaultEntryType, Pair<Double, Double>> tempPair = new Pair(pair.getKey(), new Pair(pair.getValue().getKey() - 1, pair.getValue().getValue()));
+                    if (tempPair.getValue().getKey() > 0) {
+                        // new valid pair
+                        tempList.add(tempPair);
+                    } else {
+                        // do nothing pair is obsolete since timer is 0 or less
+                    }
+                }
+                valuesForRunningComputation = tempList;
+            }
+            
+            // *************
+            // ARRAY UPDATES
+            // *************
+
+            // iterate through the array positions                    
+            for (int i = 0; i < maxArraySize; i++){
+                VaultEntryType vaultEntryTypeAtThisPosition = null;
+
+                // get the VaultEntryType at this position
+                for (VaultEntryType thisType : ARRAY_ENTRY_TRIGGER_HASHMAP.keySet()){
+                        if (ARRAY_ENTRY_TRIGGER_HASHMAP.get(thisType) == i) {vaultEntryTypeAtThisPosition = thisType; break;}  // TODO break out of for?
+                }
+                
+                // catch NullPointerException
+                if (vaultEntryTypeAtThisPosition == null) {throw new Error("No_vaild_VaultEntryType_found!");}
+
+                // get VaultEntryType info
+                boolean isOneHot = vaultEntryTypeAtThisPosition.isOneHot();
+                VaultEntryType mergeToThis = vaultEntryTypeAtThisPosition.mergeTo();
+                
+                // ************
+                // TIMER UPDATE
+                // ************
+                
+                // running timers
+                if(newDateFound) {
+                    if (tempValueTimer[i] > 0) {tempValueTimer[i] = tempValueTimer[i] - 1;}
+                    // when reaching the last thisBucketEntry for this timestamp 
+                    if ((i + 1) == maxArraySize) {newDateFound = false;}
+                }
+                
+                // get new timers
+                // new greater timer found
+                if (thisBucketEntry.getTimeCountDown(i) > tempValueTimer[i] + 1 ) {tempValueTimer[i] = thisBucketEntry.getTimeCountDown(i);}
+                // new timer found
+                if (thisVaultEntryType == vaultEntryTypeAtThisPosition) {tempValueTimer[i] = thisBucketEntry.getTimeCountDown(i);}
+                
+                // set timers into the BucketEntry
+                thisBucketEntry.setTimeCountDown(i, tempValueTimer[i]);
+                
+                // *******************************
+                // FIND NEXT VAULTENTRYTYPE UPDATE
+                // *******************************
+                
+                // get a new VaultEntryTpye
+                if (!thisBucketEntry.getFindNextArray(i).equals(VaultEntryType.EMPTY)) {tempFindNextVaultEntryType[i] = thisBucketEntry.getFindNextArray(i);}
+                
+                // set a given VaultEntryType
+                if (!tempFindNextVaultEntryType[i].equals(VaultEntryType.EMPTY)) {thisBucketEntry.setFindNextArray(i, tempFindNextVaultEntryType[i]);}
+                
+                // *************
+                // VALUE UPDATES
+                // *************
+                
+                boolean conditionValueTimer = false;
+                boolean conditionFindNextVaultEntryType = false;
+
+                // set boolean values for conditions
+                if (tempValueTimer[i] == 0) {conditionValueTimer = true;}
+                if (tempFindNextVaultEntryType[i].equals(VaultEntryType.EMPTY) 
+                        || !tempFindNextVaultEntryType[i].equals(VaultEntryType.EMPTY) 
+                            && tempFindNextVaultEntryType[i].equals(thisVaultEntryType)) {conditionFindNextVaultEntryType = true;}
+                        
+                if (isOneHot) {
+                    
+                    if (thisVaultEntryType.equals(vaultEntryTypeAtThisPosition)) {
+                        // new incoming value
+                        tempValues[i] = thisBucketEntry.getOnehotInformationArray(i);
+                    } else {
+                        // update other values
+                        if (conditionValueTimer && conditionFindNextVaultEntryType) {
+                            // correct the FindNextVaultEntryType info 
+                            // VaultEntryType has been found
+                            if (!tempFindNextVaultEntryType[i].equals(VaultEntryType.EMPTY)) {
+                                tempFindNextVaultEntryType[i] = VaultEntryType.EMPTY;
+                                thisBucketEntry.setFindNextArray(i, VaultEntryType.EMPTY);
+                            }
+                            tempValues[i] = 0.0;
+                        } else {
+                            tempValues[i] = 1.0;
+                        }
+                    }
+                    
+                } else {
+                    // not onehot
+                    // real values have to be handled according to thier type
+                    
+                    // ==============================
+                    // handling via hashmap / hashset
+                    // ==============================
+                    
+                    if (TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_SET.containsKey(thisVaultEntryType)) {
+                        
+                        // BASAL_PROFILE extra handling
+                        if (thisVaultEntryType.equals(VaultEntryType.BASAL_PROFILE)) {
+                            tempValues[i] = thisBucketEntry.getOnehotInformationArray(i);
+                        } else {
+                            // new entries are set in the createNewBucket method
+                            // add them to the internal valuesForRunningComputation list
+                            
+                            List<Pair<VaultEntryType, Pair<Double, Double>>> tempList = new ArrayList<>();
+                            
+                            // get the old list
+                            for (Pair<VaultEntryType, Pair<Double, Double>> pair : valuesForRunningComputation) {
+                                // Pair< VaultEntryType , Pair< ValueTimer, Value >>
+                                Pair<VaultEntryType, Pair<Double, Double>> tempPair;
+                                tempPair = new Pair(pair.getKey(), new Pair(pair.getValue().getKey(), pair.getValue().getValue()));
+                                tempList.add(tempPair);
+                            }
+                            // get the new list
+                            for (Pair<VaultEntryType, Pair<Double, Double>> pair : thisBucketEntry.getRunningComputation()) {
+                                // Pair< VaultEntryType , Pair< ValueTimer, Value >>
+                                Pair<VaultEntryType, Pair<Double, Double>> tempPair;
+                                tempPair = new Pair(pair.getKey(), new Pair(pair.getValue().getKey(), pair.getValue().getValue()));
+                                tempList.add(tempPair);
+                            }
+                            // save the new list with old and new pairs
+                            valuesForRunningComputation = tempList;
+                            
+                            // DO NOT SET onehotInformationArray[i] HERE BECAUSE THE VALUE HAS TO BE COMPUTED (calculateAverageForSmallestBucketSize method)
+                        }
+                        
+                    } else if (TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_GIVEN.contains(thisVaultEntryType)) {
+                        // new entries are set in the createNewBucket method
+                        // add them to the internal valuesForRunningComputation list
+
+                        List<Pair<VaultEntryType, Pair<Double, Double>>> tempList = new ArrayList<>();
+
+                        // get the old list
+                        for (Pair<VaultEntryType, Pair<Double, Double>> pair : valuesForRunningComputation) {
+                            // Pair< VaultEntryType , Pair< ValueTimer, Value >>
+                            Pair<VaultEntryType, Pair<Double, Double>> tempPair;
+                            tempPair = new Pair(pair.getKey(), new Pair(pair.getValue().getKey(), pair.getValue().getValue()));
+                            tempList.add(tempPair);
+                        }
+                        // get the new list
+                        for (Pair<VaultEntryType, Pair<Double, Double>> pair : thisBucketEntry.getRunningComputation()) {
+                            // Pair< VaultEntryType , Pair< ValueTimer, Value >>
+                            Pair<VaultEntryType, Pair<Double, Double>> tempPair;
+                            tempPair = new Pair(pair.getKey(), new Pair(pair.getValue().getKey(), pair.getValue().getValue()));
+                            tempList.add(tempPair);
+                        }
+                        // save the new list with old and new pairs
+                        valuesForRunningComputation = tempList;
+
+                        // DO NOT SET onehotInformationArray[i] HERE BECAUSE THE VALUE HAS TO BE COMPUTED (calculateAverageForSmallestBucketSize method)
+                        
+                    } else if (TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_TILL_NEXT_EVENT.contains(thisVaultEntryType)){
+                        // TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_TILL_NEXT_EVENT : value is set when BucketEntry is created
+                        tempValues[i] = thisBucketEntry.getOnehotInformationArray(i);
+                        
+                    } else if (TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_ONE.contains(thisVaultEntryType)) {
+                        // TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_ONE : value is set when BucketEntry is created
+                        tempValues[i] = thisBucketEntry.getOnehotInformationArray(i);
+                        
+                    } else if (TRIGGER_EVENT_NOT_ONE_HOT_VALUE_IS_A_TIMESTAMP.contains(thisVaultEntryType)) {
+                        tempValues[i] = thisBucketEntry.getOnehotInformationArray(i);
+                        // onehotInformationArray[i] = ???
+                        
+                    } else {
+                        // there is no new value in this BucketEntry position
+                        tempValues[i] = thisBucketEntry.getOnehotInformationArray(i);
+                    }
+                    
+                }
+                
+                // set the BucketEntry value
+                thisBucketEntry.setOnehotInformationArray(i, tempValues[i]);
+            }
+        }
+    }
+    
+    
+    
+    
+    
+    
     /**
      * This method sets the necessary information into the BucketEntry arrays
      * and manages the onehot markers, onehot timers, and merge-tos. The Date
@@ -279,7 +559,7 @@ public class CreateListOfBucketEntries {
      * (timecounter).
      * @param currentBucketEntry This is the BucketEntry that will have it's arrays updated.
      */
-    protected void setBucketArrayInformation(int firstBucketNumber, Date currentBucketEntryDate, BucketEntry currentBucketEntry) {
+    protected void setBucketArrayInformation_old(int firstBucketNumber, Date currentBucketEntryDate, BucketEntry currentBucketEntry) {
 
         // this prevents that the first BucketEntry has the chance of couting down the timer.
         // sameDatesGetNoTimerArrayUpdate_MLRevAndOneHot is initially set to false.
@@ -555,170 +835,4 @@ public class CreateListOfBucketEntries {
     
     
 
-
-    protected void setBucketArrayInformation_new(List<BucketEntry> listOfBuckets) {
-        final int maxArraySize = ARRAY_ENTRY_TRIGGER_HASHMAP.size();
-        
-        // *******************************
-        // INTERNAL VALUE HANDLING - START
-        // *******************************
-        
-        // timer
-        double[] tempValueTimer = new double[maxArraySize];
-        // values
-        double[] tempValues = new double[maxArraySize];
-        // till next thisBucketEntry
-        VaultEntryType[] tempFindNextVaultEntryType = new VaultEntryType[maxArraySize];
-        // for parallel act times computing
-        // Pair< VaultEntryType , Pair< ValueTimer, Value >>
-        List<Pair<VaultEntryType, Pair<Double, Double>>> listOfRunningComputations = new ArrayList<>();
-        // list of values for the interpolation
-        // Pair< BucketEntryNumber, Pair< VaultEntryType (mergeTo), Value >>
-        List<Pair<Integer, Pair<VaultEntryType, Double>>> valuesForTheInterpolator = new ArrayList<>();
-        
-        // *****************************
-        // INTERNAL VALUE HANDLING - END
-        // *****************************
-        
-        Date lastFoundDate = null;
-        boolean newDateFound = false;
-        final int firstBucketEntryNumber = listOfBuckets.get(0).getBucketNumber();
-
-        // get the BucketEntry
-        for (BucketEntry thisBucketEntry : listOfBuckets) {
-
-            // get VaultEntry information from the BucketEntry
-            VaultEntryType thisVaultEntryType = thisBucketEntry.getVaultEntry().getType();
-            Date thisBucketEntryTimestamp = thisBucketEntry.getVaultEntry().getTimestamp();
-            
-            if (lastFoundDate == null) {lastFoundDate = thisBucketEntryTimestamp; newDateFound = true;}
-            if (lastFoundDate.before(thisBucketEntryTimestamp)) {
-                // reset valuesForTheInterpolator
-                valuesForTheInterpolator = new ArrayList<>();
-                // set lastFoundDate
-                lastFoundDate = thisBucketEntryTimestamp;
-                // set newDateFound
-                newDateFound = true;
-            }
-            
-            // ***********************************
-            //  VALUES FOR THE INTERPOLATOR UPDATE
-            // ***********************************
-            
-            // check for new values inside the valuesForTheInterpolator list in the BucketEntry
-            if (!thisBucketEntry.getListOfValuesForTheInterpolator().isEmpty()) {
-                List<Pair<Integer, Pair<VaultEntryType, Double>>> tempList = new ArrayList<>();
-                for (Pair<Integer, Pair<VaultEntryType, Double>> pair : thisBucketEntry.getListOfValuesForTheInterpolator()){
-                    Pair<Integer, Pair<VaultEntryType, Double>> tempPair;
-                    tempPair = new Pair(pair.getKey(), new Pair(pair.getValue().getKey(), pair.getValue().getValue()));
-                    tempList.add(tempPair);
-                }
-                valuesForTheInterpolator.addAll(tempList);
-            }
-            // transfer the data from the last BucketEntrys with the same timestamp into the current BucketEntry
-            if (!valuesForTheInterpolator.isEmpty()) {
-                List<Pair<Integer, Pair<VaultEntryType, Double>>> tempList = new ArrayList<>();
-                for (Pair<Integer, Pair<VaultEntryType, Double>> pair : valuesForTheInterpolator){
-                    Pair<Integer, Pair<VaultEntryType, Double>> tempPair;
-                    tempPair = new Pair(pair.getKey(), new Pair(pair.getValue().getKey(), pair.getValue().getValue()));
-                    tempList.add(tempPair);
-                }
-                thisBucketEntry.setListOfValuesForTheInterpolator(tempList);
-            }
-            
-            // *************
-            // ARRAY UPDATES
-            // *************
-
-            // iterate through the array positions                    
-            for (int i = 0; i < maxArraySize; i++){
-                VaultEntryType vaultEntryTypeAtThisPosition = null;
-
-                // get the VaultEntryType at this position
-                for (VaultEntryType thisType : ARRAY_ENTRY_TRIGGER_HASHMAP.keySet()){
-                        if (ARRAY_ENTRY_TRIGGER_HASHMAP.get(thisType) == i) {vaultEntryTypeAtThisPosition = thisType; break;}  // TODO break out of for?
-                }
-                
-                // catch NullPointerException
-                if (vaultEntryTypeAtThisPosition == null) {throw new Error("No_vaild_VaultEntryType_found!");}
-
-                // get VaultEntryType info
-                boolean isOneHot = vaultEntryTypeAtThisPosition.isOneHot();
-                VaultEntryType mergeToThis = vaultEntryTypeAtThisPosition.mergeTo();
-                
-                // ************
-                // TIMER UPDATE
-                // ************
-                
-                // running timers
-                if(newDateFound) {
-                    if (tempValueTimer[i] > 0) {tempValueTimer[i] = tempValueTimer[i] - 1;}
-                    // when reaching the last thisBucketEntry for this timestamp 
-                    if ((i + 1) == maxArraySize) {newDateFound = false;}
-                }
-                
-                // get new timers
-                // new greater timer found
-                if (thisBucketEntry.getTimeCountDown(i) > tempValueTimer[i] + 1 ) {tempValueTimer[i] = thisBucketEntry.getTimeCountDown(i);}
-                // new timer found
-                if (thisVaultEntryType == vaultEntryTypeAtThisPosition) {tempValueTimer[i] = thisBucketEntry.getTimeCountDown(i);}
-                
-                // set timers into the BucketEntry
-                thisBucketEntry.setTimeCountDown(i, tempValueTimer[i]);
-                
-                // *******************************
-                // FIND NEXT VAULTENTRYTYPE UPDATE
-                // *******************************
-                
-                // get a new VaultEntryTpye
-                if (!thisBucketEntry.getFindNextArray(i).equals(VaultEntryType.EMPTY)) {tempFindNextVaultEntryType[i] = thisBucketEntry.getFindNextArray(i);}
-                
-                // set a given VaultEntryType
-                if (!tempFindNextVaultEntryType[i].equals(VaultEntryType.EMPTY)) {thisBucketEntry.setFindNextArray(i, tempFindNextVaultEntryType[i]);}
-                
-                // *************
-                // VALUE UPDATES
-                // *************
-                
-                boolean conditionValueTimer = false;
-                boolean conditionFindNextVaultEntryType = false;
-
-                // set boolean values for conditions
-                if (tempValueTimer[i] == 0) {conditionValueTimer = true;}
-                if (tempFindNextVaultEntryType[i].equals(VaultEntryType.EMPTY) 
-                        || !tempFindNextVaultEntryType[i].equals(VaultEntryType.EMPTY) 
-                            && tempFindNextVaultEntryType[i].equals(thisVaultEntryType)) {conditionFindNextVaultEntryType = true;}
-                        
-                if (isOneHot) {
-                    
-                    if (thisVaultEntryType.equals(vaultEntryTypeAtThisPosition)) {
-                        // new incoming value
-                        tempValues[i] = thisBucketEntry.getOnehotInformationArray(i);
-                    } else {
-                        // update other values
-                        if (conditionValueTimer && conditionFindNextVaultEntryType) {
-                            // correct the FindNextVaultEntryType info 
-                            // VaultEntryType has been found
-                            if (!tempFindNextVaultEntryType[i].equals(VaultEntryType.EMPTY)) {
-                                tempFindNextVaultEntryType[i] = VaultEntryType.EMPTY;
-                                thisBucketEntry.setFindNextArray(i, VaultEntryType.EMPTY);
-                            }
-                            tempValues[i] = 0.0;
-                        } else {
-                            tempValues[i] = 1.0;
-                        }
-                    }
-                    
-                } else {
-                    // not onehot
-                    // real values have to be handled according to thier type
-                    
-                    
-                }
-                
-                // set the BucketEntry value
-                thisBucketEntry.setOnehotInformationArray(i, tempValues[i]);
-            }
-        }
-    }
 }

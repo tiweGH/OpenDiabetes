@@ -76,6 +76,9 @@ public class BucketProcessor_new {
 
         // Bucket size == 1 min.
         List<BucketEntry> listOfBucketEntries = bucketListCreator.createListOfBuckets(firstBucketNumber, entryList);
+        // set all the array information
+        bucketListCreator.setBucketArrayInformation_new(listOfBucketEntries);
+        
         // remove duplicate timestamp BucketEntrys
         listOfBucketEntries = removeUnneededBucketEntrys(firstBucketNumber, listOfBucketEntries);
         // calculate averages
