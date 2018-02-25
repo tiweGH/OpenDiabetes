@@ -7,14 +7,17 @@ package de.jhit.opendiabetesvault.fx.gui;
 
 import de.jhit.opendiabetes.vault.container.SliceEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
+import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.container.csv.SliceCsVEntry;
 import de.jhit.opendiabetes.vault.container.csv.VaultCsvEntry;
 import de.jhit.opendiabetes.vault.data.VaultDao;
 import de.jhit.opendiabetes.vault.exporter.ExporterOptions;
 import de.jhit.opendiabetes.vault.exporter.FileExporter;
+import de.jhit.opendiabetes.vault.exporter.MLExporter1;
 import de.jhit.opendiabetes.vault.exporter.OdvDbJsonExporter;
 import de.jhit.opendiabetes.vault.exporter.SliceLayoutCsvExporter;
 import de.jhit.opendiabetes.vault.exporter.VaultCsvExporter;
+import de.jhit.opendiabetes.vault.exporter.VaultEntryJavacodeExporter;
 import de.jhit.opendiabetes.vault.importer.FileImporter;
 import de.jhit.opendiabetes.vault.importer.GoogleFitCsvImporter;
 import de.jhit.opendiabetes.vault.importer.LibreTxtImporter;
@@ -26,11 +29,14 @@ import de.jhit.opendiabetes.vault.importer.interpreter.ExerciseInterpreterOption
 import de.jhit.opendiabetes.vault.importer.interpreter.NonInterpreter;
 import de.jhit.opendiabetes.vault.importer.interpreter.PumpInterpreter;
 import de.jhit.opendiabetes.vault.importer.interpreter.PumpInterpreterOptions;
+import de.jhit.opendiabetes.vault.processing.BucketProcessor;
 import de.jhit.opendiabetes.vault.processing.DataSlicer;
 import de.jhit.opendiabetes.vault.processing.DataSlicerOptions;
 import de.jhit.opendiabetes.vault.processing.StaticInsulinSensivityCalculator;
 import de.jhit.opendiabetes.vault.processing.StaticInsulinSensivityCalculatorOptions;
+import de.jhit.opendiabetes.vault.processing.filter.Filter;
 import de.jhit.opendiabetes.vault.processing.filter.MealAbsenceFilter;
+import de.jhit.opendiabetes.vault.processing.filter.UnderThresholdFilter;
 import de.jhit.opendiabetes.vault.util.FileCopyUtil;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.io.File;
@@ -747,128 +753,147 @@ public class MainGuiController implements Initializable {
                                     TimestampUtils.fromLocalDate(
                                             exportPeriodFromPicker.getValue()),
                                     TimestampUtils.fromLocalDate(
-                                            exportPeriodToPicker.getValue(), 86399000));// 86399000 = 1 day - 1 second      
+                                            exportPeriodToPicker.getValue(), 86399000));// 86399000 = 1 day - 1 second
 
                             // standard export
-                            FileExporter exporter = new VaultCsvExporter(eOptions,
-                                    VaultDao.getInstance(),
-                                    odvExpotFileName);
-                            int result = exporter.exportDataToFile(null);
-                            if (result != VaultCsvExporter.RESULT_OK) {
-                                Platform.runLater(() -> {
-                                    Alert alert = new Alert(Alert.AlertType.ERROR,
-                                            "Could not export to odv csv file: "
-                                            + result + "\nSee logfile for details.",
-                                            ButtonType.CLOSE);
-                                    alert.setHeaderText(null);
-                                    alert.show();
-                                });
-                            }
-
-                            // odv export
-//                        odvExpotFileName = new File(path).getAbsolutePath()
-//                                + "/"
-//                                + "export-"
-//                                + VaultCsvEntry.VERSION_STRING
-//                                + "-"
-//                                + formatter.format(new Date())
-//                                + ".odv";
-//                        exporter = new VaultOdvExporter(eOptions,
-//                                VaultDao.getInstance(),
-//                                odvExpotFileName);
-//                        int result2 = exporter.exportDataToFile(null);
-//                        if (result2 != VaultCsvExporter.RESULT_OK) {
-//                            Platform.runLater(() -> {
-//                                Alert alert = new Alert(Alert.AlertType.ERROR,
-//                                        "Could not export to odv container file: "
-//                                        + result2 + "\nSee logfile for details.",
-//                                        ButtonType.CLOSE);
-//                                alert.setHeaderText(null);
-//                                alert.show();
-//                            });
-//                        }
-                            // code exporter
-//                        odvExpotFileName = new File(path).getAbsolutePath()
-//                                + "/"
-//                                + "export-"
-//                                + VaultCsvEntry.VERSION_STRING
-//                                + "-"
-//                                + formatter.format(new Date())
-//                                + ".txt";
-//                        exporter = new SourceCodeExporter(eOptions,
-//                                VaultDao.getInstance(),
-//                                odvExpotFileName);
-//                        int result4 = exporter.exportDataToFile(null);
-//                        if (result4 != VaultCsvExporter.RESULT_OK) {
-//                            Platform.runLater(() -> {
-//                                Alert alert = new Alert(Alert.AlertType.ERROR,
-//                                        "Could not export to code text file: "
-//                                        + result4 + "\nSee logfile for details.",
-//                                        ButtonType.CLOSE);
-//                                alert.setHeaderText(null);
-//                                alert.show();
-//                            });
-//                        }
-                            // slice exporter
-//                        List<SliceEntry> entries = new ArrayList<>();
-//                        // today    
-//                        Calendar date = new GregorianCalendar();
-//                        // reset hour, minutes, seconds and millis
-//                        date.set(Calendar.HOUR_OF_DAY, 0);
-//                        date.set(Calendar.MINUTE, 0);
-//                        date.set(Calendar.SECOND, 0);
-//                        date.set(Calendar.MILLISECOND, 0);
-//                        Date today = TimestampUtils.createCleanTimestamp(date.getTime());
-//
-//                        for (int i = 27; i >= 0; i--) {
-//                            entries.add(new SliceEntry(
-//                                    TimestampUtils.addMinutesToTimestamp(today, Math.round(i * -1440)),
-//                                    360));
-//                        }
-//                        odvExpotFileName = new File(path).getAbsolutePath()
-//                                + "/"
-//                                + "slice-"
-//                                + SliceCsVEntry.VERSION_STRING
-//                                + "-"
-//                                + formatter.format(new Date())
-//                                + ".csv";
-//                        exporter = new SliceLayoutCsvExporter(eOptions,
-//                                odvExpotFileName, entries);
-//                        int result3 = exporter.exportDataToFile(null);
-//                        if (result3 != VaultCsvExporter.RESULT_OK) {
-//                            Platform.runLater(() -> {
-//                                Alert alert = new Alert(Alert.AlertType.ERROR,
-//                                        "Could not export to odv csv file: "
-//                                        + result3 + "\nSee logfile for details.",
-//                                        ButtonType.CLOSE);
-//                                alert.setHeaderText(null);
-//                                alert.show();
-//                            });
-//                        }
-                            
-                            // json exporter
+//                            FileExporter exporter = new VaultCsvExporter(eOptions,
+//                                    VaultDao.getInstance(),
+//                                    odvExpotFileName);
+//                            int result = exporter.exportDataToFile(null);
+//                            if (result != VaultCsvExporter.RESULT_OK) {
+//                                Platform.runLater(() -> {
+//                                    Alert alert = new Alert(Alert.AlertType.ERROR,
+//                                            "Could not export to odv csv file: "
+//                                            + result + "\nSee logfile for details.",
+//                                            ButtonType.CLOSE);
+//                                    alert.setHeaderText(null);
+//                                    alert.show();
+//                                });
+//                            }
+                            // ML Exporter
                             odvExpotFileName = new File(path).getAbsolutePath()
                                     + "/"
-                                    + "export-"
+                                    + "exportBuckets-"
                                     + VaultCsvEntry.VERSION_STRING
                                     + "-"
                                     + formatter.format(new Date())
-                                    + ".json";
-                            exporter = new OdvDbJsonExporter(eOptions,
-                                    odvExpotFileName);
-                            int result5 = exporter.exportDataToFile(
-                                    data);
-                            if (result5 != VaultCsvExporter.RESULT_OK) {
-                            
-                                Platform.runLater(() -> {
-                                    Alert alert = new Alert(Alert.AlertType.ERROR,
-                                            "Could not export to json file: "
-                                            + result5 + "\nSee logfile for details.",
-                                            ButtonType.CLOSE);
-                                    alert.setHeaderText(null);
-                                    alert.show();
-                                });
-                            }
+                                    + ".csv";
+                            BucketProcessor bp = new BucketProcessor();
+                            MLExporter1.bucketsToCsv(bp.processor(data, 1), odvExpotFileName);
+
+                            // Java code exporter
+//                                                        System.out.println("Code Export");
+//                                                        odvExpotFileName = new File(path).getAbsolutePath()
+//                            +"/";
+//                            Filter fl = new UnderThresholdFilter(VaultEntryType.HEART_RATE, 10.0);
+//                            data = fl.filter(data).filteredData;
+//                             VaultEntryJavacodeExporter.compile(data, odvExpotFileName);
+//
+//
+//
+                            // odv export
+                            //                        odvExpotFileName = new File(path).getAbsolutePath()
+                            //                                + "/"
+                            //                                + "export-"
+                            //                                + VaultCsvEntry.VERSION_STRING
+                            //                                + "-"
+                            //                                + formatter.format(new Date())
+                            //                                + ".odv";
+                            //                        exporter = new VaultOdvExporter(eOptions,
+                            //                                VaultDao.getInstance(),
+                            //                                odvExpotFileName);
+                            //                        int result2 = exporter.exportDataToFile(null);
+                            //                        if (result2 != VaultCsvExporter.RESULT_OK) {
+                            //                            Platform.runLater(() -> {
+                            //                                Alert alert = new Alert(Alert.AlertType.ERROR,
+                            //                                        "Could not export to odv container file: "
+                            //                                        + result2 + "\nSee logfile for details.",
+                            //                                        ButtonType.CLOSE);
+                            //                                alert.setHeaderText(null);
+                            //                                alert.show();
+                            //                            });
+                            //                        }
+                            // code exporter
+                            //                        odvExpotFileName = new File(path).getAbsolutePath()
+                            //                                + "/"
+                            //                                + "export-"
+                            //                                + VaultCsvEntry.VERSION_STRING
+                            //                                + "-"
+                            //                                + formatter.format(new Date())
+                            //                                + ".txt";
+                            //                        exporter = new SourceCodeExporter(eOptions,
+                            //                                VaultDao.getInstance(),
+                            //                                odvExpotFileName);
+                            //                        int result4 = exporter.exportDataToFile(null);
+                            //                        if (result4 != VaultCsvExporter.RESULT_OK) {
+                            //                            Platform.runLater(() -> {
+                            //                                Alert alert = new Alert(Alert.AlertType.ERROR,
+                            //                                        "Could not export to code text file: "
+                            //                                        + result4 + "\nSee logfile for details.",
+                            //                                        ButtonType.CLOSE);
+                            //                                alert.setHeaderText(null);
+                            //                                alert.show();
+                            //                            });
+                            //                        }
+                            // slice exporter
+                            //                        List<SliceEntry> entries = new ArrayList<>();
+                            //                        // today
+                            //                        Calendar date = new GregorianCalendar();
+                            //                        // reset hour, minutes, seconds and millis
+                            //                        date.set(Calendar.HOUR_OF_DAY, 0);
+                            //                        date.set(Calendar.MINUTE, 0);
+                            //                        date.set(Calendar.SECOND, 0);
+                            //                        date.set(Calendar.MILLISECOND, 0);
+                            //                        Date today = TimestampUtils.createCleanTimestamp(date.getTime());
+                            //
+                            //                        for (int i = 27; i >= 0; i--) {
+                            //                            entries.add(new SliceEntry(
+                            //                                    TimestampUtils.addMinutesToTimestamp(today, Math.round(i * -1440)),
+                            //                                    360));
+                            //                        }
+                            //                        odvExpotFileName = new File(path).getAbsolutePath()
+                            //                                + "/"
+                            //                                + "slice-"
+                            //                                + SliceCsVEntry.VERSION_STRING
+                            //                                + "-"
+                            //                                + formatter.format(new Date())
+                            //                                + ".csv";
+                            //                        exporter = new SliceLayoutCsvExporter(eOptions,
+                            //                                odvExpotFileName, entries);
+                            //                        int result3 = exporter.exportDataToFile(null);
+                            //                        if (result3 != VaultCsvExporter.RESULT_OK) {
+                            //                            Platform.runLater(() -> {
+                            //                                Alert alert = new Alert(Alert.AlertType.ERROR,
+                            //                                        "Could not export to odv csv file: "
+                            //                                        + result3 + "\nSee logfile for details.",
+                            //                                        ButtonType.CLOSE);
+                            //                                alert.setHeaderText(null);
+                            //                                alert.show();
+                            //                            });
+                            //                        }
+                            // json exporter
+                            //                            odvExpotFileName = new File(path).getAbsolutePath()
+                            //                                    + "/"
+                            //                                    + "export-"
+                            //                                    + VaultCsvEntry.VERSION_STRING
+                            //                                    + "-"
+                            //                                    + formatter.format(new Date())
+                            //                                    + ".json";
+                            //                            exporter = new OdvDbJsonExporter(eOptions,
+                            //                                    odvExpotFileName);
+                            //                            int result5 = exporter.exportDataToFile(
+                            //                                    data);
+                            //                            if (result5 != VaultCsvExporter.RESULT_OK) {
+                            //
+                            //                                Platform.runLater(() -> {
+                            //                                    Alert alert = new Alert(Alert.AlertType.ERROR,
+                            //                                            "Could not export to json file: "
+                            //                                            + result5 + "\nSee logfile for details.",
+                            //                                            ButtonType.CLOSE);
+                            //                                    alert.setHeaderText(null);
+                            //                                    alert.show();
+                            //                                });
+                            //                            }
                         }
                         Platform.runLater(() -> {
                             exportPorgressBar.setProgress(0.5);
