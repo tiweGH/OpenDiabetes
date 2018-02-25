@@ -242,8 +242,10 @@ public class BucketEventTriggers {
 
     static {
         TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_SET = new HashMap<>();
+        // injected through a pump ... can be reset ... no parallel act times
         TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_SET.put(VaultEntryType.BASAL_PROFILE, 60);
-        TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_SET.put(VaultEntryType.BOLUS_NORMAL, 1);
+        // moved to TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_ONE
+        // TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_SET.put(VaultEntryType.BOLUS_NORMAL, 1);
     }
 
     // triggerEventNotOneHotActTimeGiven (act time given as a value in VaultEntry as value2)
@@ -268,6 +270,7 @@ public class BucketEventTriggers {
 
     static {
         TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_ONE = new HashSet<>();
+        TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_ONE.add(VaultEntryType.BOLUS_NORMAL);
         TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_ONE.add(VaultEntryType.GLUCOSE_CGM);
         TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_ONE.add(VaultEntryType.MEAL_BOLUS_CALCULATOR);
         TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_ONE.add(VaultEntryType.MEAL_MANUAL);
