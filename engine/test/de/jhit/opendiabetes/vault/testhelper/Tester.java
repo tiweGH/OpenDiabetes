@@ -24,6 +24,7 @@ import de.jhit.opendiabetes.vault.processing.BucketProcessor;
 
 import de.jhit.opendiabetes.vault.exporter.MLExporter1;
 import de.jhit.opendiabetes.vault.processing.BucketProcessor;
+import de.jhit.opendiabetes.vault.processing.BucketProcessor_new;
 import de.jhit.opendiabetes.vault.processing.BucketProcessor_runable;
 import de.jhit.opendiabetes.vault.processing.DataSlicer;
 import de.jhit.opendiabetes.vault.processing.DataSlicerOptions;
@@ -77,7 +78,7 @@ public class Tester {
             List<VaultEntry> entryList = StaticDataset.getStaticDataset();
             List<VaultEntry> sensyList = SensitivityDataset.getSensitivityDataset();
             List<VaultEntry> custSet = CustomDataset.getCustomDataset();
-            List<VaultEntry> workingSet = sensyList;
+            List<VaultEntry> workingSet = entryList;
             List<Filter> fl = new ArrayList<>();
             FilterResult res;
 
@@ -111,9 +112,11 @@ public class Tester {
 //            System.out.println(TimestampUtils.getMidDate(workingSet.get(0).getTimestamp(), workingSet.get(workingSet.size() - 1).getTimestamp()));
 //            System.out.println(tmp);
             MLExporter1 mle = new MLExporter1();
-            BucketProcessor bp = new BucketProcessor();
+            BucketProcessor_new bp = new BucketProcessor_new();
+//            BucketProcessor bp = new BucketProcessor();
 //            BucketProcessor_runable bp = new BucketProcessor_runable();
-            List<FinalBucketEntry> buckets = bp.processor(workingSet, 1);
+              List<FinalBucketEntry> buckets = bp.bucketProcessor(0, workingSet, 1);
+    //        List<FinalBucketEntry> buckets = bp.processor(workingSet, 1);
             MLExporter1.bucketsToCsv(buckets, "odv_export.csv");
             long minutes = (workingSet.get(workingSet.size() - 1).getTimestamp().getTime() - workingSet.get(0).getTimestamp().getTime()) / (60 * 1000);
             System.out.println("Test_end_output_minutes_:");
