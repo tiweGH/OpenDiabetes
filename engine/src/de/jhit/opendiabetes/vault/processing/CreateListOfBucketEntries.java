@@ -79,7 +79,6 @@ public class CreateListOfBucketEntries {
                 VaultEntry thisEntry = entryList.get(listPosition);
                 // get VaultEntry information
                 boolean isMLrelevant = thisEntry.getType().isMLrelevant();
-                boolean isOneHot = thisEntry.getType().isOneHot();
                 
                 // *****************************************************
                 // case according to the Timestamp inside the VaultEntry
@@ -99,7 +98,10 @@ public class CreateListOfBucketEntries {
                                 // replace the last BucketEntry in the output list
                                 
                                 // outputBucketEntry.size() - 1 == currentBucketEntryNumber - 1
-                                outputBucketList.remove(outputBucketList.size() - 1);                                           // TODO remove last thisBucketEntry method
+                    // TODO remove last thisBucketEntry method
+                    //outputBucketList.remove(outputBucketList.size() - 1);
+                            // TODO check if this method is ok
+                                outputBucketList = removeLastBucketEntry(outputBucketList);
                                 // create a new Bucket with the given VaultEntry
                                 // the new BucketEntry has the currentBucketEntryNumber from the removed BucketEntry
                                 newBucketEntry = instance.createNewBucketEntry((currentBucketEntryNumber - 1), entryList.get(vaultEntryListPosition));
@@ -507,5 +509,55 @@ public class CreateListOfBucketEntries {
                 thisBucketEntry.setValues(i, tempValues[i]);
             }
         }
+    }
+    
+    /**
+     * 
+     * @param listOfBuckets
+     * @return 
+     */
+    protected List<BucketEntry> removeLastBucketEntry(List<BucketEntry> listOfBuckets) {
+        List<BucketEntry> outputList = new ArrayList<>();
+        
+        for (int i = 0; i < (listOfBuckets.size() - 1); i++) {
+            BucketEntry thisEntry = listOfBuckets.get(i);
+            BucketEntry newEntry = new BucketEntry(thisEntry.getBucketNumber(), thisEntry.getVaultEntry());
+            
+            // copy all the info from the old BucketEntry into the new BucketEntry
+            for (int j = 0; j < BucketEntry.getNumberOfVaultEntryTriggerTypes(); j++) {
+                newEntry.setValueTimer(j, thisEntry.getValueTimer(j));
+                newEntry.setValues(j, thisEntry.getValues(j));
+                newEntry.setFindNextVaultEntryType(j, thisEntry.getFindNextVaultEntryType(j));
+            }
+            
+            List<Pair<VaultEntryType, Pair<Double, Double>>> tempListValuesForRunningComputation = new ArrayList<>();
+            for (Pair<VaultEntryType, Pair<Double, Double>> thisPair : thisEntry.getValuesForRunningComputation()) {
+                Pair<VaultEntryType, Pair<Double, Double>> newPair;
+                newPair = new Pair(thisPair.getKey(), new Pair(thisPair.getValue().getKey(), thisPair.getValue().getValue()));
+                tempListValuesForRunningComputation.add(newPair);
+            }
+            newEntry.setValuesForRunningComputation(tempListValuesForRunningComputation);
+            
+            List<Pair<VaultEntryType, Double>> tempComputedValuesForTheFinalBucketEntry = new ArrayList<>();
+            for (Pair<VaultEntryType, Double> thisPair : thisEntry.getComputedValuesForTheFinalBucketEntry()) {
+                Pair<VaultEntryType, Double> newPair;
+                newPair = new Pair(thisPair.getKey(), thisPair.getValue());
+                tempComputedValuesForTheFinalBucketEntry.add(newPair);
+            }
+            newEntry.setComputedValuesForTheFinalBucketEntry(tempComputedValuesForTheFinalBucketEntry);
+
+            List<Pair<Integer, Pair<VaultEntryType, Double>>> tempValuesForTheInterpolator = new ArrayList<>();
+            for (Pair<Integer, Pair<VaultEntryType, Double>> thisPair : thisEntry.getValuesForTheInterpolator()) {
+                Pair<Integer, Pair<VaultEntryType, Double>> newPair;
+                newPair = new Pair(thisPair.getKey(), new Pair(thisPair.getValue().getKey(), thisPair.getValue().getValue()));
+                tempValuesForTheInterpolator.add(newPair);
+            }
+            newEntry.setValuesForTheInterpolator(tempValuesForTheInterpolator);
+            
+            // add to the outputList
+            outputList.add(newEntry);
+        }
+        
+        return outputList;
     }
 }

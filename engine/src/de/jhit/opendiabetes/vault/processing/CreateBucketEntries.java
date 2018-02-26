@@ -148,10 +148,6 @@ public class CreateBucketEntries {
                     newBucket.setFindNextVaultEntryType(arrayPosition, VaultEntryType.EMPTY);
                     
                 }
-
-                // ===
-                // TODO CHECK
-                // ===
                 
                 // is the act time given?
             } else if (TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_GIVEN.contains(entry.getType())) {
@@ -170,10 +166,6 @@ public class CreateBucketEntries {
 
                 // set to EMPTY
                 newBucket.setFindNextVaultEntryType(arrayPosition, VaultEntryType.EMPTY);
-                
-                // ===
-                // TODO CHECK
-                // ===
 
                 // is the act time till some next event?
             } else if (TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_TILL_NEXT_EVENT.contains(entry.getType())) {
