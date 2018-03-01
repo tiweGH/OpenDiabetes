@@ -72,7 +72,7 @@ public class MLExporter {
             int j = 0;
             for (int i = 0; i < buckets.size()-1; i++) {
                 if (!buckets.get(i).getVaultEntry().getTimestamp().toString().equals(buckets.get(i + 1).getVaultEntry().getTimestamp().toString())) {
-                    String line = Arrays.toString(buckets.get(i).getFullOnehotInformationArray());
+                    String line = Arrays.toString(buckets.get(i).getFullValues());
                     line = line.replace("[", "");
                     line = line.replace("]", "");
                     line = line.replace("0.0", "0"); // hier muss noch ausgeschlossen werden, dass zB 0.02 erwischt wird

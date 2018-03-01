@@ -20,9 +20,10 @@ import de.jhit.opendiabetes.vault.container.FinalBucketEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.container.VaultEntryTypeGroup;
-import de.jhit.opendiabetes.vault.processing.BucketProcessor;
+import de.jhit.opendiabetes.vault.processing.BucketProcessor_old;
 
 import de.jhit.opendiabetes.vault.exporter.MLExporter1;
+import de.jhit.opendiabetes.vault.processing.BucketProcessor_old;
 import de.jhit.opendiabetes.vault.processing.BucketProcessor;
 import de.jhit.opendiabetes.vault.processing.BucketProcessor_runable;
 import de.jhit.opendiabetes.vault.processing.DataSlicer;
@@ -77,7 +78,7 @@ public class Tester {
             List<VaultEntry> entryList = StaticDataset.getStaticDataset();
             List<VaultEntry> sensyList = SensitivityDataset.getSensitivityDataset();
             List<VaultEntry> custSet = CustomDataset.getCustomDataset();
-            List<VaultEntry> workingSet = sensyList;
+            List<VaultEntry> workingSet = entryList;
             List<Filter> fl = new ArrayList<>();
             FilterResult res;
 

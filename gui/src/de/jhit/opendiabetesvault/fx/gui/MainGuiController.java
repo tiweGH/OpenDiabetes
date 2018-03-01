@@ -30,6 +30,8 @@ import de.jhit.opendiabetes.vault.importer.interpreter.NonInterpreter;
 import de.jhit.opendiabetes.vault.importer.interpreter.PumpInterpreter;
 import de.jhit.opendiabetes.vault.importer.interpreter.PumpInterpreterOptions;
 import de.jhit.opendiabetes.vault.processing.BucketProcessor;
+import de.jhit.opendiabetes.vault.processing.BucketProcessor_new;
+import de.jhit.opendiabetes.vault.processing.BucketProcessor_runable;
 import de.jhit.opendiabetes.vault.processing.DataSlicer;
 import de.jhit.opendiabetes.vault.processing.DataSlicerOptions;
 import de.jhit.opendiabetes.vault.processing.StaticInsulinSensivityCalculator;
@@ -771,26 +773,32 @@ public class MainGuiController implements Initializable {
 //                                });
 //                            }
                             // ML Exporter
+//                            odvExpotFileName = new File(path).getAbsolutePath()
+//                                    + "/"
+//                                    + "exportBuckets-"
+//                                    + VaultCsvEntry.VERSION_STRING
+//                                    + "-"
+//                                    + formatter.format(new Date())
+//                                    + ".csv";
+//                            BucketProcessor bp = new BucketProcessor();
+//                            MLExporter1.bucketsToCsv(bp.processor(data, 1), odvExpotFileName);
+                            BucketProcessor_new bpr = new BucketProcessor_new();
                             odvExpotFileName = new File(path).getAbsolutePath()
                                     + "/"
-                                    + "exportBuckets-"
+                                    + "exportBuckets_X2-"
                                     + VaultCsvEntry.VERSION_STRING
                                     + "-"
                                     + formatter.format(new Date())
                                     + ".csv";
-                            BucketProcessor bp = new BucketProcessor();
-                            MLExporter1.bucketsToCsv(bp.processor(data, 1), odvExpotFileName);
-
+                            MLExporter1.bucketsToCsv(bpr.bucketProcessor(0, data, 1), odvExpotFileName);
                             // Java code exporter
-//                                                        System.out.println("Code Export");
-//                                                        odvExpotFileName = new File(path).getAbsolutePath()
-//                            +"/";
-//                            Filter fl = new UnderThresholdFilter(VaultEntryType.HEART_RATE, 10.0);
+                            System.out.println("Code Export");
+                            odvExpotFileName = new File(path).getAbsolutePath()
+                                    + "/";
+//                            Filter fl = new UnderThresholdFilter(VaultEntryType.HEART_RATE, 5.0);
 //                            data = fl.filter(data).filteredData;
-//                             VaultEntryJavacodeExporter.compile(data, odvExpotFileName);
-//
-//
-//
+                            VaultEntryJavacodeExporter.compile(data, odvExpotFileName);
+
                             // odv export
                             //                        odvExpotFileName = new File(path).getAbsolutePath()
                             //                                + "/"

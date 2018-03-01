@@ -61,7 +61,7 @@ public class BucketAverageCalculationMethods {
         List<Pair<VaultEntryType, Double>> listOfComputedValues = new ArrayList<>();
 
         // iterate over all given pairs in the runningComputation list and add them up acording to their VaultEntryType
-        for (Pair<VaultEntryType, Pair<Double, Double>> iteratorPair : bucket.getRunningComputation()) {
+        for (Pair<VaultEntryType, Pair<Double, Double>> iteratorPair : bucket.getValuesForRunningComputation()) {
             VaultEntryType type = iteratorPair.getKey();
 
             doesListOfComputedValuesContainOutput = doesListOfComputedValuesContain(type, listOfComputedValues);
@@ -86,7 +86,7 @@ public class BucketAverageCalculationMethods {
 
         // now get all entries from the onehot array that should be summed up too
         for (VaultEntryType vaultEntryType : HASHSETS_TO_SUM_UP) {
-            VaultEntryType mergeToThisType = vaultEntryType.mergeTo();
+            VaultEntryType mergeToThisType = vaultEntryType.getMergeTo();
             int hashMapArrayPosition = ARRAY_ENTRY_TRIGGER_HASHMAP.get(vaultEntryType);
 
             doesListOfComputedValuesContainOutput = doesListOfComputedValuesContain(mergeToThisType, listOfComputedValues);
@@ -95,14 +95,14 @@ public class BucketAverageCalculationMethods {
                 int removeEntryAtThisPosition = doesListOfComputedValuesContainOutput.getValue();
                 Pair<VaultEntryType, Double> tempPair = listOfComputedValues.remove(removeEntryAtThisPosition);
                 // sum up the value in the pair with that in the bucket from the given mergeToThisType
-                tempPair = new Pair(tempPair.getKey(), tempPair.getValue() + bucket.getOnehotInformationArray(hashMapArrayPosition));
+                tempPair = new Pair(tempPair.getKey(), tempPair.getValue() + bucket.getValues(hashMapArrayPosition));
                 // put the pair bach into the list of computed values
                 listOfComputedValues.add(tempPair);
             } else {
                 // check if there is a value for the wanted mergeToThisType
                 // ... if there is create a new pair
                 // ... if not then move on
-                double valueInsideTheBucketEntry = bucket.getOnehotInformationArray(hashMapArrayPosition);
+                double valueInsideTheBucketEntry = bucket.getValues(hashMapArrayPosition);
                 if (valueInsideTheBucketEntry != 0.0) {
                     // create a new pair
                     Pair<VaultEntryType, Double> tempPair = new Pair(mergeToThisType, valueInsideTheBucketEntry);
@@ -116,7 +116,7 @@ public class BucketAverageCalculationMethods {
         // lineare interpolation
         // this is done in the processor method after all values have been collected from the BucketEntrys
         // save the generated list of values inside the BucketEntry for later use
-        bucket.setListOfComputedValuesForTheFinalBucketEntry(listOfComputedValues);
+        bucket.setComputedValuesForTheFinalBucketEntry(listOfComputedValues);
     }
 
     /**
@@ -180,7 +180,7 @@ public class BucketAverageCalculationMethods {
                 // check if a merge-to VaultEntryType is found or not
                 if (ARRAY_ENTRIES_AFTER_MERGE_TO.containsKey(type)) {
                     // not a merged mergeToThisType
-                    tempValue[ARRAY_ENTRIES_AFTER_MERGE_TO.get(type)] = entry.getOnehotInformationArray(ARRAY_ENTRY_TRIGGER_HASHMAP.get(type));
+                    tempValue[ARRAY_ENTRIES_AFTER_MERGE_TO.get(type)] = entry.getValues(ARRAY_ENTRY_TRIGGER_HASHMAP.get(type));
                 } else {
                     // a merged mergeToThisType
 
@@ -189,7 +189,7 @@ public class BucketAverageCalculationMethods {
             }
 
             // second run through the whole listOfComputedValuesForTheFinalBucketEntry
-            for (Pair<VaultEntryType, Double> pair : entry.getListOfComputedValuesForTheFinalBucketEntry()) {
+            for (Pair<VaultEntryType, Double> pair : entry.getComputedValuesForTheFinalBucketEntry()) {
                 // place found entries into the right array position
                 // look for the position of the entry that matches this merge-to VaultEntryType
                 //
