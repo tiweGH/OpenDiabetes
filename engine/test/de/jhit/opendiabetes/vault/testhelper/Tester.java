@@ -81,47 +81,14 @@ public class Tester {
             List<Filter> fl = new ArrayList<>();
             FilterResult res;
 
-//            Filter fil
-//                    = new NegateFilter(
-//                            new QueryFilter(new TimeSpanFilter(LocalTime.of(6, 0), LocalTime.of(8, 0)), new EventFilter(VaultEntryType.GLUCOSE_CGM), 5, -1));
-//            VaultEntrySlicer slic = new VaultEntrySlicer();
-//            FilterFactory fac = new ExcludeTimespanWithCriteria(LocalTime.of(11, 0), 120);
-//
-//            slic.registerFilter(fac.createFilter());//new TypeGroupFilter(VaultEntryTypeGroup.GLUCOSE) );
-//            //   slic.addClustering(2 * 60, VaultEntryType.GLUCOSE_CGM, VaultEntryType.CLUSTER_GLUCOSE_CGM);
-//
-//            res = slic.sliceEntries(workingSet);
-//            fl.add(new PositionFilter(PositionFilter.DATE_MIDDLE));
-//            fil = new TimeClusterFilter(fl, 120, 60);
-//            //res = fil.filter(workingSet);
-//            for (VaultEntry vaultEntry : res.filteredData) {
-//                System.out.println(vaultEntry.toString());
-//            }
-//            System.out.println(workingSet.size());
-//            System.out.println(res.size() + " " + res.timeSeries.size());
-//            long temp1, temp2;
-            //VaultEntry tmp = res.filteredData.get(res.filteredData.size() - 1);
-//            System.out.println("Missing: ");
-//            for (VaultEntry vaultEntry : workingSet) {
-//                if (!res.filteredData.contains(vaultEntry)) {
-//                    System.out.println(vaultEntry.getTimestamp());
-//                }
-//            }
-//            Date tmp = VaultEntryUtils.getWeightedMiddle(workingSet, VaultEntryType.GLUCOSE_CGM);
-//            System.out.println(TimestampUtils.getMidDate(workingSet.get(0).getTimestamp(), workingSet.get(workingSet.size() - 1).getTimestamp()));
-//            System.out.println(tmp);
-            MLExporter1 mle = new MLExporter1();
-            BucketProcessor bp = new BucketProcessor();
-//            BucketProcessor_runable bp = new BucketProcessor_runable();
-            List<FinalBucketEntry> buckets = bp.processor(workingSet, 1);
-            MLExporter1.bucketsToCsv(buckets, "odv_export.csv");
             long minutes = (workingSet.get(workingSet.size() - 1).getTimestamp().getTime() - workingSet.get(0).getTimestamp().getTime()) / (60 * 1000);
             System.out.println("Test_end_output_minutes_:");
             System.out.println(minutes);
+            System.out.println(TimestampUtils.createCleanTimestamp("2017.10.08-00:00", "yyyy.MM.dd-HH:mm").getTime());
+            System.out.println(TimestampUtils.createCleanTimestamp("2017.11.08-00:00", "yyyy.MM.dd-HH:mm").getTime());
+            System.out.println(new Date(1510095600000L).toString());
 
         } catch (ParseException ex) {
-            Logger.getLogger(Tester.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
             Logger.getLogger(Tester.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
