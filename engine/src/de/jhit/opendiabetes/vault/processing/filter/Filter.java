@@ -60,12 +60,13 @@ public abstract class Filter {
         List<VaultEntry> preprocessedData = setUpBeforeFilter(data);
 
         if (this.getType() == FilterType.NONE) {
-            //shortcut, since nothing has to be filtered
+            //Bypass, since nothing has to be filtered
             if (preprocessedData != null && preprocessedData.size() > 0) {
                 timeSeries.add(new Pair<>(preprocessedData.get(0).getTimestamp(), preprocessedData.get(data.size() - 1).getTimestamp()));
             }
             filterResult = new FilterResult(preprocessedData, timeSeries);
         } else {
+            //standard Filter process
             List<VaultEntry> entryResult = new ArrayList<>();
             Date startOfCurentTimeSeries = null;
             Date lastTimeStamp = null;

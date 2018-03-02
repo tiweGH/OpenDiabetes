@@ -88,6 +88,7 @@ public class Tester {
             System.out.println(TimestampUtils.createCleanTimestamp("2017.10.08-00:00", "yyyy.MM.dd-HH:mm").getTime());
             System.out.println(TimestampUtils.createCleanTimestamp("2017.11.08-00:00", "yyyy.MM.dd-HH:mm").getTime());
             System.out.println(new Date(1510095600000L).toString());
+            System.out.println(VaultEntryType.valueOf("GLUCOSE_CGM_ALERT").isOneHot());
 
         } catch (ParseException ex) {
             Logger.getLogger(Tester.class.getName()).log(Level.SEVERE, null, ex);

@@ -97,7 +97,7 @@ public class MlVisualizer extends Application {
 
                             if (counter == 0) {
                                 System.out.print("Parsing Header-names");
-                                String[] lineSplit = line.split(",");
+                                String[] lineSplit = line.split(", ");
 
                                 for (String string : lineSplit) {
                                     tempVaultEntryMap.put(string, new ArrayList<Double>());
@@ -133,56 +133,63 @@ public class MlVisualizer extends Application {
                         int theSize = headerNames.size();
                         XYChart.Series newSeries;
                         XYChart.Data tempData;
-//                        for (String headerName : headerNames) {
-//                            if (firstElement) {
-//                                firstElement = false;
-//                            } else {
-//                                System.out.println("Start " + counter2 + " of " + theSize);
-//                                newSeries = new XYChart.Series();
-//                                newSeries.setName(headerName);
-//                                counter = 0;
-//
-//                                for (Double entryValue : tempVaultEntryMap.get(headerName)) {
-//                                    tempData = new XYChart.Data(new Integer(counter), entryValue);
-//                                    newSeries.getData().add(tempData);
-//                                    counter++;
-//                                }
-//                                //tempVaultEntryMap.remove(headerName);
-//                                System.out.println("Add " + counter2 + " of " + theSize);
-//                                lineChart.getData().add(newSeries);
-//                                counter2++;
-//                            }
-//                        }
+                        for (String headerName : headerNames) {
+                            if (firstElement) {
+                                firstElement = false;
+                            } else {
+                                boolean isOnheHot = VaultEntryType.valueOf(headerName).isOneHot();
+                                System.out.println("Start: " + headerName + " " + counter2 + " of " + theSize);
+                                newSeries = new XYChart.Series();
+                                String name = headerName;
+                                if (isOnheHot) {
+                                    name = name + " - OH";
+                                }
+                                newSeries.setName(name);
+                                counter = 0;
+                                for (Double entryValue : tempVaultEntryMap.get(headerName)) {
+                                    if (isOnheHot) {
+                                        entryValue = entryValue * 200;
+                                    }
+                                    tempData = new XYChart.Data(new Integer(counter), entryValue);
+                                    newSeries.getData().add(tempData);
+                                    counter++;
+                                }
+                                //tempVaultEntryMap.remove(headerName);
+                                System.out.println("Add " + headerName);
+                                lineChart.getData().add(newSeries);
+                                counter2++;
+                            }
+                        }
                         //tiweGH hotfix
-                        if (headerNames.contains(" GLUCOSE_CGM")) {
-                            System.out.println(" GLUCOSE_CGM");
-                            newSeries = new XYChart.Series();
-                            newSeries.setName(" GLUCOSE_CGM");
-                            counter = 0;
-                            for (Double entryValue : tempVaultEntryMap.get(" GLUCOSE_CGM")) {
-                                tempData = new XYChart.Data(new Integer(counter), entryValue);
-                                newSeries.getData().add(tempData);
-                                counter++;
-                            }
-                            lineChart.getData().add(newSeries);
-                        }
-                        if (headerNames.contains(" HEART_RATE")) {
-                            System.out.println(" HEART_RATE");
-                            newSeries = new XYChart.Series();
-                            newSeries.setName(" HEART_RATE");
-                            counter = 0;
-                            for (Double entryValue : tempVaultEntryMap.get(" HEART_RATE")) {
-                                tempData = new XYChart.Data(new Integer(counter), entryValue);
-                                newSeries.getData().add(tempData);
-                                counter++;
-                            }
-                            lineChart.getData().add(newSeries);
-                        }
+//                        if (headerNames.contains(" GLUCOSE_CGM")) {
+//                            System.out.println(" GLUCOSE_CGM");
+//                            newSeries = new XYChart.Series();
+//                            newSeries.setName(" GLUCOSE_CGM");
+//                            counter = 0;
+//                            for (Double entryValue : tempVaultEntryMap.get(" GLUCOSE_CGM")) {
+//                                tempData = new XYChart.Data(new Integer(counter), entryValue);
+//                                newSeries.getData().add(tempData);
+//                                counter++;
+//                            }
+//                            lineChart.getData().add(newSeries);
+//                        }
+//                        if (headerNames.contains(" HEART_RATE")) {
+//                            System.out.println(" HEART_RATE");
+//                            newSeries = new XYChart.Series();
+//                            newSeries.setName(" HEART_RATE");
+//                            counter = 0;
+//                            for (Double entryValue : tempVaultEntryMap.get(" HEART_RATE")) {
+//                                tempData = new XYChart.Data(new Integer(counter), entryValue);
+//                                newSeries.getData().add(tempData);
+//                                counter++;
+//                            }
+//                            lineChart.getData().add(newSeries);
+//                        }
                         //---
                         System.out.print(" - done");
                         System.out.println("");
-                        System.out.print("Plotting tooltips");
-                        //adding tooltip to linechart
+//                        System.out.print("Plotting tooltips");
+//                        //adding tooltip to linechart
 //                        for (XYChart.Series<Number, Number> series : lineChart.getData()) {
 //                            for (XYChart.Data<Number, Number> data : series.getData()) {
 //                                Alert information = new Alert(AlertType.CONFIRMATION);
@@ -195,7 +202,7 @@ public class MlVisualizer extends Application {
 //                            }
 //
 //                        }
-                        System.out.print(" - done");
+//                        System.out.print(" - done");
                     }
                 } else {
                     Alert alert = new Alert(AlertType.ERROR);

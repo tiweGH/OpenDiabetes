@@ -113,7 +113,7 @@ public class ContinuousWrapper extends Filter {
     }
 
     @Override
-    public FilterResult filter(List<VaultEntry> data) {
+    public List<VaultEntry> setUpBeforeFilter(List<VaultEntry> data) {
         FilterResult result;
         FilterResult tempResult = null;
         //works similar to Slicer
@@ -127,8 +127,7 @@ public class ContinuousWrapper extends Filter {
         }
         timeSpansForContinuousData = TimestampUtils.normalizeTimeSeries(tempResult.timeSeries, marginBefore, marginAfter);
         // timeSpansForContinuousData = TimestampUtils.getNormalizedTimeSeries(tempResult.filteredData, marginBefore, marginAfter);
-        result = super.filter(data);
-        return result;
+        return data;
     }
 
     @Override

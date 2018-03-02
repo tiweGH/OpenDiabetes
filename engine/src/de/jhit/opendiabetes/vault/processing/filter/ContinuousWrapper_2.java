@@ -95,11 +95,9 @@ public class ContinuousWrapper_2 extends Filter {
     }
 
     @Override
-    public FilterResult filter(List<VaultEntry> data) {
-        FilterResult result;
+    public List<VaultEntry> setUpBeforeFilter(List<VaultEntry> data) {
         timeSpansForContinuousData = TimestampUtils.getNormalizedTimeSeries(data, marginBefore, marginAfter);
-        result = super.filter(baseData);
-        return result;
+        return baseData;
     }
 
     @Override

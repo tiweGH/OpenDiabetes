@@ -30,12 +30,12 @@ import de.jhit.opendiabetes.vault.importer.interpreter.NonInterpreter;
 import de.jhit.opendiabetes.vault.importer.interpreter.PumpInterpreter;
 import de.jhit.opendiabetes.vault.importer.interpreter.PumpInterpreterOptions;
 import de.jhit.opendiabetes.vault.processing.BucketProcessor;
-import de.jhit.opendiabetes.vault.processing.BucketProcessor_new;
 import de.jhit.opendiabetes.vault.processing.BucketProcessor_runable;
 import de.jhit.opendiabetes.vault.processing.DataSlicer;
 import de.jhit.opendiabetes.vault.processing.DataSlicerOptions;
 import de.jhit.opendiabetes.vault.processing.StaticInsulinSensivityCalculator;
 import de.jhit.opendiabetes.vault.processing.StaticInsulinSensivityCalculatorOptions;
+import de.jhit.opendiabetes.vault.processing.filter.DateTimeSpanFilter;
 import de.jhit.opendiabetes.vault.processing.filter.Filter;
 import de.jhit.opendiabetes.vault.processing.filter.MealAbsenceFilter;
 import de.jhit.opendiabetes.vault.processing.filter.UnderThresholdFilter;
@@ -773,16 +773,10 @@ public class MainGuiController implements Initializable {
 //                                });
 //                            }
                             // ML Exporter
-//                            odvExpotFileName = new File(path).getAbsolutePath()
-//                                    + "/"
-//                                    + "exportBuckets-"
-//                                    + VaultCsvEntry.VERSION_STRING
-//                                    + "-"
-//                                    + formatter.format(new Date())
-//                                    + ".csv";
-//                            BucketProcessor bp = new BucketProcessor();
-//                            MLExporter1.bucketsToCsv(bp.processor(data, 1), odvExpotFileName);
-                            BucketProcessor_new bpr = new BucketProcessor_new();
+                            Filter fl = new DateTimeSpanFilter(data.get(0).getTimestamp(), TimestampUtils.addMinutesToTimestamp(data.get(0).getTimestamp(), 48 * 60));
+                            List<VaultEntry> data2 = fl.filter(data).filteredData;
+
+                            System.out.println("Filtered: " + data.get(0).getTimestamp() + " + " + TimestampUtils.addMinutesToTimestamp(data.get(0).getTimestamp(), 48 * 60).toString());
                             odvExpotFileName = new File(path).getAbsolutePath()
                                     + "/"
                                     + "exportBuckets_X2-"
@@ -790,14 +784,13 @@ public class MainGuiController implements Initializable {
                                     + "-"
                                     + formatter.format(new Date())
                                     + ".csv";
-                            MLExporter1.bucketsToCsv(bpr.bucketProcessor(0, data, 1), odvExpotFileName);
+                            MLExporter1 exp = new MLExporter1(1, odvExpotFileName);
+                            exp.exportDataToFile(data2);
                             // Java code exporter
                             System.out.println("Code Export");
                             odvExpotFileName = new File(path).getAbsolutePath()
                                     + "/";
-//                            Filter fl = new UnderThresholdFilter(VaultEntryType.HEART_RATE, 5.0);
-//                            data = fl.filter(data).filteredData;
-                            VaultEntryJavacodeExporter.compile(data, odvExpotFileName);
+                            VaultEntryJavacodeExporter.compile(data2, odvExpotFileName);
 
                             // odv export
                             //                        odvExpotFileName = new File(path).getAbsolutePath()
