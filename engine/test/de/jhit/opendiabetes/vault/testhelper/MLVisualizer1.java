@@ -28,7 +28,7 @@ import javafx.stage.Stage;
  *
  * @author Daniel
  */
-public class MLVisualizer extends Application {
+public class MLVisualizer1 extends Application {
 
     private File file;
     private HashMap<String, List<Double>> tempVaultEntryMap;
