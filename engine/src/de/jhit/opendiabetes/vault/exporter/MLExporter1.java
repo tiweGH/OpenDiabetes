@@ -21,8 +21,8 @@ import de.jhit.opendiabetes.vault.container.BucketEventTriggers;
 import de.jhit.opendiabetes.vault.container.FinalBucketEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
+import de.jhit.opendiabetes.vault.container.csv.ExportEntry;
 import de.jhit.opendiabetes.vault.processing.BucketProcessor;
-import de.jhit.opendiabetes.vault.processing.BucketProcessor_old;
 import de.jhit.opendiabetes.vault.processing.BucketProcessor_runable;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -42,22 +42,14 @@ import java.util.logging.Logger;
  *
  * @author jorg
  */
-public class MLExporter1 {
+public class MLExporter1 extends FileExporter{
 
-    private int wantedBucketSize;
-    private String filePath;
-
-    public MLExporter1(int wantedBucketSize, String filePath) {
-        this.wantedBucketSize = wantedBucketSize;
-        this.filePath = filePath;
-    }
-
-    protected String deleteComma(VaultEntry entry) {
+    protected static String deleteComma(VaultEntry entry) {
         String result = entry.toString();
         return result.replace(",", " ");
     }
 
-    protected String createHeader() {
+    protected static String createHeader() {
 
         HashMap<VaultEntryType, Integer> oneHotHeader = BucketEventTriggers.ARRAY_ENTRIES_AFTER_MERGE_TO;
         String[] header = new String[oneHotHeader.size()];
@@ -77,21 +69,18 @@ public class MLExporter1 {
         return result;
     }
 
-    private void shortenValues(FinalBucketEntry bucket, int i) throws ParseException {
-        if ((bucket.getOnehotInformationArray(i) != 0.0) && (bucket.getOnehotInformationArray(i) != 1.0)) {
-            BigDecimal bd = new BigDecimal(bucket.getOnehotInformationArray(i));
-            bd = bd.setScale(2, RoundingMode.HALF_UP);
-            bucket.setOnehotInformationArray(i, bd.doubleValue());
-        }
-    }
+    private static void shortenValues(FinalBucketEntry bucket, int i) throws ParseException {
+                if ((bucket.getOnehotInformationArray(i) != 0.0) && (bucket.getOnehotInformationArray(i) != 1.0)) {
+                    BigDecimal bd = new BigDecimal(bucket.getOnehotInformationArray(i));
+                    bd = bd.setScale(2, RoundingMode.HALF_UP);
+                    bucket.setOnehotInformationArray(i, bd.doubleValue());
+                }
+            }
 
-    public void exportDataToFile(List<VaultEntry> data) throws IOException, ParseException {
-        BucketProcessor processor = new BucketProcessor();
-        List<FinalBucketEntry> buckets = processor.bucketProcessing(0, data, wantedBucketSize);
-
+    public static void bucketsToCsv(List<FinalBucketEntry> buckets, String filename) throws IOException, ParseException {
         int x = buckets.get(1).getFullOnehotInformationArray().length;
         FileWriter fw;
-        fw = new FileWriter(filePath);
+        fw = new FileWriter(filename);
         fw.write("index, " + createHeader() + "\n");
         try {
             //int j = 0;
@@ -113,4 +102,23 @@ public class MLExporter1 {
         }
     }
 
+    public static void main(String[] args) throws ParseException, SQLException, IOException {
+
+        List<FinalBucketEntry> buckets = new BucketProcessor_runable().processor(StaticDataset.getStaticDataset(), 1);
+//        for (int i = 0; i < StaticDataset.getStaticDataset().size(); i++) {
+//
+//            buckets.add(new BucketEntry(0, StaticDataset.getStaticDataset().get(i)));
+//        }
+        bucketsToCsv(buckets, "odv_exportxx.csv");
+
+    }
+
+    public MLExporter1(ExporterOptions options, String filePath) {
+        super(options, filePath);
+    }
+
+    @Override
+    protected List<ExportEntry> prepareData(List<VaultEntry> data) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }
