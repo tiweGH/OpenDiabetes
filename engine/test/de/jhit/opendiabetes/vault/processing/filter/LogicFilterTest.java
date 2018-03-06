@@ -64,9 +64,9 @@ public class LogicFilterTest extends Assert {
     public void testOnlyOneResultFilter() throws ParseException {
         System.out.println("filter");
         List<Filter> filters = new ArrayList<>();
-        filters.add(new EventFilter(VaultEntryType.HEART_RATE));
-        filters.add(new EventFilter(VaultEntryType.HEART_RATE_VARIABILITY));
-        filters.add(new EventFilter(VaultEntryType.SLEEP_LIGHT));
+        filters.add(new VaultEntryTypeFilter(VaultEntryType.HEART_RATE));
+        filters.add(new VaultEntryTypeFilter(VaultEntryType.HEART_RATE_VARIABILITY));
+        filters.add(new VaultEntryTypeFilter(VaultEntryType.SLEEP_LIGHT));
         
         
         List<VaultEntry> data = StaticDataset.getStaticDataset();
@@ -81,9 +81,9 @@ public class LogicFilterTest extends Assert {
     public void testFilter() throws ParseException {
         System.out.println("filter");
         List<Filter> filters = new ArrayList<>();
-        filters.add(new EventFilter(VaultEntryType.HEART_RATE));
-        filters.add(new EventFilter(VaultEntryType.HEART_RATE_VARIABILITY));
-        filters.add(new EventFilter(VaultEntryType.SLEEP_LIGHT));
+        filters.add(new VaultEntryTypeFilter(VaultEntryType.HEART_RATE));
+        filters.add(new VaultEntryTypeFilter(VaultEntryType.HEART_RATE_VARIABILITY));
+        filters.add(new VaultEntryTypeFilter(VaultEntryType.SLEEP_LIGHT));
         
         
         List<VaultEntry> data = StaticDataset.getStaticDataset();

@@ -16,31 +16,18 @@
  */
 package de.jhit.opendiabetes.vault.testhelper.filterfactory;
 
-import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.container.VaultEntryTypeGroup;
-import de.jhit.opendiabetes.vault.processing.filter.CombinationFilter;
-import de.jhit.opendiabetes.vault.processing.filter.CombinationFilter;
-import de.jhit.opendiabetes.vault.processing.filter.QueryFilter;
-import de.jhit.opendiabetes.vault.processing.filter.CounterFilter;
-import de.jhit.opendiabetes.vault.processing.filter.DateTimeSpanFilter;
-import de.jhit.opendiabetes.vault.processing.filter.EventFilter;
+import de.jhit.opendiabetes.vault.processing.filter.AndFilter;
 import de.jhit.opendiabetes.vault.processing.filter.Filter;
-import de.jhit.opendiabetes.vault.processing.filter.FilterType;
-import de.jhit.opendiabetes.vault.processing.filter.LogicFilter;
 import de.jhit.opendiabetes.vault.processing.filter.NegateFilter;
-import de.jhit.opendiabetes.vault.processing.filter.NoneFilter;
-import de.jhit.opendiabetes.vault.processing.filter.OverThresholdFilter;
-import de.jhit.opendiabetes.vault.processing.filter.PositionFilter;
+import de.jhit.opendiabetes.vault.processing.filter.ThresholdFilter;
+import de.jhit.opendiabetes.vault.processing.filter.QueryFilter;
 import de.jhit.opendiabetes.vault.processing.filter.TimeClusterFilter;
-import de.jhit.opendiabetes.vault.processing.filter.TimePointFilter;
-import de.jhit.opendiabetes.vault.processing.filter.TimeSpanFilter;
 import de.jhit.opendiabetes.vault.processing.filter.TypeGroupFilter;
-import de.jhit.opendiabetes.vault.processing.filter.UnderThresholdFilter;
-import de.jhit.opendiabetes.vault.util.TimestampUtils;
+import de.jhit.opendiabetes.vault.processing.filter.VaultEntryTypeFilter;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -54,21 +41,28 @@ public class ExcludeTimespanWithCriteria extends FilterFactory {
     public ExcludeTimespanWithCriteria(LocalTime startTime, long timespan) {
 
         List<Filter> innerFilters = new ArrayList<>();
-//        innerFilters.add(new CombinationFilter(data, new OverThresholdFilter(VaultEntryType.STRESS, 100.0), new DateTimeSpanFilter(startTime, endTime)));
-//        innerFilters.add(new CombinationFilter(data, new OverThresholdFilter(VaultEntryType.GLUCOSE_CGM, 120.0), new DateTimeSpanFilter(startTime, endTime)));
         innerFilters.add(
-                new QueryFilter(new OverThresholdFilter(VaultEntryType.STRESS, 100.0), 1, -1)
+                new QueryFilter(
+                        new AndFilter(
+                                new VaultEntryTypeFilter(VaultEntryType.STRESS),
+                                new ThresholdFilter(100.0, ThresholdFilter.OVER)),
+                        1, QueryFilter.DONT_CARE)
         );
         innerFilters.add(
-                new QueryFilter(new OverThresholdFilter(VaultEntryType.GLUCOSE_CGM, 120.0), 1, -1)
+                new QueryFilter(
+                        new AndFilter(
+                                new VaultEntryTypeFilter(VaultEntryType.GLUCOSE_CGM),
+                                new ThresholdFilter(120.0, ThresholdFilter.OVER)),
+                        1, QueryFilter.DONT_CARE)
         );
         innerFilters.add(
-                new QueryFilter(new EventFilter(VaultEntryType.BOLUS_NORMAL), -1, 1)
+                new QueryFilter(
+                        new VaultEntryTypeFilter(VaultEntryType.BOLUS_NORMAL),
+                        QueryFilter.DONT_CARE, 1)
         );
-        filters.add(new NegateFilter(
-                new TimeClusterFilter(innerFilters, startTime, timespan, TimeClusterFilter.DAY - timespan)
-        )
-        );
+        filters.add(
+                new NegateFilter(
+                        new TimeClusterFilter(innerFilters, startTime, timespan, TimeClusterFilter.DAY - timespan)));
 
     }
 

@@ -17,6 +17,7 @@
 package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -39,9 +40,15 @@ public class OrFilter extends Filter {
         this.filters = filters;
     }
 
+    public OrFilter(Filter firstFilter, Filter secondFilter) {
+        this.filters = new ArrayList<>();
+        filters.add(firstFilter);
+        filters.add(secondFilter);
+    }
+
     @Override
     FilterType getType() {
-        return FilterType.FILTER_DECORATOR;
+        return FilterType.OR;
     }
 
     @Override
@@ -69,6 +76,10 @@ public class OrFilter extends Filter {
 
     @Override
     Filter update(VaultEntry vaultEntry) {
-        return new OrFilter(filters);
+        List<Filter> tempFilters = new ArrayList<>();
+        for (Filter filter : this.filters) {
+            tempFilters.add(filter.update(vaultEntry));
+        }
+        return new OrFilter(tempFilters);
     }
 }

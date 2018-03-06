@@ -23,7 +23,6 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javafx.util.Pair;
 
 /**
  * The TimeClusterFilter is a more complex timespan-filter, filters given to the
@@ -163,7 +162,7 @@ public class TimeClusterFilter extends Filter {
 
     @Override
     FilterType getType() {
-        return FilterType.COMBINATION_FILTER;
+        return FilterType.CLUSTER;
     }
 
     @Override

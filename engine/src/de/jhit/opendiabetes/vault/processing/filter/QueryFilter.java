@@ -17,10 +17,7 @@
 package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import javafx.util.Pair;
 
 /**
  * @author tiweGH
@@ -34,6 +31,8 @@ public class QueryFilter extends Filter {
     private int minSize, maxSize;
     private List<VaultEntry> mainFilterResult;
 
+    public final static int DONT_CARE = -1;
+
     /**
      * This Filter runs its main filter and then checks if it matches the given
      * criteria, in detail, it filters the result with the inner filter and
@@ -42,8 +41,8 @@ public class QueryFilter extends Filter {
      *
      * @param mainFilter filter which will be checked
      * @param innerFilter used to check the result of the main filter
-     * @param minSize minimum size of the result. use "-1" for don't care
-     * @param maxSize maximum size of the result. use "-1" for don't care
+     * @param minSize minimum size of the result. use "DONT_CARE" for don't care
+     * @param maxSize maximum size of the result. use "DONT_CARE" for don't care
      */
     public QueryFilter(Filter mainFilter, Filter innerFilter, int minSize, int maxSize) {
         this.mainFilter = mainFilter;
@@ -59,8 +58,8 @@ public class QueryFilter extends Filter {
      * returned.
      *
      * @param innerFilter used to check the result of the main filter
-     * @param minSize minimum size of the result. use "-1" for don't care
-     * @param maxSize maximum size of the result. use "-1" for don't care
+     * @param minSize minimum size of the result. use "DONT_CARE" for don't care
+     * @param maxSize maximum size of the result. use "DONT_CARE" for don't care
      */
     public QueryFilter(Filter innerFilter, int minSize, int maxSize) {
         this(new NoneFilter(), innerFilter, minSize, maxSize);
@@ -71,7 +70,7 @@ public class QueryFilter extends Filter {
         mainFilterResult = mainFilter.filter(data).filteredData;
         List<VaultEntry> innerResult = innerFilter.filter(mainFilterResult).filteredData;
 
-        resultValid = (minSize == -1 || innerResult.size() >= minSize) && (maxSize == -1 || innerResult.size() <= maxSize);
+        resultValid = (minSize == DONT_CARE || innerResult.size() >= minSize) && (maxSize == DONT_CARE || innerResult.size() <= maxSize);
 
         //filters with the basic method
         //result = (dataPointer != null) ? dataPointer.getDataset() : innerFilterResult;
@@ -80,7 +79,7 @@ public class QueryFilter extends Filter {
 
     @Override
     FilterType getType() {
-        return FilterType.COMBINATION_FILTER;
+        return FilterType.QUERY;
     }
 
     @Override

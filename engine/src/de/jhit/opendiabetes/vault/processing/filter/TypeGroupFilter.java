@@ -18,7 +18,6 @@ package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryTypeGroup;
-import java.util.List;
 
 /**
  *
@@ -40,7 +39,7 @@ public class TypeGroupFilter extends Filter {
 
     @Override
     FilterType getType() {
-        return FilterType.EVENT_FILTER;
+        return FilterType.GROUP;
     }
 
     @Override

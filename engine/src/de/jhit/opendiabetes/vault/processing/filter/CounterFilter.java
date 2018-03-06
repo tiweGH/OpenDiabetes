@@ -17,9 +17,6 @@
 package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
-import de.jhit.opendiabetes.vault.container.VaultEntryType;
-import java.util.List;
-import javax.naming.spi.DirStateFactory;
 
 /**
  *
@@ -35,10 +32,11 @@ public class CounterFilter extends Filter {
 
     /**
      * Standard Constructor
-     * 
+     *
      * @param filter: Filter, which should be Counted
-     * @param hitCounter: After how many Hits 
-     * @param onlyOneResult: When true only one result will returned. (first appearence)
+     * @param hitCounter: After how many Hits
+     * @param onlyOneResult: When true only one result will returned. (first
+     * appearence)
      */
     public CounterFilter(Filter filter, int hitCounter, boolean onlyOneResult) {
         this.filter = filter;
@@ -49,7 +47,7 @@ public class CounterFilter extends Filter {
 
     @Override
     FilterType getType() {
-        return FilterType.EVENT_FILTER;
+        return FilterType.COUNTER;
     }
 
     @Override

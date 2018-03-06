@@ -17,12 +17,8 @@
 package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
-import de.jhit.opendiabetes.vault.container.VaultEntryType;
-import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import de.jhit.opendiabetes.vault.util.VaultEntryUtils;
-import java.util.Date;
 import java.util.List;
-import javax.naming.spi.DirStateFactory;
 
 /**
  *
@@ -88,7 +84,7 @@ public class PositionFilter extends Filter {
 
     @Override
     FilterType getType() {
-        return FilterType.EVENT_FILTER;
+        return FilterType.POSITION;
     }
 
     @Override
@@ -122,6 +118,6 @@ public class PositionFilter extends Filter {
 
     @Override
     Filter update(VaultEntry vaultEntry) {
-        return new PositionFilter(filter, filterMode);
+        return new PositionFilter(filter.update(vaultEntry), filterMode);
     }
 }

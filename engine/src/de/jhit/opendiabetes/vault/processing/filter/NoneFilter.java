@@ -16,11 +16,7 @@
  */
 package de.jhit.opendiabetes.vault.processing.filter;
 
-import com.sun.javafx.scene.control.skin.VirtualFlow;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
-import java.util.Date;
-import java.util.List;
-import javafx.util.Pair;
 
 /**
  * Does nothing.

@@ -63,7 +63,7 @@ public class CounterFilterTest extends Assert {
     public void testOnlyOneResultFilter() throws ParseException {
         System.out.println("filter");
         List<VaultEntry> data = StaticDataset.getStaticDataset();
-        CounterFilter instance = new CounterFilter(new EventFilter(VaultEntryType.HEART_RATE), 2, true);
+        CounterFilter instance = new CounterFilter(new VaultEntryTypeFilter(VaultEntryType.HEART_RATE), 2, true);
         FilterResult result = instance.filter(data);
 
         assertTrue(result.filteredData.size()==1);
@@ -73,7 +73,7 @@ public class CounterFilterTest extends Assert {
     public void testFilter() throws ParseException {
         System.out.println("filter");
         List<VaultEntry> data = StaticDataset.getStaticDataset();
-        CounterFilter instance = new CounterFilter(new EventFilter(VaultEntryType.HEART_RATE), 2, false);
+        CounterFilter instance = new CounterFilter(new VaultEntryTypeFilter(VaultEntryType.HEART_RATE), 2, false);
         FilterResult result = instance.filter(data);
 
         for (VaultEntry vaultEntry : result.filteredData) {

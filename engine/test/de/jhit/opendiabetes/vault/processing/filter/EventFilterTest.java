@@ -70,7 +70,7 @@ public class EventFilterTest extends Assert {
         String dateTimePointEnd_2 = "2017.06.29-12:21";
         
         List<VaultEntry> data = StaticDataset.getStaticDataset();
-        EventFilter instance = new EventFilter(VaultEntryType.STRESS);
+        VaultEntryTypeFilter instance = new VaultEntryTypeFilter(VaultEntryType.STRESS);
         FilterResult result = instance.filter(data);
         
         //System.out.println(result);
@@ -88,7 +88,7 @@ public class EventFilterTest extends Assert {
         String dateTimePointEnd_2 = "2017.06.29-08:39";
         
         List<VaultEntry> data = StaticDataset.getStaticDataset();
-        EventFilter instance = new EventFilter(VaultEntryType.GLUCOSE_BG);
+        VaultEntryTypeFilter instance = new VaultEntryTypeFilter(VaultEntryType.GLUCOSE_BG);
         FilterResult result = instance.filter(data);
         
         //System.out.println(result);
@@ -106,7 +106,7 @@ public class EventFilterTest extends Assert {
         String dateTimePointEnd_2 = "2017.06.29-12:40";
         
         List<VaultEntry> data = StaticDataset.getStaticDataset();
-        EventFilter instance = new EventFilter(VaultEntryType.HEART_RATE);
+        VaultEntryTypeFilter instance = new VaultEntryTypeFilter(VaultEntryType.HEART_RATE);
         FilterResult result = instance.filter(data);
         
         //System.out.println(result);
@@ -124,7 +124,7 @@ public class EventFilterTest extends Assert {
         String dateTimePointEnd_2 = "2017.06.29-12:40";
         
         List<VaultEntry> data = StaticDataset.getStaticDataset();
-        EventFilter instance = new EventFilter(VaultEntryType.HEART_RATE_VARIABILITY);
+        VaultEntryTypeFilter instance = new VaultEntryTypeFilter(VaultEntryType.HEART_RATE_VARIABILITY);
         FilterResult result = instance.filter(data);
         
         //System.out.println(result);
@@ -142,7 +142,7 @@ public class EventFilterTest extends Assert {
         String dateTimePointEnd_2 = "2017.06.29-12:00";
         
         List<VaultEntry> data = StaticDataset.getStaticDataset();
-        EventFilter instance = new EventFilter(VaultEntryType.BASAL_PROFILE);
+        VaultEntryTypeFilter instance = new VaultEntryTypeFilter(VaultEntryType.BASAL_PROFILE);
         FilterResult result = instance.filter(data);
         
         //System.out.println(result);
@@ -160,7 +160,7 @@ public class EventFilterTest extends Assert {
         String dateTimePointEnd_2 = "2017.06.29-08:40";
         
         List<VaultEntry> data = StaticDataset.getStaticDataset();
-        EventFilter instance = new EventFilter(VaultEntryType.GLUCOSE_BOLUS_CALCULATION);
+        VaultEntryTypeFilter instance = new VaultEntryTypeFilter(VaultEntryType.GLUCOSE_BOLUS_CALCULATION);
         FilterResult result = instance.filter(data);
         
         //System.out.println(result);
@@ -179,7 +179,7 @@ public class EventFilterTest extends Assert {
         String dateTimePointEnd_2 = "2010.01.01-10:10";
         
         List<VaultEntry> data = new ArrayList<VaultEntry>();
-        EventFilter instance = new EventFilter(VaultEntryType.GLUCOSE_BG);
+        VaultEntryTypeFilter instance = new VaultEntryTypeFilter(VaultEntryType.GLUCOSE_BG);
         FilterResult result = instance.filter(data);
         
         //System.out.println(result);
@@ -262,7 +262,7 @@ public class EventFilterTest extends Assert {
         FilterResult checkForThisResult = new FilterResult(filteredData, timeSeries);
         
         List<VaultEntry> data = StaticDataset.getStaticDataset();
-        EventFilter instance = new EventFilter(VaultEntryType.HEART_RATE);
+        VaultEntryTypeFilter instance = new VaultEntryTypeFilter(VaultEntryType.HEART_RATE);
         FilterResult result = instance.filter(data);
         
         assertEquals(result.filteredData, checkForThisResult.filteredData);

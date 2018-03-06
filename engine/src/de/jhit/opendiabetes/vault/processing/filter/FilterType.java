@@ -26,30 +26,24 @@ public enum FilterType {
     TIME_POINT,
     DATE_TIME_POINT,
     DATE_TIME_SPAN,
+    CLUSTER,
     // available data
-    BOLUS_AVAILABLE,
-    BASAL_AVAILABLE,
-    BG_AVAILABLE,
-    CGM_AVAILABLE,
-    HR_AVAILABLE,
-    SLEEP_AVAILABLE,
-    STRESS_AVAILABLE,
-    EXERCISE_AVAILABLE,
-    EVENT_FILTER,
+    TYPE,
+    GROUP,
     // data absence
-    MEAL_ABSENCE,
-    BOLUS_ABSENCE,
     TYPE_ABSENCE,
     // threshould
-    BOLUS_TH,
-    BASAL_TH,
-    BG_TH,
-    CGM_TH,
-    HR_TH,
-    STRESS_TH,
-    OVER_TH,
-    UNDER_TH,
+    THRESHOLD,
     // filter nothing
-    NONE, EVENT_SPAN_FILTER, BOLUS_SQARE, BOLUS_NORMAL, FILTER_DECORATOR, CONTINOUS_FILTER, COMBINATION_FILTER;
+    NONE,
+    MARKER,
+    // filter using other filters
+    AND,
+    OR,
+    COMBINATION_FILTER,
+    COUNTER,
+    LOGIC,
+    POSITION,
+    QUERY;
 
 }

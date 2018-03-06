@@ -26,7 +26,7 @@ import de.jhit.opendiabetes.vault.processing.filter.Filter;
 import de.jhit.opendiabetes.vault.processing.filter.FilterType;
 import de.jhit.opendiabetes.vault.processing.filter.NegateFilter;
 import de.jhit.opendiabetes.vault.processing.filter.TypeGroupFilter;
-import de.jhit.opendiabetes.vault.processing.filter.UnderThresholdFilter;
+import de.jhit.opendiabetes.vault.processing.filter.ThresholdFilter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -40,7 +40,11 @@ public class NoDateTimeSpansWithoutGroup extends FilterFactory {
     List<Filter> filters = new ArrayList<>();
 
     public NoDateTimeSpansWithoutGroup(List<VaultEntry> data, VaultEntryTypeGroup group, Date startTime, Date endTime) {
-        filters.add(new CombinationFilter(data, new TypeGroupFilter(group), new DateTimeSpanFilter(startTime, endTime)));
+        filters.add(
+                new CombinationFilter(
+                        data,
+                        new TypeGroupFilter(group),
+                        new DateTimeSpanFilter(startTime, endTime)));
 
     }
 

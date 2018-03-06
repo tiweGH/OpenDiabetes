@@ -17,15 +17,13 @@
 package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
-import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import java.util.List;
-import javax.naming.spi.DirStateFactory;
 
 /**
  *
  * @author Daniel This class extends filter and checks if the given Filters are
- * positiv in the given order. The Filter will be switched to the next, 
- * if the first Filter returns true.
+ * positiv in the given order. The Filter will be switched to the next, if the
+ * first Filter returns true.
  */
 public class LogicFilter extends Filter {
 
@@ -47,7 +45,7 @@ public class LogicFilter extends Filter {
 
     @Override
     FilterType getType() {
-        return FilterType.EVENT_FILTER;
+        return FilterType.LOGIC;
     }
 
     @Override

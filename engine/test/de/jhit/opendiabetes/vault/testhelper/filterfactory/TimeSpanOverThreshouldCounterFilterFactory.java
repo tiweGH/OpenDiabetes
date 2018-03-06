@@ -18,11 +18,14 @@ package de.jhit.opendiabetes.vault.testhelper.filterfactory;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
+import de.jhit.opendiabetes.vault.processing.filter.AndFilter;
 import de.jhit.opendiabetes.vault.processing.filter.CounterFilter;
 import de.jhit.opendiabetes.vault.processing.filter.Filter;
-import de.jhit.opendiabetes.vault.processing.filter.OverThresholdFilter;
+import de.jhit.opendiabetes.vault.processing.filter.ThresholdFilter;
 import de.jhit.opendiabetes.vault.processing.filter.TimePointFilter;
 import de.jhit.opendiabetes.vault.processing.filter.TimeSpanFilter;
+import de.jhit.opendiabetes.vault.processing.filter.TypeGroupFilter;
+import de.jhit.opendiabetes.vault.processing.filter.VaultEntryTypeFilter;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -33,18 +36,20 @@ import java.util.List;
  *
  * @author Daniel
  */
-public class TimeSpanOverThreshouldCounterFilterFactory extends FilterFactory{
+public class TimeSpanOverThreshouldCounterFilterFactory extends FilterFactory {
 
     private Filter overThresholdFilter;
     private Filter counterFilter;
     private Filter timeSpanFilter;
-    
+
     //Nachmittag mit wert hoch / zählen
-    public TimeSpanOverThreshouldCounterFilterFactory(LocalTime startTime, LocalTime endTime, Filter filterForCounter, int hits, VaultEntryType vaultEntryType ,double thresholdValue) {
+    public TimeSpanOverThreshouldCounterFilterFactory(LocalTime startTime, LocalTime endTime, Filter filterForCounter, int hits, VaultEntryType vaultEntryType, double thresholdValue) {
         timeSpanFilter = new TimeSpanFilter(startTime, endTime);
         counterFilter = new CounterFilter(filterForCounter, hits, true);
-        overThresholdFilter = new OverThresholdFilter(vaultEntryType, thresholdValue);
-        
+        overThresholdFilter = new AndFilter(
+                new VaultEntryTypeFilter(vaultEntryType),
+                new ThresholdFilter(thresholdValue, ThresholdFilter.OVER));
+
     }
 
     @Override
@@ -53,34 +58,33 @@ public class TimeSpanOverThreshouldCounterFilterFactory extends FilterFactory{
     }
 
     public List<VaultEntry> filter(List<VaultEntry> vaultEntries) {
-        List<VaultEntry> result =  new ArrayList<>();
-        List<VaultEntry> tempList =  new ArrayList<>();
+        List<VaultEntry> result = new ArrayList<>();
+        List<VaultEntry> tempList = new ArrayList<>();
         tempList = timeSpanFilter.filter(vaultEntries).filteredData;
-        
+
         List<VaultEntry> dayVaultEntries = new ArrayList<>();
-        
+
         SimpleDateFormat sdf = new SimpleDateFormat("dd");
-        
-        
+
         //Tage zusammenführen
         for (VaultEntry vaultEntry : tempList) {
-            if(dayVaultEntries.size()>0 && tempList.indexOf(vaultEntry) == tempList.size()-1 || !sdf.format(vaultEntry.getTimestamp()).equals(sdf.format(dayVaultEntries.get(dayVaultEntries.size()-1).getTimestamp())))
-            {
-                if(tempList.indexOf(vaultEntry) == tempList.size()-1)
+            if (dayVaultEntries.size() > 0 && tempList.indexOf(vaultEntry) == tempList.size() - 1 || !sdf.format(vaultEntry.getTimestamp()).equals(sdf.format(dayVaultEntries.get(dayVaultEntries.size() - 1).getTimestamp()))) {
+                if (tempList.indexOf(vaultEntry) == tempList.size() - 1) {
                     dayVaultEntries.add(vaultEntry);
-                
-                if(counterFilter.filter(dayVaultEntries).size() > 0 && overThresholdFilter.filter(dayVaultEntries).size() >0)
+                }
+
+                if (counterFilter.filter(dayVaultEntries).size() > 0 && overThresholdFilter.filter(dayVaultEntries).size() > 0) {
                     result.addAll(dayVaultEntries);
-                
-                dayVaultEntries =new ArrayList<>();
+                }
+
+                dayVaultEntries = new ArrayList<>();
+                dayVaultEntries.add(vaultEntry);
+            } else {
                 dayVaultEntries.add(vaultEntry);
             }
-            else
-                dayVaultEntries.add(vaultEntry);
         }
-        
+
         return result;
     }
-    
-    
+
 }

@@ -18,43 +18,37 @@ package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
-import java.util.List;
 
 /**
- * Checks if the given VaulEntey is between two values.
- * @author Daniel
+ *
+ * @author Daniel This class extends filter and checks if the given
+ * vaultEntryType is equal.
  */
-public class EventSpanFilter extends Filter {
+public class VaultEntryTypeFilter extends Filter {
 
     private VaultEntryType vaultEntryType;
-    private final float from;
-    private final float to;
 
     /**
-     * Initialize fields for functions.
-     * 
+     * Constructor initialize Parameter for comparing later
+     *
      * @param vaultEntryType
-     * @param from
-     * @param to 
      */
-    public EventSpanFilter(VaultEntryType vaultEntryType, float from, float to) {
+    public VaultEntryTypeFilter(VaultEntryType vaultEntryType) {
         this.vaultEntryType = vaultEntryType;
-        this.from = from;
-        this.to = to;
     }
 
     @Override
     FilterType getType() {
-        return FilterType.EVENT_SPAN_FILTER;
+        return FilterType.TYPE;
     }
 
     @Override
     boolean matchesFilterParameters(VaultEntry entry) {
-        return entry.getType().equals(vaultEntryType) && entry.getValue()>=from && entry.getValue() <= to;
+        return entry.getType().equals(vaultEntryType);
     }
 
     @Override
     Filter update(VaultEntry vaultEntry) {
-        return new EventSpanFilter(vaultEntry.getType(), from, to);
+        return new VaultEntryTypeFilter(vaultEntry.getType());
     }
 }

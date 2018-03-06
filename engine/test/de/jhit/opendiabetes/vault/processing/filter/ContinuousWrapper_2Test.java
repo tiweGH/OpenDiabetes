@@ -41,7 +41,7 @@ import static org.junit.Assert.*;
  */
 public class ContinuousWrapper_2Test {
 
-    ContinuousWrapper_2 filterUnderTest;
+    ContinuousWrapper filterUnderTest;
 
     static List<VaultEntry> dataSet;
 
@@ -68,7 +68,7 @@ public class ContinuousWrapper_2Test {
     }
 
     private void setUpFilterUnderTest(int margin) {
-        filterUnderTest = new ContinuousWrapper_2(dataSet, margin);
+        filterUnderTest = new ContinuousWrapper(dataSet, margin);
     }
 
     @Test
@@ -109,7 +109,7 @@ public class ContinuousWrapper_2Test {
         FilterResult expectedResult;
 
         setUpFilterUnderTest(0);
-        expectedResult = new EventFilter(VaultEntryType.GLUCOSE_BG).filter(dataSet);
+        expectedResult = new VaultEntryTypeFilter(VaultEntryType.GLUCOSE_BG).filter(dataSet);
         result = filterUnderTest.filter(expectedResult.filteredData);
         assertEquals(expectedResult.filteredData, result.filteredData);
         assertEquals(expectedResult.timeSeries, result.timeSeries);
@@ -126,7 +126,7 @@ public class ContinuousWrapper_2Test {
         List<VaultEntryAnnotation> tmpAnnotations;
 
         setUpFilterUnderTest(5);
-        result = filterUnderTest.filter(new EventFilter(VaultEntryType.GLUCOSE_BG).filter(dataSet).filteredData);
+        result = filterUnderTest.filter(new VaultEntryTypeFilter(VaultEntryType.GLUCOSE_BG).filter(dataSet).filteredData);
 
         tmpAnnotations = new ArrayList<>();
         tmpAnnotations.add(new VaultEntryAnnotation(VaultEntryAnnotation.TYPE.GLUCOSE_BG_METER_SERIAL).setValue("BG1140084B"));
@@ -170,7 +170,7 @@ public class ContinuousWrapper_2Test {
         List<VaultEntryAnnotation> tmpAnnotations;
 
         setUpFilterUnderTest(4 * 60);
-        result = filterUnderTest.filter(new EventFilter(VaultEntryType.GLUCOSE_BG).filter(dataSet).filteredData);
+        result = filterUnderTest.filter(new VaultEntryTypeFilter(VaultEntryType.GLUCOSE_BG).filter(dataSet).filteredData);
 
         vaultEntries.remove(vaultEntries.size() - 1);
         vaultEntries.remove(vaultEntries.size() - 1);

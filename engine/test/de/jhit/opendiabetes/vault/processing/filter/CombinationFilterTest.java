@@ -64,7 +64,7 @@ public class CombinationFilterTest extends Assert {
      */
     @Test
     public void testCombinationFilter() throws ParseException {
-        Filter firstFilter = new EventFilter(VaultEntryType.HEART_RATE);
+        Filter firstFilter = new VaultEntryTypeFilter(VaultEntryType.HEART_RATE);
         Filter secondFilter = new TimePointFilter(LocalTime.MIN, 1);
         List<VaultEntry> data = StaticDataset.getStaticDataset();
 

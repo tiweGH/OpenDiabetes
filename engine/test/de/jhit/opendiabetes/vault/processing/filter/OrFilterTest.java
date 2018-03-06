@@ -67,8 +67,8 @@ public class OrFilterTest extends Assert {
     @Test
     public void checkFilterMethod() throws ParseException {
         List<Filter> filters = new ArrayList<>();
-        filters.add(new EventFilter(VaultEntryType.HEART_RATE));
-        filters.add(new EventFilter(VaultEntryType.STRESS));
+        filters.add(new VaultEntryTypeFilter(VaultEntryType.HEART_RATE));
+        filters.add(new VaultEntryTypeFilter(VaultEntryType.STRESS));
         Filter filter = new OrFilter(filters);
 
         data = StaticDataset.getStaticDataset();

@@ -23,7 +23,7 @@ import de.jhit.opendiabetes.vault.processing.filter.CombinationFilter;
 import de.jhit.opendiabetes.vault.processing.filter.CombinationFilter;
 import de.jhit.opendiabetes.vault.processing.filter.CounterFilter;
 import de.jhit.opendiabetes.vault.processing.filter.DateTimeSpanFilter;
-import de.jhit.opendiabetes.vault.processing.filter.EventFilter;
+import de.jhit.opendiabetes.vault.processing.filter.VaultEntryTypeFilter;
 import de.jhit.opendiabetes.vault.processing.filter.Filter;
 import de.jhit.opendiabetes.vault.processing.filter.FilterType;
 import de.jhit.opendiabetes.vault.processing.filter.LogicFilter;
@@ -32,7 +32,7 @@ import de.jhit.opendiabetes.vault.processing.filter.PositionFilter;
 import de.jhit.opendiabetes.vault.processing.filter.TimePointFilter;
 import de.jhit.opendiabetes.vault.processing.filter.TimeSpanFilter;
 import de.jhit.opendiabetes.vault.processing.filter.TypeGroupFilter;
-import de.jhit.opendiabetes.vault.processing.filter.UnderThresholdFilter;
+import de.jhit.opendiabetes.vault.processing.filter.ThresholdFilter;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -49,11 +49,15 @@ public class TypeAfterNthEventAfterEvent extends FilterFactory {
 
     public TypeAfterNthEventAfterEvent(List<VaultEntry> data) {
         List<Filter> innerFilters = new ArrayList<>();
-        //filters.add(new NegateFilter(new CombinationFilter(data, new TypeGroupFilter(VaultEntryTypeGroup.SLEEP), new TimePointFilter(LocalTime.MIN, 12 * 60, 0))));
-        // filters.add(new TimeSpanFilter(LocalTime.MIDNIGHT, LocalTime.of(18, 0)));
-        innerFilters.add(new PositionFilter(new TypeGroupFilter(VaultEntryTypeGroup.SLEEP), PositionFilter.LAST));
-        innerFilters.add(new CounterFilter(new EventFilter(VaultEntryType.HEART_RATE), 2, false));
-        innerFilters.add(new EventFilter(VaultEntryType.STRESS));
+
+        innerFilters.add(
+                new PositionFilter(
+                        new TypeGroupFilter(VaultEntryTypeGroup.SLEEP), PositionFilter.LAST));
+        innerFilters.add(
+                new CounterFilter(
+                        new VaultEntryTypeFilter(VaultEntryType.HEART_RATE),
+                        2, false));
+        innerFilters.add(new VaultEntryTypeFilter(VaultEntryType.STRESS));
         filters.add(new LogicFilter(innerFilters, true));
 
     }

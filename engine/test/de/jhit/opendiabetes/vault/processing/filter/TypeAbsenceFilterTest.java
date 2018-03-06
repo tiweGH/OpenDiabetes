@@ -21,9 +21,7 @@ import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.exporter.NewDataset;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import javafx.util.Pair;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -67,24 +65,22 @@ public class TypeAbsenceFilterTest extends Assert {
         List<VaultEntryType> types = new ArrayList<>();
 //        types.add(VaultEntryType.EMPTY);
 //        types.add(VaultEntryType.HEART_RATE);
-        types.add(VaultEntryType.BOLUS_NORMAL);
-        TypeAbsenceFilter instance = new TypeAbsenceFilter(types, 0);
+        TypeAbsenceFilter instance = new TypeAbsenceFilter(VaultEntryType.BOLUS_NORMAL, 0);
         FilterResult result = instance.filter(data);
         int missingValues = 0;
 
-        for (VaultEntry entry: data){
-            if (entry.getType().toString().equals(VaultEntryType.BOLUS_NORMAL.toString()) 
-////                    entry.getType().toString().equals(VaultEntryType.HEART_RATE.toString()) ||
-//                    entry.getType().toString().equals(VaultEntryType.BOLUS_NORMAL.toString())
-                    ){
+        for (VaultEntry entry : data) {
+            if (entry.getType().toString().equals(VaultEntryType.BOLUS_NORMAL.toString()) ////                    entry.getType().toString().equals(VaultEntryType.HEART_RATE.toString()) ||
+                    //                    entry.getType().toString().equals(VaultEntryType.BOLUS_NORMAL.toString())
+                    ) {
                 missingValues++;
             }
         }
-            System.out.println(missingValues);
-            System.out.println(data.size());
-            System.out.println(result.size());
+        System.out.println(missingValues);
+        System.out.println(data.size());
+        System.out.println(result.size());
         assertEquals(result.size(), data.size() - missingValues);
-            
+
     }
 
 //    @Test(expected = NullPointerException.class)
@@ -95,6 +91,4 @@ public class TypeAbsenceFilterTest extends Assert {
 //
 //        assertEquals(result.filteredData, null);
 //
-    }
-    
-
+}

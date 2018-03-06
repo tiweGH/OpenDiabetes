@@ -24,7 +24,7 @@ import static de.jhit.opendiabetes.vault.container.VaultEntryType.EXERCISE_MANUA
 import static de.jhit.opendiabetes.vault.container.VaultEntryType.GLUCOSE_CGM;
 import static de.jhit.opendiabetes.vault.container.VaultEntryType.MEAL_MANUAL;
 import de.jhit.opendiabetes.vault.processing.filter.DateTimePointFilter;
-import de.jhit.opendiabetes.vault.processing.filter.EventFilter;
+import de.jhit.opendiabetes.vault.processing.filter.VaultEntryTypeFilter;
 import de.jhit.opendiabetes.vault.processing.filter.FilterResult;
 import java.util.ArrayList;
 import java.util.Date;
@@ -67,7 +67,7 @@ public class StaticInsulinSensivityCalculator {
         double bolusAdd = 0.0;
         
         VaultEntryType type = BOLUS_NORMAL;
-        EventFilter eventFilter = new EventFilter(type);
+        VaultEntryTypeFilter eventFilter = new VaultEntryTypeFilter(type);
         // Save timestamp of each bolus event
         FilterResult bolusEvents = eventFilter.filter(data);
 

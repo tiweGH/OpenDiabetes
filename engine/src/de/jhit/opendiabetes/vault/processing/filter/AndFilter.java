@@ -17,21 +17,12 @@
 package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
-import de.jhit.opendiabetes.vault.util.VaultEntryUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- * @author Daniel This Filter is an Filter, which gains multiple Filter. These
- * Filters will be combined by an or. This means,that if an matches
- * Filterparameters method retursn true the vaultEntry will be in the result
- * List.
- */
 public class AndFilter extends Filter {
 
     private final List<Filter> filters;
-    private List<VaultEntry> innerResult;
 
     /**
      * Constructor just set:
@@ -40,27 +31,49 @@ public class AndFilter extends Filter {
      */
     public AndFilter(List<Filter> filters) {
         this.filters = filters;
-        this.innerResult = new ArrayList<>();
+    }
+
+    public AndFilter(Filter firstFilter, Filter secondFilter) {
+        this.filters = new ArrayList<>();
+        filters.add(firstFilter);
+        filters.add(secondFilter);
     }
 
     @Override
     FilterType getType() {
-        return FilterType.FILTER_DECORATOR;
+        return FilterType.AND;
     }
 
     @Override
     boolean matchesFilterParameters(VaultEntry vaultEntry) {
-        return innerResult.contains(vaultEntry);
+        boolean result = true;
+
+        for (Filter filter : filters) {
+            if (!filter.matchesFilterParameters(vaultEntry)) {
+                result = false;
+                break;
+            }
+
+        }
+
+        return result;
     }
 
     @Override
     protected List<VaultEntry> setUpBeforeFilter(List<VaultEntry> data) {
-        innerResult = VaultEntryUtils.slice(data, filters).filteredData;
+        List<VaultEntry> temp = data;
+        for (Filter filter : this.filters) {
+            temp = filter.setUpBeforeFilter(temp);
+        }
         return data;
     }
 
     @Override
     Filter update(VaultEntry vaultEntry) {
-        return new AndFilter(filters);
+        List<Filter> tempFilters = new ArrayList<>();
+        for (Filter filter : this.filters) {
+            tempFilters.add(filter.update(vaultEntry));
+        }
+        return new AndFilter(tempFilters);
     }
 }

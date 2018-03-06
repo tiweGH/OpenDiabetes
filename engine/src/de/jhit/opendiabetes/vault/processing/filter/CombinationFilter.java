@@ -18,9 +18,7 @@ package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import javafx.util.Pair;
 
 /**
  * The CombinationFilter is a special kind of Filter. The CombinationFilter
