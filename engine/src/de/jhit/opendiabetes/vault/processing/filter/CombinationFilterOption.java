@@ -20,6 +20,28 @@ package de.jhit.opendiabetes.vault.processing.filter;
  *
  * @author tiweGH
  */
-public abstract class FilterOption {
+public class CombinationFilterOption extends FilterOption {
+
+    private final DatasetMarker dataPointer;
+    private final Filter firstFilter;
+    private final Filter secondFilter;
+
+    public CombinationFilterOption(DatasetMarker dataPointer, Filter firstFilter, Filter secondFilter) {
+        this.dataPointer = dataPointer;
+        this.firstFilter = firstFilter;
+        this.secondFilter = secondFilter;
+    }
+
+    public DatasetMarker getDataPointer() {
+        return dataPointer;
+    }
+
+    public Filter getFirstFilter() {
+        return firstFilter;
+    }
+
+    public Filter getSecondFilter() {
+        return secondFilter;
+    }
 
 }
