@@ -17,9 +17,14 @@
 package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
+import de.jhit.opendiabetes.vault.processing.filter.options.ContinuousWrapperOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.FilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.VaultEntryTypeFilterOption;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.util.Pair;
 
 /**
@@ -44,27 +49,19 @@ public class ContinuousWrapper extends Filter {
      * @param marginBefore margin before each timespamp
      * @param marginAfter margin after each timespamp
      */
-    public ContinuousWrapper(List<VaultEntry> baseData, int marginBefore, int marginAfter) {
-        if (marginBefore < 0 || marginAfter < 0) {
-            throw new IllegalArgumentException("Expected a margin >= 0 but was " + marginBefore + " and " + marginAfter);
+    public ContinuousWrapper(FilterOption option) {
+        
+        super(option);
+        if (option instanceof ContinuousWrapperOption) {
+            
+            this.marginBefore = ((ContinuousWrapperOption)option).getMarginBefore();
+            this.marginAfter = ((ContinuousWrapperOption)option).getMarginAfter();
+            this.baseData = ((ContinuousWrapperOption)option).getBaseData();
+        } else {
+            String msg = "Option has to be an instance of VaultEntryTypeFilterOption";
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, msg);
+            throw new Error(msg);//IllegalArgumentException("Option has to be an instance of CombinationFilterOption");
         }
-        this.marginBefore = marginBefore;
-        this.marginAfter = marginAfter;
-        this.baseData = baseData;
-    }
-
-    /**
-     * Filter subclass, uses the <code>timeSeries</code> of the previous
-     * FilterResult, together with a margin value in minutes, on the initial
-     * List of VaultEntrys and returns only entries located in these time spans
-     *
-     * @param baseData Dataset which provides the original entries for the
-     * margin applied after other filters where used
-     * @param marginInMinutes time range in minutes applied to the resulting
-     * time spans of <code>registeredFilter</code>
-     */
-    public ContinuousWrapper(List<VaultEntry> baseData, int marginInMinutes) {
-        this(baseData, marginInMinutes, marginInMinutes);
     }
 
     @Override
@@ -97,6 +94,6 @@ public class ContinuousWrapper extends Filter {
 
     @Override
     Filter update(VaultEntry vaultEntry) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new ContinuousWrapper(super.option);
     }
 }

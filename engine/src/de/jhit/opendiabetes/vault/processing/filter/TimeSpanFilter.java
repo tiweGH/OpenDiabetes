@@ -17,8 +17,13 @@
 package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
+import de.jhit.opendiabetes.vault.processing.filter.options.FilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.TimeSpanFilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.VaultEntryTypeFilterOption;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.time.LocalTime;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -29,9 +34,16 @@ public class TimeSpanFilter extends Filter {
     private final LocalTime startTime;
     private final LocalTime endTime;
 
-    public TimeSpanFilter(LocalTime startTime, LocalTime endTime) {
-        this.startTime = startTime;
-        this.endTime = endTime;
+    public TimeSpanFilter(FilterOption option) {
+        super(option);
+        if (option instanceof TimeSpanFilterOption) {
+            this.startTime =  ((TimeSpanFilterOption) option).getStartTime();
+            this.endTime = ((TimeSpanFilterOption) option).getEndTime();
+        } else {
+            String msg = "Option has to be an instance of VaultEntryTypeFilterOption";
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, msg);
+            throw new Error(msg);//IllegalArgumentException("Option has to be an instance of CombinationFilterOption");
+        }
     }
 
     @Override
@@ -46,7 +58,8 @@ public class TimeSpanFilter extends Filter {
 
     @Override
     Filter update(VaultEntry vaultEntry) {
-        return new TimeSpanFilter(TimestampUtils.dateToLocalTime(vaultEntry.getTimestamp()), endTime);
+        option = new TimeSpanFilterOption(TimestampUtils.dateToLocalTime(vaultEntry.getTimestamp()), endTime);
+        return new TimeSpanFilter(option);
     }
 
 }

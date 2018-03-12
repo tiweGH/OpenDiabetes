@@ -18,6 +18,11 @@ package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryTypeGroup;
+import de.jhit.opendiabetes.vault.processing.filter.options.FilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.TypeGroupFilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.VaultEntryTypeFilterOption;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -33,8 +38,15 @@ public class TypeGroupFilter extends Filter {
      *
      * @param entryTypeGroup
      */
-    public TypeGroupFilter(VaultEntryTypeGroup entryTypeGroup) {
-        this.entryTypeGroup = entryTypeGroup;
+    public TypeGroupFilter(FilterOption option) {
+        super(option);
+        if (option instanceof VaultEntryTypeFilterOption) {
+            this.entryTypeGroup = ((TypeGroupFilterOption)option).getVaultEntryTypeGroup();
+        } else {
+            String msg = "Option has to be an instance of TypeGroupFilterOption";
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, msg);
+            throw new Error(msg);//IllegalArgumentException("Option has to be an instance of CombinationFilterOption");
+        }        
     }
 
     @Override
@@ -49,6 +61,6 @@ public class TypeGroupFilter extends Filter {
 
     @Override
     Filter update(VaultEntry vaultEntry) {
-        return new TypeGroupFilter(vaultEntry.getType().getGroup());
+        return new TypeGroupFilter(option);
     }
 }

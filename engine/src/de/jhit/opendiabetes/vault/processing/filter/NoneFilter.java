@@ -17,6 +17,7 @@
 package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
+import de.jhit.opendiabetes.vault.processing.filter.options.FilterOption;
 
 /**
  * Does nothing.
@@ -24,6 +25,10 @@ import de.jhit.opendiabetes.vault.container.VaultEntry;
  * @author juehv
  */
 public class NoneFilter extends Filter {
+
+    public NoneFilter() {
+        super(null);
+    }
 
     @Override
     public FilterType getType() {

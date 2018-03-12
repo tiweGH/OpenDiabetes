@@ -14,12 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.jhit.opendiabetes.vault.processing.filter;
+package de.jhit.opendiabetes.vault.processing.filter.options;
+
+import de.jhit.opendiabetes.vault.processing.filter.FilterType;
 
 /**
  *
  * @author tiweGH
  */
 public abstract class FilterOption {
-
+    
 }

@@ -14,19 +14,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.jhit.opendiabetes.vault.processing.filter;
+package de.jhit.opendiabetes.vault.processing.filter.options;
+
+import de.jhit.opendiabetes.vault.processing.filter.DatasetMarker;
+import de.jhit.opendiabetes.vault.processing.filter.Filter;
 
 /**
  *
  * @author tiweGH
  */
-public class CombinationFilterOption extends FilterOption {
+public class AndFilterOption extends FilterOption {
 
     private final DatasetMarker dataPointer;
     private final Filter firstFilter;
     private final Filter secondFilter;
 
-    public CombinationFilterOption(DatasetMarker dataPointer, Filter firstFilter, Filter secondFilter) {
+    public AndFilterOption(DatasetMarker dataPointer, Filter firstFilter, Filter secondFilter) {
         this.dataPointer = dataPointer;
         this.firstFilter = firstFilter;
         this.secondFilter = secondFilter;
