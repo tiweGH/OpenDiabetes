@@ -30,12 +30,6 @@ import javafx.util.Pair;
  */
 public abstract class Filter {
 
-    FilterOption option;
-
-    public Filter(FilterOption option) {
-        this.option = option;
-    }
-
     /**
      * Returns the name of the extended Filter
      *

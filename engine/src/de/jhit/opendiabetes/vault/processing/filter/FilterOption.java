@@ -20,6 +20,6 @@ package de.jhit.opendiabetes.vault.processing.filter;
  *
  * @author tiweGH
  */
-public abstract class FilterOption {
+public class FilterOption {
 
 }

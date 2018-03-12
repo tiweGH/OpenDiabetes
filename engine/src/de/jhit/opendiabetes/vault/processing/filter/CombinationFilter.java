@@ -19,8 +19,6 @@ package de.jhit.opendiabetes.vault.processing.filter;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * The CombinationFilter is a special kind of Filter. The CombinationFilter
@@ -66,23 +64,14 @@ public class CombinationFilter extends Filter {
      * The Constructor will set the Filters and basic data, which will be used
      * later in the filter method.
      *
-     * @param option
      * @param dataPointer pointer to the dataset to work on
      * @param firstFilter first Filter from the data in the filter method
      * @param secondFilter Filter mask for the list of Filters in the filter
      */
-    public CombinationFilter(FilterOption option) {
-        super(option);
-        if (option instanceof CombinationFilterOption) {
-            CombinationFilterOption combinationFilterOption = (CombinationFilterOption) option;
-            this.dataPointer = combinationFilterOption.getDataPointer();
-            this.firstFilter = combinationFilterOption.getFirstFilter();
-            this.secondFilter = combinationFilterOption.getSecondFilter();
-        } else {
-            String msg = "Option has to be an instance of CombinationFilterOption";
-            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, msg);
-            throw new Error(msg);//IllegalArgumentException("Option has to be an instance of CombinationFilterOption");
-        }
+    public CombinationFilter(DatasetMarker dataPointer, Filter firstFilter, Filter secondFilter) {
+        this.dataPointer = dataPointer;
+        this.firstFilter = firstFilter;
+        this.secondFilter = secondFilter;
     }
 
     /**
@@ -92,7 +81,6 @@ public class CombinationFilter extends Filter {
      * @param secondFilter Filter mask for the list of Filters in the filter
      */
     public CombinationFilter(Filter firstFilter, Filter secondFilter) {
-        super(null);
         this.dataPointer = null;
         this.firstFilter = firstFilter;
         this.secondFilter = secondFilter;
