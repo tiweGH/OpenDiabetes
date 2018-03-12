@@ -17,16 +17,16 @@
 package de.jhit.opendiabetes.vault.testhelper.filterfactory;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
-import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.container.VaultEntryTypeGroup;
 import de.jhit.opendiabetes.vault.processing.filter.CombinationFilter;
-import de.jhit.opendiabetes.vault.processing.filter.CombinationFilter;
 import de.jhit.opendiabetes.vault.processing.filter.Filter;
-import de.jhit.opendiabetes.vault.processing.filter.FilterType;
 import de.jhit.opendiabetes.vault.processing.filter.NegateFilter;
 import de.jhit.opendiabetes.vault.processing.filter.TimePointFilter;
 import de.jhit.opendiabetes.vault.processing.filter.TypeGroupFilter;
-import de.jhit.opendiabetes.vault.processing.filter.ThresholdFilter;
+import de.jhit.opendiabetes.vault.processing.filter.options.CombinationFilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.NegateFilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.TimePointFilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.TypeGroupFilterOption;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,11 +42,11 @@ public class TypeAbsence extends FilterFactory {
     public TypeAbsence(List<VaultEntry> data, VaultEntryTypeGroup group, int absenceMargin) {
         filters = new ArrayList<>();
         filters.add(
-                new NegateFilter(
-                        new CombinationFilter(
+                new NegateFilter(new NegateFilterOption(
+                        new CombinationFilter(new CombinationFilterOption(
                                 data,
-                                new TypeGroupFilter(group),
-                                new TimePointFilter(LocalTime.MIN, 0, absenceMargin))));
+                                new TypeGroupFilter(new TypeGroupFilterOption(group)),
+                                new TimePointFilter(new TimePointFilterOption(LocalTime.MIN, 0, absenceMargin)))))));
 
     }
 

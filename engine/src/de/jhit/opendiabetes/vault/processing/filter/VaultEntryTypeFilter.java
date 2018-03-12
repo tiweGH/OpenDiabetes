@@ -32,21 +32,16 @@ public class VaultEntryTypeFilter extends Filter {
 
     private VaultEntryType vaultEntryType;
 
-    /**
-     * Constructor initialize Parameter for comparing later
-     *
-     * @param vaultEntryType
-     */
     public VaultEntryTypeFilter(FilterOption option) {
         super(option);
         if (option instanceof VaultEntryTypeFilterOption) {
-            this.vaultEntryType = ((VaultEntryTypeFilterOption)option).getVaultEntryType();
+            this.vaultEntryType = ((VaultEntryTypeFilterOption) option).getVaultEntryType();
         } else {
             String msg = "Option has to be an instance of VaultEntryTypeFilterOption";
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, msg);
             throw new Error(msg);//IllegalArgumentException("Option has to be an instance of CombinationFilterOption");
         }
-        
+
     }
 
     @Override

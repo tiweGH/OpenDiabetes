@@ -16,10 +16,7 @@
  */
 package de.jhit.opendiabetes.vault.processing.filter.options;
 
-import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.container.VaultEntryTypeGroup;
-import de.jhit.opendiabetes.vault.processing.filter.DatasetMarker;
-import de.jhit.opendiabetes.vault.processing.filter.Filter;
 
 /**
  *
@@ -27,32 +24,20 @@ import de.jhit.opendiabetes.vault.processing.filter.Filter;
  */
 public class TypeGroupFilterOption extends FilterOption {
 
-    private final long marginAfterTrigger; // minutes after a trigger until data becomes interesting again.
-    private final VaultEntryType vaultEntryType;
     private final VaultEntryTypeGroup vaultEntryTypeGroup;
-    
-    public TypeGroupFilterOption(long marginAfterTrigger, VaultEntryType vaultEntryType, VaultEntryTypeGroup vaultEntryTypeGroup) {
+
+    /**
+     * Filters entries with a type in the matching type-group
+     *
+     * @param entryTypeGroup
+     */
+    public TypeGroupFilterOption(VaultEntryTypeGroup vaultEntryTypeGroup) {
         this.vaultEntryTypeGroup = vaultEntryTypeGroup;
-        this.vaultEntryType = vaultEntryType;
-        this.marginAfterTrigger = marginAfterTrigger;
+
     }
-    
-    public TypeGroupFilterOption(long marginAfterTrigger, VaultEntryTypeGroup vaultEntryTypeGroup) {
-        this.vaultEntryTypeGroup = vaultEntryTypeGroup;
-        this.vaultEntryType = null;
-        this.marginAfterTrigger = marginAfterTrigger;
-    }
-    
+
     public VaultEntryTypeGroup getVaultEntryTypeGroup() {
         return vaultEntryTypeGroup;
-    }
-
-    public VaultEntryType getVaultEntryType() {
-        return vaultEntryType;
-    }
-
-    public long getMargingAfterTrigger() {
-        return marginAfterTrigger;
     }
 
 }

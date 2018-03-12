@@ -16,10 +16,7 @@
  */
 package de.jhit.opendiabetes.vault.processing.filter.options;
 
-import de.jhit.opendiabetes.vault.processing.filter.DatasetMarker;
-import de.jhit.opendiabetes.vault.processing.filter.Filter;
-import static de.jhit.opendiabetes.vault.processing.filter.ThresholdFilter.OVER;
-import static de.jhit.opendiabetes.vault.processing.filter.ThresholdFilter.UNDER;
+import de.jhit.opendiabetes.vault.processing.filter.ThresholdFilter;
 
 /**
  *
@@ -29,24 +26,24 @@ public class ThresholdFilterOption extends FilterOption {
 
     double minThreshold = 0;
     double maxThreshold = 0;
-    private int option = 0;
-    
-    public static final int OVER = 0;
-    public static final int UNDER = 1;
-    public static final int BANDPASS = 2;
-    
-    public ThresholdFilterOption(double minThreshold, double maxThreshold, double option) {
+    private int mode = 0;
+
+    public static final int OVER = ThresholdFilter.OVER;
+    public static final int UNDER = ThresholdFilter.UNDER;
+    public static final int BANDPASS = ThresholdFilter.BANDPASS;
+
+    public ThresholdFilterOption(double minThreshold, double maxThreshold, int mode) {
         this.minThreshold = minThreshold;
         this.maxThreshold = maxThreshold;
-        this.option = this.option;
+        this.mode = mode;
     }
-    
-    public ThresholdFilterOption(double thresholdValue, int option) {
-        this.option = option;
 
-        if (option == OVER) {
+    public ThresholdFilterOption(double thresholdValue, int mode) {
+        this.mode = mode;
+
+        if (this.mode == OVER) {
             this.minThreshold = thresholdValue;
-        } else if (option == UNDER) {
+        } else if (this.mode == UNDER) {
             this.maxThreshold = thresholdValue;
         }
     }
@@ -59,8 +56,8 @@ public class ThresholdFilterOption extends FilterOption {
         return maxThreshold;
     }
 
-    public int getOption() {
-        return option;
+    public int getMode() {
+        return mode;
     }
 
 }

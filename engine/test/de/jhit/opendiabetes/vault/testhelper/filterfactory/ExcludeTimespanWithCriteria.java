@@ -17,15 +17,19 @@
 package de.jhit.opendiabetes.vault.testhelper.filterfactory;
 
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
-import de.jhit.opendiabetes.vault.container.VaultEntryTypeGroup;
 import de.jhit.opendiabetes.vault.processing.filter.AndFilter;
 import de.jhit.opendiabetes.vault.processing.filter.Filter;
 import de.jhit.opendiabetes.vault.processing.filter.NegateFilter;
-import de.jhit.opendiabetes.vault.processing.filter.ThresholdFilter;
 import de.jhit.opendiabetes.vault.processing.filter.QueryFilter;
+import de.jhit.opendiabetes.vault.processing.filter.ThresholdFilter;
 import de.jhit.opendiabetes.vault.processing.filter.TimeClusterFilter;
-import de.jhit.opendiabetes.vault.processing.filter.TypeGroupFilter;
 import de.jhit.opendiabetes.vault.processing.filter.VaultEntryTypeFilter;
+import de.jhit.opendiabetes.vault.processing.filter.options.AndFilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.NegateFilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.QueryFilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.ThresholdFilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.TimeClusterFilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.VaultEntryTypeFilterOption;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,27 +46,28 @@ public class ExcludeTimespanWithCriteria extends FilterFactory {
 
         List<Filter> innerFilters = new ArrayList<>();
         innerFilters.add(
-                new QueryFilter(
-                        new AndFilter(
-                                new VaultEntryTypeFilter(VaultEntryType.STRESS),
-                                new ThresholdFilter(100.0, ThresholdFilter.OVER)),
-                        1, QueryFilter.DONT_CARE)
+                new QueryFilter(new QueryFilterOption(
+                        new AndFilter(new AndFilterOption(
+                                new VaultEntryTypeFilter(new VaultEntryTypeFilterOption(VaultEntryType.STRESS)),
+                                new ThresholdFilter(new ThresholdFilterOption(100.0, ThresholdFilter.OVER)))),
+                        1, QueryFilter.DONT_CARE))
         );
         innerFilters.add(
-                new QueryFilter(
-                        new AndFilter(
-                                new VaultEntryTypeFilter(VaultEntryType.GLUCOSE_CGM),
-                                new ThresholdFilter(120.0, ThresholdFilter.OVER)),
-                        1, QueryFilter.DONT_CARE)
+                new QueryFilter(new QueryFilterOption(
+                        new AndFilter(new AndFilterOption(
+                                new VaultEntryTypeFilter(new VaultEntryTypeFilterOption(VaultEntryType.GLUCOSE_CGM)),
+                                new ThresholdFilter(new ThresholdFilterOption(120.0, ThresholdFilter.OVER)))),
+                        1, QueryFilter.DONT_CARE))
         );
         innerFilters.add(
-                new QueryFilter(
-                        new VaultEntryTypeFilter(VaultEntryType.BOLUS_NORMAL),
-                        QueryFilter.DONT_CARE, 1)
+                new QueryFilter(new QueryFilterOption(
+                        new VaultEntryTypeFilter(new VaultEntryTypeFilterOption(VaultEntryType.BOLUS_NORMAL)),
+                        QueryFilter.DONT_CARE, 1))
         );
         filters.add(
-                new NegateFilter(
-                        new TimeClusterFilter(innerFilters, startTime, timespan, TimeClusterFilter.DAY - timespan)));
+                new NegateFilter(new NegateFilterOption(
+                        new TimeClusterFilter(new TimeClusterFilterOption(
+                                innerFilters, startTime, timespan, TimeClusterFilter.DAY - timespan)))));
 
     }
 

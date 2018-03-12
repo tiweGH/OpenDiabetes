@@ -18,8 +18,6 @@ package de.jhit.opendiabetes.vault.processing.filter.options;
 
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.container.VaultEntryTypeGroup;
-import de.jhit.opendiabetes.vault.processing.filter.DatasetMarker;
-import de.jhit.opendiabetes.vault.processing.filter.Filter;
 
 /**
  *
@@ -30,19 +28,29 @@ public class TypeAbsenceFilterOption extends FilterOption {
     private final long marginAfterTrigger; // minutes after a trigger until data becomes interesting again.
     private final VaultEntryType vaultEntryType;
     private final VaultEntryTypeGroup vaultEntryTypeGroup;
-    
+
+    /**
+     * The Filter gets an EntryType and excludes all entries from the
+     * FilterResult, whose EntryType match or are located in the time margin
+     * after a trigger of the group occurs
+     *
+     * @param marginAfterTrigger minutes after a trigger until data becomes
+     * interesting again
+     * @param vaultEntryType
+     * @param vaultEntryTypeGroup
+     */
     public TypeAbsenceFilterOption(long marginAfterTrigger, VaultEntryType vaultEntryType, VaultEntryTypeGroup vaultEntryTypeGroup) {
         this.vaultEntryTypeGroup = vaultEntryTypeGroup;
         this.vaultEntryType = vaultEntryType;
         this.marginAfterTrigger = marginAfterTrigger;
     }
-    
+
     public TypeAbsenceFilterOption(long marginAfterTrigger, VaultEntryTypeGroup vaultEntryTypeGroup) {
         this.vaultEntryTypeGroup = vaultEntryTypeGroup;
         this.vaultEntryType = null;
         this.marginAfterTrigger = marginAfterTrigger;
     }
-    
+
     public VaultEntryTypeGroup getVaultEntryTypeGroup() {
         return vaultEntryTypeGroup;
     }

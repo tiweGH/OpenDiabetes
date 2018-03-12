@@ -17,8 +17,6 @@
 package de.jhit.opendiabetes.vault.processing.filter.options;
 
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
-import de.jhit.opendiabetes.vault.processing.filter.DatasetMarker;
-import de.jhit.opendiabetes.vault.processing.filter.Filter;
 
 /**
  *
@@ -28,10 +26,14 @@ public class VaultEntryTypeFilterOption extends FilterOption {
 
     private final VaultEntryType vaultEntryType;
 
-    
+    /**
+     * Constructor initialize Parameter for comparing later
+     *
+     * @param vaultEntryType
+     */
     public VaultEntryTypeFilterOption(VaultEntryType vaultEntryType) {
         this.vaultEntryType = vaultEntryType;
-    }    
+    }
 
     public VaultEntryType getVaultEntryType() {
         return vaultEntryType;

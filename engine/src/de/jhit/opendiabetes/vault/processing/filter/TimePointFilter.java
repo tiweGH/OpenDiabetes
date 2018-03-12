@@ -19,7 +19,6 @@ package de.jhit.opendiabetes.vault.processing.filter;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.processing.filter.options.FilterOption;
 import de.jhit.opendiabetes.vault.processing.filter.options.TimePointFilterOption;
-import de.jhit.opendiabetes.vault.processing.filter.options.VaultEntryTypeFilterOption;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
@@ -38,17 +37,7 @@ public class TimePointFilter extends Filter {
     private LocalTime timePoint;
     private final int marginBeforeInMinutes;
     private final int marginAfterInMinutes;
-    
-    /**
-     * Initialize fields and calculates:
-     * <p>
-     * startTime: timepoint- marginBeforeInMinutes<p>
-     * endTime: timepoint+ marginAfterInMinutes
-     *
-     * @param timePoint
-     * @param marginBeforeInMinutes
-     * @param marginAfterInMinutes
-     */
+
     public TimePointFilter(FilterOption option) {
 
         super(option);
@@ -59,10 +48,10 @@ public class TimePointFilter extends Filter {
             startTime = timePoint.minus(marginBeforeInMinutes, ChronoUnit.MINUTES);
             endTime = timePoint.plus(marginAfterInMinutes, ChronoUnit.MINUTES);
         } else {
-            String msg = "Option has to be an instance of VaultEntryTypeFilterOption";
+            String msg = "Option has to be an instance of TimePointFilterOption";
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, msg);
             throw new Error(msg);//IllegalArgumentException("Option has to be an instance of CombinationFilterOption");
-        }        
+        }
     }
 
     @Override

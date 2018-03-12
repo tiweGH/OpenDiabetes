@@ -16,8 +16,6 @@
  */
 package de.jhit.opendiabetes.vault.processing.filter.options;
 
-import de.jhit.opendiabetes.vault.processing.filter.DatasetMarker;
-import de.jhit.opendiabetes.vault.processing.filter.Filter;
 import java.util.Date;
 
 /**
@@ -29,13 +27,23 @@ public class DateTimePointFilterOption extends FilterOption {
     private Date dateTimePoint;
     private long marginBeforeInMinutes;
     private long marginAfterInMinutes;
-    
+
     public DateTimePointFilterOption(Date dateTimePoint, int marginInMinutes) {
         this.dateTimePoint = dateTimePoint;
         this.marginBeforeInMinutes = marginInMinutes;
         this.marginAfterInMinutes = marginInMinutes;
     }
-    
+
+    /**
+     * Initialize fields and calculates:
+     * <p>
+     * startTime: date - marginBeforeInMinutes<p>
+     * endTime: date + marginAfterInMinutes
+     *
+     * @param dateTimePoint
+     * @param marginBeforeInMinutes
+     * @param marginAfterInMinutes
+     */
     public DateTimePointFilterOption(Date dateTimePoint, int marginBeforeInMinutes, int marginAfterInMinutes) {
         this.dateTimePoint = dateTimePoint;
         this.marginBeforeInMinutes = marginBeforeInMinutes;

@@ -20,11 +20,15 @@ import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.processing.filter.AndFilter;
 import de.jhit.opendiabetes.vault.processing.filter.CombinationFilter;
-import de.jhit.opendiabetes.vault.processing.filter.VaultEntryTypeFilter;
 import de.jhit.opendiabetes.vault.processing.filter.Filter;
 import de.jhit.opendiabetes.vault.processing.filter.ThresholdFilter;
 import de.jhit.opendiabetes.vault.processing.filter.TimePointFilter;
-import de.jhit.opendiabetes.vault.processing.filter.TypeGroupFilter;
+import de.jhit.opendiabetes.vault.processing.filter.VaultEntryTypeFilter;
+import de.jhit.opendiabetes.vault.processing.filter.options.AndFilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.CombinationFilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.ThresholdFilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.TimePointFilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.VaultEntryTypeFilterOption;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,15 +43,25 @@ public class GlucoseElevation extends FilterFactory {
 
     public GlucoseElevation(List<VaultEntry> data, double cgm_value, double rise_value, int minutes) {
         filters.add(
-                new CombinationFilter(data,
-                        new AndFilter(
-                                new VaultEntryTypeFilter(VaultEntryType.GLUCOSE_ELEVATION_30),
-                                new ThresholdFilter(rise_value, ThresholdFilter.OVER)),
-                        new TimePointFilter(LocalTime.MIN, minutes)));
+                new CombinationFilter(new CombinationFilterOption(
+                        data,
+                        new AndFilter(new AndFilterOption(
+                                new VaultEntryTypeFilter(new VaultEntryTypeFilterOption(
+                                        VaultEntryType.GLUCOSE_ELEVATION_30)),
+                                new ThresholdFilter(new ThresholdFilterOption(
+                                        rise_value,
+                                        ThresholdFilter.OVER)))),
+                        new TimePointFilter(new TimePointFilterOption(
+                                LocalTime.MIN, minutes)))));
         filters.add(
-                new CombinationFilter(data,
-                        new VaultEntryTypeFilter(VaultEntryType.GLUCOSE_CGM),
-                        new ThresholdFilter(cgm_value, ThresholdFilter.UNDER)));
+                new CombinationFilter(new CombinationFilterOption(
+                        data,
+                        new VaultEntryTypeFilter(new VaultEntryTypeFilterOption(
+                                VaultEntryType.GLUCOSE_CGM)),
+                        new ThresholdFilter(new ThresholdFilterOption(
+                                cgm_value,
+                                ThresholdFilter.UNDER))
+                )));
 
     }
 

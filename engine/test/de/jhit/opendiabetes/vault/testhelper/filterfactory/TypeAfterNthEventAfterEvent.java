@@ -19,24 +19,18 @@ package de.jhit.opendiabetes.vault.testhelper.filterfactory;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.container.VaultEntryTypeGroup;
-import de.jhit.opendiabetes.vault.processing.filter.CombinationFilter;
-import de.jhit.opendiabetes.vault.processing.filter.CombinationFilter;
 import de.jhit.opendiabetes.vault.processing.filter.CounterFilter;
-import de.jhit.opendiabetes.vault.processing.filter.DateTimeSpanFilter;
-import de.jhit.opendiabetes.vault.processing.filter.VaultEntryTypeFilter;
 import de.jhit.opendiabetes.vault.processing.filter.Filter;
-import de.jhit.opendiabetes.vault.processing.filter.FilterType;
 import de.jhit.opendiabetes.vault.processing.filter.LogicFilter;
-import de.jhit.opendiabetes.vault.processing.filter.NegateFilter;
 import de.jhit.opendiabetes.vault.processing.filter.PositionFilter;
-import de.jhit.opendiabetes.vault.processing.filter.TimePointFilter;
-import de.jhit.opendiabetes.vault.processing.filter.TimeSpanFilter;
 import de.jhit.opendiabetes.vault.processing.filter.TypeGroupFilter;
-import de.jhit.opendiabetes.vault.processing.filter.ThresholdFilter;
-import de.jhit.opendiabetes.vault.util.TimestampUtils;
-import java.time.LocalTime;
+import de.jhit.opendiabetes.vault.processing.filter.VaultEntryTypeFilter;
+import de.jhit.opendiabetes.vault.processing.filter.options.CounterFilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.LogicFilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.PositionFilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.TypeGroupFilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.VaultEntryTypeFilterOption;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -51,14 +45,16 @@ public class TypeAfterNthEventAfterEvent extends FilterFactory {
         List<Filter> innerFilters = new ArrayList<>();
 
         innerFilters.add(
-                new PositionFilter(
-                        new TypeGroupFilter(VaultEntryTypeGroup.SLEEP), PositionFilter.LAST));
+                new PositionFilter(new PositionFilterOption(
+                        new TypeGroupFilter(new TypeGroupFilterOption(
+                                VaultEntryTypeGroup.SLEEP)),
+                        PositionFilter.LAST)));
         innerFilters.add(
-                new CounterFilter(
-                        new VaultEntryTypeFilter(VaultEntryType.HEART_RATE),
-                        2, false));
-        innerFilters.add(new VaultEntryTypeFilter(VaultEntryType.STRESS));
-        filters.add(new LogicFilter(innerFilters, true));
+                new CounterFilter(new CounterFilterOption(
+                        new VaultEntryTypeFilter(new VaultEntryTypeFilterOption(VaultEntryType.HEART_RATE)),
+                        2, false)));
+        innerFilters.add(new VaultEntryTypeFilter(new VaultEntryTypeFilterOption(VaultEntryType.STRESS)));
+        filters.add(new LogicFilter(new LogicFilterOption(innerFilters, true)));
 
     }
 

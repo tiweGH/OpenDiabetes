@@ -31,7 +31,7 @@ public class ThresholdFilter extends Filter {
 
     double minThreshold = 0;
     double maxThreshold = 0;
-    private int option = 0;
+    private int mode = 0;
 
     public static final int OVER = 0;
     public static final int UNDER = 1;
@@ -40,15 +40,15 @@ public class ThresholdFilter extends Filter {
     public ThresholdFilter(FilterOption option) {
         super(option);
         if (option instanceof ThresholdFilterOption) {
-            this.minThreshold = ((ThresholdFilterOption)option).getMinThresholdValue();
-            this.maxThreshold = ((ThresholdFilterOption)option).getMaxThresholdValue();
-            this.option = ((ThresholdFilterOption)option).getOption();
+            this.minThreshold = ((ThresholdFilterOption) option).getMinThresholdValue();
+            this.maxThreshold = ((ThresholdFilterOption) option).getMaxThresholdValue();
+            this.mode = ((ThresholdFilterOption) option).getMode();
 
         } else {
             String msg = "Option has to be an instance of ThresholdFilterOption";
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, msg);
             throw new Error(msg);//IllegalArgumentException("Option has to be an instance of CombinationFilterOption");
-        };
+        }
     }
 
     @Override
@@ -59,9 +59,9 @@ public class ThresholdFilter extends Filter {
     @Override
     boolean matchesFilterParameters(VaultEntry entry) {
 
-        return (option == UNDER && (entry.getValue() < maxThreshold))
-                || (option == OVER && (entry.getValue() > minThreshold))
-                || (option == BANDPASS && ((entry.getValue() > minThreshold) && (entry.getValue() < maxThreshold)));
+        return (mode == UNDER && (entry.getValue() < maxThreshold))
+                || (mode == OVER && (entry.getValue() > minThreshold))
+                || (mode == BANDPASS && ((entry.getValue() > minThreshold) && (entry.getValue() < maxThreshold)));
     }
 
     @Override

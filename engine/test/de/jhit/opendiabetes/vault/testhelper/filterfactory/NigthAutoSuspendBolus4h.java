@@ -21,14 +21,16 @@ import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.container.VaultEntryTypeGroup;
 import de.jhit.opendiabetes.vault.processing.filter.CombinationFilter;
 import de.jhit.opendiabetes.vault.processing.filter.DatasetMarker;
-import de.jhit.opendiabetes.vault.processing.filter.VaultEntryTypeFilter;
 import de.jhit.opendiabetes.vault.processing.filter.Filter;
-import de.jhit.opendiabetes.vault.processing.filter.FilterType;
-import de.jhit.opendiabetes.vault.processing.filter.NegateFilter;
-import de.jhit.opendiabetes.vault.processing.filter.ThresholdFilter;
 import de.jhit.opendiabetes.vault.processing.filter.TimePointFilter;
 import de.jhit.opendiabetes.vault.processing.filter.TimeSpanFilter;
 import de.jhit.opendiabetes.vault.processing.filter.TypeGroupFilter;
+import de.jhit.opendiabetes.vault.processing.filter.VaultEntryTypeFilter;
+import de.jhit.opendiabetes.vault.processing.filter.options.CombinationFilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.TimePointFilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.TimeSpanFilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.TypeGroupFilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.VaultEntryTypeFilterOption;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,15 +45,15 @@ public class NigthAutoSuspendBolus4h extends FilterFactory {
     List<Filter> filters = new ArrayList<>();
 
     public NigthAutoSuspendBolus4h(List<VaultEntry> data, VaultEntryType searchedType, VaultEntryTypeGroup groupInMargin, int timeMarginMinutes, LocalTime startTime, LocalTime endTime) {
-        filters.add(new TimeSpanFilter(startTime, endTime));
+        filters.add(new TimeSpanFilter(new TimeSpanFilterOption(startTime, endTime)));
         DatasetMarker pointer = new DatasetMarker();
         filters.add(pointer);
         filters.add(
-                new CombinationFilter(
+                new CombinationFilter(new CombinationFilterOption(
                         pointer,
-                        new TypeGroupFilter(groupInMargin),
-                        new TimePointFilter(LocalTime.MIN, timeMarginMinutes)));
-        filters.add(new VaultEntryTypeFilter(searchedType));
+                        new TypeGroupFilter(new TypeGroupFilterOption(groupInMargin)),
+                        new TimePointFilter(new TimePointFilterOption(LocalTime.MIN, timeMarginMinutes)))));
+        filters.add(new VaultEntryTypeFilter(new VaultEntryTypeFilterOption(searchedType)));
     }
 
     @Override

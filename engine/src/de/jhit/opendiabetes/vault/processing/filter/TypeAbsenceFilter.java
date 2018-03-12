@@ -21,7 +21,6 @@ import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.container.VaultEntryTypeGroup;
 import de.jhit.opendiabetes.vault.processing.filter.options.FilterOption;
 import de.jhit.opendiabetes.vault.processing.filter.options.TypeAbsenceFilterOption;
-import de.jhit.opendiabetes.vault.processing.filter.options.VaultEntryTypeFilterOption;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.util.Date;
 import java.util.logging.Level;
@@ -39,15 +38,6 @@ public class TypeAbsenceFilter extends Filter {
 
     Date lastEntryTimeFound = null;
 
-    /**
-     * The Filter gets an EntryType and excludes all entries from the
-     * FilterResult, whose EntryType match or are located in the time margin
-     * after a trigger of the group occurs
-     *
-     * @param type an EntryType
-     * @param marginAfterTrigger minutes after a trigger until data becomes
-     * interesting again
-     */
     public TypeAbsenceFilter(FilterOption option) {
         super(option);
         if (option instanceof TypeAbsenceFilterOption) {

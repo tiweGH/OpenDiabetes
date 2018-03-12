@@ -16,7 +16,6 @@
  */
 package de.jhit.opendiabetes.vault.processing.filter;
 
-import de.jhit.opendiabetes.vault.processing.filter.options.FilterOption;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.processing.filter.options.FilterOption;
 import java.util.ArrayList;

@@ -17,16 +17,14 @@
 package de.jhit.opendiabetes.vault.testhelper.filterfactory;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
-import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.container.VaultEntryTypeGroup;
-import de.jhit.opendiabetes.vault.processing.filter.CombinationFilter;
 import de.jhit.opendiabetes.vault.processing.filter.CombinationFilter;
 import de.jhit.opendiabetes.vault.processing.filter.DateTimeSpanFilter;
 import de.jhit.opendiabetes.vault.processing.filter.Filter;
-import de.jhit.opendiabetes.vault.processing.filter.FilterType;
-import de.jhit.opendiabetes.vault.processing.filter.NegateFilter;
 import de.jhit.opendiabetes.vault.processing.filter.TypeGroupFilter;
-import de.jhit.opendiabetes.vault.processing.filter.ThresholdFilter;
+import de.jhit.opendiabetes.vault.processing.filter.options.CombinationFilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.DateTimeSpanFilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.TypeGroupFilterOption;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -41,10 +39,10 @@ public class NoDateTimeSpansWithoutGroup extends FilterFactory {
 
     public NoDateTimeSpansWithoutGroup(List<VaultEntry> data, VaultEntryTypeGroup group, Date startTime, Date endTime) {
         filters.add(
-                new CombinationFilter(
+                new CombinationFilter(new CombinationFilterOption(
                         data,
-                        new TypeGroupFilter(group),
-                        new DateTimeSpanFilter(startTime, endTime)));
+                        new TypeGroupFilter(new TypeGroupFilterOption(group)),
+                        new DateTimeSpanFilter(new DateTimeSpanFilterOption(startTime, endTime)))));
 
     }
 
