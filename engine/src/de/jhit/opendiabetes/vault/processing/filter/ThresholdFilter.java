@@ -17,6 +17,10 @@
 package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
+import de.jhit.opendiabetes.vault.processing.filter.options.FilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.ThresholdFilterOption;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This Filter is the superclass for the Thresholdfilter.
@@ -33,20 +37,18 @@ public class ThresholdFilter extends Filter {
     public static final int UNDER = 1;
     public static final int BANDPASS = 2;
 
-    public ThresholdFilter(double minThresholdValue, double maxThresholdValue, int option) {
-        this.minThreshold = minThresholdValue;
-        this.maxThreshold = maxThresholdValue;
-        this.option = option;
-    }
+    public ThresholdFilter(FilterOption option) {
+        super(option);
+        if (option instanceof ThresholdFilterOption) {
+            this.minThreshold = ((ThresholdFilterOption)option).getMinThresholdValue();
+            this.maxThreshold = ((ThresholdFilterOption)option).getMaxThresholdValue();
+            this.option = ((ThresholdFilterOption)option).getOption();
 
-    public ThresholdFilter(double thresholdValue, int option) {
-        this.option = option;
-
-        if (option == OVER) {
-            this.minThreshold = thresholdValue;
-        } else if (option == UNDER) {
-            this.maxThreshold = thresholdValue;
-        }
+        } else {
+            String msg = "Option has to be an instance of ThresholdFilterOption";
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, msg);
+            throw new Error(msg);//IllegalArgumentException("Option has to be an instance of CombinationFilterOption");
+        };
     }
 
     @Override
@@ -64,6 +66,6 @@ public class ThresholdFilter extends Filter {
 
     @Override
     Filter update(VaultEntry vaultEntry) {
-        return new ThresholdFilter(minThreshold, maxThreshold, option);
+        return new ThresholdFilter(super.option);
     }
 }
