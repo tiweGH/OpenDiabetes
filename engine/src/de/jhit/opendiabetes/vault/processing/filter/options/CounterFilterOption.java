@@ -16,7 +16,6 @@
  */
 package de.jhit.opendiabetes.vault.processing.filter.options;
 
-import de.jhit.opendiabetes.vault.processing.filter.DatasetMarker;
 import de.jhit.opendiabetes.vault.processing.filter.Filter;
 
 /**
@@ -25,26 +24,34 @@ import de.jhit.opendiabetes.vault.processing.filter.Filter;
  */
 public class CounterFilterOption extends FilterOption {
 
-    private final DatasetMarker dataPointer;
-    private final Filter firstFilter;
-    private final Filter secondFilter;
+    private final Filter filter;
+    private final int hitCounter;
+    private final boolean onlyOneResult;
 
-    public CounterFilterOption(DatasetMarker dataPointer, Filter firstFilter, Filter secondFilter) {
-        this.dataPointer = dataPointer;
-        this.firstFilter = firstFilter;
-        this.secondFilter = secondFilter;
+    /**
+     * Standard Constructor
+     *
+     * @param filter: Filter, which should be Counted
+     * @param hitCounter: After how many Hits
+     * @param onlyOneResult: When true only one result will returned. (first
+     * appearence)
+     */
+    public CounterFilterOption(Filter filter, int hitCounter, boolean onlyOneResult) {
+        this.filter = filter;
+        this.hitCounter = hitCounter;
+        this.onlyOneResult = onlyOneResult;
     }
 
-    public DatasetMarker getDataPointer() {
-        return dataPointer;
+    public Filter getFilter() {
+        return filter;
     }
 
-    public Filter getFirstFilter() {
-        return firstFilter;
+    public int getHitCounter() {
+        return hitCounter;
     }
 
-    public Filter getSecondFilter() {
-        return secondFilter;
+    public boolean isOnlyOneResult() {
+        return onlyOneResult;
     }
 
 }

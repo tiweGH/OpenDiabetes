@@ -16,8 +16,8 @@
  */
 package de.jhit.opendiabetes.vault.processing.filter.options;
 
-import de.jhit.opendiabetes.vault.processing.filter.DatasetMarker;
 import de.jhit.opendiabetes.vault.processing.filter.Filter;
+import java.util.List;
 
 /**
  *
@@ -25,26 +25,26 @@ import de.jhit.opendiabetes.vault.processing.filter.Filter;
  */
 public class LogicFilterOption extends FilterOption {
 
-    private final DatasetMarker dataPointer;
-    private final Filter firstFilter;
-    private final Filter secondFilter;
+    private List<Filter> filters;
+    private boolean onlyOneResult;
 
-    public LogicFilterOption(DatasetMarker dataPointer, Filter firstFilter, Filter secondFilter) {
-        this.dataPointer = dataPointer;
-        this.firstFilter = firstFilter;
-        this.secondFilter = secondFilter;
+    /**
+     * Standard Constructor
+     *
+     * @param filters; Filters, which are in an specific order for checking
+     * @param onlyOneResult; If there should be the first or all results.
+     */
+    public LogicFilterOption(List<Filter> filters, boolean onlyOneResult) {
+        this.filters = filters;
+        this.onlyOneResult = onlyOneResult;
     }
 
-    public DatasetMarker getDataPointer() {
-        return dataPointer;
+    public List<Filter> getFilters() {
+        return filters;
     }
 
-    public Filter getFirstFilter() {
-        return firstFilter;
-    }
-
-    public Filter getSecondFilter() {
-        return secondFilter;
+    public boolean isOnlyOneResult() {
+        return onlyOneResult;
     }
 
 }

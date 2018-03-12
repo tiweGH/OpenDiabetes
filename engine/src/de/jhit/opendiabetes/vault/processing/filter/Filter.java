@@ -16,8 +16,8 @@
  */
 package de.jhit.opendiabetes.vault.processing.filter;
 
-import de.jhit.opendiabetes.vault.processing.filter.options.FilterOption;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
+import de.jhit.opendiabetes.vault.processing.filter.options.FilterOption;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -30,6 +30,12 @@ import javafx.util.Pair;
  * @author Daniel
  */
 public abstract class Filter {
+
+    FilterOption option;
+
+    public Filter(FilterOption option) {
+        this.option = option;
+    }
 
     /**
      * Returns the name of the extended Filter

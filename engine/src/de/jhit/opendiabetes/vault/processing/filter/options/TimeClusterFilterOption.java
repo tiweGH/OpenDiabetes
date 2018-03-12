@@ -16,8 +16,10 @@
  */
 package de.jhit.opendiabetes.vault.processing.filter.options;
 
-import de.jhit.opendiabetes.vault.processing.filter.DatasetMarker;
 import de.jhit.opendiabetes.vault.processing.filter.Filter;
+import de.jhit.opendiabetes.vault.processing.filter.TimeClusterFilter;
+import java.time.LocalTime;
+import java.util.List;
 
 /**
  *
@@ -25,26 +27,53 @@ import de.jhit.opendiabetes.vault.processing.filter.Filter;
  */
 public class TimeClusterFilterOption extends FilterOption {
 
-    private final DatasetMarker dataPointer;
-    private final Filter firstFilter;
-    private final Filter secondFilter;
+    private List<Filter> filters;
+    private final LocalTime startTime;
+    private final long clusterTimeInMinutes;
+    private long clusterSpacing;
 
-    public TimeClusterFilterOption(DatasetMarker dataPointer, Filter firstFilter, Filter secondFilter) {
-        this.dataPointer = dataPointer;
-        this.firstFilter = firstFilter;
-        this.secondFilter = secondFilter;
+    public static final long HOUR = TimeClusterFilter.HOUR;
+    public static final long DAY = TimeClusterFilter.DAY;
+    public static final long WEEK = TimeClusterFilter.WEEK;
+    public static final long YEAR = TimeClusterFilter.YEAR;
+
+    /**
+     * Filters given to the TimeClusterFilter will be applied to each timespan
+     * seperately. <br>
+     * The timespans can be a fragmentation of the whole entry dataset, or, with
+     * a gap greater than 0, spans between the clusters will be excluded from
+     * filtering.<p>
+     * For example, use <code>TimeClusterFilter.DAY</code> for
+     * <code>clusterSpacing</code>, to filter the same timespan of each day
+     * independently.
+     *
+     * @param filters list of filters, which will be applied to each timespan in
+     * a slicing process.
+     * @param startTime start time of the timespan
+     * @param clusterTimeInMinutes length of the timespan in minutes
+     * @param clusterSpacing length of the gaps between each timespan in minutes
+     */
+    public TimeClusterFilterOption(List<Filter> filters, LocalTime startTime, long clusterTimeInMinutes, long clusterSpacing) {
+        this.filters = filters;
+        this.clusterTimeInMinutes = clusterTimeInMinutes;
+        this.startTime = startTime;
+        this.clusterSpacing = clusterSpacing;
     }
 
-    public DatasetMarker getDataPointer() {
-        return dataPointer;
+    public List<Filter> getFilters() {
+        return filters;
     }
 
-    public Filter getFirstFilter() {
-        return firstFilter;
+    public LocalTime getStartTime() {
+        return startTime;
     }
 
-    public Filter getSecondFilter() {
-        return secondFilter;
+    public long getClusterTimeInMinutes() {
+        return clusterTimeInMinutes;
+    }
+
+    public long getClusterSpacing() {
+        return clusterSpacing;
     }
 
 }

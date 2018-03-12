@@ -17,8 +17,12 @@
 package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
+import de.jhit.opendiabetes.vault.processing.filter.options.FilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.PositionFilterOption;
 import de.jhit.opendiabetes.vault.util.VaultEntryUtils;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -48,38 +52,17 @@ public class PositionFilter extends Filter {
      */
     public static final int DATE_MIDDLE = 3;
 
-    /**
-     * Searches the given dataset for one specific position.
-     *
-     * @param filter The FilterResult of this Filter will be used as working
-     * data for the position search
-     * @param filterMode Configures the position search:
-     * <p>
-     * <code>FIRST</code>: The first entry of the input data<p>
-     * <code>LAST</code>: The last entry<p>
-     * <code>MIDDLE</code>: The entry with the middle index<p>
-     * <code>DATE_MIDDLE</code>: The entry with the timestamp located in the
-     * middle between the first and the last entry
-     */
-    public PositionFilter(Filter filter, int filterMode) {
-        this.filter = filter;
-        this.filterMode = filterMode;
-        positionResult = null;
-    }
-
-    /**
-     * Searches the given dataset for one specific position.
-     *
-     * @param filterMode Configures the position search:
-     * <p>
-     * <code>FIRST</code>: The first entry of the input data<p>
-     * <code>LAST</code>: The last entry<p>
-     * <code>MIDDLE</code>: The entry with the middle index<p>
-     * <code>DATE_MIDDLE</code>: The entry with the timestamp located in the
-     * middle between the first and the last entry
-     */
-    public PositionFilter(int filterMode) {
-        this(new NoneFilter(), filterMode);
+    public PositionFilter(FilterOption option) {
+        super(option);
+        if (option instanceof PositionFilterOption) {
+            this.filter = ((PositionFilterOption) option).getFilter();
+            this.filterMode = ((PositionFilterOption) option).getFilterMode();
+            positionResult = null;
+        } else {
+            String msg = "Option has to be an instance of PositionFilterOption";
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, msg);
+            throw new Error(msg);//IllegalArgumentException("Option has to be an instance of CombinationFilterOption");
+        }
     }
 
     @Override
@@ -118,6 +101,6 @@ public class PositionFilter extends Filter {
 
     @Override
     Filter update(VaultEntry vaultEntry) {
-        return new PositionFilter(filter.update(vaultEntry), filterMode);
+        return new PositionFilter(new PositionFilterOption(filter.update(vaultEntry), filterMode));
     }
 }

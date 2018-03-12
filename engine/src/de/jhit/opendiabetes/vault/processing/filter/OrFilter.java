@@ -17,8 +17,12 @@
 package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
+import de.jhit.opendiabetes.vault.processing.filter.options.FilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.OrFilterOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -31,19 +35,15 @@ public class OrFilter extends Filter {
 
     private final List<Filter> filters;
 
-    /**
-     * Constructor just set:
-     *
-     * @param filters; These will used in the matchesFilterParameters Method
-     */
-    public OrFilter(List<Filter> filters) {
-        this.filters = filters;
-    }
-
-    public OrFilter(Filter firstFilter, Filter secondFilter) {
-        this.filters = new ArrayList<>();
-        filters.add(firstFilter);
-        filters.add(secondFilter);
+    public OrFilter(FilterOption option) {
+        super(option);
+        if (option instanceof OrFilterOption) {
+            this.filters = ((OrFilterOption) option).getFilters();
+        } else {
+            String msg = "Option has to be an instance of OrFilterOption";
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, msg);
+            throw new Error(msg);//IllegalArgumentException("Option has to be an instance of CombinationFilterOption");
+        }
     }
 
     @Override
@@ -80,6 +80,7 @@ public class OrFilter extends Filter {
         for (Filter filter : this.filters) {
             tempFilters.add(filter.update(vaultEntry));
         }
-        return new OrFilter(tempFilters);
+        OrFilterOption tempOption = new OrFilterOption(tempFilters);
+        return new OrFilter(tempOption);
     }
 }

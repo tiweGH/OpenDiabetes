@@ -17,7 +17,11 @@
 package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
+import de.jhit.opendiabetes.vault.processing.filter.options.FilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.NegateFilterOption;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -27,13 +31,15 @@ public class NegateFilter extends Filter {
 
     private Filter filter;
 
-    /**
-     * Negates basic filters due negating matchesFilterParameters output.
-     *
-     * @param filter Filter, which will be negated
-     */
-    public NegateFilter(Filter filter) {
-        this.filter = filter;
+    public NegateFilter(FilterOption option) {
+        super(option);
+        if (option instanceof NegateFilterOption) {
+            this.filter = ((NegateFilterOption) option).getFilter();
+        } else {
+            String msg = "Option has to be an instance of NegateFilterOption";
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, msg);
+            throw new Error(msg);//IllegalArgumentException("Option has to be an instance of CombinationFilterOption");
+        }
     }
 
     @Override
@@ -48,7 +54,7 @@ public class NegateFilter extends Filter {
 
     @Override
     Filter update(VaultEntry vaultEntry) {
-        return new NegateFilter(filter.update(vaultEntry));
+        return new NegateFilter(new NegateFilterOption(filter.update(vaultEntry)));
     }
 
     @Override

@@ -16,8 +16,11 @@
  */
 package de.jhit.opendiabetes.vault.processing.filter.options;
 
+import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.processing.filter.DatasetMarker;
 import de.jhit.opendiabetes.vault.processing.filter.Filter;
+import de.jhit.opendiabetes.vault.processing.filter.NoneFilter;
+import java.util.List;
 
 /**
  *
@@ -29,8 +32,50 @@ public class CombinationFilterOption extends FilterOption {
     private final Filter firstFilter;
     private final Filter secondFilter;
 
+    /**
+     * The Constructor will set the Filters and basic data, which will be used
+     * later in the filter method.
+     *
+     * @param data original input entry data
+     * @param firstFilter; first Filter from the data in the filter method
+     * @param secondFilter; Filter mask for the list of Filters in the filter
+     * method
+     */
+    public CombinationFilterOption(List<VaultEntry> data, Filter firstFilter, Filter secondFilter) {
+        this(new DatasetMarker(), firstFilter, secondFilter);
+    }
+
+    /**
+     *
+     * @param data original input entry data
+     * @param combinatedFilter Filter mask for the previous result
+     */
+    public CombinationFilterOption(List<VaultEntry> data, Filter combinatedFilter) {
+        this(data, new NoneFilter(), combinatedFilter);
+    }
+
+    /**
+     * The Constructor will set the Filters and basic data, which will be used
+     * later in the filter method.
+     *
+     * @param dataPointer pointer to the dataset to work on
+     * @param firstFilter first Filter from the data in the filter method
+     * @param secondFilter Filter mask for the list of Filters in the filter
+     */
     public CombinationFilterOption(DatasetMarker dataPointer, Filter firstFilter, Filter secondFilter) {
         this.dataPointer = dataPointer;
+        this.firstFilter = firstFilter;
+        this.secondFilter = secondFilter;
+    }
+
+    /**
+     * Doesn't work on the original dataset but on the previous result.
+     *
+     * @param firstFilter first Filter from the data in the filter method
+     * @param secondFilter Filter mask for the list of Filters in the filter
+     */
+    public CombinationFilterOption(Filter firstFilter, Filter secondFilter) {
+        this.dataPointer = null;
         this.firstFilter = firstFilter;
         this.secondFilter = secondFilter;
     }

@@ -17,26 +17,26 @@
 package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
+import de.jhit.opendiabetes.vault.processing.filter.options.AndFilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.FilterOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class AndFilter extends Filter {
 
     private final List<Filter> filters;
 
-    /**
-     * Constructor just set:
-     *
-     * @param filters; These will used in the matchesFilterParameters Method
-     */
-    public AndFilter(List<Filter> filters) {
-        this.filters = filters;
-    }
-
-    public AndFilter(Filter firstFilter, Filter secondFilter) {
-        this.filters = new ArrayList<>();
-        filters.add(firstFilter);
-        filters.add(secondFilter);
+    public AndFilter(FilterOption option) {
+        super(option);
+        if (option instanceof AndFilterOption) {
+            this.filters = ((AndFilterOption) option).getFilters();
+        } else {
+            String msg = "Option has to be an instance of AndFilterOption";
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, msg);
+            throw new Error(msg);//IllegalArgumentException("Option has to be an instance of CombinationFilterOption");
+        }
     }
 
     @Override
@@ -45,7 +45,8 @@ public class AndFilter extends Filter {
     }
 
     @Override
-    boolean matchesFilterParameters(VaultEntry vaultEntry) {
+    boolean matchesFilterParameters(VaultEntry vaultEntry
+    ) {
         boolean result = true;
 
         for (Filter filter : filters) {
@@ -60,7 +61,8 @@ public class AndFilter extends Filter {
     }
 
     @Override
-    protected List<VaultEntry> setUpBeforeFilter(List<VaultEntry> data) {
+    protected List<VaultEntry> setUpBeforeFilter(List<VaultEntry> data
+    ) {
         List<VaultEntry> temp = data;
         for (Filter filter : this.filters) {
             temp = filter.setUpBeforeFilter(temp);
@@ -69,11 +71,13 @@ public class AndFilter extends Filter {
     }
 
     @Override
-    Filter update(VaultEntry vaultEntry) {
+    Filter update(VaultEntry vaultEntry
+    ) {
         List<Filter> tempFilters = new ArrayList<>();
         for (Filter filter : this.filters) {
             tempFilters.add(filter.update(vaultEntry));
         }
-        return new AndFilter(tempFilters);
+        AndFilterOption tempOption = new AndFilterOption(tempFilters);
+        return new AndFilter(tempOption);
     }
 }

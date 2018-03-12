@@ -16,7 +16,6 @@
  */
 package de.jhit.opendiabetes.vault.processing.filter.options;
 
-import de.jhit.opendiabetes.vault.processing.filter.DatasetMarker;
 import de.jhit.opendiabetes.vault.processing.filter.Filter;
 
 /**
@@ -25,26 +24,19 @@ import de.jhit.opendiabetes.vault.processing.filter.Filter;
  */
 public class NegateFilterOption extends FilterOption {
 
-    private final DatasetMarker dataPointer;
-    private final Filter firstFilter;
-    private final Filter secondFilter;
+    private Filter filter;
 
-    public NegateFilterOption(DatasetMarker dataPointer, Filter firstFilter, Filter secondFilter) {
-        this.dataPointer = dataPointer;
-        this.firstFilter = firstFilter;
-        this.secondFilter = secondFilter;
+    /**
+     * Negates basic filters due negating matchesFilterParameters output.
+     *
+     * @param filter Filter, which will be negated
+     */
+    public NegateFilterOption(Filter filter) {
+        this.filter = filter;
     }
 
-    public DatasetMarker getDataPointer() {
-        return dataPointer;
-    }
-
-    public Filter getFirstFilter() {
-        return firstFilter;
-    }
-
-    public Filter getSecondFilter() {
-        return secondFilter;
+    public Filter getFilter() {
+        return filter;
     }
 
 }

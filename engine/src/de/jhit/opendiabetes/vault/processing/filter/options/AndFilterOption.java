@@ -16,8 +16,9 @@
  */
 package de.jhit.opendiabetes.vault.processing.filter.options;
 
-import de.jhit.opendiabetes.vault.processing.filter.DatasetMarker;
 import de.jhit.opendiabetes.vault.processing.filter.Filter;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -25,26 +26,20 @@ import de.jhit.opendiabetes.vault.processing.filter.Filter;
  */
 public class AndFilterOption extends FilterOption {
 
-    private final DatasetMarker dataPointer;
-    private final Filter firstFilter;
-    private final Filter secondFilter;
+    private final List<Filter> filters;
 
-    public AndFilterOption(DatasetMarker dataPointer, Filter firstFilter, Filter secondFilter) {
-        this.dataPointer = dataPointer;
-        this.firstFilter = firstFilter;
-        this.secondFilter = secondFilter;
+    public AndFilterOption(List<Filter> filters) {
+        this.filters = filters;
     }
 
-    public DatasetMarker getDataPointer() {
-        return dataPointer;
+    public AndFilterOption(Filter firstFilter, Filter secondFilter) {
+        this.filters = new ArrayList<>();
+        filters.add(firstFilter);
+        filters.add(secondFilter);
     }
 
-    public Filter getFirstFilter() {
-        return firstFilter;
-    }
-
-    public Filter getSecondFilter() {
-        return secondFilter;
+    public List<Filter> getFilters() {
+        return filters;
     }
 
 }

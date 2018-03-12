@@ -16,11 +16,13 @@
  */
 package de.jhit.opendiabetes.vault.processing.filter;
 
+import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.processing.filter.options.CombinationFilterOption;
 import de.jhit.opendiabetes.vault.processing.filter.options.FilterOption;
-import de.jhit.opendiabetes.vault.container.VaultEntry;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The CombinationFilter is a special kind of Filter. The CombinationFilter
@@ -35,75 +37,36 @@ import java.util.List;
  */
 public class CombinationFilter extends Filter {
 
-    private DatasetMarker dataPointer;
-    private Filter firstFilter;
-    private Filter secondFilter;
+    private CombinationFilterOption option;
     private List<Filter> filters;
 
-    /**
-     * The Constructor will set the Filters and basic data, which will be used
-     * later in the filter method.
-     *
-     * @param data original input entry data
-     * @param firstFilter; first Filter from the data in the filter method
-     * @param secondFilter; Filter mask for the list of Filters in the filter
-     * method
-     */
-    public CombinationFilter(List<VaultEntry> data, Filter firstFilter, Filter secondFilter) {
-        this(new DatasetMarker(data), firstFilter, secondFilter);
-    }
-
-    /**
-     *
-     * @param data original input entry data
-     * @param combinatedFilter Filter mask for the previous result
-     */
-    public CombinationFilter(List<VaultEntry> data, Filter combinatedFilter) {
-        this(data, new NoneFilter(), combinatedFilter);
-    }
-
-    /**
-     * The Constructor will set the Filters and basic data, which will be used
-     * later in the filter method.
-     *
-     * @param dataPointer pointer to the dataset to work on
-     * @param firstFilter first Filter from the data in the filter method
-     * @param secondFilter Filter mask for the list of Filters in the filter
-     */
-    public CombinationFilter(DatasetMarker dataPointer, Filter firstFilter, Filter secondFilter) {
-        this.dataPointer = dataPointer;
-        this.firstFilter = firstFilter;
-        this.secondFilter = secondFilter;
-    }
-
-    /**
-     * Doesn't work on the original dataset but on the previous result.
-     *
-     * @param firstFilter first Filter from the data in the filter method
-     * @param secondFilter Filter mask for the list of Filters in the filter
-     */
-    public CombinationFilter(Filter firstFilter, Filter secondFilter) {
-        this.dataPointer = null;
-        this.firstFilter = firstFilter;
-        this.secondFilter = secondFilter;
+    public CombinationFilter(FilterOption option) {
+        super(option);
+        if (option instanceof CombinationFilterOption) {
+            this.option = (CombinationFilterOption) option;
+        } else {
+            String msg = "Option has to be an instance of CombinationFilterOption";
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, msg);
+            throw new Error(msg);//IllegalArgumentException("Option has to be an instance of CombinationFilterOption");
+        }
     }
 
     @Override
     protected List<VaultEntry> setUpBeforeFilter(List<VaultEntry> data) {
-        List<VaultEntry> firstResult = firstFilter.filter(data).filteredData;
+        List<VaultEntry> firstResult = option.getFirstFilter().filter(data).filteredData;
 
         Filter tempFilter;
         // generates an List of Filters from the first found dataset. The secondFilter will be used as Mask.
         filters = new ArrayList<>();
         for (VaultEntry vaultEntry : firstResult) {
-            tempFilter = secondFilter.update(vaultEntry);
+            tempFilter = option.getSecondFilter().update(vaultEntry);
             filters.add(tempFilter);
             //this can potentially slow down the process, if the setUp is complex and the dataset is big
             tempFilter.setUpBeforeFilter(firstResult);
         }
 
         //filters with the basic method
-        return dataPointer != null ? dataPointer.getDataset() : data;
+        return option.getDataPointer() != null ? option.getDataPointer().getDataset() : data;
     }
 
     @Override
@@ -127,9 +90,8 @@ public class CombinationFilter extends Filter {
     }
 
     @Override
-    Filter update(VaultEntry vaultEntry
-    ) {
-        return new CombinationFilter(dataPointer, firstFilter, secondFilter);
+    Filter update(VaultEntry vaultEntry) {
+        return new CombinationFilter(option);
     }
 
 }

@@ -16,8 +16,9 @@
  */
 package de.jhit.opendiabetes.vault.processing.filter.options;
 
-import de.jhit.opendiabetes.vault.processing.filter.DatasetMarker;
 import de.jhit.opendiabetes.vault.processing.filter.Filter;
+import de.jhit.opendiabetes.vault.processing.filter.NoneFilter;
+import de.jhit.opendiabetes.vault.processing.filter.QueryFilter;
 
 /**
  *
@@ -25,26 +26,58 @@ import de.jhit.opendiabetes.vault.processing.filter.Filter;
  */
 public class QueryFilterOption extends FilterOption {
 
-    private final DatasetMarker dataPointer;
-    private final Filter firstFilter;
-    private final Filter secondFilter;
+    private Filter mainFilter;
+    private Filter innerFilter;
+    private int minSize, maxSize;
 
-    public QueryFilterOption(DatasetMarker dataPointer, Filter firstFilter, Filter secondFilter) {
-        this.dataPointer = dataPointer;
-        this.firstFilter = firstFilter;
-        this.secondFilter = secondFilter;
+    public final static int DONT_CARE = QueryFilter.DONT_CARE;
+
+    /**
+     * This Filter runs its main filter and then checks if it matches the given
+     * criteria, in detail, it filters the result with the inner filter and
+     * checks if the inner result matches the given size. If not, the main
+     * result won't be returned.
+     *
+     * @param mainFilter filter which will be checked
+     * @param innerFilter used to check the result of the main filter
+     * @param minSize minimum size of the result. use "DONT_CARE" for don't care
+     * @param maxSize maximum size of the result. use "DONT_CARE" for don't care
+     */
+    public QueryFilterOption(Filter mainFilter, Filter innerFilter, int minSize, int maxSize) {
+        this.mainFilter = mainFilter;
+        this.innerFilter = innerFilter;
+        this.minSize = minSize;
+        this.maxSize = maxSize;
     }
 
-    public DatasetMarker getDataPointer() {
-        return dataPointer;
+    /**
+     * This Filter checks if the previous result matches the given criteria, in
+     * detail, it filters the result with the inner filter and checks if the
+     * inner result matches the given size. If not, the previous result won't be
+     * returned.
+     *
+     * @param innerFilter used to check the result of the main filter
+     * @param minSize minimum size of the result. use "DONT_CARE" for don't care
+     * @param maxSize maximum size of the result. use "DONT_CARE" for don't care
+     */
+    public QueryFilterOption(Filter innerFilter, int minSize, int maxSize) {
+        this(new NoneFilter(), innerFilter, minSize, maxSize);
     }
 
-    public Filter getFirstFilter() {
-        return firstFilter;
+    public Filter getMainFilter() {
+        return mainFilter;
     }
 
-    public Filter getSecondFilter() {
-        return secondFilter;
+    public Filter getInnerFilter() {
+        return innerFilter;
+    }
+
+    public int getMinSize() {
+        return minSize;
+    }
+
+    public int getMaxSize() {
+        return maxSize;
     }
 
 }

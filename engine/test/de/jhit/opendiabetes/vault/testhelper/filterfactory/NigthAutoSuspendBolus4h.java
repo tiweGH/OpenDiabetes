@@ -44,7 +44,7 @@ public class NigthAutoSuspendBolus4h extends FilterFactory {
 
     public NigthAutoSuspendBolus4h(List<VaultEntry> data, VaultEntryType searchedType, VaultEntryTypeGroup groupInMargin, int timeMarginMinutes, LocalTime startTime, LocalTime endTime) {
         filters.add(new TimeSpanFilter(startTime, endTime));
-        DatasetMarker pointer = new DatasetMarker(data);
+        DatasetMarker pointer = new DatasetMarker();
         filters.add(pointer);
         filters.add(
                 new CombinationFilter(

@@ -16,8 +16,9 @@
  */
 package de.jhit.opendiabetes.vault.processing.filter.options;
 
-import de.jhit.opendiabetes.vault.processing.filter.DatasetMarker;
 import de.jhit.opendiabetes.vault.processing.filter.Filter;
+import de.jhit.opendiabetes.vault.processing.filter.NoneFilter;
+import de.jhit.opendiabetes.vault.processing.filter.PositionFilter;
 
 /**
  *
@@ -25,26 +26,66 @@ import de.jhit.opendiabetes.vault.processing.filter.Filter;
  */
 public class PositionFilterOption extends FilterOption {
 
-    private final DatasetMarker dataPointer;
-    private final Filter firstFilter;
-    private final Filter secondFilter;
+    private Filter filter;
+    private final int filterMode;
 
-    public PositionFilterOption(DatasetMarker dataPointer, Filter firstFilter, Filter secondFilter) {
-        this.dataPointer = dataPointer;
-        this.firstFilter = firstFilter;
-        this.secondFilter = secondFilter;
+    /**
+     * The first entry of the given input data
+     */
+    public static final int FIRST = PositionFilter.FIRST;
+    /**
+     * The last entry of the given input data
+     */
+    public static final int LAST = PositionFilter.LAST;
+    /**
+     * The entry with the middle index of the given input data
+     */
+    public static final int MIDDLE = PositionFilter.MIDDLE;
+    /**
+     * The entry with the timestamp located in the middle between the first and
+     * the last entry of the given input data
+     */
+    public static final int DATE_MIDDLE = PositionFilter.DATE_MIDDLE;
+
+    /**
+     * Searches the given dataset for one specific position.
+     *
+     * @param filter The FilterResult of this Filter will be used as working
+     * data for the position search
+     * @param filterMode Configures the position search:
+     * <p>
+     * <code>FIRST</code>: The first entry of the input data<p>
+     * <code>LAST</code>: The last entry<p>
+     * <code>MIDDLE</code>: The entry with the middle index<p>
+     * <code>DATE_MIDDLE</code>: The entry with the timestamp located in the
+     * middle between the first and the last entry
+     */
+    public PositionFilterOption(Filter filter, int filterMode) {
+        this.filter = filter;
+        this.filterMode = filterMode;
     }
 
-    public DatasetMarker getDataPointer() {
-        return dataPointer;
+    /**
+     * Searches the given dataset for one specific position.
+     *
+     * @param filterMode Configures the position search:
+     * <p>
+     * <code>FIRST</code>: The first entry of the input data<p>
+     * <code>LAST</code>: The last entry<p>
+     * <code>MIDDLE</code>: The entry with the middle index<p>
+     * <code>DATE_MIDDLE</code>: The entry with the timestamp located in the
+     * middle between the first and the last entry
+     */
+    public PositionFilterOption(int filterMode) {
+        this(new NoneFilter(), filterMode);
     }
 
-    public Filter getFirstFilter() {
-        return firstFilter;
+    public Filter getFilter() {
+        return filter;
     }
 
-    public Filter getSecondFilter() {
-        return secondFilter;
+    public int getFilterMode() {
+        return filterMode;
     }
 
 }
