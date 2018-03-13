@@ -18,11 +18,10 @@ package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
+import de.jhit.opendiabetes.vault.processing.filter.options.CounterFilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.VaultEntryTypeFilterOption;
 import de.jhit.opendiabetes.vault.testhelper.StaticDataset;
-import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.text.ParseException;
-import java.time.LocalTime;
-import java.util.Date;
 import java.util.List;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -56,6 +55,10 @@ public class CounterFilterTest extends Assert {
     public void tearDown() {
     }
 
+    CounterFilter setUpFilter(Filter filter, int counter, boolean onlyOneResult) {
+        return new CounterFilter(new CounterFilterOption(filter, counter, onlyOneResult));
+    }
+
     /**
      * Test of filter method, of class TimeSpanFilter.
      */
@@ -63,17 +66,17 @@ public class CounterFilterTest extends Assert {
     public void testOnlyOneResultFilter() throws ParseException {
         System.out.println("filter");
         List<VaultEntry> data = StaticDataset.getStaticDataset();
-        CounterFilter instance = new CounterFilter(new VaultEntryTypeFilter(VaultEntryType.HEART_RATE), 2, true);
+        CounterFilter instance = setUpFilter(new VaultEntryTypeFilter(new VaultEntryTypeFilterOption(VaultEntryType.HEART_RATE)), 2, true);
         FilterResult result = instance.filter(data);
 
-        assertTrue(result.filteredData.size()==1);
+        assertTrue(result.filteredData.size() == 1);
     }
-    
+
     @Test
     public void testFilter() throws ParseException {
         System.out.println("filter");
         List<VaultEntry> data = StaticDataset.getStaticDataset();
-        CounterFilter instance = new CounterFilter(new VaultEntryTypeFilter(VaultEntryType.HEART_RATE), 2, false);
+        CounterFilter instance = setUpFilter(new VaultEntryTypeFilter(new VaultEntryTypeFilterOption(VaultEntryType.HEART_RATE)), 2, false);
         FilterResult result = instance.filter(data);
 
         for (VaultEntry vaultEntry : result.filteredData) {

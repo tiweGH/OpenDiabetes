@@ -20,6 +20,7 @@ import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryAnnotation;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.exporter.NewDataset;
+import de.jhit.opendiabetes.vault.processing.filter.options.TimeSpanFilterOption;
 import de.jhit.opendiabetes.vault.testhelper.StaticDataset;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.text.ParseException;
@@ -41,7 +42,7 @@ import org.junit.Test;
  * @author juehv, a.a.aponte
  */
 public class TimeSpanFilterTest extends Assert {
-    
+
     static List<VaultEntry> data;
     static List<VaultEntry> newData;
     List<VaultEntryAnnotation> tmpAnnotations;
@@ -67,23 +68,28 @@ public class TimeSpanFilterTest extends Assert {
     public void tearDown() {
     }
 
+    TimeSpanFilter setUpFilter(LocalTime start, LocalTime end) {
+
+        return new TimeSpanFilter(new TimeSpanFilterOption(start, end));
+    }
+
     /**
      * Test of filter method, of class TimeSpanFilter.
+     *
      * @author juehv, a.a.aponte
      */
-    
     @Test
     public void testDateTimeSpanFilterTest_1200_1230() throws ParseException {
         //System.out.println("filter");
-        TimeSpanFilter instance = new TimeSpanFilter(LocalTime.parse("12:00"),
-                                                     LocalTime.parse("12:30"));
+        TimeSpanFilter instance = setUpFilter(LocalTime.parse("12:00"),
+                LocalTime.parse("12:30"));
         FilterResult result = instance.filter(data);
 
         for (VaultEntry entry : result.filteredData) {
             assertTrue(TimestampUtils.withinTimeSpan(LocalTime.parse("12:00"),
-                                                     LocalTime.parse("12:30"), entry.getTimestamp()));
+                    LocalTime.parse("12:30"), entry.getTimestamp()));
         }
-        
+
         List<VaultEntry> filteredData = new ArrayList<>();
         filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE, TestFunctions.creatNewDateToCheckFor("2017.06.29-12:00"), 55.0));
         filteredData.add(new VaultEntry(VaultEntryType.BASAL_PROFILE, TestFunctions.creatNewDateToCheckFor("2017.06.29-12:00"), 0.9));
@@ -92,24 +98,23 @@ public class TimeSpanFilterTest extends Assert {
         filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE, TestFunctions.creatNewDateToCheckFor("2017.06.29-12:21"), 51.0));
         filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE_VARIABILITY, TestFunctions.creatNewDateToCheckFor("2017.06.29-12:21"), 44.0, 127.0));
         filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-12:21"), 18.25));
-        
-        
+
         List<Pair<Date, Date>> timeSeries = new ArrayList<>();
         timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-12:00"), TestFunctions.creatNewDateToCheckFor("2017.06.29-12:21")));
-        
+
         FilterResult checkForThisResult = new FilterResult(filteredData, timeSeries);
-        
+
         assertEquals(result.filteredData, checkForThisResult.filteredData);
         assertEquals(result.timeSeries, checkForThisResult.timeSeries);
         //assertEquals(result, checkForThisResult);
     }
-    
+
     @Test
     public void testDateTimeSpanFilterTest_0800_1200() throws ParseException {
-        TimeSpanFilter instance = new TimeSpanFilter(LocalTime.parse("08:00"),
-                                                     LocalTime.parse("12:00"));
+        TimeSpanFilter instance = setUpFilter(LocalTime.parse("08:00"),
+                LocalTime.parse("12:00"));
         FilterResult result = instance.filter(data);
-        
+
         List<VaultEntry> filteredData = new ArrayList<>();
         filteredData.add(new VaultEntry(VaultEntryType.BASAL_PROFILE, TestFunctions.creatNewDateToCheckFor("2017.06.29-08:00"), 1.25));
         filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-08:06"), 27.25));
@@ -147,26 +152,24 @@ public class TimeSpanFilterTest extends Assert {
         filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE, TestFunctions.creatNewDateToCheckFor("2017.06.29-11:51"), 58.0));
         filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE, TestFunctions.creatNewDateToCheckFor("2017.06.29-12:00"), 55.0));
         filteredData.add(new VaultEntry(VaultEntryType.BASAL_PROFILE, TestFunctions.creatNewDateToCheckFor("2017.06.29-12:00"), 0.9));
-        
-        
+
         List<Pair<Date, Date>> timeSeries = new ArrayList<>();
         timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-08:00"), TestFunctions.creatNewDateToCheckFor("2017.06.29-12:00")));
-        
-        
+
         FilterResult checkForThisResult = new FilterResult(filteredData, timeSeries);
-        
+
         assertEquals(result.filteredData, checkForThisResult.filteredData);
         assertEquals(result.timeSeries, checkForThisResult.timeSeries);
         //assertEquals(result, checkForThisResult);
     }
-    
+
     @Test
     public void testDateTimeSpanFilterTest_0830_1130() throws ParseException {
-        TimeSpanFilter instance = new TimeSpanFilter(LocalTime.parse("08:30"),
-                                                     LocalTime.parse("11:30"));
+        TimeSpanFilter instance = setUpFilter(LocalTime.parse("08:30"),
+                LocalTime.parse("11:30"));
         FilterResult result = instance.filter(newData);
-        
-        List<VaultEntry> filteredData = new ArrayList<>();        
+
+        List<VaultEntry> filteredData = new ArrayList<>();
         filteredData.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TestFunctions.creatNewDateToCheckFor("2016.04.18-08:43"), 180));
         filteredData.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TestFunctions.creatNewDateToCheckFor("2016.04.18-08:58"), 168));
         filteredData.add(new VaultEntry(VaultEntryType.BASAL_PROFILE, TestFunctions.creatNewDateToCheckFor("2016.04.18-09:00"), 1.3));
@@ -191,7 +194,7 @@ public class TimeSpanFilterTest extends Assert {
         filteredData.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_ALERT, TestFunctions.creatNewDateToCheckFor("2016.04.18-10:13"), 182));
         filteredData.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TestFunctions.creatNewDateToCheckFor("2016.04.18-11:14"), 120));
         filteredData.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TestFunctions.creatNewDateToCheckFor("2016.04.18-11:29"), 103));
-        
+
         tmpAnnotations = new ArrayList<>();
         tmpAnnotations.add(new VaultEntryAnnotation(VaultEntryAnnotation.TYPE.GLUCOSE_BG_METER_SERIAL).setValue("BG1140084B"));
         filteredData.add(new VaultEntry(VaultEntryType.GLUCOSE_BG, TestFunctions.creatNewDateToCheckFor("2017.06.29-08:39"), 181.0, tmpAnnotations));
@@ -215,14 +218,13 @@ public class TimeSpanFilterTest extends Assert {
         filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE_VARIABILITY, TestFunctions.creatNewDateToCheckFor("2017.06.29-11:21"), 43.0, 59.0));
         filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-11:21"), 55.75));
         filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE, TestFunctions.creatNewDateToCheckFor("2017.06.29-11:30"), 51.0));
-        
-        
+
         List<Pair<Date, Date>> timeSeries = new ArrayList<>();
         timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2016.04.18-08:43"), TestFunctions.creatNewDateToCheckFor("2016.04.18-11:29")));
         timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-08:39"), TestFunctions.creatNewDateToCheckFor("2017.06.29-11:30")));
-        
+
         FilterResult checkForThisResult = new FilterResult(filteredData, timeSeries);
-        
+
         assertEquals(result.filteredData, checkForThisResult.filteredData);
         assertEquals(result.timeSeries, checkForThisResult.timeSeries);
         //assertEquals(result, checkForThisResult);

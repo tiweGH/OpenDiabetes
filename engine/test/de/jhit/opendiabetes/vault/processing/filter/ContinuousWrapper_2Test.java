@@ -19,21 +19,21 @@ package de.jhit.opendiabetes.vault.processing.filter;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryAnnotation;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
+import de.jhit.opendiabetes.vault.processing.filter.options.ContinuousWrapperOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.VaultEntryTypeFilterOption;
 import de.jhit.opendiabetes.vault.testhelper.StaticDataset;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.util.Pair;
 import org.junit.After;
 import org.junit.AfterClass;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -68,7 +68,7 @@ public class ContinuousWrapper_2Test {
     }
 
     private void setUpFilterUnderTest(int margin) {
-        filterUnderTest = new ContinuousWrapper(dataSet, margin);
+        filterUnderTest = new ContinuousWrapper(new ContinuousWrapperOption(dataSet, margin));
     }
 
     @Test
@@ -109,7 +109,7 @@ public class ContinuousWrapper_2Test {
         FilterResult expectedResult;
 
         setUpFilterUnderTest(0);
-        expectedResult = new VaultEntryTypeFilter(VaultEntryType.GLUCOSE_BG).filter(dataSet);
+        expectedResult = new VaultEntryTypeFilter(new VaultEntryTypeFilterOption(VaultEntryType.GLUCOSE_BG)).filter(dataSet);
         result = filterUnderTest.filter(expectedResult.filteredData);
         assertEquals(expectedResult.filteredData, result.filteredData);
         assertEquals(expectedResult.timeSeries, result.timeSeries);
@@ -126,7 +126,7 @@ public class ContinuousWrapper_2Test {
         List<VaultEntryAnnotation> tmpAnnotations;
 
         setUpFilterUnderTest(5);
-        result = filterUnderTest.filter(new VaultEntryTypeFilter(VaultEntryType.GLUCOSE_BG).filter(dataSet).filteredData);
+        result = filterUnderTest.filter(new VaultEntryTypeFilter(new VaultEntryTypeFilterOption(VaultEntryType.GLUCOSE_BG)).filter(dataSet).filteredData);
 
         tmpAnnotations = new ArrayList<>();
         tmpAnnotations.add(new VaultEntryAnnotation(VaultEntryAnnotation.TYPE.GLUCOSE_BG_METER_SERIAL).setValue("BG1140084B"));
@@ -170,7 +170,7 @@ public class ContinuousWrapper_2Test {
         List<VaultEntryAnnotation> tmpAnnotations;
 
         setUpFilterUnderTest(4 * 60);
-        result = filterUnderTest.filter(new VaultEntryTypeFilter(VaultEntryType.GLUCOSE_BG).filter(dataSet).filteredData);
+        result = filterUnderTest.filter(new VaultEntryTypeFilter(new VaultEntryTypeFilterOption(VaultEntryType.GLUCOSE_BG)).filter(dataSet).filteredData);
 
         vaultEntries.remove(vaultEntries.size() - 1);
         vaultEntries.remove(vaultEntries.size() - 1);

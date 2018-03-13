@@ -18,12 +18,11 @@ package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
+import de.jhit.opendiabetes.vault.processing.filter.options.OrFilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.VaultEntryTypeFilterOption;
 import de.jhit.opendiabetes.vault.testhelper.StaticDataset;
-import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import de.jhit.opendiabetes.vault.util.VaultEntryUtils;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -59,6 +58,10 @@ public class OrFilterTest extends Assert {
     public void tearDown() {
     }
 
+    OrFilter setUpFilter(List<Filter> filters) {
+        return new OrFilter(new OrFilterOption(filters));
+    }
+
     /**
      * Test of filter method, of class FilterDecoratorTest.
      *
@@ -67,9 +70,9 @@ public class OrFilterTest extends Assert {
     @Test
     public void checkFilterMethod() throws ParseException {
         List<Filter> filters = new ArrayList<>();
-        filters.add(new VaultEntryTypeFilter(VaultEntryType.HEART_RATE));
-        filters.add(new VaultEntryTypeFilter(VaultEntryType.STRESS));
-        Filter filter = new OrFilter(filters);
+        filters.add(new VaultEntryTypeFilter(new VaultEntryTypeFilterOption(VaultEntryType.HEART_RATE)));
+        filters.add(new VaultEntryTypeFilter(new VaultEntryTypeFilterOption(VaultEntryType.STRESS)));
+        Filter filter = setUpFilter(filters);
 
         data = StaticDataset.getStaticDataset();
         FilterResult result = filter.filter(data);
