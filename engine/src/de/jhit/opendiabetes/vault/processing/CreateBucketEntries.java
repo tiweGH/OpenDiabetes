@@ -27,17 +27,21 @@ import java.util.List;
 import javafx.util.Pair;
 
 /**
+ * This class contains all methods needed to create a new BucketEntry.
  *
  * @author Chryat1s
  */
 public class CreateBucketEntries {
-    
+
     /**
      * This method creates a new BucketEntry out of the given int and
      * VaultEntry. The int is the consecutive numbering of the BucketEntry.
      * During the process the VaultEntryType will be checked and all necessary
      * inputs for the arrays inside the BucketEntry will be generated
      * accordingly.
+     *
+     * The generated information inside the BucketEntry does not contain the
+     * information of other BucketEntrys needed for further processing.
      *
      * @param bucketNumber The consecutive number of the BucketEntry that is
      * being created.
@@ -62,7 +66,6 @@ public class CreateBucketEntries {
             // ==================
             // =ML-rev + one hot=
             // ==================
-            
             // is the act time given?
             if (TRIGGER_EVENT_ACT_TIME_GIVEN.contains(entry.getType())) {
                 // set act time
@@ -93,7 +96,6 @@ public class CreateBucketEntries {
                 // ======================
                 // =ML-rev + NOT one hot=
                 // ======================
-                
                 // catch VaultEntryTypes that have to be interpolated
             } else if (HASHSET_FOR_LINEAR_INTERPOLATION.contains(entry.getType())) {
                 // at the moment the act time for there VaultEntryTypes are only 1 frame ... this might change later on if new types are added to the hashset
@@ -112,25 +114,24 @@ public class CreateBucketEntries {
 
                 // is the act time set?
             } else if (TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_SET.containsKey(entry.getType())) {
-                
+
                 if (entry.getType().equals(VaultEntryType.BASAL_PROFILE)) {
-                    
+
                     // ************************************************************************************************************
                     // BASAL_PROFILE is resetable ... this means new values and value timers will overwrite the previous valid ones
                     // ************************************************************************************************************
-                    
                     // set act time to set act time in hashmap
                     newBucket.setValueTimer(arrayPosition, TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_SET.get(entry.getType()));
                     // set value
                     newBucket.setValues(arrayPosition, entry.getValue());
                     // set to EMPTY
                     newBucket.setFindNextVaultEntryType(arrayPosition, VaultEntryType.EMPTY);
-                    
+
                 } else {
                     // *************************************************************************************************************************
                     // at the moment BASAL_PROFILE is the only type in this hashset ... this might change and this might be the correct handling
                     // *************************************************************************************************************************
-                
+
                     // set act time to set act time in hashmap
                     newBucket.setValueTimer(arrayPosition, TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_SET.get(entry.getType()));
                     // set value
@@ -146,9 +147,9 @@ public class CreateBucketEntries {
 
                     // set to EMPTY
                     newBucket.setFindNextVaultEntryType(arrayPosition, VaultEntryType.EMPTY);
-                    
+
                 }
-                
+
                 // is the act time given?
             } else if (TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_GIVEN.contains(entry.getType())) {
                 // set act time
@@ -220,5 +221,47 @@ public class CreateBucketEntries {
         BucketEntry newBucket = new BucketEntry(bucketNumber, new VaultEntry(VaultEntryType.EMPTY, date));
         return newBucket;
 
+    }
+    
+    /**
+     * This method gets a BucketEntry and creates a new BucketEntry with the same information.
+     * 
+     * @param oldBucketEntry This is the BucketEntry that will be recreated.
+     * @return The method returns the recreated BucketEntry.
+     */
+    protected BucketEntry recreateBucketEntry(BucketEntry oldBucketEntry) {
+        BucketEntry newEntry = new BucketEntry(oldBucketEntry.getBucketNumber(), oldBucketEntry.getVaultEntry());
+        
+        for (int j = 0; j < BucketEntry.getNumberOfVaultEntryTriggerTypes(); j++) {
+            newEntry.setValueTimer(j, oldBucketEntry.getValueTimer(j));
+            newEntry.setValues(j, oldBucketEntry.getValues(j));
+            newEntry.setFindNextVaultEntryType(j, oldBucketEntry.getFindNextVaultEntryType(j));
+        }
+
+        List<Pair<VaultEntryType, Pair<Double, Double>>> tempListValuesForRunningComputation = new ArrayList<>();
+        for (Pair<VaultEntryType, Pair<Double, Double>> thisPair : oldBucketEntry.getValuesForRunningComputation()) {
+            Pair<VaultEntryType, Pair<Double, Double>> newPair;
+            newPair = new Pair(thisPair.getKey(), new Pair(thisPair.getValue().getKey(), thisPair.getValue().getValue()));
+            tempListValuesForRunningComputation.add(newPair);
+        }
+        newEntry.setValuesForRunningComputation(tempListValuesForRunningComputation);
+
+        List<Pair<VaultEntryType, Double>> tempComputedValuesForTheFinalBucketEntry = new ArrayList<>();
+        for (Pair<VaultEntryType, Double> thisPair : oldBucketEntry.getComputedValuesForTheFinalBucketEntry()) {
+            Pair<VaultEntryType, Double> newPair;
+            newPair = new Pair(thisPair.getKey(), thisPair.getValue());
+            tempComputedValuesForTheFinalBucketEntry.add(newPair);
+        }
+        newEntry.setComputedValuesForTheFinalBucketEntry(tempComputedValuesForTheFinalBucketEntry);
+
+        List<Pair<Integer, Pair<VaultEntryType, Double>>> tempValuesForTheInterpolator = new ArrayList<>();
+        for (Pair<Integer, Pair<VaultEntryType, Double>> thisPair : oldBucketEntry.getValuesForTheInterpolator()) {
+            Pair<Integer, Pair<VaultEntryType, Double>> newPair;
+            newPair = new Pair(thisPair.getKey(), new Pair(thisPair.getValue().getKey(), thisPair.getValue().getValue()));
+            tempValuesForTheInterpolator.add(newPair);
+        }
+        newEntry.setValuesForTheInterpolator(tempValuesForTheInterpolator);
+            
+        return newEntry;
     }
 }

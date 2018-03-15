@@ -26,7 +26,8 @@ import java.util.List;
 import javafx.util.Pair;
 
 /**
- *
+ * This class contains all the methods needed to compute the average of the values inside of BucketEntrys.
+ * 
  * @author Chryat1s
  */
 public class BucketAverageCalculationMethods {
@@ -51,15 +52,10 @@ public class BucketAverageCalculationMethods {
         // this pair will contain the information if the type is found in the list and if where in the list
         Pair<Boolean, Integer> doesListOfComputedValuesContainOutput;
 
-        // ===== just for info
-        // first part of the pair == VaultEntryType
-        // second part
-        //          first double == timer
-        //          second double == value
-        // ===== just for info
         // this list contains all calculated values before they are set into the FinalBucketEntrys
         List<Pair<VaultEntryType, Double>> listOfComputedValues = new ArrayList<>();
 
+        // Pair< VaultEntryType , Pair< ValueTimer, Value >>
         // iterate over all given pairs in the runningComputation list and add them up acording to their VaultEntryType
         for (Pair<VaultEntryType, Pair<Double, Double>> iteratorPair : bucket.getValuesForRunningComputation()) {
             VaultEntryType type = iteratorPair.getKey();
@@ -150,18 +146,32 @@ public class BucketAverageCalculationMethods {
     }
 
     /**
+     * This method receives a first BucketEntry number, a wanted BucketEntry size, and a list of BucketEntrys.
+     * This method computes the average value of the information found inside the BucketEntrys of the list.
+     * The given list of BucketEntrys has to be smaller or eqaul to the wanted BucketEntry size.
+     * If this is false an error will be thrown.
+     * 
+     * There are two cases for the average computation. The first is that the computed value is a onehot value (0 or 1).
+     * The second is that the computed value is a normal value.
+     * If the value is onehot and greater than or equal to 0,5 a 1 will be displayed, other values will be taken as they are.
+     * 
+     * After the average is computed the values are saved inside a FinalBucketEntry which is then returned.
      *
-     * collects data out of array / list computes avg over given list size
-     * creates FinalBucketEntry and sets the computed and needed values
-     *
-     * @param bucketNumber
-     * @param bucketsToMerge
-     * @return
+     * @param bucketNumber This is the consecutive FinalBucketEntry number.
+     * @param wantedBucketSize This is the wanted FinalBucketEntry size. This number will be used to calculate the average value for the FinalBucketEntry.
+     * @param bucketsToMerge This is the list of BucketEntrys that will be merged and averaged into the resulting FinalBucketEntry.
+     * @return This method returns a FinalBucketEntry containing all the averaged information of the given BucketEntrys inside the list.
      */
     protected FinalBucketEntry calculateAverageForWantedBucketSize(int bucketNumber, double wantedBucketSize, List<BucketEntry> bucketsToMerge) {
         // the list of BucketEntrys contains all entries that are relavent for the average computation
         final int MAX_ARRAY_SIZE = ARRAY_ENTRIES_AFTER_MERGE_TO.size();
         final double WANTED_BUCKET_SIZE = wantedBucketSize;
+        
+        // check for the list size
+        if (bucketsToMerge.size() > WANTED_BUCKET_SIZE) {
+            // data will be lost if continued
+            throw new Error("The_given_list_size_is_greater_than_the_wanted_size_data_will_be_lost!");
+        }
 
         double[] valueComputaion = new double[MAX_ARRAY_SIZE];
         // Fill valueComputaion with 0

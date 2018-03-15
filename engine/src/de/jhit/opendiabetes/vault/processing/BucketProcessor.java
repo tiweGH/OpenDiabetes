@@ -36,8 +36,10 @@ import javafx.util.Pair;
  */
 public class BucketProcessor {
     
+    final CreateBucketEntries bucketEntryCreator;
     final CreateListOfBucketEntries bucketListCreator;
     public BucketProcessor() throws ParseException {
+        this.bucketEntryCreator = new CreateBucketEntries();
         this.bucketListCreator = new CreateListOfBucketEntries();
     }
     
@@ -334,6 +336,66 @@ public class BucketProcessor {
     // =========================================================================
     // =========================================================================
     
+    /**
+     * This method iterates through all BucketEntrys of the given list of
+     * BucketEntrys and creates a new list of BucketEntrys that only contains
+     * the last found BucketEntry of each timestamp found in the given list of
+     * BucketEntrys. All the BucketEntrys in the new created list of
+     * BucketEntrys will have the correct numeration set to thier new position
+     * in the list.
+     *
+     * NEW: This method will now also update the listOfValuesForTheInterpolator
+     * list by setting the bucketNumbers inside this list to the new
+     * bucketNumber.
+     *
+     * @param firstBucketEntryNumber This is the first BucketEntry number in the returned list.
+     * @param bucketList This is the list of BucketEntrys that will be used to
+     * create the new normalized (minimal) list of BucketEntrys.
+     * @return This method returns a list of BucketEntrys with only one
+     * BucketEntry per timestamp.
+     */
+    protected List<BucketEntry> removeUnneededBucketEntries(int firstBucketEntryNumber, List<BucketEntry> bucketList) {
+        List<BucketEntry> outputBucketList = new ArrayList<>();
+        List<BucketEntry> inverseOutputBucketList = new ArrayList<>();
+        Date firstBucketEntryDate = bucketList.get(0).getVaultEntry().getTimestamp();
+        Date lastBucketEntryDate = bucketList.get(bucketList.size() - 1).getVaultEntry().getTimestamp();
+        Date currentBucketEntryDate = null;
+        int newConsecutiveBucketEntryNumber = firstBucketEntryNumber;
+
+        // loop through the list and search for a new date
+        for (int i = (bucketList.size() - 1); i > -1; i--) {
+            Date thisTimestamp = bucketList.get(i).getVaultEntry().getTimestamp();
+            
+            // last element
+            if (thisTimestamp.equals(lastBucketEntryDate)) {
+                inverseOutputBucketList.add(bucketEntryCreator.recreateBucketEntry(bucketList.get(i)));
+                currentBucketEntryDate = thisTimestamp;
+            }
+            
+            // normal walk through
+            if (thisTimestamp.before(currentBucketEntryDate)) {
+                inverseOutputBucketList.add(bucketEntryCreator.recreateBucketEntry(bucketList.get(i)));
+                currentBucketEntryDate = thisTimestamp;
+            }
+        }
+        
+        // generate the correct output
+        for (int i = (inverseOutputBucketList.size() - 1); i > -1; i--) {
+            outputBucketList.add(bucketEntryCreator.recreateBucketEntry(inverseOutputBucketList.get(i)));
+            outputBucketList.get(outputBucketList.size() - 1).setBucketNumber(newConsecutiveBucketEntryNumber);
+            newConsecutiveBucketEntryNumber = newConsecutiveBucketEntryNumber++;
+        }
+        
+        // check if everything is correct
+        Date checkThisFirstDate = outputBucketList.get(0).getVaultEntry().getTimestamp();
+        Date checkThisLAstDate = outputBucketList.get(outputBucketList.size() - 1).getVaultEntry().getTimestamp();
+        if (checkThisFirstDate.equals(firstBucketEntryDate) && checkThisLAstDate.equals(lastBucketEntryDate)) {
+            return outputBucketList;
+        } else {
+            throw new Error("An_Error_occurred_while_removing_unneeded_BucketEntrys!");
+        }
+    }
+    
     
     /**
      * This method iterates through all BucketEntrys of the given list of
@@ -347,12 +409,13 @@ public class BucketProcessor {
      * list by setting the bucketNumbers inside this list to the new
      * bucketNumber.
      *
+     * @param firstBucketEntryNumber This is the first BucketEntry number in the returned list.
      * @param bucketList This is the list of BucketEntrys that will be used to
      * create the new normalized (minimal) list of BucketEntrys.
      * @return This method returns a list of BucketEntrys with only one
      * BucketEntry per timestamp.
      */
-    protected List<BucketEntry> removeUnneededBucketEntries(int firstBucketEntryNumber, List<BucketEntry> bucketList) {
+    protected List<BucketEntry> removeUnneededBucketEntries_old(int firstBucketEntryNumber, List<BucketEntry> bucketList) {
         List<BucketEntry> outputBucketList = new ArrayList<>();
         Date checkingThisBucketEntryDate = bucketList.get(0).getVaultEntry().getTimestamp();
         Date lastBucketEntryDate = bucketList.get(bucketList.size() - 1).getVaultEntry().getTimestamp();
