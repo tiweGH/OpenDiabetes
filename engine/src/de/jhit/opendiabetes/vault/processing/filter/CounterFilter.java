@@ -17,9 +17,10 @@
 package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
-import de.jhit.opendiabetes.vault.container.VaultEntryType;
-import java.util.List;
-import javax.naming.spi.DirStateFactory;
+import de.jhit.opendiabetes.vault.processing.filter.options.CounterFilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.FilterOption;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -33,23 +34,23 @@ public class CounterFilter extends Filter {
     private int hitCounter;
     private final boolean onlyOneResult;
 
-    /**
-     * Standard Constructor
-     * 
-     * @param filter: Filter, which should be Counted
-     * @param hitCounter: After how many Hits 
-     * @param onlyOneResult: When true only one result will returned. (first appearence)
-     */
-    public CounterFilter(Filter filter, int hitCounter, boolean onlyOneResult) {
-        this.filter = filter;
-        this.hitCounter = hitCounter;
-        currentHit = 0;
-        this.onlyOneResult = onlyOneResult;
+    public CounterFilter(FilterOption option) {
+        super(option);
+        if (option instanceof CounterFilterOption) {
+            this.filter = ((CounterFilterOption) option).getFilter();
+            this.hitCounter = ((CounterFilterOption) option).getHitCounter();
+            currentHit = 0;
+            this.onlyOneResult = ((CounterFilterOption) option).isOnlyOneResult();
+        } else {
+            String msg = "Option has to be an instance of CounterFilterOption";
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, msg);
+            throw new Error(msg);//IllegalArgumentException("Option has to be an instance of CombinationFilterOption");
+        }
     }
 
     @Override
     FilterType getType() {
-        return FilterType.EVENT_FILTER;
+        return FilterType.COUNTER;
     }
 
     @Override
@@ -69,6 +70,7 @@ public class CounterFilter extends Filter {
 
     @Override
     Filter update(VaultEntry vaultEntry) {
-        return new CounterFilter(filter, hitCounter, onlyOneResult);
+        CounterFilterOption tempOption = new CounterFilterOption(filter, hitCounter, onlyOneResult);
+        return new CounterFilter(tempOption);
     }
 }

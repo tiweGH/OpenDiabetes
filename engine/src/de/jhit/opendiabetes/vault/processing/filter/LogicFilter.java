@@ -17,49 +17,51 @@
 package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
-import de.jhit.opendiabetes.vault.container.VaultEntryType;
+import de.jhit.opendiabetes.vault.processing.filter.options.FilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.LogicFilterOption;
 import java.util.List;
-import javax.naming.spi.DirStateFactory;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author Daniel This class extends filter and checks if the given Filters are
- * positiv in the given order. The Filter will be switched to the next, 
- * if the first Filter returns true.
+ * positiv in the given order. The Filter will be switched to the next, if the
+ * first Filter returns true.
  */
 public class LogicFilter extends Filter {
 
-    private List<Filter> filters;
-    private int currentFilter;
-    private boolean onlyOneResult;
+    private LogicFilterOption option;
 
-    /**
-     * Standard Constructor
-     *
-     * @param filters; Filters, which are in an specific order for checking
-     * @param onlyOneResult; If there should be the first or all results.
-     */
-    public LogicFilter(List<Filter> filters, boolean onlyOneResult) {
-        this.filters = filters;
-        currentFilter = 0;
-        this.onlyOneResult = onlyOneResult;
+    private int currentFilter;
+
+    public LogicFilter(FilterOption option) {
+        super(option);
+        if (option instanceof LogicFilterOption) {
+            this.option = (LogicFilterOption) option;
+            currentFilter = 0;
+        } else {
+            String msg = "Option has to be an instance of LogicFilterOption";
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, msg);
+            throw new Error(msg);//IllegalArgumentException("Option has to be an instance of CombinationFilterOption");
+        }
     }
 
     @Override
     FilterType getType() {
-        return FilterType.EVENT_FILTER;
+        return FilterType.LOGIC;
     }
 
     @Override
     boolean matchesFilterParameters(VaultEntry entry) {
         boolean result = false;
 
-        if (filters.size() - 1 >= currentFilter && filters.get(currentFilter).matchesFilterParameters(entry) == true) {
+        if (option.getFilters().size() - 1 >= currentFilter && option.getFilters().get(currentFilter).matchesFilterParameters(entry) == true) {
 
-            if (filters.size() - 1 == currentFilter) {
+            if (option.getFilters().size() - 1 == currentFilter) {
                 result = true;
 
-                if (!onlyOneResult) {
+                if (!option.isOnlyOneResult()) {
                     currentFilter = -1;
                 }
             }
@@ -71,7 +73,7 @@ public class LogicFilter extends Filter {
 
     @Override
     protected List<VaultEntry> setUpBeforeFilter(List<VaultEntry> data) {
-        for (Filter filter : filters) {
+        for (Filter filter : option.getFilters()) {
             filter.setUpBeforeFilter(data);
         }
         return data;
@@ -80,6 +82,6 @@ public class LogicFilter extends Filter {
     @Override
     Filter update(VaultEntry vaultEntry
     ) {
-        return new LogicFilter(filters, onlyOneResult);
+        return new LogicFilter(option);
     }
 }

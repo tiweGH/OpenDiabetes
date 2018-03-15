@@ -21,7 +21,8 @@ import de.jhit.opendiabetes.vault.container.BucketEventTriggers;
 import de.jhit.opendiabetes.vault.container.FinalBucketEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
-import de.jhit.opendiabetes.vault.processing.BucketProcessor_old;
+import de.jhit.opendiabetes.vault.container.csv.ExportEntry;
+import de.jhit.opendiabetes.vault.processing.BucketProcessor;
 import de.jhit.opendiabetes.vault.processing.BucketProcessor_runable;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -41,7 +42,7 @@ import java.util.logging.Logger;
  *
  * @author jorg
  */
-public class MLExporter1 {
+public class MLExporter1 extends FileExporter{
 
     protected static String deleteComma(VaultEntry entry) {
         String result = entry.toString();
@@ -110,5 +111,14 @@ public class MLExporter1 {
 //        }
         bucketsToCsv(buckets, "odv_exportxx.csv");
 
+    }
+
+    public MLExporter1(ExporterOptions options, String filePath) {
+        super(options, filePath);
+    }
+
+    @Override
+    protected List<ExportEntry> prepareData(List<VaultEntry> data) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

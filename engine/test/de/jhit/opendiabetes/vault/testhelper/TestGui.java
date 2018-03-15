@@ -2,18 +2,11 @@ package de.jhit.opendiabetes.vault.testhelper;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
-import de.jhit.opendiabetes.vault.processing.filter.EventFilter;
-import de.jhit.opendiabetes.vault.processing.filter.EventPointFilter;
 import de.jhit.opendiabetes.vault.processing.filter.FilterResult;
 import de.jhit.opendiabetes.vault.processing.filter.TimePointFilter;
-import de.jhit.opendiabetes.vault.util.TimestampUtils;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
-import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -36,7 +29,7 @@ public class TestGui extends Application {
 
     @Override
     public void start(Stage stage) {
-
+        /*
         GridPane grid = new GridPane();
         grid.setVgap(4);
         grid.setHgap(10);
@@ -162,7 +155,7 @@ public class TestGui extends Application {
         } catch (Throwable t) {
             t.printStackTrace();
         }
-
+         */
     }
 
     public static void main(String[] args) {

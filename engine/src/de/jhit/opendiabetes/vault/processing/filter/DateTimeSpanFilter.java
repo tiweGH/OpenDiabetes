@@ -17,13 +17,14 @@
 package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
+import de.jhit.opendiabetes.vault.processing.filter.options.DateTimeSpanFilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.FilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.VaultEntryTypeFilterOption;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
-import javafx.util.Pair;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -34,9 +35,17 @@ public class DateTimeSpanFilter extends Filter {
     private final Date startTime;
     private final Date endTime;
 
-    public DateTimeSpanFilter(Date startTime, Date endTime) {
-        this.startTime = startTime;
-        this.endTime = endTime;
+    public DateTimeSpanFilter(FilterOption option) {
+        
+        super(option);
+        if (option instanceof DateTimeSpanFilterOption) {
+            this.startTime = ((DateTimeSpanFilterOption)option).getStartTime();
+            this.endTime = ((DateTimeSpanFilterOption)option).getEndTime();
+        } else {
+            String msg = "Option has to be an instance of DateTimeSpanFilterOption";
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, msg);
+            throw new Error(msg);//IllegalArgumentException("Option has to be an instance of CombinationFilterOption");
+        }
     }
 
     @Override
@@ -63,7 +72,9 @@ public class DateTimeSpanFilter extends Filter {
         } else {
             tempEnd = TimestampUtils.setDayOfDate(endTime, vaultEntry.getTimestamp());
         }
-        return new DateTimeSpanFilter(tempStart, tempEnd);
+        option = new DateTimeSpanFilterOption(tempStart, tempEnd);
+        
+        return new DateTimeSpanFilter(option);
     }
 
 }

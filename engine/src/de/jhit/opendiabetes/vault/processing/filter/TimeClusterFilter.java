@@ -17,13 +17,16 @@
 package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
+import de.jhit.opendiabetes.vault.processing.filter.options.FilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.TimeClusterFilterOption;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import de.jhit.opendiabetes.vault.util.VaultEntryUtils;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javafx.util.Pair;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The TimeClusterFilter is a more complex timespan-filter, filters given to the
@@ -41,6 +44,7 @@ import javafx.util.Pair;
 public class TimeClusterFilter extends Filter {
 
 //    private DatasetMarker dataPointer;
+    private TimeClusterFilterOption option;
     private List<VaultEntry> clusterFilterResult;
     private List<Filter> filters;
     private final LocalTime startTime;
@@ -52,49 +56,18 @@ public class TimeClusterFilter extends Filter {
     public static final long WEEK = 7 * DAY;
     public static final long YEAR = 365 * DAY;
 
-    /**
-     * Filters given to the TimeClusterFilter will be applied to each timespan
-     * seperately. <br>
-     * The timespans can be a fragmentation of the whole entry dataset, or, with
-     * a gap greater than 0, spans between the clusters will be excluded from
-     * filtering.<p>
-     * For example, use <code>TimeClusterFilter.DAY</code> for
-     * <code>clusterSpacing</code>, to filter the same timespan of each day
-     * independently.
-     *
-     * @param filters list of filters, which will be applied to each timespan in
-     * a slicing process.
-     * @param startTime start time of the timespan
-     * @param clusterTimeInMinutes length of the timespan in minutes
-     * @param clusterSpacing length of the gaps between each timespan in minutes
-     */
-    public TimeClusterFilter(List<Filter> filters, LocalTime startTime, long clusterTimeInMinutes, long clusterSpacing) {
-        this.filters = filters;
-        this.clusterTimeInMinutes = clusterTimeInMinutes;
-        this.startTime = startTime;
-        this.clusterSpacing = clusterSpacing;
-    }
-
-    /**
-     * Filters given to the TimeClusterFilter will be applied to each timespan
-     * seperately<br>
-     * The timespans can be a fragmentation of the whole entry dataset, or, with
-     * a gap greater than 0, spans between the clusters will be excluded from
-     * filtering.<p>
-     * For example, use <code>TimeClusterFilter.DAY</code> for
-     * <code>clusterSpacing</code>, to filter the same timespan of each day
-     * independently.
-     *
-     * @param filters list of filters, which will be applied to each timespan in
-     * a slicing process.
-     * @param clusterTimeInMinutes length of the timespan in minutes
-     * @param clusterSpacing length of the gaps between each timespan in minutes
-     */
-    public TimeClusterFilter(List<Filter> filters, long clusterTimeInMinutes, long clusterSpacing) {
-        this.filters = filters;
-        this.clusterTimeInMinutes = clusterTimeInMinutes;
-        this.startTime = null;
-        this.clusterSpacing = clusterSpacing;
+    public TimeClusterFilter(FilterOption option) {
+        super(option);
+        if (option instanceof TimeClusterFilterOption) {
+            this.filters = ((TimeClusterFilterOption) option).getFilters();
+            this.clusterTimeInMinutes = ((TimeClusterFilterOption) option).getClusterTimeInMinutes();
+            this.startTime = ((TimeClusterFilterOption) option).getStartTime();
+            this.clusterSpacing = ((TimeClusterFilterOption) option).getClusterSpacing();
+        } else {
+            String msg = "Option has to be an instance of TimeClusterFilterOption";
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, msg);
+            throw new Error(msg);//IllegalArgumentException("Option has to be an instance of CombinationFilterOption");
+        }
     }
 
     @Override
@@ -163,7 +136,7 @@ public class TimeClusterFilter extends Filter {
 
     @Override
     FilterType getType() {
-        return FilterType.COMBINATION_FILTER;
+        return FilterType.CLUSTER;
     }
 
     @Override
@@ -173,7 +146,7 @@ public class TimeClusterFilter extends Filter {
 
     @Override
     Filter update(VaultEntry vaultEntry) {
-        return new TimeClusterFilter(this.filters, this.startTime, this.clusterTimeInMinutes, this.clusterSpacing);
+        return new TimeClusterFilter(option);
     }
 
 }

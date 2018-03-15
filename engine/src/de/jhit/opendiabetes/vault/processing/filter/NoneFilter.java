@@ -16,11 +16,8 @@
  */
 package de.jhit.opendiabetes.vault.processing.filter;
 
-import com.sun.javafx.scene.control.skin.VirtualFlow;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
-import java.util.Date;
-import java.util.List;
-import javafx.util.Pair;
+import de.jhit.opendiabetes.vault.processing.filter.options.FilterOption;
 
 /**
  * Does nothing.
@@ -28,6 +25,10 @@ import javafx.util.Pair;
  * @author juehv
  */
 public class NoneFilter extends Filter {
+
+    public NoneFilter() {
+        super(null);
+    }
 
     @Override
     public FilterType getType() {

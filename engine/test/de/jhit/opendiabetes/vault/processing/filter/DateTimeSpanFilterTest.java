@@ -18,13 +18,11 @@ package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
-import static de.jhit.opendiabetes.vault.processing.filter.DateTimePointFilterTest.data;
+import de.jhit.opendiabetes.vault.processing.filter.options.DateTimeSpanFilterOption;
 import de.jhit.opendiabetes.vault.testhelper.SensitivityDataset;
 import de.jhit.opendiabetes.vault.testhelper.StaticDataset;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -42,10 +40,10 @@ import org.junit.Test;
  * @author gizem, a.a.aponte
  */
 public class DateTimeSpanFilterTest extends Assert {
-    
+
     static List<VaultEntry> data;
     static List<VaultEntry> dataSet;
-    
+
     public DateTimeSpanFilterTest() {
     }
 
@@ -67,8 +65,13 @@ public class DateTimeSpanFilterTest extends Assert {
     public void tearDown() {
     }
 
+    DateTimeSpanFilter setUpFilter(Date start, Date end) {
+        return new DateTimeSpanFilter(new DateTimeSpanFilterOption(start, end));
+    }
+
     /**
      * Test of filter method, of class DateTimeSpanFilter.
+     *
      * @author gizem, a.a.aponte
      */
     @Test
@@ -76,13 +79,13 @@ public class DateTimeSpanFilterTest extends Assert {
         // System.out.println("filter");
         String dateTimePointBegin = "2017.08.02-01:07";
         String dateTimePointEnd = "2017.08.03-01:22";
-        
-        DateTimeSpanFilter instance = new DateTimeSpanFilter(TestFunctions.creatNewDateToCheckFor(dateTimePointBegin), TestFunctions.creatNewDateToCheckFor(dateTimePointEnd));
+
+        DateTimeSpanFilter instance = setUpFilter(TestFunctions.creatNewDateToCheckFor(dateTimePointBegin), TestFunctions.creatNewDateToCheckFor(dateTimePointEnd));
         FilterResult result = instance.filter(data);
 
         for (VaultEntry entry : result.filteredData) {
             assertTrue(TimestampUtils.withinDateTimeSpan(TestFunctions.creatNewDateToCheckFor(dateTimePointBegin),
-                   TestFunctions.creatNewDateToCheckFor(dateTimePointEnd), entry.getTimestamp()));
+                    TestFunctions.creatNewDateToCheckFor(dateTimePointEnd), entry.getTimestamp()));
         }
     }
 
@@ -90,8 +93,8 @@ public class DateTimeSpanFilterTest extends Assert {
     public void testDateTimeSpanFilterTest_0803_0959() throws ParseException {
         String dateTimePointBegin = "2016.04.18-08:03";
         String dateTimePointEnd = "2016.04.18-09:59";
-        
-        DateTimeSpanFilter instance = new DateTimeSpanFilter(TestFunctions.creatNewDateToCheckFor(dateTimePointBegin), TestFunctions.creatNewDateToCheckFor(dateTimePointEnd));
+
+        DateTimeSpanFilter instance = setUpFilter(TestFunctions.creatNewDateToCheckFor(dateTimePointBegin), TestFunctions.creatNewDateToCheckFor(dateTimePointEnd));
         FilterResult result = instance.filter(data);
 
         List<VaultEntry> filteredData = new ArrayList<>();
@@ -110,23 +113,23 @@ public class DateTimeSpanFilterTest extends Assert {
         filteredData.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_ALERT, TestFunctions.creatNewDateToCheckFor("2016.04.18-09:44"), 126));
         filteredData.add(new VaultEntry(VaultEntryType.BOLUS_NORMAL, TestFunctions.creatNewDateToCheckFor("2016.04.18-09:45"), 5));
         filteredData.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TestFunctions.creatNewDateToCheckFor("2016.04.18-09:59"), 118));
-        
+
         List<Pair<Date, Date>> timeSeries = new ArrayList<>();
         timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2016.04.18-08:03"), TestFunctions.creatNewDateToCheckFor("2016.04.18-09:59")));
-        
+
         FilterResult checkForThisResult = new FilterResult(filteredData, timeSeries);
-        
+
         assertEquals(result.filteredData, checkForThisResult.filteredData);
         assertEquals(result.timeSeries, checkForThisResult.timeSeries);
         //assertEquals(result, checkForThisResult);
     }
-    
+
     @Test
     public void testDateTimeSpanFilterTest_0506_0656() throws ParseException {
         String dateTimePointBegin = "2017.06.29-05:06";
         String dateTimePointEnd = "2017.06.29-06:56";
-        
-        DateTimeSpanFilter instance = new DateTimeSpanFilter(TestFunctions.creatNewDateToCheckFor(dateTimePointBegin), TestFunctions.creatNewDateToCheckFor(dateTimePointEnd));
+
+        DateTimeSpanFilter instance = setUpFilter(TestFunctions.creatNewDateToCheckFor(dateTimePointBegin), TestFunctions.creatNewDateToCheckFor(dateTimePointEnd));
         FilterResult result = instance.filter(dataSet);
 
         List<VaultEntry> filteredData = new ArrayList<>();
@@ -168,23 +171,23 @@ public class DateTimeSpanFilterTest extends Assert {
         filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-06:46"), 27.25));
         filteredData.add(new VaultEntry(VaultEntryType.SLEEP_DEEP, TestFunctions.creatNewDateToCheckFor("2017.06.29-06:55"), 27.0));
         filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE, TestFunctions.creatNewDateToCheckFor("2017.06.29-06:56"), 59.0));
-        
+
         List<Pair<Date, Date>> timeSeries = new ArrayList<>();
         timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-05:06"), TestFunctions.creatNewDateToCheckFor("2017.06.29-06:56")));
-        
+
         FilterResult checkForThisResult = new FilterResult(filteredData, timeSeries);
-        
+
         assertEquals(result.filteredData, checkForThisResult.filteredData);
         assertEquals(result.timeSeries, checkForThisResult.timeSeries);
         //assertEquals(result, checkForThisResult);
     }
-    
+
     @Test
     public void testDateTimeSpanFilterTest_1110_1151() throws ParseException {
         String dateTimePointBegin = "2017.06.29-11:10";
         String dateTimePointEnd = "2017.06.29-11:51";
-        
-        DateTimeSpanFilter instance = new DateTimeSpanFilter(TestFunctions.creatNewDateToCheckFor(dateTimePointBegin), TestFunctions.creatNewDateToCheckFor(dateTimePointEnd));
+
+        DateTimeSpanFilter instance = setUpFilter(TestFunctions.creatNewDateToCheckFor(dateTimePointBegin), TestFunctions.creatNewDateToCheckFor(dateTimePointEnd));
         FilterResult result = instance.filter(dataSet);
 
         List<VaultEntry> filteredData = new ArrayList<>();
@@ -201,12 +204,12 @@ public class DateTimeSpanFilterTest extends Assert {
         filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE_VARIABILITY, TestFunctions.creatNewDateToCheckFor("2017.06.29-11:51"), 41.0, 33.0));
         filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-11:51"), 75.25));
         filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE, TestFunctions.creatNewDateToCheckFor("2017.06.29-11:51"), 58.0));
-        
+
         List<Pair<Date, Date>> timeSeries = new ArrayList<>();
         timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-11:10"), TestFunctions.creatNewDateToCheckFor("2017.06.29-11:51")));
-        
+
         FilterResult checkForThisResult = new FilterResult(filteredData, timeSeries);
-        
+
         assertEquals(result.filteredData, checkForThisResult.filteredData);
         assertEquals(result.timeSeries, checkForThisResult.timeSeries);
         //assertEquals(result, checkForThisResult);

@@ -18,43 +18,44 @@ package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
-import java.util.List;
+import de.jhit.opendiabetes.vault.processing.filter.options.FilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.VaultEntryTypeFilterOption;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- * Checks if the given VaulEntey is between two values.
- * @author Daniel
+ *
+ * @author Daniel This class extends filter and checks if the given
+ * vaultEntryType is equal.
  */
-public class EventSpanFilter extends Filter {
+public class VaultEntryTypeFilter extends Filter {
 
     private VaultEntryType vaultEntryType;
-    private final float from;
-    private final float to;
 
-    /**
-     * Initialize fields for functions.
-     * 
-     * @param vaultEntryType
-     * @param from
-     * @param to 
-     */
-    public EventSpanFilter(VaultEntryType vaultEntryType, float from, float to) {
-        this.vaultEntryType = vaultEntryType;
-        this.from = from;
-        this.to = to;
+    public VaultEntryTypeFilter(FilterOption option) {
+        super(option);
+        if (option instanceof VaultEntryTypeFilterOption) {
+            this.vaultEntryType = ((VaultEntryTypeFilterOption) option).getVaultEntryType();
+        } else {
+            String msg = "Option has to be an instance of VaultEntryTypeFilterOption";
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, msg);
+            throw new Error(msg);//IllegalArgumentException("Option has to be an instance of CombinationFilterOption");
+        }
+
     }
 
     @Override
     FilterType getType() {
-        return FilterType.EVENT_SPAN_FILTER;
+        return FilterType.TYPE;
     }
 
     @Override
     boolean matchesFilterParameters(VaultEntry entry) {
-        return entry.getType().equals(vaultEntryType) && entry.getValue()>=from && entry.getValue() <= to;
+        return entry.getType().equals(vaultEntryType);
     }
 
     @Override
     Filter update(VaultEntry vaultEntry) {
-        return new EventSpanFilter(vaultEntry.getType(), from, to);
+        return new VaultEntryTypeFilter(option);
     }
 }

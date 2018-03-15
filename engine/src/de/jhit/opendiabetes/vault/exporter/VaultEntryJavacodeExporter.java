@@ -43,22 +43,12 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author jorg
+ * @author tiweGH
  */
 public class VaultEntryJavacodeExporter {
-    // public class StaticDataset {
 
-//    public static List<VaultEntry> getStaticDataset() throws ParseException {
-//        List<VaultEntry> vaultEntries = new ArrayList<>();
-//        List<VaultEntryAnnotation> tmpAnnotations;
-//
-//        vaultEntries.add(new VaultEntry(VaultEntryType.STRESS, TimestampUtils.createCleanTimestamp("2017.06.29-04:46", "yyyy.MM.dd-HH:mm"), 21.5));
-//        tmpAnnotations = new ArrayList<>();
-//        tmpAnnotations.add(new VaultEntryAnnotation(VaultEntryAnnotation.TYPE.GLUCOSE_BG_METER_SERIAL).setValue("BG1140084B"));
-//        vaultEntries.add(new VaultEntry(VaultEntryType.GLUCOSE_BG, TimestampUtils.createCleanTimestamp("2017.06.29-04:53", "yyyy.MM.dd-HH:mm"), 109.0, tmpAnnotations));
-//        vaultEntries.add(new VaultEntry(VaultEntryType.STRESS, TimestampUtils.createCleanTimestamp("2017.06.29-04:56", "yyyy.MM.dd-HH:mm"), 36.25));
     public static void compile(List<VaultEntry> entries, String filepath) throws IOException, ParseException {
-        //int x = buckets.get(1).getFullOnehotInformationArray().length;
+
         FileWriter fw;
         String line;
         fw = new FileWriter(filepath + "ExportDataset.java");
@@ -71,12 +61,12 @@ public class VaultEntryJavacodeExporter {
                 + "        List<VaultEntry> vaultEntries = new ArrayList<>();\n"
                 + "        List<VaultEntryAnnotation> tmpAnnotations;\n");
         try {
-            //int j = 0;
+
             for (VaultEntry entry : entries) {
 
                 calTimestamp.setTime(entry.getTimestamp());
                 year = "" + calTimestamp.get(Calendar.YEAR);
-                month = "" + calTimestamp.get(Calendar.MONTH);
+                month = "" + (calTimestamp.get(Calendar.MONTH) + 1);
                 if (month.length() < 2) {
                     month = "0" + month;
                 }

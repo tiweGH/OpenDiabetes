@@ -19,11 +19,12 @@ package de.jhit.opendiabetes.vault.processing.filter;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.container.VaultEntryTypeGroup;
+import de.jhit.opendiabetes.vault.processing.filter.options.FilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.TypeAbsenceFilterOption;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import javafx.util.Pair;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -32,41 +33,22 @@ import javafx.util.Pair;
 public class TypeAbsenceFilter extends Filter {
 
     private final long marginAfterTrigger; // minutes after a trigger until data becomes interesting again.
-    private final List<VaultEntryType> types;
+    private final VaultEntryType type;
     private final VaultEntryTypeGroup typeGroup;
 
     Date lastEntryTimeFound = null;
 
-    /**
-     * The Filter gets a List of EntryTypes and excludes all entries from the
-     * FilterResult, whose EntryType belong to the list or are located in the
-     * time margin after a trigger of the group occurs
-     *
-     * @param types a List of EntryTypes
-     * @param marginAfterTrigger minutes after a trigger until data becomes
-     * interesting again
-     */
-    public TypeAbsenceFilter(List<VaultEntryType> types, long marginAfterTrigger) {
-        this.marginAfterTrigger = marginAfterTrigger;
-        this.types = types;
-        this.typeGroup = null;
-    }
-
-    /**
-     * The filter gets a group of EntryTypes and excludes all entries from the
-     * FilterResult, whose EntryType belong to the group or are located in the
-     * time margin after a trigger of the group occurs.
-     * <p>
-     * For more information about groups, look at VaultEntryType.java.
-     *
-     * @param typeGroup a group of EntryTypes
-     * @param marginAfterTrigger minutes after a trigger until data becomes
-     * interesting again
-     */
-    public TypeAbsenceFilter(VaultEntryTypeGroup typeGroup, long marginAfterTrigger) {
-        this.typeGroup = typeGroup;
-        this.marginAfterTrigger = marginAfterTrigger;
-        this.types = null;
+    public TypeAbsenceFilter(FilterOption option) {
+        super(option);
+        if (option instanceof TypeAbsenceFilterOption) {
+            this.marginAfterTrigger = ((TypeAbsenceFilterOption) option).getMargingAfterTrigger();
+            this.type = ((TypeAbsenceFilterOption) option).getVaultEntryType();
+            this.typeGroup = ((TypeAbsenceFilterOption) option).getVaultEntryTypeGroup();
+        } else {
+            String msg = "Option has to be an instance of TypeAbsenceFilterOption";
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, msg);
+            throw new Error(msg);//IllegalArgumentException("Option has to be an instance of CombinationFilterOption");
+        }
     }
 
     @Override
@@ -74,7 +56,7 @@ public class TypeAbsenceFilter extends Filter {
         boolean result = true;
 
         //maybe buggy behaviour. Whole class better be refactored in separate filter, e.g. TypeFilter, groupFilter and ExclusionFilter
-        if ((types != null && types.contains(entry.getType())) || typeGroup == entry.getType().getGroup()) {
+        if ((type != null && type == entry.getType()) || typeGroup == entry.getType().getGroup()) {
             lastEntryTimeFound = entry.getTimestamp();
             result = false;
         } else if ((lastEntryTimeFound != null
@@ -94,7 +76,7 @@ public class TypeAbsenceFilter extends Filter {
 
     @Override
     Filter update(VaultEntry vaultEntry) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new TypeAbsenceFilter(option);
     }
 
 }

@@ -16,22 +16,6 @@
  */
 package de.jhit.opendiabetes.vault.util;
 
-import de.jhit.opendiabetes.vault.container.VaultEntry;
-import de.jhit.opendiabetes.vault.container.VaultEntryType;
-import de.jhit.opendiabetes.vault.container.VaultEntryTypeGroup;
-import de.jhit.opendiabetes.vault.processing.filter.Filter;
-import de.jhit.opendiabetes.vault.processing.filter.FilterResult;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import javafx.util.Pair;
 
@@ -48,9 +32,11 @@ public class SplineInterpolator {
      * Gets a set of x and y values, uses them as basicdata to interpolate given
      * y values.<br>
      * Uses the Fritsch-Carlson method for computing the splines.<br>
-     * http://en.wikipedia.org/wiki/Monotone_cubic_interpolation<p>
+     * See
+     * <a href="http://en.wikipedia.org/wiki/Monotone_cubic_interpolation">http://en.wikipedia.org/wiki/Monotone_cubic_interpolation</a><p>
      * Won't work with sets with less than 2 elements, x values have to be
      * sorted in ascending order!
+     *
      *
      * @param values Pairs of x and y values. Have to be null-checked!
      */
@@ -64,23 +50,20 @@ public class SplineInterpolator {
             double[] moments = new double[numOfXValues];
             double a, b, hInterval, t;
 
-
             for (int i = 0; i < numOfXValues - 1; i++) {
                 hInterval = getXvalue(i + 1) - getXvalue(i);
 
                 d[i] = (getYvalue(i + 1) - getYvalue(i)) / hInterval;
             }
 
-            
             moments[0] = d[0];
             for (int i = 1; i < numOfXValues - 1; i++) {
                 moments[i] = (d[i - 1] + d[i]) * 0.5;
             }
             moments[numOfXValues - 1] = d[numOfXValues - 2];
 
-
             for (int i = 0; i < numOfXValues - 1; i++) {
-                if (d[i] == 0.0) { 
+                if (d[i] == 0.0) {
 
                     moments[i] = 0.0;
                     moments[i + 1] = 0.0;
@@ -89,7 +72,7 @@ public class SplineInterpolator {
 
                     a = moments[i] / d[i];
                     b = moments[i + 1] / d[i];
-                    hInterval = (double) Math.hypot(a, b);
+                    hInterval = Math.hypot(a, b);
 
                     if (hInterval > 9.0) {
 

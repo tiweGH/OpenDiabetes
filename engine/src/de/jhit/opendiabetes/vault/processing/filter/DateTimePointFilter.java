@@ -17,11 +17,12 @@
 package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
+import de.jhit.opendiabetes.vault.processing.filter.options.DateTimePointFilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.FilterOption;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.util.Date;
-import java.util.List;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static java.util.concurrent.TimeUnit.MINUTES;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -31,35 +32,25 @@ public class DateTimePointFilter extends Filter {
 
     private Date startTime;
     private Date endTime;
-    private long marginBefore;
-    private long marginAfter;
+    private Date dateTimePoint;
+    private long marginBeforeInMinutes;
+    private long marginAfterInMinutes;
 
-    /**
-     * Initialize fields and calculates: startTime: date - marginInMinutes
-     * endTime: date + marginInMinutes
-     *
-     * @param dateTimePoint
-     * @param marginInMinutes
-     */
-    public DateTimePointFilter(Date dateTimePoint, int marginInMinutes) {
-        this(dateTimePoint, marginInMinutes, marginInMinutes);
-    }
+    public DateTimePointFilter(FilterOption option) {
+        super(option);
+        if (option instanceof DateTimePointFilterOption) {
 
-    /**
-     * Initialize fields and calculates:
-     * <p>
-     * startTime: date - marginBeforeInMinutes<p>
-     * endTime: date + marginAfterInMinutes
-     *
-     * @param dateTimePoint
-     * @param marginBeforeInMinutes
-     * @param marginAfterInMinutes
-     */
-    public DateTimePointFilter(Date dateTimePoint, int marginBeforeInMinutes, int marginAfterInMinutes) {
-        marginBefore = MILLISECONDS.convert(marginBeforeInMinutes, MINUTES);
-        marginAfter = MILLISECONDS.convert(marginAfterInMinutes, MINUTES);
-        startTime = new Date(dateTimePoint.getTime() - marginBeforeInMinutes);
-        endTime = new Date(dateTimePoint.getTime() + marginAfterInMinutes);
+            marginBeforeInMinutes = ((DateTimePointFilterOption) option).getMarginBeforeInMinutes();
+            marginAfterInMinutes = ((DateTimePointFilterOption) option).getAfterBeforeInMinutes();
+            dateTimePoint = ((DateTimePointFilterOption) option).getDateTimePoint();
+
+            startTime = TimestampUtils.addMinutesToTimestamp(dateTimePoint, (-1) * marginBeforeInMinutes);
+            endTime = TimestampUtils.addMinutesToTimestamp(dateTimePoint, marginAfterInMinutes);
+        } else {
+            String msg = "Option has to be an instance of DateTimePointFilterOption";
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, msg);
+            throw new Error(msg);//IllegalArgumentException("Option has to be an instance of CombinationFilterOption");
+        }
     }
 
     @Override
@@ -75,7 +66,8 @@ public class DateTimePointFilter extends Filter {
 
     @Override
     Filter update(VaultEntry vaultEntry) {
-        return new DateTimePointFilter(vaultEntry.getTimestamp(), (int) marginBefore, (int) marginAfter);
+        option = new DateTimePointFilterOption(vaultEntry.getTimestamp(), (int) marginBeforeInMinutes, (int) marginAfterInMinutes);
+        return new DateTimePointFilter(option);
     }
 
 }

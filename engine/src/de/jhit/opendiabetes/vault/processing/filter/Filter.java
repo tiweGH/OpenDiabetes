@@ -17,7 +17,7 @@
 package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
-import de.jhit.opendiabetes.vault.util.TimestampUtils;
+import de.jhit.opendiabetes.vault.processing.filter.options.FilterOption;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -30,6 +30,12 @@ import javafx.util.Pair;
  * @author Daniel
  */
 public abstract class Filter {
+
+    FilterOption option;
+
+    public Filter(FilterOption option) {
+        this.option = option;
+    }
 
     /**
      * Returns the name of the extended Filter
@@ -59,13 +65,14 @@ public abstract class Filter {
         List<Pair<Date, Date>> timeSeries = new ArrayList<>();
         List<VaultEntry> preprocessedData = setUpBeforeFilter(data);
 
-        if (this.getType() == FilterType.NONE) {
-            //shortcut, since nothing has to be filtered
+        if (this.getType() == FilterType.NONE || this.getType() == FilterType.MARKER) {
+            //Bypass, since nothing has to be filtered
             if (preprocessedData != null && preprocessedData.size() > 0) {
                 timeSeries.add(new Pair<>(preprocessedData.get(0).getTimestamp(), preprocessedData.get(data.size() - 1).getTimestamp()));
             }
             filterResult = new FilterResult(preprocessedData, timeSeries);
         } else {
+            //standard Filter process
             List<VaultEntry> entryResult = new ArrayList<>();
             Date startOfCurentTimeSeries = null;
             Date lastTimeStamp = null;

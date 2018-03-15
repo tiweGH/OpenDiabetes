@@ -17,13 +17,10 @@
 package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
-import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.exporter.NewDataset;
+import de.jhit.opendiabetes.vault.processing.filter.options.PositionFilterOption;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import javafx.util.Pair;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -56,6 +53,10 @@ public class PositionFilterTest extends Assert {
     public void tearDown() {
     }
 
+    PositionFilter setUpFilter(int pos) {
+        return new PositionFilter(new PositionFilterOption(pos));
+    }
+
     /**
      * Test of filter method, of class UnderThresholdFilter.
      *
@@ -64,19 +65,18 @@ public class PositionFilterTest extends Assert {
      */
     @Test
     public void testPositionFilterFirst() throws ParseException {
-        
-        PositionFilter instance = new PositionFilter(0);
+
+        PositionFilter instance = setUpFilter(PositionFilter.FIRST);
         FilterResult result = instance.filter(data);
         assertEquals(result.filteredData.get(0), data.get(0));
     }
+
     @Test
     public void testPositionFilterMiddle() throws ParseException {
-        
-        PositionFilter instance = new PositionFilter(2);
+
+        PositionFilter instance = setUpFilter(PositionFilterOption.MIDDLE);
         FilterResult result = instance.filter(data);
         assertEquals(result.filteredData.get(0), data.get(data.size() / 2));
     }
 
-    }
-    
-
+}

@@ -17,16 +17,20 @@
 package de.jhit.opendiabetes.vault.testhelper.filterfactory;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
-import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.container.VaultEntryTypeGroup;
+import de.jhit.opendiabetes.vault.processing.filter.AndFilter;
 import de.jhit.opendiabetes.vault.processing.filter.CombinationFilter;
 import de.jhit.opendiabetes.vault.processing.filter.Filter;
-import de.jhit.opendiabetes.vault.processing.filter.FilterType;
 import de.jhit.opendiabetes.vault.processing.filter.NegateFilter;
-import de.jhit.opendiabetes.vault.processing.filter.OverThresholdFilter;
+import de.jhit.opendiabetes.vault.processing.filter.ThresholdFilter;
 import de.jhit.opendiabetes.vault.processing.filter.TimePointFilter;
 import de.jhit.opendiabetes.vault.processing.filter.TypeGroupFilter;
-import de.jhit.opendiabetes.vault.processing.filter.UnderThresholdFilter;
+import de.jhit.opendiabetes.vault.processing.filter.options.AndFilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.CombinationFilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.NegateFilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.ThresholdFilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.TimePointFilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.TypeGroupFilterOption;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,8 +45,16 @@ public class BolusGreater180NoMeal3h extends FilterFactory {
     List<Filter> filters = new ArrayList<>();
 
     public BolusGreater180NoMeal3h(List<VaultEntry> data, VaultEntryTypeGroup group, int absenceMargin, double value) {
-        filters.add(new NegateFilter(new CombinationFilter(data, new TypeGroupFilter(group), new TimePointFilter(LocalTime.MIN, absenceMargin))));
-        filters.add(new OverThresholdFilter(VaultEntryType.BOLUS_NORMAL, value, FilterType.BOLUS_TH, FilterType.BOLUS_TH));
+        filters.add(
+                new NegateFilter(new NegateFilterOption(
+                        new CombinationFilter(new CombinationFilterOption(
+                                data,
+                                new TypeGroupFilter(new TypeGroupFilterOption(group)),
+                                new TimePointFilter(new TimePointFilterOption(LocalTime.MIN, absenceMargin)))))));
+        filters.add(
+                new AndFilter(new AndFilterOption(
+                        new TypeGroupFilter(new TypeGroupFilterOption(VaultEntryTypeGroup.BOLUS)),
+                        new ThresholdFilter(new ThresholdFilterOption(value, ThresholdFilter.OVER)))));
     }
 
     @Override

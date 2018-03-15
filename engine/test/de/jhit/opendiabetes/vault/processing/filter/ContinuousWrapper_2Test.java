@@ -19,33 +19,33 @@ package de.jhit.opendiabetes.vault.processing.filter;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryAnnotation;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
+import de.jhit.opendiabetes.vault.processing.filter.options.ContinuousWrapperOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.VaultEntryTypeFilterOption;
 import de.jhit.opendiabetes.vault.testhelper.StaticDataset;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.util.Pair;
 import org.junit.After;
 import org.junit.AfterClass;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
  * @author tiweGH
  */
-public class ContinuousWrapperTest {
+public class ContinuousWrapper_2Test {
 
     ContinuousWrapper filterUnderTest;
 
     static List<VaultEntry> dataSet;
 
-    public ContinuousWrapperTest() {
+    public ContinuousWrapper_2Test() {
     }
 
     @BeforeClass
@@ -67,12 +67,8 @@ public class ContinuousWrapperTest {
     public void tearDown() {
     }
 
-    private void setUpFilterUnderTest(Filter filter, int margin) {
-        filterUnderTest = new ContinuousWrapper(filter, margin);
-    }
-
-    private void setUpFilterUnderTest(List<Filter> paramFilterList, int margin) {
-        filterUnderTest = new ContinuousWrapper(paramFilterList, margin);
+    private void setUpFilterUnderTest(int margin) {
+        filterUnderTest = new ContinuousWrapper(new ContinuousWrapperOption(dataSet, margin));
     }
 
     @Test
@@ -82,17 +78,17 @@ public class ContinuousWrapperTest {
         expectedTimeSeries.add(new Pair(TimestampUtils.createCleanTimestamp("2017.06.29-04:46", "yyyy.MM.dd-HH:mm"),
                 TimestampUtils.createCleanTimestamp("2017.06.29-12:40", "yyyy.MM.dd-HH:mm")));
 
-        setUpFilterUnderTest(new NoneFilter(), 0);
+        setUpFilterUnderTest(0);
         result = filterUnderTest.filter(dataSet);
         assertEquals(result.filteredData, dataSet);
         assertEquals(result.timeSeries, expectedTimeSeries);
 
-        setUpFilterUnderTest(new NoneFilter(), 5);
+        setUpFilterUnderTest(5);
         result = filterUnderTest.filter(dataSet);
         assertEquals(result.filteredData, dataSet);
         assertEquals(result.timeSeries, expectedTimeSeries);
 
-        setUpFilterUnderTest(new NoneFilter(), 100);
+        setUpFilterUnderTest(100);
         result = filterUnderTest.filter(dataSet);
         assertEquals(result.filteredData, dataSet);
         assertEquals(result.timeSeries, expectedTimeSeries);
@@ -101,7 +97,7 @@ public class ContinuousWrapperTest {
     @Test(expected = IllegalArgumentException.class)
     public void testFilter_BASICINVALIDMARGIN() throws ParseException {
 
-        setUpFilterUnderTest(new NoneFilter(), -1);
+        setUpFilterUnderTest(-1);
         filterUnderTest.filter(dataSet);
     }
 
@@ -112,9 +108,9 @@ public class ContinuousWrapperTest {
         FilterResult result;
         FilterResult expectedResult;
 
-        setUpFilterUnderTest(new EventFilter(VaultEntryType.GLUCOSE_BG), 0);
-        expectedResult = new EventFilter(VaultEntryType.GLUCOSE_BG).filter(dataSet);
-        result = filterUnderTest.filter(dataSet);
+        setUpFilterUnderTest(0);
+        expectedResult = new VaultEntryTypeFilter(new VaultEntryTypeFilterOption(VaultEntryType.GLUCOSE_BG)).filter(dataSet);
+        result = filterUnderTest.filter(expectedResult.filteredData);
         assertEquals(expectedResult.filteredData, result.filteredData);
         assertEquals(expectedResult.timeSeries, result.timeSeries);
     }
@@ -129,8 +125,8 @@ public class ContinuousWrapperTest {
         List<VaultEntry> vaultEntries = new ArrayList<>();
         List<VaultEntryAnnotation> tmpAnnotations;
 
-        setUpFilterUnderTest(new EventFilter(VaultEntryType.GLUCOSE_BG), 5);
-        result = filterUnderTest.filter(dataSet);
+        setUpFilterUnderTest(5);
+        result = filterUnderTest.filter(new VaultEntryTypeFilter(new VaultEntryTypeFilterOption(VaultEntryType.GLUCOSE_BG)).filter(dataSet).filteredData);
 
         tmpAnnotations = new ArrayList<>();
         tmpAnnotations.add(new VaultEntryAnnotation(VaultEntryAnnotation.TYPE.GLUCOSE_BG_METER_SERIAL).setValue("BG1140084B"));
@@ -173,8 +169,8 @@ public class ContinuousWrapperTest {
         List<VaultEntry> vaultEntries = new ArrayList<>(dataSet);
         List<VaultEntryAnnotation> tmpAnnotations;
 
-        setUpFilterUnderTest(new EventFilter(VaultEntryType.GLUCOSE_BG), 4 * 60);
-        result = filterUnderTest.filter(dataSet);
+        setUpFilterUnderTest(4 * 60);
+        result = filterUnderTest.filter(new VaultEntryTypeFilter(new VaultEntryTypeFilterOption(VaultEntryType.GLUCOSE_BG)).filter(dataSet).filteredData);
 
         vaultEntries.remove(vaultEntries.size() - 1);
         vaultEntries.remove(vaultEntries.size() - 1);

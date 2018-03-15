@@ -19,10 +19,10 @@ package de.jhit.opendiabetes.vault.processing.filter;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryAnnotation;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
+import de.jhit.opendiabetes.vault.processing.filter.options.DateTimePointFilterOption;
 import de.jhit.opendiabetes.vault.testhelper.StaticDataset;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.text.ParseException;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -41,8 +41,7 @@ import org.junit.Test;
  * @author juehv, a.a.aponte
  */
 public class DateTimePointFilterTest extends Assert {
-    
-    
+
     static List<VaultEntry> data;
     DateTimePointFilter instance;
     List<VaultEntryAnnotation> tmpAnnotations;
@@ -67,18 +66,26 @@ public class DateTimePointFilterTest extends Assert {
     public void tearDown() {
     }
 
+    DateTimePointFilter setUpFilter(Date date, int margin) {
+        return setUpFilter(date, margin, margin);
+    }
+
+    DateTimePointFilter setUpFilter(Date date, int marginBefore, int marginAfter) {
+        return new DateTimePointFilter(new DateTimePointFilterOption(date, marginBefore, marginAfter));
+    }
+
     /**
      * Test of filter method, of class DateTimePointFilter.
+     *
      * @author juehv, a.a.aponte
      */
-    
     @Test
     public void testDateTimePointFilter_margin_5() throws ParseException {
         //System.out.println("filter");
         Date dateTimePoint = TestFunctions.creatNewDateToCheckFor("2017.06.29-05:26");
         int marginInMinutes = 5;
         long margin = MILLISECONDS.convert(marginInMinutes, MINUTES);
-        instance = new DateTimePointFilter(dateTimePoint,marginInMinutes);
+        instance = setUpFilter(dateTimePoint, marginInMinutes);
         FilterResult result = instance.filter(data);
 
         for (VaultEntry entry : result.filteredData) {
@@ -86,13 +93,13 @@ public class DateTimePointFilterTest extends Assert {
                     new Date(dateTimePoint.getTime() + margin), entry.getTimestamp()));
         }
     }
-    
+
     @Test
     public void testDateTimePointFilter_margin_10() throws ParseException {
         Date dateTimePoint = TestFunctions.creatNewDateToCheckFor("2017.06.29-12:15");
         int marginInMinutes = 10;
         // 2017.06.29-12:05 - 2017.06.29-12:25
-        instance = new DateTimePointFilter(dateTimePoint,marginInMinutes);
+        instance = setUpFilter(dateTimePoint, marginInMinutes);
         FilterResult result = instance.filter(data);
 
         List<VaultEntry> filteredData = new ArrayList<>();
@@ -101,26 +108,25 @@ public class DateTimePointFilterTest extends Assert {
         filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE, TestFunctions.creatNewDateToCheckFor("2017.06.29-12:21"), 51.0));
         filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE_VARIABILITY, TestFunctions.creatNewDateToCheckFor("2017.06.29-12:21"), 44.0, 127.0));
         filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-12:21"), 18.25));
-        
-        
+
         List<Pair<Date, Date>> timeSeries = new ArrayList<>();
         timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-12:11"), TestFunctions.creatNewDateToCheckFor("2017.06.29-12:21")));
-        
+
         FilterResult checkForThisResult = new FilterResult(filteredData, timeSeries);
-        
+
         assertEquals(result.filteredData, checkForThisResult.filteredData);
         assertEquals(result.timeSeries, checkForThisResult.timeSeries);
         //assertEquals(result, checkForThisResult);
     }
-    
+
     @Test
     public void testDateTimePointFilter_margin_240() throws ParseException {
         Date dateTimePoint = TestFunctions.creatNewDateToCheckFor("2017.06.29-07:56");
         int marginInMinutes = 240;
         // 2017.06.29-03:56 - 2017.06.29-11:56
-        instance = new DateTimePointFilter(dateTimePoint,marginInMinutes);
+        instance = setUpFilter(dateTimePoint, marginInMinutes);
         FilterResult result = instance.filter(data);
-        
+
         List<VaultEntry> filteredData = new ArrayList<>();
         filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-04:46"), 21.5));
         tmpAnnotations = new ArrayList<>();
@@ -218,13 +224,12 @@ public class DateTimePointFilterTest extends Assert {
         filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE_VARIABILITY, TestFunctions.creatNewDateToCheckFor("2017.06.29-11:51"), 41.0, 33.0));
         filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-11:51"), 75.25));
         filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE, TestFunctions.creatNewDateToCheckFor("2017.06.29-11:51"), 58.0));
-        
-        
+
         List<Pair<Date, Date>> timeSeries = new ArrayList<>();
         timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-04:46"), TestFunctions.creatNewDateToCheckFor("2017.06.29-11:51")));
-        
+
         FilterResult checkForThisResult = new FilterResult(filteredData, timeSeries);
-        
+
         assertEquals(result.filteredData, checkForThisResult.filteredData);
         assertEquals(result.timeSeries, checkForThisResult.timeSeries);
         //assertEquals(result, checkForThisResult);
@@ -235,9 +240,9 @@ public class DateTimePointFilterTest extends Assert {
         Date dateTimePoint = TestFunctions.creatNewDateToCheckFor("2017.06.29-12:40");
         int marginInMinutes = 120;
         // 2017.06.29-10:40 - 2017.06.29-14:40
-        instance = new DateTimePointFilter(dateTimePoint,marginInMinutes);
+        instance = setUpFilter(dateTimePoint, marginInMinutes);
         FilterResult result = instance.filter(data);
-        
+
         List<VaultEntry> filteredData = new ArrayList<>();
         filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE, TestFunctions.creatNewDateToCheckFor("2017.06.29-10:41"), 66.0));
         filteredData.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2017.06.29-10:50"), 52.75));
@@ -270,13 +275,12 @@ public class DateTimePointFilterTest extends Assert {
         filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE, TestFunctions.creatNewDateToCheckFor("2017.06.29-12:31"), 60.0));
         filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE, TestFunctions.creatNewDateToCheckFor("2017.06.29-12:40"), 68.0));
         filteredData.add(new VaultEntry(VaultEntryType.HEART_RATE_VARIABILITY, TestFunctions.creatNewDateToCheckFor("2017.06.29-12:40"), 43.0, 77.0));
-        
-        
+
         List<Pair<Date, Date>> timeSeries = new ArrayList<>();
         timeSeries.add(new Pair<>(TestFunctions.creatNewDateToCheckFor("2017.06.29-10:41"), TestFunctions.creatNewDateToCheckFor("2017.06.29-12:40")));
-        
+
         FilterResult checkForThisResult = new FilterResult(filteredData, timeSeries);
-        
+
         assertEquals(result.filteredData, checkForThisResult.filteredData);
         assertEquals(result.timeSeries, checkForThisResult.timeSeries);
         //assertEquals(result, checkForThisResult);

@@ -18,12 +18,11 @@ package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
+import de.jhit.opendiabetes.vault.processing.filter.options.LogicFilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.VaultEntryTypeFilterOption;
 import de.jhit.opendiabetes.vault.testhelper.StaticDataset;
-import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.text.ParseException;
-import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -57,6 +56,10 @@ public class LogicFilterTest extends Assert {
     public void tearDown() {
     }
 
+    LogicFilter setUpFilter(List<Filter> filters, boolean onlyOneResult) {
+        return new LogicFilter(new LogicFilterOption(filters, onlyOneResult));
+    }
+
     /**
      * Test of filter method, of class TimeSpanFilter.
      */
@@ -64,31 +67,29 @@ public class LogicFilterTest extends Assert {
     public void testOnlyOneResultFilter() throws ParseException {
         System.out.println("filter");
         List<Filter> filters = new ArrayList<>();
-        filters.add(new EventFilter(VaultEntryType.HEART_RATE));
-        filters.add(new EventFilter(VaultEntryType.HEART_RATE_VARIABILITY));
-        filters.add(new EventFilter(VaultEntryType.SLEEP_LIGHT));
-        
-        
+        filters.add(new VaultEntryTypeFilter(new VaultEntryTypeFilterOption(VaultEntryType.HEART_RATE)));
+        filters.add(new VaultEntryTypeFilter(new VaultEntryTypeFilterOption(VaultEntryType.HEART_RATE_VARIABILITY)));
+        filters.add(new VaultEntryTypeFilter(new VaultEntryTypeFilterOption(VaultEntryType.SLEEP_LIGHT)));
+
         List<VaultEntry> data = StaticDataset.getStaticDataset();
-        
-        LogicFilter instance = new LogicFilter(filters, true);
+
+        LogicFilter instance = setUpFilter(filters, true);
         FilterResult result = instance.filter(data);
 
-        assertTrue(result.filteredData.size()==1);
+        assertTrue(result.filteredData.size() == 1);
     }
-    
+
     @Test
     public void testFilter() throws ParseException {
         System.out.println("filter");
         List<Filter> filters = new ArrayList<>();
-        filters.add(new EventFilter(VaultEntryType.HEART_RATE));
-        filters.add(new EventFilter(VaultEntryType.HEART_RATE_VARIABILITY));
-        filters.add(new EventFilter(VaultEntryType.SLEEP_LIGHT));
-        
-        
+        filters.add(new VaultEntryTypeFilter(new VaultEntryTypeFilterOption(VaultEntryType.HEART_RATE)));
+        filters.add(new VaultEntryTypeFilter(new VaultEntryTypeFilterOption(VaultEntryType.HEART_RATE_VARIABILITY)));
+        filters.add(new VaultEntryTypeFilter(new VaultEntryTypeFilterOption(VaultEntryType.SLEEP_LIGHT)));
+
         List<VaultEntry> data = StaticDataset.getStaticDataset();
-        
-        LogicFilter instance = new LogicFilter(filters, true);
+
+        LogicFilter instance = setUpFilter(filters, true);
         FilterResult result = instance.filter(data);
 
         for (VaultEntry vaultEntry : result.filteredData) {

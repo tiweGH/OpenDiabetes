@@ -25,8 +25,6 @@ import java.util.List;
  */
 public enum VaultEntryType {
 
-    // Empty Type for BucketEntry
-    EMPTY,
     // Bolus
     BOLUS_NORMAL(VaultEntryTypeGroup.BOLUS, false, true),
     BOLUS_SQARE(VaultEntryTypeGroup.BOLUS, false, true, BOLUS_NORMAL),
@@ -93,7 +91,9 @@ public enum VaultEntryType {
     // More unspecific input
     OTHER_ANNOTATION,
     CLUSTER_MEAL,
-    CLUSTER_GLUCOSE_CGM;
+    CLUSTER_GLUCOSE_CGM,
+    // Empty Type for BucketEntry
+    EMPTY;
 
     //current handling of MAYBE being true
     private final static boolean MAYBE = true;

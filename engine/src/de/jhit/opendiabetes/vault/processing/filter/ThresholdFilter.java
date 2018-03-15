@@ -17,97 +17,55 @@
 package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
-import de.jhit.opendiabetes.vault.container.VaultEntryType;
-import de.jhit.opendiabetes.vault.container.VaultEntryTypeGroup;
-import de.jhit.opendiabetes.vault.util.VaultEntryUtils;
-import java.util.AbstractList;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import javafx.util.Pair;
+import de.jhit.opendiabetes.vault.processing.filter.options.FilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.ThresholdFilterOption;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This Filter is the superclass for the Thresholdfilter.
  *
  * @author juehv, Daniel, tiweGH
  */
-public abstract class ThresholdFilter extends Filter {
+public class ThresholdFilter extends Filter {
 
-    /**
-     * Is used to check if the value from DB is greater or less than given
-     * threshold
-     */
-    double thresholdValue;
-    /**
-     * The given Filtertype, usually the same as <code>TH</code>
-     */
-    FilterType type;
+    double minThreshold = 0;
+    double maxThreshold = 0;
+    private int mode = 0;
 
-    public List<VaultEntry> data;
-    public VaultEntryType filteredType;
-    public VaultEntryTypeGroup filteredGroup;
-    public FilterType availabledatatype;
-    public FilterType filterType;
+    public static final int OVER = 0;
+    public static final int UNDER = 1;
+    public static final int BANDPASS = 2;
 
-    /**
-     * Checks if the given parameters are a valid combination, which means
-     * <code>GenericType</code> and <code>TH</code> or
-     * <code>availabledatatype</code> and <code>TH</code> belong to the same
-     * Type-group.<p>
-     * Example:
-     * <p>
-     * <code>checkThresholdCombination(BASAL_PROFILE, BASAL_AVAILABLE, BASAL_TH)</code><p>
-     * <code>checkThresholdCombination(BASAL_PROFILE, BG_AVAILABLE, BASAL_TH)</code><p>
-     * <code>checkThresholdCombination(CGM_AVAILABLE, BASAL_AVAILABLE, BASAL_TH)</code><p>
-     * all return <b><code>TRUE</code></b>, whereas<p>
-     * <p>
-     * <code>checkThresholdCombination(BOLUS_NORMAL, BASAL_AVAILABLE, GLUCOSE_CGM_ALERT)</code><p>
-     * returns <b><code>FALSE</code></b>
-     *
-     * @param GenericType the <code>VaultEntryType</code> of the entry to be
-     * filtered
-     * @param availabledatatype
-     * @param TH
-     * @return boolean
-     */
-    public boolean checkThresholdCombination(VaultEntryType GenericType, FilterType availabledatatype, FilterType TH) {
-        boolean result = true;
+    public ThresholdFilter(FilterOption option) {
+        super(option);
+        if (option instanceof ThresholdFilterOption) {
+            this.minThreshold = ((ThresholdFilterOption) option).getMinThresholdValue();
+            this.maxThreshold = ((ThresholdFilterOption) option).getMaxThresholdValue();
+            this.mode = ((ThresholdFilterOption) option).getMode();
 
-        if (!(((GenericType == VaultEntryType.BASAL_PROFILE || GenericType == VaultEntryType.BASAL_MANUAL || GenericType == VaultEntryType.BASAL_INTERPRETER) && (TH == FilterType.BASAL_TH))
-                || ((GenericType == VaultEntryType.BOLUS_NORMAL || GenericType == VaultEntryType.BOLUS_SQARE || GenericType == VaultEntryType.GLUCOSE_BOLUS_CALCULATION) && (TH == FilterType.BOLUS_TH))
-                || ((GenericType == VaultEntryType.GLUCOSE_BG || GenericType == VaultEntryType.GLUCOSE_BG_MANUAL) && (TH == FilterType.BG_TH))
-                || ((GenericType == VaultEntryType.GLUCOSE_CGM || GenericType == VaultEntryType.GLUCOSE_CGM_RAW || GenericType == VaultEntryType.GLUCOSE_CGM_ALERT
-                || GenericType == VaultEntryType.GLUCOSE_CGM_CALIBRATION) && (TH == FilterType.CGM_TH))
-                || ((GenericType == VaultEntryType.HEART_RATE || GenericType == VaultEntryType.HEART_RATE_VARIABILITY) && (TH == FilterType.HR_TH))
-                || ((GenericType == VaultEntryType.STRESS) && (TH == FilterType.STRESS_TH)))) {
-
-            result = false;
-        } else if (!((availabledatatype == FilterType.BASAL_AVAILABLE && TH == FilterType.BASAL_TH)
-                || (availabledatatype == FilterType.BG_AVAILABLE && TH == FilterType.BG_TH)
-                || (availabledatatype == FilterType.BOLUS_AVAILABLE && TH == FilterType.BOLUS_TH)
-                || (availabledatatype == FilterType.CGM_AVAILABLE && TH == FilterType.CGM_TH)
-                || (availabledatatype == FilterType.HR_AVAILABLE && TH == FilterType.HR_TH)
-                || (availabledatatype == FilterType.STRESS_AVAILABLE && TH == FilterType.STRESS_TH))) {
-
-            result = false;
+        } else {
+            String msg = "Option has to be an instance of ThresholdFilterOption";
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, msg);
+            throw new Error(msg);//IllegalArgumentException("Option has to be an instance of CombinationFilterOption");
         }
-
-        return result;
     }
 
-    boolean matchesThresholdFilter(VaultEntry entry, boolean thresholdResult) {
-        return VaultEntryUtils.equalsTypeAndGroup(entry, filteredType, filteredGroup)
-                && thresholdResult;
+    @Override
+    public FilterType getType() {
+        return FilterType.THRESHOLD;
     }
-    //    @Override
-    //    public FilterResult filter(List<VaultEntry> data) {
-    //        FilterResult result;
-    //        if (checkThresholdCombination(GenericType, availabledatatype, TH)) {
-    //            result = super.filter(data);
-    //        } else {
-    //            result = new FilterResult();
-    //        }
-    //        return result;
-    //    }
 
+    @Override
+    boolean matchesFilterParameters(VaultEntry entry) {
+
+        return (mode == UNDER && (entry.getValue() < maxThreshold))
+                || (mode == OVER && (entry.getValue() > minThreshold))
+                || (mode == BANDPASS && ((entry.getValue() > minThreshold) && (entry.getValue() < maxThreshold)));
+    }
+
+    @Override
+    Filter update(VaultEntry vaultEntry) {
+        return new ThresholdFilter(super.option);
+    }
 }

@@ -19,7 +19,7 @@ package de.jhit.opendiabetes.vault.processing;
 import de.jhit.opendiabetes.vault.container.SliceEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
-import de.jhit.opendiabetes.vault.processing.filter.EventFilter;
+import de.jhit.opendiabetes.vault.processing.filter.VaultEntryTypeFilter;
 import de.jhit.opendiabetes.vault.processing.filter.Filter;
 import de.jhit.opendiabetes.vault.processing.filter.FilterResult;
 import de.jhit.opendiabetes.vault.processing.filter.NoneFilter;

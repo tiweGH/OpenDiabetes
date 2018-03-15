@@ -18,10 +18,16 @@ package de.jhit.opendiabetes.vault.exporter;
 
 import de.jhit.opendiabetes.vault.container.BucketEntry;
 import de.jhit.opendiabetes.vault.container.BucketEventTriggers;
+import de.jhit.opendiabetes.vault.container.FinalBucketEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
+import de.jhit.opendiabetes.vault.processing.BucketProcessor;
+import de.jhit.opendiabetes.vault.processing.BucketProcessor_old;
+import de.jhit.opendiabetes.vault.processing.BucketProcessor_runable;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -38,14 +44,22 @@ import java.util.logging.Logger;
  */
 public class MLExporter {
 
-    protected static String deleteComma(VaultEntry entry) {
+    private int wantedBucketSize;
+    private String filePath;
+
+    public MLExporter(int wantedBucketSize, String filePath) {
+        this.wantedBucketSize = wantedBucketSize;
+        this.filePath = filePath;
+    }
+
+    protected String deleteComma(VaultEntry entry) {
         String result = entry.toString();
         return result.replace(",", " ");
     }
 
-    protected static String createHeader() {
+    protected String createHeader() {
 
-        HashMap<VaultEntryType, Integer> oneHotHeader = BucketEventTriggers.ARRAY_ENTRY_TRIGGER_HASHMAP;
+        HashMap<VaultEntryType, Integer> oneHotHeader = BucketEventTriggers.ARRAY_ENTRIES_AFTER_MERGE_TO;
         String[] header = new String[oneHotHeader.size()];
 
         int i = 0;
@@ -63,24 +77,34 @@ public class MLExporter {
         return result;
     }
 
-    public static void bucketsToCsv(List<BucketEntry> buckets, String filename) throws IOException, ParseException {
+    private void shortenValues(FinalBucketEntry bucket, int i) throws ParseException {
+        if ((bucket.getOnehotInformationArray(i) != 0.0) && (bucket.getOnehotInformationArray(i) != 1.0)) {
+            BigDecimal bd = new BigDecimal(bucket.getOnehotInformationArray(i));
+            bd = bd.setScale(2, RoundingMode.HALF_UP);
+            bucket.setOnehotInformationArray(i, bd.doubleValue());
+        }
+    }
 
+    public void exportDataToFile(List<VaultEntry> data) throws IOException, ParseException {
+        BucketProcessor processor = new BucketProcessor();
+        List<FinalBucketEntry> buckets = processor.bucketProcessing(0, data, wantedBucketSize);
+
+        int x = buckets.get(1).getFullOnehotInformationArray().length;
         FileWriter fw;
-        fw = new FileWriter(filename);
+        fw = new FileWriter(filePath);
         fw.write("index, " + createHeader() + "\n");
         try {
-            int j = 0;
-            for (int i = 0; i < buckets.size()-1; i++) {
-                if (!buckets.get(i).getVaultEntry().getTimestamp().toString().equals(buckets.get(i + 1).getVaultEntry().getTimestamp().toString())) {
-                    String line = Arrays.toString(buckets.get(i).getFullValues());
-                    line = line.replace("[", "");
-                    line = line.replace("]", "");
-                    line = line.replace("0.0", "0"); // hier muss noch ausgeschlossen werden, dass zB 0.02 erwischt wird
-                    line = line.replace("1.0", "1");
-                    fw.write(j + ", " + line);
-                    fw.write(System.lineSeparator());
-                    j++;
+            //int j = 0;
+            for (FinalBucketEntry bucket : buckets) {
+                for (int i = 0; i < x; i++) {
+                    shortenValues(bucket, i);
                 }
+                String line = Arrays.toString(bucket.getFullOnehotInformationArray());
+                line = line.replace("[", "");
+                line = line.replace("]", "");
+                fw.write(bucket.getBucketNumber() + ", " + line);
+                fw.write(System.lineSeparator());
+                //j++;
             }
         } catch (IOException ex) {
             Logger.getLogger(MLExporter.class.getName()).log(Level.SEVERE, null, ex);
@@ -89,16 +113,4 @@ public class MLExporter {
         }
     }
 
-    public static void main(String[] args) throws ParseException, SQLException, IOException {
-
-        List<BucketEntry> buckets = new ArrayList<>();
-         
-        for (int i = 0; i < StaticDataset.getStaticDataset().size(); i++) {
-            
-            buckets.add(new BucketEntry(0, StaticDataset.getStaticDataset().get(i)));
-        }
-        
-        bucketsToCsv(buckets, "toll.csv");
-
-    }
 }

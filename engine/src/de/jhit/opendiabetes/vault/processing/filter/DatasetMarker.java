@@ -16,11 +16,9 @@
  */
 package de.jhit.opendiabetes.vault.processing.filter;
 
-import com.sun.javafx.scene.control.skin.VirtualFlow;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
-import javafx.util.Pair;
 
 /**
  * Filters Nothing. Used as a pointer to a specific state of the VaultEntry
@@ -38,16 +36,15 @@ public class DatasetMarker extends Filter {
      * Dataset given via filter. Use instances of this class in other Filters,
      * which need to have access to specific previous states.
      *
-     * @param data default value for the dataset pointer, overridden when
-     * <code>filter</code> is run
      */
-    public DatasetMarker(List<VaultEntry> data) {
-        this.basedata = data;
+    public DatasetMarker() {
+        super(null);
+        basedata = new ArrayList<>();
     }
 
     @Override
     public FilterType getType() {
-        return FilterType.NONE;
+        return FilterType.MARKER;
     }
 
     @Override
@@ -63,7 +60,7 @@ public class DatasetMarker extends Filter {
 
     @Override
     Filter update(VaultEntry vaultEntry) {
-        return new DatasetMarker(this.basedata);
+        return new DatasetMarker();
     }
 
     /**

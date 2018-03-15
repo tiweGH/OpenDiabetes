@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 tiweGH
+ * Copyright (C) 2018 tiweGH
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,43 +14,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.jhit.opendiabetes.vault.container;
+package de.jhit.opendiabetes.vault.processing.filter.options;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import de.jhit.opendiabetes.vault.processing.filter.DatasetMarker;
+import de.jhit.opendiabetes.vault.processing.filter.Filter;
+import java.util.Date;
 
 /**
  *
  * @author tiweGH
  */
-public class VaultEntryTypeTest {
+public class DateTimeSpanFilterOption extends FilterOption {
 
-    public VaultEntryTypeTest() {
+    private final Date startTime;
+    private final Date endTime;
+
+    public DateTimeSpanFilterOption(Date startTime, Date endTime) {
+        this.startTime = startTime;
+        this.endTime = endTime;
     }
 
-    @BeforeClass
-    public static void setUpClass() {
+    public Date getEndTime() {
+        return endTime;
     }
 
-    @AfterClass
-    public static void tearDownClass() {
+    public Date getStartTime() {
+        return startTime;
     }
 
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
-
-    // TODO add test methods here.
-    // The methods must be annotated with annotation @Test. For example:
-    //
-    // @Test
-    // public void hello() {}
 }

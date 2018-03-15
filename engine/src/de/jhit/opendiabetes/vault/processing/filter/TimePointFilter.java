@@ -17,9 +17,13 @@
 package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
+import de.jhit.opendiabetes.vault.processing.filter.options.FilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.TimePointFilterOption;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This Filter checks if the given VaultEntry is in an given range of Time.
@@ -30,35 +34,24 @@ public class TimePointFilter extends Filter {
 
     private LocalTime endTime;
     private LocalTime startTime;
+    private LocalTime timePoint;
     private final int marginBeforeInMinutes;
     private final int marginAfterInMinutes;
 
-    /**
-     * Initialize fields and calculates: startTime: timepoint- marginInMinutes
-     * endTime: timepoint+ marginInMinutes
-     *
-     * @param timePoint
-     * @param marginInMinutes
-     */
-    public TimePointFilter(LocalTime timePoint, int marginInMinutes) {
-        this(timePoint, marginInMinutes, marginInMinutes);
-    }
+    public TimePointFilter(FilterOption option) {
 
-    /**
-     * Initialize fields and calculates:
-     * <p>
-     * startTime: timepoint- marginBeforeInMinutes<p>
-     * endTime: timepoint+ marginAfterInMinutes
-     *
-     * @param timePoint
-     * @param marginBeforeInMinutes
-     * @param marginAfterInMinutes
-     */
-    public TimePointFilter(LocalTime timePoint, int marginBeforeInMinutes, int marginAfterInMinutes) {
-        this.marginBeforeInMinutes = marginBeforeInMinutes;
-        this.marginAfterInMinutes = marginAfterInMinutes;
-        startTime = timePoint.minus(marginBeforeInMinutes, ChronoUnit.MINUTES);
-        endTime = timePoint.plus(marginAfterInMinutes, ChronoUnit.MINUTES);
+        super(option);
+        if (option instanceof TimePointFilterOption) {
+            this.marginBeforeInMinutes = ((TimePointFilterOption) option).getMarginBeforeInMinutes();
+            this.marginAfterInMinutes = ((TimePointFilterOption) option).getmarginAfterInMinutes();
+            timePoint = ((TimePointFilterOption) option).getTimePoint();
+            startTime = timePoint.minus(marginBeforeInMinutes, ChronoUnit.MINUTES);
+            endTime = timePoint.plus(marginAfterInMinutes, ChronoUnit.MINUTES);
+        } else {
+            String msg = "Option has to be an instance of TimePointFilterOption";
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, msg);
+            throw new Error(msg);//IllegalArgumentException("Option has to be an instance of CombinationFilterOption");
+        }
     }
 
     @Override
@@ -73,7 +66,8 @@ public class TimePointFilter extends Filter {
 
     @Override
     Filter update(VaultEntry vaultEntry) {
-        return new TimePointFilter(TimestampUtils.dateToLocalTime(vaultEntry.getTimestamp()), marginBeforeInMinutes, marginAfterInMinutes);
+        option = new TimePointFilterOption(TimestampUtils.dateToLocalTime(vaultEntry.getTimestamp()), marginBeforeInMinutes, marginAfterInMinutes);
+        return new TimePointFilter(option);
     }
 
 }

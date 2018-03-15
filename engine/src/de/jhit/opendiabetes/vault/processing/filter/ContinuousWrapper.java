@@ -17,12 +17,14 @@
 package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
+import de.jhit.opendiabetes.vault.processing.filter.options.ContinuousWrapperOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.FilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.VaultEntryTypeFilterOption;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static java.util.concurrent.TimeUnit.MINUTES;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.util.Pair;
 
 /**
@@ -31,75 +33,43 @@ import javafx.util.Pair;
  */
 public class ContinuousWrapper extends Filter {
 
-    List<Filter> registeredFilter;
+    List<VaultEntry> baseData;
     protected int marginBefore;
     protected int marginAfter;
     List<Pair<Date, Date>> timeSpansForContinuousData;
 
-    //folgendes problem: die Filter werden dem Slicer scheinbar fertig übergeben,
-    //dh der kann, da er nur filter() ausführt, die ursprüngliche EntryListe nicht übergeben
-    //außer er wird als erstes  ausgeführt
     /**
-     * Filter subclass, gets a filter and uses the <code>timeSeries</code> of
-     * the internal FilterResult, together with a before-margin value and
-     * after-margin value in minutes, on the initial List of VaultEntrys and
-     * returns only entries located in these time spans
+     * Filter subclass, uses the <code>timeSeries</code> of the previous
+     * FilterResult, together with a before-margin value and after-margin value
+     * in minutes, on the initial List of VaultEntrys and returns only entries
+     * located in these time spans
      *
-     * @param registeredFilter Filter(s) which provide the results for the time
-     * spans
+     * @param baseData Dataset which provides the original entries for the
+     * margin applied after other filters where used
      * @param marginBefore margin before each timespamp
      * @param marginAfter margin after each timespamp
      */
-    public ContinuousWrapper(List<Filter> registeredFilter, int marginBefore, int marginAfter) {
-        this.registeredFilter = registeredFilter;
-        if (marginBefore < 0 || marginAfter < 0) {
-            throw new IllegalArgumentException("Expected a margin >= 0 but was " + marginBefore + " " + marginAfter);
+    public ContinuousWrapper(FilterOption option) {
+        
+        super(option);
+        if (option instanceof ContinuousWrapperOption) {
+            
+            this.marginBefore = ((ContinuousWrapperOption)option).getMarginBefore();
+            this.marginAfter = ((ContinuousWrapperOption)option).getMarginAfter();
+            this.baseData = ((ContinuousWrapperOption)option).getBaseData();
+        } else {
+            String msg = "Option has to be an instance of VaultEntryTypeFilterOption";
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, msg);
+            throw new Error(msg);//IllegalArgumentException("Option has to be an instance of CombinationFilterOption");
         }
-        this.marginBefore = marginBefore;
-        this.marginAfter = marginAfter;
-    }
-
-    /**
-     * Filter subclass, gets a List of Filters and runs them similar to
-     * <code>DataSlicer</code>, uses the <code>timeSeries</code> of the last
-     * internal FilterResult, together with a margin value in minutes, on the
-     * initial List of VaultEntrys and returns only entries located in these
-     * time spans
-     *
-     * @param registeredFilter Filter(s) which provide the results for the time
-     * spans
-     * @param marginInMinutes time range in minutes applied to the resulting
-     * time spans of <code>registeredFilter</code>
-     */
-    public ContinuousWrapper(List<Filter> registeredFilter, int marginInMinutes) {
-        this(registeredFilter, marginInMinutes, marginInMinutes);
-    }
-
-    /**
-     * Filter subclass, gets a filter and uses the <code>timeSeries</code> of
-     * the internal FilterResult, together with a margin value in minutes, on
-     * the initial List of VaultEntrys and returns only entries located in these
-     * time spans
-     *
-     * @param filter Filter which provides the results for the time spans
-     * @param marginInMinutes time range in minutes applied to the resulting
-     * time spans of <code>registeredFilter</code>
-     */
-    public ContinuousWrapper(Filter filter, int marginInMinutes) {
-        List<Filter> registeredFilter = new ArrayList<>();
-        registeredFilter.add(filter);
-        this.registeredFilter = registeredFilter;
-        if (marginInMinutes < 0) {
-            throw new IllegalArgumentException("Expected a margin >= 0 but was " + marginInMinutes);
-        }
-        this.marginBefore = this.marginAfter = marginInMinutes;
     }
 
     @Override
     FilterType getType() {
-        return FilterType.EVENT_SPAN_FILTER;
+        return FilterType.COMBINATION_FILTER;
     }
 
+    //maybe put this in TimestampUtils class?
     @Override
     boolean matchesFilterParameters(VaultEntry entry) {
         boolean result = false;
@@ -108,31 +78,22 @@ public class ContinuousWrapper extends Filter {
                 result = true;
                 break;
             }
+            if (entry.getTimestamp().before(p.getKey())) {
+                //breaks if entry's Timestamp is located before every TimeSpan that will follow now
+                break;
+            }
         }
         return result;
     }
 
     @Override
-    public FilterResult filter(List<VaultEntry> data) {
-        FilterResult result;
-        FilterResult tempResult = null;
-        //works similar to Slicer
-        //TODO there has to be a better way than copying the Slicer
-        for (Filter filter : registeredFilter) {
-            if (tempResult == null) {
-                tempResult = filter.filter(data);
-            } else {
-                tempResult = filter.filter(tempResult.filteredData);
-            }
-        }
-        timeSpansForContinuousData = TimestampUtils.normalizeTimeSeries(tempResult.timeSeries, marginBefore, marginAfter);
-        // timeSpansForContinuousData = TimestampUtils.getNormalizedTimeSeries(tempResult.filteredData, marginBefore, marginAfter);
-        result = super.filter(data);
-        return result;
+    public List<VaultEntry> setUpBeforeFilter(List<VaultEntry> data) {
+        timeSpansForContinuousData = TimestampUtils.getNormalizedTimeSeries(data, marginBefore, marginAfter);
+        return baseData;
     }
 
     @Override
     Filter update(VaultEntry vaultEntry) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new ContinuousWrapper(super.option);
     }
 }

@@ -17,50 +17,67 @@
 package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
-import de.jhit.opendiabetes.vault.util.VaultEntryUtils;
+import de.jhit.opendiabetes.vault.processing.filter.options.AndFilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.FilterOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-/**
- *
- * @author Daniel This Filter is an Filter, which gains multiple Filter. These
- * Filters will be combined by an or. This means,that if an matches
- * Filterparameters method retursn true the vaultEntry will be in the result
- * List.
- */
 public class AndFilter extends Filter {
 
     private final List<Filter> filters;
-    private List<VaultEntry> innerResult;
 
-    /**
-     * Constructor just set:
-     *
-     * @param filters; These will used in the matchesFilterParameters Method
-     */
-    public AndFilter(List<Filter> filters) {
-        this.filters = filters;
-        this.innerResult = new ArrayList<>();
+    public AndFilter(FilterOption option) {
+        super(option);
+        if (option instanceof AndFilterOption) {
+            this.filters = ((AndFilterOption) option).getFilters();
+        } else {
+            String msg = "Option has to be an instance of AndFilterOption";
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, msg);
+            throw new Error(msg);//IllegalArgumentException("Option has to be an instance of CombinationFilterOption");
+        }
     }
 
     @Override
     FilterType getType() {
-        return FilterType.FILTER_DECORATOR;
+        return FilterType.AND;
     }
 
     @Override
-    boolean matchesFilterParameters(VaultEntry vaultEntry) {
-        return innerResult.contains(vaultEntry);
+    boolean matchesFilterParameters(VaultEntry vaultEntry
+    ) {
+        boolean result = true;
+
+        for (Filter filter : filters) {
+            if (!filter.matchesFilterParameters(vaultEntry)) {
+                result = false;
+                break;
+            }
+
+        }
+
+        return result;
     }
 
     @Override
-    protected List<VaultEntry> setUpBeforeFilter(List<VaultEntry> data) {
-        innerResult = VaultEntryUtils.slice(data, filters).filteredData;
+    protected List<VaultEntry> setUpBeforeFilter(List<VaultEntry> data
+    ) {
+        List<VaultEntry> temp = data;
+        for (Filter filter : this.filters) {
+            temp = filter.setUpBeforeFilter(temp);
+        }
         return data;
     }
 
     @Override
-    Filter update(VaultEntry vaultEntry) {
-        return new AndFilter(filters);
+    Filter update(VaultEntry vaultEntry
+    ) {
+        List<Filter> tempFilters = new ArrayList<>();
+        for (Filter filter : this.filters) {
+            tempFilters.add(filter.update(vaultEntry));
+        }
+        AndFilterOption tempOption = new AndFilterOption(tempFilters);
+        return new AndFilter(tempOption);
     }
 }

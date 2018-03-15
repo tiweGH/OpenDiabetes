@@ -17,10 +17,11 @@
 package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
-import java.util.ArrayList;
-import java.util.Date;
+import de.jhit.opendiabetes.vault.processing.filter.options.FilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.QueryFilterOption;
 import java.util.List;
-import javafx.util.Pair;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author tiweGH
@@ -34,36 +35,20 @@ public class QueryFilter extends Filter {
     private int minSize, maxSize;
     private List<VaultEntry> mainFilterResult;
 
-    /**
-     * This Filter runs its main filter and then checks if it matches the given
-     * criteria, in detail, it filters the result with the inner filter and
-     * checks if the inner result matches the given size. If not, the main
-     * result won't be returned.
-     *
-     * @param mainFilter filter which will be checked
-     * @param innerFilter used to check the result of the main filter
-     * @param minSize minimum size of the result. use "-1" for don't care
-     * @param maxSize maximum size of the result. use "-1" for don't care
-     */
-    public QueryFilter(Filter mainFilter, Filter innerFilter, int minSize, int maxSize) {
-        this.mainFilter = mainFilter;
-        this.innerFilter = innerFilter;
-        this.minSize = minSize;
-        this.maxSize = maxSize;
-    }
+    public final static int DONT_CARE = -1;
 
-    /**
-     * This Filter checks if the previous result matches the given criteria, in
-     * detail, it filters the result with the inner filter and checks if the
-     * inner result matches the given size. If not, the previous result won't be
-     * returned.
-     *
-     * @param innerFilter used to check the result of the main filter
-     * @param minSize minimum size of the result. use "-1" for don't care
-     * @param maxSize maximum size of the result. use "-1" for don't care
-     */
-    public QueryFilter(Filter innerFilter, int minSize, int maxSize) {
-        this(new NoneFilter(), innerFilter, minSize, maxSize);
+    public QueryFilter(FilterOption option) {
+        super(option);
+        if (option instanceof QueryFilterOption) {
+            this.mainFilter = ((QueryFilterOption) option).getMainFilter();
+            this.innerFilter = ((QueryFilterOption) option).getInnerFilter();
+            this.minSize = ((QueryFilterOption) option).getMinSize();
+            this.maxSize = ((QueryFilterOption) option).getMaxSize();
+        } else {
+            String msg = "Option has to be an instance of QueryFilterOption";
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, msg);
+            throw new Error(msg);//IllegalArgumentException("Option has to be an instance of CombinationFilterOption");
+        }
     }
 
     @Override
@@ -71,7 +56,8 @@ public class QueryFilter extends Filter {
         mainFilterResult = mainFilter.filter(data).filteredData;
         List<VaultEntry> innerResult = innerFilter.filter(mainFilterResult).filteredData;
 
-        resultValid = (minSize == -1 || innerResult.size() >= minSize) && (maxSize == -1 || innerResult.size() <= maxSize);
+        resultValid = (minSize == DONT_CARE || innerResult.size() >= minSize)
+                && (maxSize == DONT_CARE || innerResult.size() <= maxSize);
 
         //filters with the basic method
         //result = (dataPointer != null) ? dataPointer.getDataset() : innerFilterResult;
@@ -80,7 +66,7 @@ public class QueryFilter extends Filter {
 
     @Override
     FilterType getType() {
-        return FilterType.COMBINATION_FILTER;
+        return FilterType.QUERY;
     }
 
     @Override
@@ -90,7 +76,7 @@ public class QueryFilter extends Filter {
 
     @Override
     Filter update(VaultEntry vaultEntry) {
-        return new QueryFilter(mainFilter.update(vaultEntry), innerFilter, minSize, maxSize);
+        return new QueryFilter(new QueryFilterOption(mainFilter.update(vaultEntry), innerFilter, minSize, maxSize));
     }
 
 }
