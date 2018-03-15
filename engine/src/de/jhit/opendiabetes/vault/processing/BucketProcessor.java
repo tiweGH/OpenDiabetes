@@ -45,6 +45,13 @@ public class BucketProcessor {
     
     final BucketAverageCalculationMethods averageCalculationMethods = new BucketAverageCalculationMethods();
     
+    /* TEMP for MainGuiController */
+    public List<FinalBucketEntry> processor(List<VaultEntry> entryList, int wantedBucketSize) throws ParseException {
+        List<FinalBucketEntry> outputList = bucketProcessing(0, entryList, wantedBucketSize);
+        return outputList;
+    }
+    
+    
     /**
      * This method receives a list of VaultEntrys and a wanted step size (in
      * minutes) for the resulting list of FinalBucketEntrys. In this method the
