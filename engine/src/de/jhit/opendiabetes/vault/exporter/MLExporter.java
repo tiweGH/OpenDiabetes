@@ -16,7 +16,6 @@
  */
 package de.jhit.opendiabetes.vault.exporter;
 
-import de.jhit.opendiabetes.vault.container.BucketEntry;
 import de.jhit.opendiabetes.vault.container.BucketEventTriggers;
 import de.jhit.opendiabetes.vault.container.FinalBucketEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
@@ -28,10 +27,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.sql.SQLException;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,12 +84,34 @@ public class MLExporter {
     }
 
     public void exportDataToFile(List<VaultEntry> data) throws IOException, ParseException {
+        String temp = filePath;
+        long start;
+        start = System.currentTimeMillis();
+        System.out.println("Start new BProc at " + new Date(start));
         BucketProcessor processor = new BucketProcessor();
-        List<FinalBucketEntry> buckets = processor.bucketProcessing(0, data, wantedBucketSize);
+        writeToFile(processor.runProcess(0, data, wantedBucketSize));
+        System.out.println("Writing took " + (System.currentTimeMillis() - start));
 
+//        start = System.currentTimeMillis();
+//        System.out.println("Start old BProc at " + new Date(start).toString());
+//        BucketProcessor_old p3 = new BucketProcessor_old();
+//        filePath = temp + "_old";
+//        writeToFile(p3.processor(data, wantedBucketSize));
+//        System.out.println("Writing took " + (System.currentTimeMillis() - start));
+//
+//        start = System.currentTimeMillis();
+//        System.out.println("Start runable BProc at " + new Date(start).toString());
+//        BucketProcessor_runable p2 = new BucketProcessor_runable();
+//        filePath = temp + "_run";
+//        writeToFile(p2.processor(data, wantedBucketSize));
+//        System.out.println("Writing took " + (System.currentTimeMillis() - start));
+    }
+
+    private void writeToFile(List<FinalBucketEntry> buckets) throws IOException, ParseException {
         int x = buckets.get(1).getFullOnehotInformationArray().length;
         FileWriter fw;
-        fw = new FileWriter(filePath);
+        //System.out.println("writing File to " + filePath + ".csv");
+        fw = new FileWriter(filePath + ".csv");
         fw.write("index, " + createHeader() + "\n");
         try {
             //int j = 0;

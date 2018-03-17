@@ -17,7 +17,6 @@ package de.jhit.opendiabetes.vault.testhelper;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import de.jhit.opendiabetes.vault.container.VaultEntry;
-import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.processing.filter.Filter;
 import de.jhit.opendiabetes.vault.processing.filter.FilterResult;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
@@ -43,13 +42,9 @@ public class Tester {
             List<Filter> fl = new ArrayList<>();
             FilterResult res;
 
-            long minutes = (workingSet.get(workingSet.size() - 1).getTimestamp().getTime() - workingSet.get(0).getTimestamp().getTime()) / (60 * 1000);
-            System.out.println("Test_end_output_minutes_:");
-            System.out.println(minutes);
-            System.out.println(TimestampUtils.createCleanTimestamp("2017.10.08-00:00", "yyyy.MM.dd-HH:mm").getTime());
-            System.out.println(TimestampUtils.createCleanTimestamp("2017.11.08-00:00", "yyyy.MM.dd-HH:mm").getTime());
-            System.out.println(new Date(1510095600000L).toString());
-            System.out.println(VaultEntryType.valueOf("GLUCOSE_CGM_ALERT").isOneHot());
+            Date date1 = TimestampUtils.createCleanTimestamp("2017.06.28-00:00", "yyyy.MM.dd-HH:mm");
+            Date date2 = TimestampUtils.createCleanTimestamp("2017.06.28-12:33", "yyyy.MM.dd-HH:mm");
+            System.out.println(TimestampUtils.getMidDate(date1, date2));
 
         } catch (ParseException ex) {
             Logger.getLogger(Tester.class.getName()).log(Level.SEVERE, null, ex);

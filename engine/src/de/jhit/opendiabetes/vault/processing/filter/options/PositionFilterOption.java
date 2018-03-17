@@ -16,8 +16,8 @@
  */
 package de.jhit.opendiabetes.vault.processing.filter.options;
 
+import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.processing.filter.Filter;
-import de.jhit.opendiabetes.vault.processing.filter.NoneFilter;
 import de.jhit.opendiabetes.vault.processing.filter.PositionFilter;
 
 /**
@@ -28,6 +28,7 @@ public class PositionFilterOption extends FilterOption {
 
     private Filter filter;
     private final int filterMode;
+    private VaultEntryType weightedType;
 
     /**
      * The first entry of the given input data
@@ -46,38 +47,63 @@ public class PositionFilterOption extends FilterOption {
      * the last entry of the given input data
      */
     public static final int DATE_MIDDLE = PositionFilter.DATE_MIDDLE;
+    /**
+     * The entry with the timestamp located nearest to the calculated weighted
+     * middle of a given type.
+     */
+    public static final int WEIGHTED_MIDDLE = PositionFilter.WEIGHTED_MIDDLE;
 
     /**
      * Searches the given dataset for one specific position.
      *
      * @param filter The FilterResult of this Filter will be used as working
-     * data for the position search
+     * data for the position search. Use a <code>NoneFilter</code> if you don't
+     * want to run an extra Filter.<p>
      * @param filterMode Configures the position search:
      * <p>
-     * <code>FIRST</code>: The first entry of the input data<p>
-     * <code>LAST</code>: The last entry<p>
-     * <code>MIDDLE</code>: The entry with the middle index<p>
+     * <code>FIRST</code>: The first entry of the input data<br>
+     * <code>LAST</code>: The last entry<br>
+     * <code>MIDDLE</code>: The entry with the middle index<br>
      * <code>DATE_MIDDLE</code>: The entry with the timestamp located in the
-     * middle between the first and the last entry
+     * middle between the first and the last entry<br>
+     * <code>WEIGHTED_MIDDLE</code>: The entry with the timestamp located
+     * nearest to the calculated weighted middle of a given type.<br>
+     * @param type VaultEntryType only relevant for
+     * <code>WEIGHTED_MIDDLE</code>, ignored otherwise
      */
-    public PositionFilterOption(Filter filter, int filterMode) {
+    public PositionFilterOption(Filter filter, int filterMode, VaultEntryType type) {
         this.filter = filter;
         this.filterMode = filterMode;
+        this.weightedType = type;
     }
 
     /**
      * Searches the given dataset for one specific position.
      *
+     * @param filter The FilterResult of this Filter will be used as working
+     * data for the position search. Use a <code>NoneFilter</code> if you don't
+     * want to run an extra Filter.<p>
      * @param filterMode Configures the position search:
      * <p>
-     * <code>FIRST</code>: The first entry of the input data<p>
-     * <code>LAST</code>: The last entry<p>
-     * <code>MIDDLE</code>: The entry with the middle index<p>
+     * <code>FIRST</code>: The first entry of the input data<br>
+     * <code>LAST</code>: The last entry<br>
+     * <code>MIDDLE</code>: The entry with the middle index<br>
      * <code>DATE_MIDDLE</code>: The entry with the timestamp located in the
-     * middle between the first and the last entry
+     * middle between the first and the last entry<br>
      */
-    public PositionFilterOption(int filterMode) {
-        this(new NoneFilter(), filterMode);
+    public PositionFilterOption(Filter filter, int filterMode) {
+        this(filter, filterMode, null);
+    }
+
+    /**
+     * Searches the given dataset for the weighted middle.
+     *
+     * @param filter The FilterResult of this Filter will be used as working
+     * data for the position search
+     * @param type type for the weighted middle calculation
+     */
+    public PositionFilterOption(Filter filter, VaultEntryType type) {
+        this(filter, WEIGHTED_MIDDLE, type);
     }
 
     public Filter getFilter() {
@@ -85,6 +111,10 @@ public class PositionFilterOption extends FilterOption {
     }
 
     public int getFilterMode() {
+        return filterMode;
+    }
+
+    public int getWeightedType() {
         return filterMode;
     }
 

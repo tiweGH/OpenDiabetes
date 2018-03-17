@@ -18,10 +18,7 @@ package de.jhit.opendiabetes.vault.util;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
-import de.jhit.opendiabetes.vault.processing.filter.NoneFilter;
-import de.jhit.opendiabetes.vault.testhelper.StaticDataset;
 import java.text.ParseException;
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,10 +26,10 @@ import java.util.List;
 import javafx.util.Pair;
 import org.junit.After;
 import org.junit.AfterClass;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -138,14 +135,14 @@ public class TimestampUtilsTest {
     }
 
     @Test
-    public void testGetNormalizedTimeSeriesEmpty() {
+    public void testGetNormalizedTimeSeries_Empty() {
         List<VaultEntry> entries = new ArrayList<>();
         List<Pair<Date, Date>> expectedResult = new ArrayList<>();
         assertEquals(expectedResult, TimestampUtils.getNormalizedTimeSeries(entries, 0));
     }
 
     @Test
-    public void testGetNormalizedTimeSeriesZeroMargin() throws ParseException {
+    public void testGetNormalizedTimeSeries_ZeroMargin() throws ParseException {
         List<VaultEntry> vaultEntries = new ArrayList<>();
         vaultEntries.add(new VaultEntry(VaultEntryType.GLUCOSE_BG, TimestampUtils.createCleanTimestamp("2017.06.29-04:53", "yyyy.MM.dd-HH:mm"), 109.0));
         vaultEntries.add(new VaultEntry(VaultEntryType.STRESS, TimestampUtils.createCleanTimestamp("2017.06.29-04:56", "yyyy.MM.dd-HH:mm"), 36.25));
@@ -176,6 +173,88 @@ public class TimestampUtilsTest {
                 TimestampUtils.createCleanTimestamp("2017.06.29-05:22", "yyyy.MM.dd-HH:mm")));
 
         assertEquals(expectedTimeSeries, TimestampUtils.getNormalizedTimeSeries(vaultEntries, 0));
+    }
+
+    @Test
+    public void testGetMidDate_DifferentDays() throws ParseException {
+        Date date1 = TimestampUtils.createCleanTimestamp("2017.06.28-00:00", "yyyy.MM.dd-HH:mm");
+        Date date2 = TimestampUtils.createCleanTimestamp("2017.06.30-00:00", "yyyy.MM.dd-HH:mm");
+        Date expectedResult = TimestampUtils.createCleanTimestamp("2017.06.29-00:00", "yyyy.MM.dd-HH:mm");
+
+        assertEquals(expectedResult, TimestampUtils.getMidDate(date1, date2));
+    }
+
+    @Test
+    public void testGetMidDate_DifferentTimes() throws ParseException {
+        Date date1 = TimestampUtils.createCleanTimestamp("2017.06.28-00:00", "yyyy.MM.dd-HH:mm");
+        Date date2 = TimestampUtils.createCleanTimestamp("2017.06.28-12:33", "yyyy.MM.dd-HH:mm");
+        Date expectedResult = TimestampUtils.createCleanTimestamp("2017.06.28-06:16", "yyyy.MM.dd-HH:mm");
+
+        assertEquals(expectedResult, TimestampUtils.getMidDate(date1, date2));
+    }
+
+    @Test
+    public void testGetMidDate_SameDate() throws ParseException {
+        Date date1 = TimestampUtils.createCleanTimestamp("2017.06.28-00:00", "yyyy.MM.dd-HH:mm");
+        Date date2 = TimestampUtils.createCleanTimestamp("2017.06.28-00:00", "yyyy.MM.dd-HH:mm");
+        Date expectedResult = TimestampUtils.createCleanTimestamp("2017.06.28-00:00", "yyyy.MM.dd-HH:mm");
+
+        assertEquals(expectedResult, TimestampUtils.getMidDate(date1, date2));
+    }
+
+    @Test
+    public void testGetMidDate_SwitchArguments() throws ParseException {
+        Date date1 = TimestampUtils.createCleanTimestamp("2017.06.28-00:00", "yyyy.MM.dd-HH:mm");
+        Date date2 = TimestampUtils.createCleanTimestamp("2017.06.28-12:33", "yyyy.MM.dd-HH:mm");
+
+        assertEquals(TimestampUtils.getMidDate(date2, date1), TimestampUtils.getMidDate(date1, date2));
+    }
+
+    @Test
+    public void testSetTimeOfDate() throws ParseException {
+        LocalTime newTime = LocalTime.of(14, 30, 12);
+        Date date = TimestampUtils.createCleanTimestamp("2017.06.28-00:00", "yyyy.MM.dd-HH:mm");
+        Date expectedResult = TimestampUtils.createCleanTimestamp("2017.06.28-14:30", "yyyy.MM.dd-HH:mm");
+
+        assertEquals(expectedResult, TimestampUtils.setTimeOfDate(date, newTime));
+    }
+
+    @Test
+    public void testSetDayOfDate() throws ParseException {
+        Date date1 = TimestampUtils.createCleanTimestamp("2000.01.01-11:11", "yyyy.MM.dd-HH:mm");
+        Date date2 = TimestampUtils.createCleanTimestamp("2017.06.28-00:00", "yyyy.MM.dd-HH:mm");
+        Date expectedResult = TimestampUtils.createCleanTimestamp("2017.06.28-11:11", "yyyy.MM.dd-HH:mm");
+
+        assertEquals(expectedResult, TimestampUtils.setDayOfDate(date1, date2));
+    }
+
+    @Test
+    public void testWithinTimeSeries() throws ParseException {
+        List<Pair<Date, Date>> timeSeries = new ArrayList<>();
+        timeSeries.add(new Pair(TimestampUtils.createCleanTimestamp("2017.06.29-04:53", "yyyy.MM.dd-HH:mm"),
+                TimestampUtils.createCleanTimestamp("2017.06.29-04:53", "yyyy.MM.dd-HH:mm")));
+        timeSeries.add(new Pair(TimestampUtils.createCleanTimestamp("2017.06.29-04:56", "yyyy.MM.dd-HH:mm"),
+                TimestampUtils.createCleanTimestamp("2017.06.29-04:56", "yyyy.MM.dd-HH:mm")));
+        timeSeries.add(new Pair(TimestampUtils.createCleanTimestamp("2017.06.29-04:58", "yyyy.MM.dd-HH:mm"),
+                TimestampUtils.createCleanTimestamp("2017.06.29-05:01", "yyyy.MM.dd-HH:mm")));
+        timeSeries.add(new Pair(TimestampUtils.createCleanTimestamp("2017.06.29-05:06", "yyyy.MM.dd-HH:mm"),
+                TimestampUtils.createCleanTimestamp("2017.06.29-05:06", "yyyy.MM.dd-HH:mm")));
+        timeSeries.add(new Pair(TimestampUtils.createCleanTimestamp("2017.06.29-05:16", "yyyy.MM.dd-HH:mm"),
+                TimestampUtils.createCleanTimestamp("2017.06.29-05:16", "yyyy.MM.dd-HH:mm")));
+        timeSeries.add(new Pair(TimestampUtils.createCleanTimestamp("2017.06.29-05:22", "yyyy.MM.dd-HH:mm"),
+                TimestampUtils.createCleanTimestamp("2017.06.29-05:22", "yyyy.MM.dd-HH:mm")));
+
+        Date date = TimestampUtils.createCleanTimestamp("2000.01.01-11:11", "yyyy.MM.dd-HH:mm");
+        assertFalse(TimestampUtils.withinTimeSeries(timeSeries, date));
+
+        date = TimestampUtils.createCleanTimestamp("2017.06.29-05:03", "yyyy.MM.dd-HH:mm");
+        assertFalse(TimestampUtils.withinTimeSeries(timeSeries, date));
+
+        date = TimestampUtils.createCleanTimestamp("2017.06.29-05:16", "yyyy.MM.dd-HH:mm");
+        assertTrue(TimestampUtils.withinTimeSeries(timeSeries, date));
+
+        date = TimestampUtils.createCleanTimestamp("2017.06.29-05:00", "yyyy.MM.dd-HH:mm");
+        assertTrue(TimestampUtils.withinTimeSeries(timeSeries, date));
     }
 
 }

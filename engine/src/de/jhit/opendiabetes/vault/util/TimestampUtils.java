@@ -315,6 +315,13 @@ public class TimestampUtils {
         return getNormalizedTimeSeries(data, margin, margin);
     }
 
+    /**
+     * Checks if the given date is within one of the given timeSeries.
+     *
+     * @param timeSeries
+     * @param date
+     * @return true, if the date is within one of the timeSeries
+     */
     public static boolean withinTimeSeries(List<Pair<Date, Date>> timeSeries, Date date) {
         boolean result = false;
         if (timeSeries != null) {

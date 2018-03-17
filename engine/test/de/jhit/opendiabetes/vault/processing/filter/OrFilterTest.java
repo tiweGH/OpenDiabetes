@@ -206,7 +206,7 @@ public class OrFilterTest extends Assert {
         }
         filteredData.addAll(filters.get(1).filter(data).filteredData);
         filteredData.addAll(filters.get(0).filter(data).filteredData);
-        VaultEntryUtils.sort(filteredData);
+        filteredData = VaultEntryUtils.sort(filteredData);
         //FilterResult checkForThisResult = new FilterResult(filteredData, timeSeries);
 
         assertEquals(result.filteredData, filteredData);

@@ -54,7 +54,7 @@ public class PositionFilterTest extends Assert {
     }
 
     PositionFilter setUpFilter(int pos) {
-        return new PositionFilter(new PositionFilterOption(pos));
+        return new PositionFilter(new PositionFilterOption(new NoneFilter(), pos));
     }
 
     /**

@@ -9,14 +9,12 @@ import de.jhit.opendiabetes.vault.container.SliceEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.container.VaultEntryTypeGroup;
-import de.jhit.opendiabetes.vault.container.csv.SliceCsVEntry;
 import de.jhit.opendiabetes.vault.container.csv.VaultCsvEntry;
 import de.jhit.opendiabetes.vault.data.VaultDao;
 import de.jhit.opendiabetes.vault.exporter.ExporterOptions;
 import de.jhit.opendiabetes.vault.exporter.FileExporter;
 import de.jhit.opendiabetes.vault.exporter.MLExporter;
 import de.jhit.opendiabetes.vault.exporter.OdvDbJsonExporter;
-import de.jhit.opendiabetes.vault.exporter.SliceLayoutCsvExporter;
 import de.jhit.opendiabetes.vault.exporter.VaultCsvExporter;
 import de.jhit.opendiabetes.vault.exporter.VaultEntryJavacodeExporter;
 import de.jhit.opendiabetes.vault.importer.FileImporter;
@@ -30,16 +28,14 @@ import de.jhit.opendiabetes.vault.importer.interpreter.ExerciseInterpreterOption
 import de.jhit.opendiabetes.vault.importer.interpreter.NonInterpreter;
 import de.jhit.opendiabetes.vault.importer.interpreter.PumpInterpreter;
 import de.jhit.opendiabetes.vault.importer.interpreter.PumpInterpreterOptions;
-import de.jhit.opendiabetes.vault.processing.BucketProcessor;
-import de.jhit.opendiabetes.vault.processing.BucketProcessor_runable;
 import de.jhit.opendiabetes.vault.processing.DataSlicer;
 import de.jhit.opendiabetes.vault.processing.DataSlicerOptions;
 import de.jhit.opendiabetes.vault.processing.StaticInsulinSensivityCalculator;
 import de.jhit.opendiabetes.vault.processing.StaticInsulinSensivityCalculatorOptions;
-import de.jhit.opendiabetes.vault.processing.filter.DateTimeSpanFilter;
-import de.jhit.opendiabetes.vault.processing.filter.Filter;
 import de.jhit.opendiabetes.vault.processing.filter.TypeAbsenceFilter;
-
+import de.jhit.opendiabetes.vault.processing.filter.options.TypeAbsenceFilterOption;
+import de.jhit.opendiabetes.vault.processing.preprocessing.GapRemover;
+import de.jhit.opendiabetes.vault.processing.preprocessing.Preprocessor;
 import de.jhit.opendiabetes.vault.util.FileCopyUtil;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.io.File;
@@ -652,7 +648,7 @@ public class MainGuiController implements Initializable {
         //Slicing Basal Rate Tests
         DataSlicerOptions slicerOptions = new DataSlicerOptions(60, DataSlicerOptions.OutputFilter.FIRST_OF_SERIES);
         DataSlicer slicer = new DataSlicer(slicerOptions);
-        slicer.registerFilter(new TypeAbsenceFilter(VaultEntryTypeGroup.MEAL, 4 * 60));
+        slicer.registerFilter(new TypeAbsenceFilter(new TypeAbsenceFilterOption(VaultEntryTypeGroup.MEAL, 4 * 60)));
         slices = slicer.sliceData(data);
 
         // inform user
@@ -758,8 +754,9 @@ public class MainGuiController implements Initializable {
                                     TimestampUtils.fromLocalDate(
                                             exportPeriodToPicker.getValue(), 86399000));// 86399000 = 1 day - 1 second
 
+                            FileExporter exporter;
                             // standard export
-//                            FileExporter exporter = new VaultCsvExporter(eOptions,
+//                            exporter = new VaultCsvExporter(eOptions,
 //                                    VaultDao.getInstance(),
 //                                    odvExpotFileName);
 //                            int result = exporter.exportDataToFile(null);
@@ -774,25 +771,26 @@ public class MainGuiController implements Initializable {
 //                                });
 //                            }
                             // ML Exporter
-                            Filter fl = new DateTimeSpanFilter(data.get(0).getTimestamp(), TimestampUtils.addMinutesToTimestamp(data.get(0).getTimestamp(), 48 * 60));
-                            List<VaultEntry> data2 = fl.filter(data).filteredData;
+                            Preprocessor gapper = new GapRemover(VaultEntryType.GLUCOSE_CGM, 30);
+                            data = gapper.preprocess(data);
+//                            Filter fl = new DateTimeSpanFilter(new DateTimeSpanFilterOption(data.get(0).getTimestamp(), TimestampUtils.addMinutesToTimestamp(data.get(0).getTimestamp(), 48 * 60)));
+//                            System.out.println("Filtered: " + data.get(0).getTimestamp() + " + " + TimestampUtils.addMinutesToTimestamp(data.get(0).getTimestamp(), 48 * 60).toString());
+//                            data = fl.filter(data).filteredData;
 
-                            System.out.println("Filtered: " + data.get(0).getTimestamp() + " + " + TimestampUtils.addMinutesToTimestamp(data.get(0).getTimestamp(), 48 * 60).toString());
-                            odvExpotFileName = new File(path).getAbsolutePath()
-                                    + "/"
-                                    + "exportBuckets_X2-"
-                                    + VaultCsvEntry.VERSION_STRING
-                                    + "-"
-                                    + formatter.format(new Date())
-                                    + ".csv";
-                            MLExporter exp = new MLExporter(1, odvExpotFileName);
-                            exp.exportDataToFile(data2);
+//                            odvExpotFileName = new File(path).getAbsolutePath()
+//                                    + "/"
+//                                    + "exportBuckets_X2-"
+//                                    + VaultCsvEntry.VERSION_STRING
+//                                    + "-"
+//                                    + formatter.format(new Date());
+//                            MLExporter exp = new MLExporter(1, odvExpotFileName);
+//                            exp.exportDataToFile(data);
                             // Java code exporter
-                            System.out.println("Code Export");
-                            odvExpotFileName = new File(path).getAbsolutePath()
-                                    + "/";
-                            VaultEntryJavacodeExporter.compile(data2, odvExpotFileName);
-
+//                            System.out.println("Code Export");
+//                            odvExpotFileName = "ExportDataset";
+//                            VaultEntryJavacodeExporter.compile(data, new File(path).getAbsolutePath() + "/" + odvExpotFileName
+//                                    + "_" + formatter.format(new Date()) + ".java",
+//                                    odvExpotFileName);
                             // odv export
                             //                        odvExpotFileName = new File(path).getAbsolutePath()
                             //                                + "/"
@@ -874,28 +872,28 @@ public class MainGuiController implements Initializable {
                             //                            });
                             //                        }
                             // json exporter
-                            //                            odvExpotFileName = new File(path).getAbsolutePath()
-                            //                                    + "/"
-                            //                                    + "export-"
-                            //                                    + VaultCsvEntry.VERSION_STRING
-                            //                                    + "-"
-                            //                                    + formatter.format(new Date())
-                            //                                    + ".json";
-                            //                            exporter = new OdvDbJsonExporter(eOptions,
-                            //                                    odvExpotFileName);
-                            //                            int result5 = exporter.exportDataToFile(
-                            //                                    data);
-                            //                            if (result5 != VaultCsvExporter.RESULT_OK) {
-                            //
-                            //                                Platform.runLater(() -> {
-                            //                                    Alert alert = new Alert(Alert.AlertType.ERROR,
-                            //                                            "Could not export to json file: "
-                            //                                            + result5 + "\nSee logfile for details.",
-                            //                                            ButtonType.CLOSE);
-                            //                                    alert.setHeaderText(null);
-                            //                                    alert.show();
-                            //                                });
-                            //                            }
+                            odvExpotFileName = new File(path).getAbsolutePath()
+                                    + "/"
+                                    + "export-"
+                                    + VaultCsvEntry.VERSION_STRING
+                                    + "-"
+                                    + formatter.format(new Date())
+                                    + ".json";
+                            exporter = new OdvDbJsonExporter(eOptions,
+                                    odvExpotFileName);
+                            int result5 = exporter.exportDataToFile(
+                                    data);
+                            if (result5 != VaultCsvExporter.RESULT_OK) {
+
+                                Platform.runLater(() -> {
+                                    Alert alert = new Alert(Alert.AlertType.ERROR,
+                                            "Could not export to json file: "
+                                            + result5 + "\nSee logfile for details.",
+                                            ButtonType.CLOSE);
+                                    alert.setHeaderText(null);
+                                    alert.show();
+                                });
+                            }
                         }
                         Platform.runLater(() -> {
                             exportPorgressBar.setProgress(0.5);

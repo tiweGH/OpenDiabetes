@@ -17,6 +17,7 @@
 package de.jhit.opendiabetes.vault.processing.filter;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
+import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.processing.filter.options.FilterOption;
 import de.jhit.opendiabetes.vault.processing.filter.options.PositionFilterOption;
 import de.jhit.opendiabetes.vault.util.VaultEntryUtils;
@@ -33,6 +34,7 @@ public class PositionFilter extends Filter {
     private Filter filter;
     private final int filterMode;
     private VaultEntry positionResult;
+    private VaultEntryType weightedType;
 
     /**
      * The first entry of the given input data
@@ -51,6 +53,11 @@ public class PositionFilter extends Filter {
      * the last entry of the given input data
      */
     public static final int DATE_MIDDLE = 3;
+    /**
+     * The entry with the timestamp located nearest to the calculated weighted
+     * middle of a given type.
+     */
+    public static final int WEIGHTED_MIDDLE = 4;
 
     public PositionFilter(FilterOption option) {
         super(option);
@@ -86,6 +93,9 @@ public class PositionFilter extends Filter {
             case (DATE_MIDDLE):
                 positionResult = VaultEntryUtils.getNearestMidEntry(tempData);
                 break;
+            case (WEIGHTED_MIDDLE):
+                positionResult = VaultEntryUtils.getNearestEntryAt(data, VaultEntryUtils.getWeightedMiddle(data, weightedType));
+                break;
             default:
                 break;
         }
@@ -101,6 +111,6 @@ public class PositionFilter extends Filter {
 
     @Override
     Filter update(VaultEntry vaultEntry) {
-        return new PositionFilter(new PositionFilterOption(filter.update(vaultEntry), filterMode));
+        return new PositionFilter(new PositionFilterOption(filter.update(vaultEntry), filterMode, weightedType));
     }
 }

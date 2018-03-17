@@ -24,6 +24,8 @@ import de.jhit.opendiabetes.vault.processing.filter.Filter;
 import de.jhit.opendiabetes.vault.processing.filter.FilterResult;
 import de.jhit.opendiabetes.vault.processing.filter.NoneFilter;
 import de.jhit.opendiabetes.vault.processing.filter.TimePointFilter;
+import de.jhit.opendiabetes.vault.processing.preprocessing.ClusterPreprocessor;
+import de.jhit.opendiabetes.vault.processing.preprocessing.GapRemover;
 import de.jhit.opendiabetes.vault.testhelper.SensitivityDataset;
 import de.jhit.opendiabetes.vault.testhelper.StaticDataset;
 import java.text.ParseException;
@@ -70,7 +72,7 @@ public class VaultEntrySlicerTest extends Assert {
 //        System.out.println("sliceData");
 //        Filter filter = new EventFilter(VaultEntryType.HEART_RATE);
 //        Filter secondFilter = new TimePointFilter(LocalTime.parse("04:56:00"), 10);
-//        
+//
 //        VaultEntrySlicer instance = new VaultEntrySlicer();
 //        instance.registerFilter(secondFilter);
 //        instance.registerFilter(filter);
@@ -78,42 +80,38 @@ public class VaultEntrySlicerTest extends Assert {
 //        FilterResult result = instance.sliceEntries(StaticDataset.getStaticDataset());
 //        assertTrue(result.size() == 2);
 //    }
-
     @Test
-    public void testVaultEntrySlicerClusterOneCluster() throws ParseException{
+    public void testVaultEntrySlicerClusterOneCluster() throws ParseException {
         List<VaultEntry> data = SensitivityDataset.getSensitivityDataset();
-        VaultEntrySlicer slicer = new VaultEntrySlicer(); 
-        List<VaultEntry> clustered = slicer.cluster(data, 1000000, VaultEntryType.GLUCOSE_CGM, VaultEntryType.CLUSTER_GLUCOSE_CGM);
-        
+        VaultEntrySlicer slicer = new VaultEntrySlicer();
+        List<VaultEntry> clustered = new ClusterPreprocessor(1000000, VaultEntryType.GLUCOSE_CGM, VaultEntryType.CLUSTER_GLUCOSE_CGM).preprocess(data);
+
         assertEquals(data.size() + 1, clustered.size());
 
         System.out.println("size data: " + data.size());
         System.out.println("size: " + clustered.size());
     }
+
     @Test
-    public void testVaultEntrySlicerClusterNoCluster() throws ParseException{
+    public void testVaultEntrySlicerClusterNoCluster() throws ParseException {
         List<VaultEntry> data = SensitivityDataset.getSensitivityDataset();
-        VaultEntrySlicer slicer = new VaultEntrySlicer(); 
-        List<VaultEntry> clustered = slicer.cluster(data, 0, VaultEntryType.GLUCOSE_CGM, VaultEntryType.CLUSTER_GLUCOSE_CGM);
-        
+        VaultEntrySlicer slicer = new VaultEntrySlicer();
+        List<VaultEntry> clustered = new ClusterPreprocessor(0, VaultEntryType.GLUCOSE_CGM, VaultEntryType.CLUSTER_GLUCOSE_CGM).preprocess(data);
+
         assertEquals(data.size(), clustered.size());
 
         System.out.println("size data: " + data.size());
         System.out.println("size: " + clustered.size());
     }
-    
-    @Test
-    public void testVaultEntrySlicerGap() throws ParseException{
-        List<VaultEntry> data = SensitivityDataset.getSensitivityDataset();
-        VaultEntrySlicer slicer = new VaultEntrySlicer(); 
-        slicer.setGapRemoving(1, VaultEntryType.BASAL_PROFILE);
-        List<VaultEntry> clustered = slicer.removeGaps(data);
-        
-        
-        
-        
-//        assertEquals(data.size(), clustered.size());
 
+    @Test
+    public void testVaultEntrySlicerGap() throws ParseException {
+        List<VaultEntry> data = SensitivityDataset.getSensitivityDataset();
+        VaultEntrySlicer slicer = new VaultEntrySlicer();
+        slicer.setGapRemoving(VaultEntryType.BASAL_PROFILE, 1);
+        List<VaultEntry> clustered = new GapRemover(VaultEntryType.BASAL_PROFILE, 1).preprocess(data);
+
+//        assertEquals(data.size(), clustered.size());
         System.out.println("size data: " + data.size());
         System.out.println("size: " + clustered.size());
     }

@@ -47,15 +47,15 @@ import java.util.logging.Logger;
  */
 public class VaultEntryJavacodeExporter {
 
-    public static void compile(List<VaultEntry> entries, String filepath) throws IOException, ParseException {
+    public static void compile(List<VaultEntry> entries, String filepath, String fileName) throws IOException, ParseException {
 
         FileWriter fw;
         String line;
-        fw = new FileWriter(filepath + "ExportDataset.java");
+        fw = new FileWriter(filepath);
         Calendar calTimestamp = Calendar.getInstance();
         String year, month, day, hour, minute;
         int dayNr = -1;
-        fw.write("public class ExportDataset {\n"
+        fw.write("public class " + fileName + " {\n"
                 + "\n"
                 + "    public static List<VaultEntry> getExportDataset() throws ParseException {\n"
                 + "        List<VaultEntry> vaultEntries = new ArrayList<>();\n"
@@ -106,7 +106,6 @@ public class VaultEntryJavacodeExporter {
 
     public static void main(String[] args) throws ParseException, SQLException, IOException {
 
-        compile(StaticDataset.getStaticDataset(), "C:/Users/Timm/Desktop/");
-
+        //compile(StaticDataset.getStaticDataset(), "C:/Users/Timm/Desktop/");
     }
 }

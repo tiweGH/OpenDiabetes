@@ -39,13 +39,13 @@ public class TypeAbsenceFilterOption extends FilterOption {
      * @param vaultEntryType
      * @param vaultEntryTypeGroup
      */
-    public TypeAbsenceFilterOption(long marginAfterTrigger, VaultEntryType vaultEntryType, VaultEntryTypeGroup vaultEntryTypeGroup) {
+    public TypeAbsenceFilterOption(VaultEntryTypeGroup vaultEntryTypeGroup, VaultEntryType vaultEntryType, long marginAfterTrigger) {
         this.vaultEntryTypeGroup = vaultEntryTypeGroup;
         this.vaultEntryType = vaultEntryType;
         this.marginAfterTrigger = marginAfterTrigger;
     }
 
-    public TypeAbsenceFilterOption(long marginAfterTrigger, VaultEntryTypeGroup vaultEntryTypeGroup) {
+    public TypeAbsenceFilterOption(VaultEntryTypeGroup vaultEntryTypeGroup, long marginAfterTrigger) {
         this.vaultEntryTypeGroup = vaultEntryTypeGroup;
         this.vaultEntryType = null;
         this.marginAfterTrigger = marginAfterTrigger;

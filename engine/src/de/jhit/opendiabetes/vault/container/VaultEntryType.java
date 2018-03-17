@@ -16,9 +16,6 @@
  */
 package de.jhit.opendiabetes.vault.container;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  *
  * @author mswin, tiweGH, a.a.aponte
@@ -90,6 +87,7 @@ public enum VaultEntryType {
     DM_INSULIN_SENSITIVTY(VaultEntryTypeGroup.DATA_MINING, false, VaultEntryType.MAYBE),
     // More unspecific input
     OTHER_ANNOTATION,
+    //Cluster Types
     CLUSTER_MEAL,
     CLUSTER_GLUCOSE_CGM,
     // Empty Type for BucketEntry

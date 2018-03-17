@@ -35,23 +35,22 @@ import javafx.util.Pair;
  * @author Chryat1s
  */
 public class BucketProcessor {
-    
+
     final CreateBucketEntries bucketEntryCreator;
     final CreateListOfBucketEntries bucketListCreator;
+
     public BucketProcessor() throws ParseException {
         this.bucketEntryCreator = new CreateBucketEntries();
         this.bucketListCreator = new CreateListOfBucketEntries();
     }
-    
+
     final BucketAverageCalculationMethods averageCalculationMethods = new BucketAverageCalculationMethods();
-    
-    /* TEMP for MainGuiController */
-    public List<FinalBucketEntry> processor(List<VaultEntry> entryList, int wantedBucketSize) throws ParseException {
-        List<FinalBucketEntry> outputList = bucketProcessing(0, entryList, wantedBucketSize);
-        return outputList;
-    }
-    
-    
+
+//    /* TEMP for MainGuiController */
+//    public List<FinalBucketEntry> processor(List<VaultEntry> entryList, int wantedBucketSize) throws ParseException {
+//        List<FinalBucketEntry> outputList = bucketProcessing(0, entryList, wantedBucketSize);
+//        return outputList;
+//    }
     /**
      * This method receives a list of VaultEntrys and a wanted step size (in
      * minutes) for the resulting list of FinalBucketEntrys. In this method the
@@ -65,12 +64,13 @@ public class BucketProcessor {
      * is 1 the list will just be transformed. If the wanted bucket size is
      * greater than 1 the list will be sent through the !!!average to the wanted
      * bucket size!!! method and reduced to the needed FinalBucketEntrys.
-     * 
-     *  If the given list of VaultEntrys results in a list of BucketEntrys that
-     *  does not fulfill the given size % wanted size == 0 scheme the needed
-     *  BucketEntrys will be added as empty BucketEntrys at the end of the list
-     *  of BucketEntrys.
      *
+     * If the given list of VaultEntrys results in a list of BucketEntrys that
+     * does not fulfill the given size % wanted size == 0 scheme the needed
+     * BucketEntrys will be added as empty BucketEntrys at the end of the list
+     * of BucketEntrys.
+     *
+     * @param firstBucketNumber starting index
      * @param entryList The list of VaultEntrys that will be transformed into a
      * list of FinalBucketEntrys.
      * @param wantedBucketSize This is the wanted bucket size (in minutes).
@@ -78,7 +78,7 @@ public class BucketProcessor {
      * bucket size (time step size).
      * @throws ParseException
      */
-    public List<FinalBucketEntry> bucketProcessing(int firstBucketNumber, List<VaultEntry> entryList, int wantedBucketSize) throws ParseException {
+    public List<FinalBucketEntry> runProcess(int firstBucketNumber, List<VaultEntry> entryList, int wantedBucketSize) throws ParseException {
         List<FinalBucketEntry> outputFinalBucketList = new ArrayList<>();
         // FinalBucketEntry counter
         int finalBucketEntryListCounter = firstBucketNumber;
@@ -87,9 +87,9 @@ public class BucketProcessor {
         List<BucketEntry> listOfBucketEntries = bucketListCreator.createListOfBuckets(firstBucketNumber, entryList);
         // set all the array information
         bucketListCreator.transferBucketEntryValues(listOfBucketEntries);
-        
+
         // remove duplicate timestamp BucketEntrys
-        listOfBucketEntries = removeUnneededBucketEntries(firstBucketNumber, listOfBucketEntries);
+        listOfBucketEntries = removeUnneededBucketEntries_old(firstBucketNumber, listOfBucketEntries);
         // calculate averages
         // for each BucketEntry in the list
         for (BucketEntry entry : listOfBucketEntries) {
@@ -160,6 +160,7 @@ public class BucketProcessor {
             }
 
             // data is now ready for the interpolateGaps method
+            System.out.println("Hallo ich interpoliere");
             List<Pair<Integer, Pair<VaultEntryType, Double>>> interpolatedData = interpolateGaps(sortedData);
 
             // ===============================================================
@@ -338,11 +339,10 @@ public class BucketProcessor {
 
         return new Pair(false, 0);
     }
-    
+
     // =========================================================================
     // =========================================================================
     // =========================================================================
-    
     /**
      * This method iterates through all BucketEntrys of the given list of
      * BucketEntrys and creates a new list of BucketEntrys that only contains
@@ -355,7 +355,8 @@ public class BucketProcessor {
      * list by setting the bucketNumbers inside this list to the new
      * bucketNumber.
      *
-     * @param firstBucketEntryNumber This is the first BucketEntry number in the returned list.
+     * @param firstBucketEntryNumber This is the first BucketEntry number in the
+     * returned list.
      * @param bucketList This is the list of BucketEntrys that will be used to
      * create the new normalized (minimal) list of BucketEntrys.
      * @return This method returns a list of BucketEntrys with only one
@@ -372,27 +373,27 @@ public class BucketProcessor {
         // loop through the list and search for a new date
         for (int i = (bucketList.size() - 1); i > -1; i--) {
             Date thisTimestamp = bucketList.get(i).getVaultEntry().getTimestamp();
-            
+
             // last element
             if (thisTimestamp.equals(lastBucketEntryDate)) {
                 inverseOutputBucketList.add(bucketEntryCreator.recreateBucketEntry(bucketList.get(i)));
                 currentBucketEntryDate = thisTimestamp;
             }
-            
+
             // normal walk through
             if (thisTimestamp.before(currentBucketEntryDate)) {
                 inverseOutputBucketList.add(bucketEntryCreator.recreateBucketEntry(bucketList.get(i)));
                 currentBucketEntryDate = thisTimestamp;
             }
         }
-        
+
         // generate the correct output
         for (int i = (inverseOutputBucketList.size() - 1); i > -1; i--) {
             outputBucketList.add(bucketEntryCreator.recreateBucketEntry(inverseOutputBucketList.get(i)));
             outputBucketList.get(outputBucketList.size() - 1).setBucketNumber(newConsecutiveBucketEntryNumber);
             newConsecutiveBucketEntryNumber = newConsecutiveBucketEntryNumber++;
         }
-        
+
         // check if everything is correct
         Date checkThisFirstDate = outputBucketList.get(0).getVaultEntry().getTimestamp();
         Date checkThisLAstDate = outputBucketList.get(outputBucketList.size() - 1).getVaultEntry().getTimestamp();
@@ -402,8 +403,7 @@ public class BucketProcessor {
             throw new Error("An_Error_occurred_while_removing_unneeded_BucketEntrys!");
         }
     }
-    
-    
+
     /**
      * This method iterates through all BucketEntrys of the given list of
      * BucketEntrys and creates a new list of BucketEntrys that only contains
@@ -416,7 +416,8 @@ public class BucketProcessor {
      * list by setting the bucketNumbers inside this list to the new
      * bucketNumber.
      *
-     * @param firstBucketEntryNumber This is the first BucketEntry number in the returned list.
+     * @param firstBucketEntryNumber This is the first BucketEntry number in the
+     * returned list.
      * @param bucketList This is the list of BucketEntrys that will be used to
      * create the new normalized (minimal) list of BucketEntrys.
      * @return This method returns a list of BucketEntrys with only one
@@ -502,70 +503,37 @@ public class BucketProcessor {
         return outputBucketList;
     }
 
+//      liste beinhält alles vom ersten auftretten eines wertes bis zum letzten
+//      vorkommenden wert anfang ohne NULL und ende ohne NULL
+//
+//
+//      TODO für Adrian: Im averageForSmallesBucketSize werden alle werte die für
+//      diese methode benötigt werden in eine liste gepackt und später in teil
+//      listen unterteilt um dieser methode übergeben zu werden. Die werte werden
+//      willkührlich nach fund in die liste aufgenommen und vor der übergabe
+//      zwischen den einzelnen werten mit sinn vollen listen einträgen befüllt
+//      die mit NULL symbolisieren das noch kein double Wert für diesen
+//      BucketEntry vorhanden ist. Die rückgabe dieser methode wird dann zurück
+//      in die zugehörigen BucketEntrys (anhand der bucketNumber) in die arrays
+//      an der richtigen position eingetragen ... ggf. erst im FinalBucketEntry.
+//
+//      Anmerkung von Timm: wegen der Art und weise wie wir die Methode benutzen
+//      (Dh wir überprüfen ja nicht nochmal ob die liste korrekt ist, also ob
+//      alle typen gleich sind) Sollten wir die Methode vllt private machen ->
+//      protected um sie testen zu können
     /**
      *
-     * This method receives a list that begins with a
+     * Interpolates gaps (as null values) of a specific VaultEntryType in a
+     * given list.<br>
+     * Regarding the Structure: <br>
+     * List(Index, (Type, Value))<br>
+     * whereas the value being null means that it's a gap which has to be
+     * interpolated
      *
-     *
-     * liste beinhält alles vom ersten auftretten eines wertes bis zum letzten
-     * vorkommenden wert anfang ohne NULL und ende ohne NULL
-     *
-     *
-     * TODO für Adrian: Im averageForSmallesBucketSize werden alle werte die für
-     * diese methode benötigt werden in eine liste gepackt und später in teil
-     * listen unterteilt um dieser methode übergeben zu werden. Die werte werden
-     * willkührlich nach fund in die liste aufgenommen und vor der übergabe
-     * zwischen den einzelnen werten mit sinn vollen listen einträgen befüllt
-     * die mit NULL symbolisieren das noch kein double Wert für diesen
-     * BucketEntry vorhanden ist. Die rückgabe dieser methode wird dann zurück
-     * in die zugehörigen BucketEntrys (anhand der bucketNumber) in die arrays
-     * an der richtigen position eingetragen ... ggf. erst im FinalBucketEntry.
-     *
-     * Anmerkung von Timm: wegen der Art und weise wie wir die Methode benutzen
-     * (Dh wir überprüfen ja nicht nochmal ob die liste korrekt ist, also ob
-     * alle typen gleich sind) Sollten wir die Methode vllt private machen ->
-     * protected um sie testen zu können
      *
      * @param input
      * @return
      */
-//    protected List<Pair<Integer, Pair<VaultEntryType, Double>>> interpolateGaps(List<Pair<Integer, Pair<VaultEntryType, Double>>> input){
-//        List<Pair<Double, Double>> calcValues = new ArrayList<>();
-//        List<Pair<Integer, Pair<VaultEntryType, Double>>> result = new ArrayList<>();
-//        VaultEntryType resultType = null;
-//        Double tmpValue;
-//        Integer tmpIndex;
-//
-//        //prepare the input data for interpolation, exclude null-values
-//        for (Pair<Integer, Pair<VaultEntryType, Double>> pair : input) {
-//            if(pair!=null && pair.getValue()!=null && pair.getKey()!=null){
-//                tmpIndex = pair.getKey();
-//                tmpValue = pair.getValue().getValue();
-//                resultType = pair.getValue().getKey();
-//
-//                if(tmpValue != null){
-//                    calcValues.add(new Pair(tmpIndex.doubleValue(), tmpValue));
-//                }
-//            }
-//        }
-//        SplineInterpolator sI = new SplineInterpolator(calcValues);
-//
-//        //compute each value that is null
-//        for (Pair<Integer, Pair<VaultEntryType, Double>> pair : input) {
-//            if(pair!=null && pair.getValue()!=null && pair.getKey()!=null){
-//                tmpIndex = pair.getKey();
-//                tmpValue = pair.getValue().getValue();
-//
-//                if(tmpValue == null){
-//            //interpolation call: tmpValue = interpolate(tmpIndex.doubleValue()); vllt mit Runden?
-//                    tmpValue = sI.interpolate(tmpIndex.doubleValue());
-//                }
-//                result.add(new Pair(tmpIndex, new Pair(resultType, tmpValue)));
-//            }
-//        }
-//
-//        return result;
-//    }
     protected List<Pair<Integer, Pair<VaultEntryType, Double>>> interpolateGaps(List<Pair<Integer, Pair<VaultEntryType, Double>>> input) {
         List<Pair<Double, Double>> calcValues = new ArrayList<>();
         List<Pair<Integer, Pair<VaultEntryType, Double>>> result = new ArrayList<>();
