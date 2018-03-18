@@ -43,10 +43,13 @@ public class GapRemover extends Preprocessor {
         List<VaultEntry> tempList = new ArrayList<>();
         Date startTime = null;
         Date endDate = null;
-        if (gapType != null && gapTimeInMinutes > 0) {
+        if (data != null && gapType != null && gapTimeInMinutes > 0) {
+
             int dataSize = data.size();
-            int nextTenth = dataSize / 10;
-            int i = 0;
+            double tenthCounter = 1.0;
+            int nextTenth = (int) Math.round(((double) dataSize / 10.0));
+            int index = 0;
+
             System.out.println("Preprocessing: Removing Gaps");
             for (VaultEntry vaultEntry : data) {
                 if (vaultEntry.getType() == gapType && startTime == null) {
@@ -57,10 +60,13 @@ public class GapRemover extends Preprocessor {
                     if (TimestampUtils.withinDateTimeSpan(startTime, endDate, vaultEntry.getTimestamp())) {
                         tempList.add(vaultEntry);
                         result.addAll(tempList);
-                    } else if (tempList.size() > 0) {
-                        System.out.println("Removed from " + startTime + " to " + endDate + " with " + tempList.size());
+                        tempList = new ArrayList<>();
+                    } else {
+                        //System.out.println("Removed from " + startTime + " to " + endDate + " with " + tempList.size());
+                        tempList = new ArrayList<>();
+                        tempList.add(vaultEntry);//add, otherwise entries might get lost
                     }
-                    tempList = new ArrayList<>();
+                    //tempList = new ArrayList<>();
                     startTime = vaultEntry.getTimestamp();
                     endDate = TimestampUtils.addMinutesToTimestamp(startTime, gapTimeInMinutes);//new Date(startTime.getTime() + gapTimeInMinutes);
                 } else if (startTime == null && vaultEntry.getType() != gapType) {
@@ -69,17 +75,25 @@ public class GapRemover extends Preprocessor {
                     tempList.add(vaultEntry);
                 }
                 //add last temp List if in time span
-                if (i == dataSize - 1 && TimestampUtils.withinDateTimeSpan(startTime, endDate, vaultEntry.getTimestamp())) {
-                    result.addAll(tempList);
-                } else if (i == dataSize - 1 && tempList.size() > 0) {
-                    System.out.println("Removed LAST from " + startTime + " to " + endDate + " with " + tempList.size());
+                if (index == dataSize - 1 && startTime != null) {
+                    if (TimestampUtils.withinDateTimeSpan(startTime, endDate, vaultEntry.getTimestamp())) {
+                        result.addAll(tempList);
+                    }
+//                    else {
+//                        System.out.println("Removed LAST from " + startTime + " to " + endDate + " with " + tempList.size());
+////                        for (VaultEntry vaultEntry1 : tempList) {
+////                            System.out.println(vaultEntry1.toString());
+////                        }
+//                    }
                 }
 
-                if (i == nextTenth) {
-                    System.out.println("Processed " + (int) (((double) i / (double) dataSize) * 100) + "% at " + (new Date(System.currentTimeMillis())));
-                    nextTenth = nextTenth + dataSize / 10;
-                }
-                i++;
+//                if (index == nextTenth) {
+//                    System.out.println("Processed " + (int) (((double) index / (double) dataSize) * 100) + "% at " + (new Date(System.currentTimeMillis())));
+//                    //System.out.println("Processed " + index + " of " + dataSize + " at " + (new Date(System.currentTimeMillis())));
+//                    tenthCounter++;
+//                    nextTenth = (int) Math.round(tenthCounter * ((double) dataSize / 10.0));
+//                }
+                index++;
             }
             System.out.println("Removed " + (dataSize - result.size()) + " entries");
             System.out.println("");

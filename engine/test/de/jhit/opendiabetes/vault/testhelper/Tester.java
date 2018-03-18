@@ -45,6 +45,8 @@ public class Tester {
             Date date1 = TimestampUtils.createCleanTimestamp("2017.06.28-00:00", "yyyy.MM.dd-HH:mm");
             Date date2 = TimestampUtils.createCleanTimestamp("2017.06.28-12:33", "yyyy.MM.dd-HH:mm");
             System.out.println(TimestampUtils.getMidDate(date1, date2));
+            System.out.println(Math.round(((double) 13 / 10.0)));
+            System.out.println(Math.round(((double) 16 / 10.0)));
 
         } catch (ParseException ex) {
             Logger.getLogger(Tester.class.getName()).log(Level.SEVERE, null, ex);

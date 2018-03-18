@@ -184,16 +184,16 @@ public class VaultEntryUtils {
                 result = TimestampUtils.createCleanTimestamp(new Date((weightedTimeSum / weightSum)));
                 //System.out.println(result);
             }
-            if (result == null) {
-                System.out.println("NULL");
-                for (VaultEntry vaultEntry : data) {
-                    System.out.println(vaultEntry.toString());
-                }
-                System.out.println("size = " + data.size());
-                System.out.println("weightedTimeSum = " + weightedTimeSum);
-                System.out.println("weightSum = " + weightSum);
-
-            }
+//            if (result == null) {
+//                System.out.println("NULL");
+//                for (VaultEntry vaultEntry : data) {
+//                    System.out.println(vaultEntry.toString());
+//                }
+//                System.out.println("size = " + data.size());
+//                System.out.println("weightedTimeSum = " + weightedTimeSum);
+//                System.out.println("weightSum = " + weightSum);
+//
+//            }
         }
 
         return result;
@@ -201,7 +201,7 @@ public class VaultEntryUtils {
 
     /**
      * Returns a sublist of the given VaultEntry List, consisting of Entries
-     * between the both given VaultEntries
+     * between the both given VaultEntries. Might be slow with large Lists!
      *
      * @param data
      * @param fromIndex earliest VaultEntry in the sublist
@@ -214,7 +214,7 @@ public class VaultEntryUtils {
 
     /**
      * Returns a sublist of the given VaultEntry List, consisting of Entries
-     * between the both given timepoints
+     * between the both given timepoints. Might be slow with large Lists!
      *
      * @param data
      * @param fromTimestamp earliest date of the sublist

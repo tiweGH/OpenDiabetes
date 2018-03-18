@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.jhit.opendiabetes.vault.processing;
+package de.jhit.opendiabetes.vault.processing.buckets;
 
 import de.jhit.opendiabetes.vault.container.BucketEntry;
 import static de.jhit.opendiabetes.vault.container.BucketEventTriggers.*;
@@ -34,9 +34,9 @@ import javafx.util.Pair;
  *
  * @author Chryat1s
  */
-public class CreateListOfBucketEntries {
+public class ListOfBucketEntriesCreator {
 
-    protected final CreateBucketEntries instance = new CreateBucketEntries();
+    protected final BucketEntryCreator instance = new BucketEntryCreator();
 
     /**
      * This method receives a first bucket number and a list of VaultEntrys.

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.jhit.opendiabetes.vault.processing;
+package de.jhit.opendiabetes.vault.processing.buckets;
 
 import de.jhit.opendiabetes.vault.container.BucketEntry;
 import static de.jhit.opendiabetes.vault.container.BucketEventTriggers.*;
@@ -36,15 +36,15 @@ import javafx.util.Pair;
  */
 public class BucketProcessor {
 
-    final CreateBucketEntries bucketEntryCreator;
-    final CreateListOfBucketEntries bucketListCreator;
+    final BucketEntryCreator bucketEntryCreator;
+    final ListOfBucketEntriesCreator bucketListCreator;
 
     public BucketProcessor() throws ParseException {
-        this.bucketEntryCreator = new CreateBucketEntries();
-        this.bucketListCreator = new CreateListOfBucketEntries();
+        this.bucketEntryCreator = new BucketEntryCreator();
+        this.bucketListCreator = new ListOfBucketEntriesCreator();
     }
 
-    final BucketAverageCalculationMethods averageCalculationMethods = new BucketAverageCalculationMethods();
+    final BucketAverageCalculationUtils averageCalculationMethods = new BucketAverageCalculationUtils();
 
 //    /* TEMP for MainGuiController */
 //    public List<FinalBucketEntry> processor(List<VaultEntry> entryList, int wantedBucketSize) throws ParseException {

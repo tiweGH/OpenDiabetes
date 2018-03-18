@@ -45,15 +45,23 @@ public class ClusterPreprocessor extends Preprocessor {
     @Override
     public List<VaultEntry> preprocess(List<VaultEntry> data) {
         long temp1, temp2;
-        temp1 = System.nanoTime();
+        temp1 = System.currentTimeMillis();
 
         List<VaultEntry> result = data;
-        if (clusterTimeInMinutes > 0 && typeToBeClustered != null) {
+        if (data != null && clusterTimeInMinutes > 0 && typeToBeClustered != null) {
             System.out.println("Preprocessing: Clustering");
             List<VaultEntry> clusteredList = new ArrayList<>();
             Date startTime = null;
             Date compareDate = null;
-            Date tmp;
+            Date tmpDate;
+            List<VaultEntry> tmpSubList;
+
+            int dataSize = data.size();
+            double tenthCounter = 1.0;
+            int nextTenth = (int) Math.round(((double) dataSize / 10.0));
+            int index = 0;
+            int startTimeIndex = 0;
+
             double sumOfValue = 0;
             for (VaultEntry vaultEntry : result) {
                 if (startTime == null) {
@@ -61,17 +69,20 @@ public class ClusterPreprocessor extends Preprocessor {
                     compareDate = TimestampUtils.addMinutesToTimestamp(startTime, clusterTimeInMinutes);
                 }
                 //compareDate = TimestampUtils.addMinutesToTimestamp(startTime, clusterTimeInMinutes);
-                if (compareDate.before(vaultEntry.getTimestamp()) || result.indexOf(vaultEntry) == result.size() - 1) {
+                if (compareDate.before(vaultEntry.getTimestamp()) || index == dataSize - 1) {
                     //clustertype?
-                    tmp = VaultEntryUtils.getWeightedMiddle(VaultEntryUtils.subList(data, startTime, compareDate), typeToBeClustered);
+                    //tmpSubList = VaultEntryUtils.subList(data, startTime, compareDate); //very slow with large Lists, since indexOf() is called multiple times
+                    tmpSubList = result.subList(startTimeIndex, index);
+                    tmpDate = VaultEntryUtils.getWeightedMiddle(tmpSubList, typeToBeClustered);
                     // tmp =
-                    if (tmp != null) {
-                        VaultEntry tmpVaultEntry = new VaultEntry(clusterType, tmp, sumOfValue);
-                        LOG.log(Level.INFO, "New Cluster between {0} and {1} : {2}", new Object[]{startTime, compareDate, tmpVaultEntry.getTimestamp()});
+                    if (tmpDate != null) {
+                        VaultEntry tmpVaultEntry = new VaultEntry(clusterType, tmpDate, sumOfValue);
+                        //LOG.log(Level.INFO, "New Cluster between {0} and {1} : {2}", new Object[]{startTime, compareDate, tmpVaultEntry.getTimestamp()});
                         clusteredList.add(tmpVaultEntry);
                     }
                     //Alternative cluster the day in whole blocks, starting with 00:00 and not with the first entry
                     startTime = compareDate;//vaultEntry.getTimestamp();
+                    startTimeIndex = index;
                     compareDate = TimestampUtils.addMinutesToTimestamp(startTime, clusterTimeInMinutes);
                     sumOfValue = 0;
                 }
@@ -79,12 +90,21 @@ public class ClusterPreprocessor extends Preprocessor {
                 if (vaultEntry.getType() == typeToBeClustered) {
                     sumOfValue += vaultEntry.getValue();
                 }
+
+//                if (index == nextTenth) {
+//                    System.out.println("Processed " + (int) (((double) index / (double) dataSize) * 100) + "% at " + (new Date(System.currentTimeMillis())));
+//                    //System.out.println("Processed " + index + " of " + dataSize + " at " + (new Date(System.currentTimeMillis())));
+//                    tenthCounter++;
+//                    nextTenth = (int) Math.round(tenthCounter * ((double) dataSize / 10.0));
+//                }
+                index++;
             }
             result = clusteredList;
             VaultEntryUtils.sort(result);
+            System.out.println("Added " + (result.size() - data.size()) + " Cluster-Entries");
         }
-        temp2 = System.nanoTime();
-        System.out.println(temp2 - temp1);
+        temp2 = System.currentTimeMillis();
+        //System.out.println(temp2 - temp1);
         return result;
     }
 

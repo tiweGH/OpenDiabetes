@@ -14,8 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.jhit.opendiabetes.vault.processing;
+package de.jhit.opendiabetes.vault.processing.buckets;
 
+import de.jhit.opendiabetes.vault.processing.buckets.BucketProcessor_old;
+import de.jhit.opendiabetes.vault.processing.buckets.BucketProcessor_runable;
 import de.jhit.opendiabetes.vault.container.BucketEntry;
 import static de.jhit.opendiabetes.vault.container.BucketEntry.getNumberOfVaultEntryTriggerTypes;
 import de.jhit.opendiabetes.vault.container.FinalBucketEntry;

@@ -14,8 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.jhit.opendiabetes.vault.processing;
+package de.jhit.opendiabetes.vault.processing.buckets;
 
+import de.jhit.opendiabetes.vault.processing.buckets.ListOfBucketEntriesCreator;
+import de.jhit.opendiabetes.vault.processing.buckets.BucketProcessor;
 import de.jhit.opendiabetes.vault.container.BucketEntry;
 import static de.jhit.opendiabetes.vault.container.BucketEntry.getNumberOfVaultEntryTriggerTypes;
 import de.jhit.opendiabetes.vault.container.FinalBucketEntry;
@@ -43,7 +45,7 @@ public class BucketProcessor_new_all_tests extends Assert {
     List<BucketEntry> resultBuckets;
     List<FinalBucketEntry> resultFinalBuckets;
     BucketProcessor bp;
-    CreateListOfBucketEntries lbe;
+    ListOfBucketEntriesCreator lbe;
 
     public BucketProcessor_new_all_tests() {
     }
@@ -85,7 +87,7 @@ public class BucketProcessor_new_all_tests extends Assert {
     
     @Test
     public void testBucketProcessor_checkPreviousBucketEntry() throws ParseException {
-        lbe = new CreateListOfBucketEntries();
+        lbe = new ListOfBucketEntriesCreator();
         Boolean result;
         Date date;
         
@@ -137,7 +139,7 @@ public class BucketProcessor_new_all_tests extends Assert {
         Date date_1;
         Date date_2;
         Integer result;
-        lbe = new CreateListOfBucketEntries();
+        lbe = new ListOfBucketEntriesCreator();
         
         date_1 = TestFunctions.creatNewDateToCheckFor("2000.01.01-00:01");
         date_2 = TestFunctions.creatNewDateToCheckFor("2000.01.01-00:02");
@@ -191,7 +193,7 @@ public class BucketProcessor_new_all_tests extends Assert {
         vaultEntries.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2000.01.01-00:08"), 21, 5));
         vaultEntries.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_ALERT, TestFunctions.creatNewDateToCheckFor("2000.01.01-00:08"), 170));
 
-        lbe = new CreateListOfBucketEntries();
+        lbe = new ListOfBucketEntriesCreator();
         List<BucketEntry> result = lbe.createListOfBuckets(0, vaultEntries);
 
         // 9 BucketEntrys -- 2 replaced and 3 timestamps missing -- 5 ML-relevant
@@ -246,7 +248,7 @@ public class BucketProcessor_new_all_tests extends Assert {
         vaultEntries.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2000.01.01-00:08"), 21, 5));
         vaultEntries.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_ALERT, TestFunctions.creatNewDateToCheckFor("2000.01.01-00:08"), 170));
 
-        lbe = new CreateListOfBucketEntries();
+        lbe = new ListOfBucketEntriesCreator();
         List<BucketEntry> result = lbe.createListOfBuckets(1, vaultEntries);
 
         // 9 BucketEntrys -- 2 replaced and 3 timestamps missing -- 5 ML-relevant

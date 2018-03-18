@@ -34,6 +34,7 @@ import de.jhit.opendiabetes.vault.processing.StaticInsulinSensivityCalculator;
 import de.jhit.opendiabetes.vault.processing.StaticInsulinSensivityCalculatorOptions;
 import de.jhit.opendiabetes.vault.processing.filter.TypeAbsenceFilter;
 import de.jhit.opendiabetes.vault.processing.filter.options.TypeAbsenceFilterOption;
+import de.jhit.opendiabetes.vault.processing.preprocessing.ClusterPreprocessor;
 import de.jhit.opendiabetes.vault.processing.preprocessing.GapRemover;
 import de.jhit.opendiabetes.vault.processing.preprocessing.Preprocessor;
 import de.jhit.opendiabetes.vault.util.FileCopyUtil;
@@ -773,18 +774,20 @@ public class MainGuiController implements Initializable {
                             // ML Exporter
                             Preprocessor gapper = new GapRemover(VaultEntryType.GLUCOSE_CGM, 30);
                             data = gapper.preprocess(data);
+//                            Preprocessor clusterer = new ClusterPreprocessor(30, VaultEntryType.GLUCOSE_CGM, VaultEntryType.CLUSTER_GLUCOSE_CGM);
+//                            data = clusterer.preprocess(data);
 //                            Filter fl = new DateTimeSpanFilter(new DateTimeSpanFilterOption(data.get(0).getTimestamp(), TimestampUtils.addMinutesToTimestamp(data.get(0).getTimestamp(), 48 * 60)));
 //                            System.out.println("Filtered: " + data.get(0).getTimestamp() + " + " + TimestampUtils.addMinutesToTimestamp(data.get(0).getTimestamp(), 48 * 60).toString());
 //                            data = fl.filter(data).filteredData;
 
-//                            odvExpotFileName = new File(path).getAbsolutePath()
-//                                    + "/"
-//                                    + "exportBuckets_X2-"
-//                                    + VaultCsvEntry.VERSION_STRING
-//                                    + "-"
-//                                    + formatter.format(new Date());
-//                            MLExporter exp = new MLExporter(1, odvExpotFileName);
-//                            exp.exportDataToFile(data);
+                            odvExpotFileName = new File(path).getAbsolutePath()
+                                    + "/"
+                                    + "exportBuckets_X2-"
+                                    + VaultCsvEntry.VERSION_STRING
+                                    + "-"
+                                    + formatter.format(new Date());
+                            MLExporter exp = new MLExporter(1, odvExpotFileName);
+                            exp.exportDataToFile(data);
                             // Java code exporter
 //                            System.out.println("Code Export");
 //                            odvExpotFileName = "ExportDataset";
