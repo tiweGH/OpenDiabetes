@@ -18,10 +18,15 @@ package de.jhit.opendiabetes.vault.processing.preprocessing;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
+import de.jhit.opendiabetes.vault.processing.preprocessing.options.GapRemoverPreprocessorOption;
+import de.jhit.opendiabetes.vault.processing.preprocessing.options.PreprocessorOption;
+import de.jhit.opendiabetes.vault.processing.preprocessing.options.QueryPreprocessorOption;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -39,9 +44,19 @@ public class GapRemover extends Preprocessor {
      * @param removeType specific type for gap search
      * @param gapTimeInMinutes max time between two entries before it's a "gap"
      */
-    public GapRemover(VaultEntryType removeType, long gapTimeInMinutes) {
-        this.gapTimeInMinutes = gapTimeInMinutes;
-        this.gapType = removeType;
+    public GapRemover(PreprocessorOption preprocessorOption) {
+        
+        super(preprocessorOption);
+        if (preprocessorOption instanceof GapRemoverPreprocessorOption) {
+            
+            this.gapTimeInMinutes = ((GapRemoverPreprocessorOption) preprocessorOption).getGapTimeInMinutes();
+            this.gapType = ((GapRemoverPreprocessorOption) preprocessorOption).getGapType();
+        } else {
+            String msg = "Option has to be an instance of GapRemoverPreprocessorOption";
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, msg);
+            throw new Error(msg);//IllegalArgumentException("Option has to be an instance of CombinationFilterOption");
+        }
+        
     }
 
     @Override

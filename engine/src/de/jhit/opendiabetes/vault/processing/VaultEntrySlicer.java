@@ -35,6 +35,7 @@ import java.util.logging.Logger;
 public class VaultEntrySlicer {
 
     private final List<Filter> registeredFilter = new ArrayList<>();
+    private final List<Preprocessor> preprocessors = new ArrayList<>();
 
     private Preprocessor gapRemover;
     private List<Preprocessor> clusterPreprocessors = new ArrayList<>();
@@ -90,53 +91,29 @@ public class VaultEntrySlicer {
         registeredFilter.addAll(filters);
     }
 
-    public void setGapRemoving(VaultEntryType removeType, long gapTimeInMinutes) {
-        gapRemover = new GapRemover(removeType, gapTimeInMinutes);
+    /**
+     * Registeres a PreProcess for slicing. Should be called before slicing.
+     * Registered PreProcess are always combined as logical AND.
+     * 
+     * @param preProcesses 
+     */
+    public void registerPreProcess(Preprocessor preprocess)
+    {
+        preprocessors.add(preprocess);
     }
+    
 
-//    /**
-//     * This method will remove gaps between two timestamps from a given
-//     * vaultentrytpye. If there is an vaultentry in the given timerange the new
-//     * Vaultentry will be the start for the new gap.
-//     *
-//     * @param vaultEntries
-//     * @return
-//     */
-//    /**
-//     * This Method checks if the given vaultEntry are correct with the given
-//     * Querry. If the queery is wong the result will be null. This method will
-//     * only works, if the parameters are set correctly in the setQuerying
-//     * method.
-//     *
-//     *
-//     * @param data
-//     * @return
-//     */
-    public void setQuerying(List<Filter> queryFilters) {
-        queries.add(new QueryPreprocessor(queryFilters));
-    }
+    /**
+     * Registeres a PreProcess for slicing. Should be called before slicing.
+     * Registered PreProcess are always combined as logical AND.
+     * 
+     * @param preProcesses 
+     */
+    public void registerPreProcess(List<Preprocessor> preprocessors)
+    {
+        this.preprocessors.addAll(preprocessors);
+    }    
 
-    public void setQuerying(Filter queryFilter) {
-        queries.add(new QueryPreprocessor(queryFilter));
-    }
-
-    public void addClustering(long clusterTimeInMinutes, VaultEntryType typeToBeClustered, VaultEntryType clusterType) {
-        clusterPreprocessors.add(new ClusterPreprocessor(clusterTimeInMinutes, typeToBeClustered, clusterType));
-    }
-
-//    /**
-//     * This Method add clustered Vaultentry from the setType in the
-//     * setClusteringMethod. This Method will only work if the parameters are set
-//     * correctly. The clsteredVaultEntry is at the end of the clustered Series.
-//     * This method sums up all entries ind the given Timerange and creates a new
-//     * Vaultentry.
-//     *
-//     * @param data
-//     * @param clusterTimeInMinutes
-//     * @param searchedType
-//     * @param clusterType
-//     * @return
-//     */
     /**
      * Preprocessing for slicing. Prerocessing calls different Methods, which
      * will be set specific sst methods.
@@ -147,15 +124,10 @@ public class VaultEntrySlicer {
     public List<VaultEntry> preprocessing(List<VaultEntry> data) {
         List<VaultEntry> result = data;
 
-        if (gapRemover != null) {
-            result = gapRemover.preprocess(result);
-        }
-        for (Preprocessor preprocessor : queries) {
+        for (Preprocessor preprocessor : preprocessors) {
             result = preprocessor.preprocess(result);
         }
-        for (Preprocessor clusterPreprocessor : clusterPreprocessors) {
-            result = clusterPreprocessor.preprocess(result);
-        }
+        
         return result;
     }
 

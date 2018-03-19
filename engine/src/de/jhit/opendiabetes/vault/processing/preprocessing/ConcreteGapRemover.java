@@ -18,6 +18,7 @@ package de.jhit.opendiabetes.vault.processing.preprocessing;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
+import de.jhit.opendiabetes.vault.processing.preprocessing.options.GapRemoverPreprocessorOption;
 import java.util.List;
 
 /**
@@ -27,7 +28,8 @@ import java.util.List;
 public class ConcreteGapRemover {
 
     public List<VaultEntry> preprocess(List<VaultEntry> data) {
-        GapRemover gapRemover = new GapRemover(VaultEntryType.GLUCOSE_CGM, 30);
+        GapRemoverPreprocessorOption gapRemoverPreprocessorOption = new GapRemoverPreprocessorOption(VaultEntryType.GLUCOSE_CGM, 30);
+        GapRemover gapRemover = new GapRemover(gapRemoverPreprocessorOption);
         return gapRemover.preprocess(data);
     }
 

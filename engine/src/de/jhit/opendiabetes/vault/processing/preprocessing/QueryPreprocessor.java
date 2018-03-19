@@ -18,8 +18,12 @@ package de.jhit.opendiabetes.vault.processing.preprocessing;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.processing.filter.Filter;
+import de.jhit.opendiabetes.vault.processing.preprocessing.options.PreprocessorOption;
+import de.jhit.opendiabetes.vault.processing.preprocessing.options.QueryPreprocessorOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -33,24 +37,19 @@ public class QueryPreprocessor extends Preprocessor {
      * Checks if the given vaultEntry are correct with the given Querry. If the
      * queery is wong the result will be an empty List. This method will only
      * work, if the parameters are set correctly in the setQuerying method.
-     *
-     * @param queryFilters
+     *     
+     * @param preprocessorOption
      */
-    public QueryPreprocessor(List<Filter> queryFilters) {
-        this.queryFilters = queryFilters;
-    }
-
-    /**
-     * Checks if the given vaultEntry are correct with the given Querry. If the
-     * queery is wong the result will be an empty List. This method will only
-     * work, if the parameters are set correctly in the setQuerying method.
-     *
-     * @param filter
-     */
-    public QueryPreprocessor(Filter filter) {
-        this.queryFilters = new ArrayList<>();
-        queryFilters.add(filter);
-    }
+    public QueryPreprocessor(PreprocessorOption preprocessorOption) {
+        super(preprocessorOption);
+        if (preprocessorOption instanceof QueryPreprocessorOption) {
+            this.queryFilters = ((QueryPreprocessorOption) preprocessorOption).getQueryFilters();
+        } else {
+            String msg = "Option has to be an instance of QueryPreprocessorOption";
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, msg);
+            throw new Error(msg);//IllegalArgumentException("Option has to be an instance of CombinationFilterOption");
+        }
+    }    
 
     @Override
     public List<VaultEntry> preprocess(List<VaultEntry> data) {

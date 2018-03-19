@@ -26,6 +26,8 @@ import de.jhit.opendiabetes.vault.processing.filter.NoneFilter;
 import de.jhit.opendiabetes.vault.processing.filter.TimePointFilter;
 import de.jhit.opendiabetes.vault.processing.preprocessing.ClusterPreprocessor;
 import de.jhit.opendiabetes.vault.processing.preprocessing.GapRemover;
+import de.jhit.opendiabetes.vault.processing.preprocessing.options.ClusterPreprocessorOption;
+import de.jhit.opendiabetes.vault.processing.preprocessing.options.GapRemoverPreprocessorOption;
 import de.jhit.opendiabetes.vault.testhelper.SensitivityDataset;
 import de.jhit.opendiabetes.vault.testhelper.StaticDataset;
 import java.text.ParseException;
@@ -84,7 +86,7 @@ public class VaultEntrySlicerTest extends Assert {
     public void testVaultEntrySlicerClusterOneCluster() throws ParseException {
         List<VaultEntry> data = SensitivityDataset.getSensitivityDataset();
         VaultEntrySlicer slicer = new VaultEntrySlicer();
-        List<VaultEntry> clustered = new ClusterPreprocessor(1000000, VaultEntryType.GLUCOSE_CGM, VaultEntryType.CLUSTER_GLUCOSE_CGM).preprocess(data);
+        List<VaultEntry> clustered = new ClusterPreprocessor(new ClusterPreprocessorOption(1000000, VaultEntryType.GLUCOSE_CGM, VaultEntryType.CLUSTER_GLUCOSE_CGM)).preprocess(data);
 
         assertEquals(data.size() + 1, clustered.size());
 
@@ -96,7 +98,7 @@ public class VaultEntrySlicerTest extends Assert {
     public void testVaultEntrySlicerClusterNoCluster() throws ParseException {
         List<VaultEntry> data = SensitivityDataset.getSensitivityDataset();
         VaultEntrySlicer slicer = new VaultEntrySlicer();
-        List<VaultEntry> clustered = new ClusterPreprocessor(0, VaultEntryType.GLUCOSE_CGM, VaultEntryType.CLUSTER_GLUCOSE_CGM).preprocess(data);
+        List<VaultEntry> clustered = new ClusterPreprocessor(new ClusterPreprocessorOption(0, VaultEntryType.GLUCOSE_CGM, VaultEntryType.CLUSTER_GLUCOSE_CGM)).preprocess(data);
 
         assertEquals(data.size(), clustered.size());
 
@@ -108,8 +110,9 @@ public class VaultEntrySlicerTest extends Assert {
     public void testVaultEntrySlicerGap() throws ParseException {
         List<VaultEntry> data = SensitivityDataset.getSensitivityDataset();
         VaultEntrySlicer slicer = new VaultEntrySlicer();
-        slicer.setGapRemoving(VaultEntryType.BASAL_PROFILE, 1);
-        List<VaultEntry> clustered = new GapRemover(VaultEntryType.BASAL_PROFILE, 1).preprocess(data);
+        
+        slicer.registerPreProcess(new GapRemover(new GapRemoverPreprocessorOption(VaultEntryType.BASAL_PROFILE, 1)));
+        List<VaultEntry> clustered = new GapRemover(new GapRemoverPreprocessorOption(VaultEntryType.BASAL_PROFILE, 1)).preprocess(data);
 
 //        assertEquals(data.size(), clustered.size());
         System.out.println("size data: " + data.size());
