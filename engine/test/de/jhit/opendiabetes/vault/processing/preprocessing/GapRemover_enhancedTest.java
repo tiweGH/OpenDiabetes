@@ -34,14 +34,14 @@ import static org.junit.Assert.*;
  *
  * @author tiweGH
  */
-public class GapRemoverTest {
+public class GapRemover_enhancedTest {
 
-    GapRemover instance;
+    GapRemover_enhanced instance;
     List<VaultEntry> data;
     List<VaultEntry> actualResult;
     List<VaultEntry> expectedResult;
 
-    public GapRemoverTest() {
+    public GapRemover_enhancedTest() {
     }
 
     @BeforeClass
@@ -67,10 +67,10 @@ public class GapRemoverTest {
         GapRemoverPreprocessorOption gapRemoverPreprocessorOption = new GapRemoverPreprocessorOption(VaultEntryType.GLUCOSE_CGM, 0);
         GapRemoverPreprocessorOption gapRemoverPreprocessorOptionTwo = new GapRemoverPreprocessorOption(VaultEntryType.GLUCOSE_CGM, 5);
         
-        instance = new GapRemover(gapRemoverPreprocessorOption);
+        instance = new GapRemover_enhanced(gapRemoverPreprocessorOption);
         assertEquals(instance.preprocess(data), new ArrayList<>());
 
-        instance = new GapRemover(gapRemoverPreprocessorOptionTwo);
+        instance = new GapRemover_enhanced(gapRemoverPreprocessorOptionTwo);
         assertEquals(instance.preprocess(data), new ArrayList<>());
     }
 
@@ -85,9 +85,8 @@ public class GapRemoverTest {
         data.add(new VaultEntry(VaultEntryType.GLUCOSE_BOLUS_CALCULATION, TimestampUtils.createCleanTimestamp("2010.01.08-00:04", "yyyy.MM.dd-HH:mm"), 125.0));
         data.add(new VaultEntry(VaultEntryType.BOLUS_NORMAL, TimestampUtils.createCleanTimestamp("2010.01.08-00:04", "yyyy.MM.dd-HH:mm"), 0.3));
 
-        
         GapRemoverPreprocessorOption gapRemoverPreprocessorOption = new GapRemoverPreprocessorOption(VaultEntryType.GLUCOSE_CGM, 5);
-        instance = new GapRemover(gapRemoverPreprocessorOption);
+        instance = new GapRemover_enhanced(gapRemoverPreprocessorOption);
 
         assertEquals(data, instance.preprocess(data));
 
@@ -111,7 +110,7 @@ public class GapRemoverTest {
         expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TimestampUtils.createCleanTimestamp("2010.01.08-00:00", "yyyy.MM.dd-HH:mm"), 151.0));
 
         GapRemoverPreprocessorOption gapRemoverPreprocessorOption = new GapRemoverPreprocessorOption(VaultEntryType.GLUCOSE_CGM, 5);
-        instance = new GapRemover(gapRemoverPreprocessorOption);
+        instance = new GapRemover_enhanced(gapRemoverPreprocessorOption);
 
 //        actualResult = instance.preprocess(data);
 //        System.out.println("testData_OneMatchingEntry_RestOutOfRange");
@@ -151,9 +150,12 @@ public class GapRemoverTest {
         expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_BOLUS_CALCULATION, TimestampUtils.createCleanTimestamp("2010.01.08-00:04", "yyyy.MM.dd-HH:mm"), 125.0));
         expectedResult.add(new VaultEntry(VaultEntryType.BOLUS_NORMAL, TimestampUtils.createCleanTimestamp("2010.01.08-00:04", "yyyy.MM.dd-HH:mm"), 0.3));
         expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TimestampUtils.createCleanTimestamp("2010.01.08-00:05", "yyyy.MM.dd-HH:mm"), 144.0));
+        expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_RAW, TimestampUtils.createCleanTimestamp("2010.01.08-00:05", "yyyy.MM.dd-HH:mm"), 29.0));
+        expectedResult.add(new VaultEntry(VaultEntryType.PUMP_CGM_PREDICTION, TimestampUtils.createCleanTimestamp("2010.01.08-00:05", "yyyy.MM.dd-HH:mm"), 135.0));
+        expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_ELEVATION_30, TimestampUtils.createCleanTimestamp("2010.01.08-00:05", "yyyy.MM.dd-HH:mm"), -41.0));
 
         GapRemoverPreprocessorOption gapRemoverPreprocessorOption = new GapRemoverPreprocessorOption(VaultEntryType.GLUCOSE_CGM, 5);
-        instance = new GapRemover(gapRemoverPreprocessorOption);
+        instance = new GapRemover_enhanced(gapRemoverPreprocessorOption);
 
         System.out.println("testData_TwoMatchingEntries_RestOutOfRange");
         actualResult = instance.preprocess(data);
@@ -189,7 +191,7 @@ public class GapRemoverTest {
         expectedResult = data;
 
         GapRemoverPreprocessorOption gapRemoverPreprocessorOption = new GapRemoverPreprocessorOption(VaultEntryType.GLUCOSE_CGM, 5);
-        instance = new GapRemover(gapRemoverPreprocessorOption);
+        instance = new GapRemover_enhanced(gapRemoverPreprocessorOption);
 
         System.out.println("testData_TwoMatchingEntries_RestInRange");
         actualResult = instance.preprocess(data);
@@ -246,7 +248,11 @@ public class GapRemoverTest {
         expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_BOLUS_CALCULATION, TimestampUtils.createCleanTimestamp("2010.01.08-00:04", "yyyy.MM.dd-HH:mm"), 125.0));
         expectedResult.add(new VaultEntry(VaultEntryType.BOLUS_NORMAL, TimestampUtils.createCleanTimestamp("2010.01.08-00:04", "yyyy.MM.dd-HH:mm"), 0.3));
         expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TimestampUtils.createCleanTimestamp("2010.01.08-00:05", "yyyy.MM.dd-HH:mm"), 144.0));
+        expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_RAW, TimestampUtils.createCleanTimestamp("2010.01.08-00:05", "yyyy.MM.dd-HH:mm"), 29.0));
+        expectedResult.add(new VaultEntry(VaultEntryType.PUMP_CGM_PREDICTION, TimestampUtils.createCleanTimestamp("2010.01.08-00:05", "yyyy.MM.dd-HH:mm"), 135.0));
+        expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_ELEVATION_30, TimestampUtils.createCleanTimestamp("2010.01.08-00:05", "yyyy.MM.dd-HH:mm"), -41.0));
         //--Gap--
+        expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_RAW, TimestampUtils.createCleanTimestamp("2010.01.08-00:11", "yyyy.MM.dd-HH:mm"), 28.09));
         expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TimestampUtils.createCleanTimestamp("2010.01.08-00:11", "yyyy.MM.dd-HH:mm"), 139.0));
         expectedResult.add(new VaultEntry(VaultEntryType.PUMP_CGM_PREDICTION, TimestampUtils.createCleanTimestamp("2010.01.08-00:11", "yyyy.MM.dd-HH:mm"), 126.0));
         expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_ELEVATION_30, TimestampUtils.createCleanTimestamp("2010.01.08-00:11", "yyyy.MM.dd-HH:mm"), -42.0));
@@ -263,7 +269,7 @@ public class GapRemoverTest {
         expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TimestampUtils.createCleanTimestamp("2010.01.08-00:20", "yyyy.MM.dd-HH:mm"), 122.0));
 
         GapRemoverPreprocessorOption gapRemoverPreprocessorOption = new GapRemoverPreprocessorOption(VaultEntryType.GLUCOSE_CGM, 5);
-        instance = new GapRemover(gapRemoverPreprocessorOption);
+        instance = new GapRemover_enhanced(gapRemoverPreprocessorOption);
 
         System.out.println("testData_MultipleMatchingEntries_GapInMiddle_MiddleCGMTooLate");
         actualResult = instance.preprocess(data);
@@ -301,11 +307,11 @@ public class GapRemoverTest {
         data.add(new VaultEntry(VaultEntryType.PUMP_CGM_PREDICTION, TimestampUtils.createCleanTimestamp("2010.01.08-00:15", "yyyy.MM.dd-HH:mm"), 114.0));
         data.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_RAW, TimestampUtils.createCleanTimestamp("2010.01.08-00:15", "yyyy.MM.dd-HH:mm"), 27.38));
         data.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TimestampUtils.createCleanTimestamp("2010.01.08-00:17", "yyyy.MM.dd-HH:mm"), 126.0));
-        data.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_CALIBRATION, TimestampUtils.createCleanTimestamp("2010.01.08-00:15", "yyyy.MM.dd-HH:mm"), 125.0));
-        data.add(new VaultEntry(VaultEntryType.GLUCOSE_ELEVATION_30, TimestampUtils.createCleanTimestamp("2010.01.08-00:15", "yyyy.MM.dd-HH:mm"), -44.0));
-        data.add(new VaultEntry(VaultEntryType.STRESS, TimestampUtils.createCleanTimestamp("2010.01.08-00:16", "yyyy.MM.dd-HH:mm"), 77.5));
-        data.add(new VaultEntry(VaultEntryType.HEART_RATE_VARIABILITY, TimestampUtils.createCleanTimestamp("2010.01.08-00:16", "yyyy.MM.dd-HH:mm"), 24.0));
-        data.add(new VaultEntry(VaultEntryType.HEART_RATE, TimestampUtils.createCleanTimestamp("2010.01.08-00:16", "yyyy.MM.dd-HH:mm"), 63.0));
+        data.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_CALIBRATION, TimestampUtils.createCleanTimestamp("2010.01.08-00:17", "yyyy.MM.dd-HH:mm"), 125.0));
+        data.add(new VaultEntry(VaultEntryType.GLUCOSE_ELEVATION_30, TimestampUtils.createCleanTimestamp("2010.01.08-00:17", "yyyy.MM.dd-HH:mm"), -44.0));
+        data.add(new VaultEntry(VaultEntryType.STRESS, TimestampUtils.createCleanTimestamp("2010.01.08-00:17", "yyyy.MM.dd-HH:mm"), 77.5));
+        data.add(new VaultEntry(VaultEntryType.HEART_RATE_VARIABILITY, TimestampUtils.createCleanTimestamp("2010.01.08-00:17", "yyyy.MM.dd-HH:mm"), 24.0));
+        data.add(new VaultEntry(VaultEntryType.HEART_RATE, TimestampUtils.createCleanTimestamp("2010.01.08-00:17", "yyyy.MM.dd-HH:mm"), 63.0));
         data.add(new VaultEntry(VaultEntryType.PUMP_CGM_PREDICTION, TimestampUtils.createCleanTimestamp("2010.01.08-00:20", "yyyy.MM.dd-HH:mm"), 108.0));
         data.add(new VaultEntry(VaultEntryType.GLUCOSE_ELEVATION_30, TimestampUtils.createCleanTimestamp("2010.01.08-00:20", "yyyy.MM.dd-HH:mm"), -46.0));
         data.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TimestampUtils.createCleanTimestamp("2010.01.08-00:20", "yyyy.MM.dd-HH:mm"), 122.0));
@@ -320,19 +326,22 @@ public class GapRemoverTest {
         expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_BOLUS_CALCULATION, TimestampUtils.createCleanTimestamp("2010.01.08-00:04", "yyyy.MM.dd-HH:mm"), 125.0));
         expectedResult.add(new VaultEntry(VaultEntryType.BOLUS_NORMAL, TimestampUtils.createCleanTimestamp("2010.01.08-00:04", "yyyy.MM.dd-HH:mm"), 0.3));
         expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TimestampUtils.createCleanTimestamp("2010.01.08-00:05", "yyyy.MM.dd-HH:mm"), 144.0));
+        expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_RAW, TimestampUtils.createCleanTimestamp("2010.01.08-00:05", "yyyy.MM.dd-HH:mm"), 29.0));
+        expectedResult.add(new VaultEntry(VaultEntryType.PUMP_CGM_PREDICTION, TimestampUtils.createCleanTimestamp("2010.01.08-00:05", "yyyy.MM.dd-HH:mm"), 135.0));
+        expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_ELEVATION_30, TimestampUtils.createCleanTimestamp("2010.01.08-00:05", "yyyy.MM.dd-HH:mm"), -41.0));
         //--2 Gaps--
         expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TimestampUtils.createCleanTimestamp("2010.01.08-00:17", "yyyy.MM.dd-HH:mm"), 126.0));
-        expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_CALIBRATION, TimestampUtils.createCleanTimestamp("2010.01.08-00:15", "yyyy.MM.dd-HH:mm"), 125.0));
-        expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_ELEVATION_30, TimestampUtils.createCleanTimestamp("2010.01.08-00:15", "yyyy.MM.dd-HH:mm"), -44.0));
-        expectedResult.add(new VaultEntry(VaultEntryType.STRESS, TimestampUtils.createCleanTimestamp("2010.01.08-00:16", "yyyy.MM.dd-HH:mm"), 77.5));
-        expectedResult.add(new VaultEntry(VaultEntryType.HEART_RATE_VARIABILITY, TimestampUtils.createCleanTimestamp("2010.01.08-00:16", "yyyy.MM.dd-HH:mm"), 24.0));
-        expectedResult.add(new VaultEntry(VaultEntryType.HEART_RATE, TimestampUtils.createCleanTimestamp("2010.01.08-00:16", "yyyy.MM.dd-HH:mm"), 63.0));
+        expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_CALIBRATION, TimestampUtils.createCleanTimestamp("2010.01.08-00:17", "yyyy.MM.dd-HH:mm"), 125.0));
+        expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_ELEVATION_30, TimestampUtils.createCleanTimestamp("2010.01.08-00:17", "yyyy.MM.dd-HH:mm"), -44.0));
+        expectedResult.add(new VaultEntry(VaultEntryType.STRESS, TimestampUtils.createCleanTimestamp("2010.01.08-00:17", "yyyy.MM.dd-HH:mm"), 77.5));
+        expectedResult.add(new VaultEntry(VaultEntryType.HEART_RATE_VARIABILITY, TimestampUtils.createCleanTimestamp("2010.01.08-00:17", "yyyy.MM.dd-HH:mm"), 24.0));
+        expectedResult.add(new VaultEntry(VaultEntryType.HEART_RATE, TimestampUtils.createCleanTimestamp("2010.01.08-00:17", "yyyy.MM.dd-HH:mm"), 63.0));
         expectedResult.add(new VaultEntry(VaultEntryType.PUMP_CGM_PREDICTION, TimestampUtils.createCleanTimestamp("2010.01.08-00:20", "yyyy.MM.dd-HH:mm"), 108.0));
         expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_ELEVATION_30, TimestampUtils.createCleanTimestamp("2010.01.08-00:20", "yyyy.MM.dd-HH:mm"), -46.0));
         expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TimestampUtils.createCleanTimestamp("2010.01.08-00:20", "yyyy.MM.dd-HH:mm"), 122.0));
 
         GapRemoverPreprocessorOption gapRemoverPreprocessorOption = new GapRemoverPreprocessorOption(VaultEntryType.GLUCOSE_CGM, 5);
-        instance = new GapRemover(gapRemoverPreprocessorOption);
+        instance = new GapRemover_enhanced(gapRemoverPreprocessorOption);
 
         System.out.println("testData_MultipleMatchingEntries_TwoGapsInMiddle_Successive");
         actualResult = instance.preprocess(data);
@@ -367,8 +376,8 @@ public class GapRemoverTest {
         data.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TimestampUtils.createCleanTimestamp("2010.01.08-00:11", "yyyy.MM.dd-HH:mm"), 139.0));
         data.add(new VaultEntry(VaultEntryType.PUMP_CGM_PREDICTION, TimestampUtils.createCleanTimestamp("2010.01.08-00:11", "yyyy.MM.dd-HH:mm"), 126.0));
         data.add(new VaultEntry(VaultEntryType.GLUCOSE_ELEVATION_30, TimestampUtils.createCleanTimestamp("2010.01.08-00:11", "yyyy.MM.dd-HH:mm"), -42.0));
-        data.add(new VaultEntry(VaultEntryType.PUMP_CGM_PREDICTION, TimestampUtils.createCleanTimestamp("2010.01.08-00:15", "yyyy.MM.dd-HH:mm"), 114.0));
-        data.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_RAW, TimestampUtils.createCleanTimestamp("2010.01.08-00:15", "yyyy.MM.dd-HH:mm"), 27.38));
+        data.add(new VaultEntry(VaultEntryType.PUMP_CGM_PREDICTION, TimestampUtils.createCleanTimestamp("2010.01.08-00:12", "yyyy.MM.dd-HH:mm"), 114.0));
+        data.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_RAW, TimestampUtils.createCleanTimestamp("2010.01.08-00:12", "yyyy.MM.dd-HH:mm"), 27.38));
         data.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TimestampUtils.createCleanTimestamp("2010.01.08-00:14", "yyyy.MM.dd-HH:mm"), 126.0));
         data.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_CALIBRATION, TimestampUtils.createCleanTimestamp("2010.01.08-00:15", "yyyy.MM.dd-HH:mm"), 125.0));
         data.add(new VaultEntry(VaultEntryType.GLUCOSE_ELEVATION_30, TimestampUtils.createCleanTimestamp("2010.01.08-00:15", "yyyy.MM.dd-HH:mm"), -44.0));
@@ -398,14 +407,20 @@ public class GapRemoverTest {
         expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_BOLUS_CALCULATION, TimestampUtils.createCleanTimestamp("2010.01.08-00:04", "yyyy.MM.dd-HH:mm"), 125.0));
         expectedResult.add(new VaultEntry(VaultEntryType.BOLUS_NORMAL, TimestampUtils.createCleanTimestamp("2010.01.08-00:04", "yyyy.MM.dd-HH:mm"), 0.3));
         expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TimestampUtils.createCleanTimestamp("2010.01.08-00:05", "yyyy.MM.dd-HH:mm"), 144.0));
+        expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_RAW, TimestampUtils.createCleanTimestamp("2010.01.08-00:05", "yyyy.MM.dd-HH:mm"), 29.0));
+        expectedResult.add(new VaultEntry(VaultEntryType.PUMP_CGM_PREDICTION, TimestampUtils.createCleanTimestamp("2010.01.08-00:05", "yyyy.MM.dd-HH:mm"), 135.0));
+        expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_ELEVATION_30, TimestampUtils.createCleanTimestamp("2010.01.08-00:05", "yyyy.MM.dd-HH:mm"), -41.0));
         //--First Gap--
+        expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_RAW, TimestampUtils.createCleanTimestamp("2010.01.08-00:11", "yyyy.MM.dd-HH:mm"), 28.09));
         expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TimestampUtils.createCleanTimestamp("2010.01.08-00:11", "yyyy.MM.dd-HH:mm"), 139.0));
         expectedResult.add(new VaultEntry(VaultEntryType.PUMP_CGM_PREDICTION, TimestampUtils.createCleanTimestamp("2010.01.08-00:11", "yyyy.MM.dd-HH:mm"), 126.0));
         expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_ELEVATION_30, TimestampUtils.createCleanTimestamp("2010.01.08-00:11", "yyyy.MM.dd-HH:mm"), -42.0));
-        expectedResult.add(new VaultEntry(VaultEntryType.PUMP_CGM_PREDICTION, TimestampUtils.createCleanTimestamp("2010.01.08-00:15", "yyyy.MM.dd-HH:mm"), 114.0));
-        expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_RAW, TimestampUtils.createCleanTimestamp("2010.01.08-00:15", "yyyy.MM.dd-HH:mm"), 27.38));
+        expectedResult.add(new VaultEntry(VaultEntryType.PUMP_CGM_PREDICTION, TimestampUtils.createCleanTimestamp("2010.01.08-00:12", "yyyy.MM.dd-HH:mm"), 114.0));
+        expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_RAW, TimestampUtils.createCleanTimestamp("2010.01.08-00:12", "yyyy.MM.dd-HH:mm"), 27.38));
         expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TimestampUtils.createCleanTimestamp("2010.01.08-00:14", "yyyy.MM.dd-HH:mm"), 126.0));
         //--Second Gap--
+        expectedResult.add(new VaultEntry(VaultEntryType.PUMP_CGM_PREDICTION, TimestampUtils.createCleanTimestamp("2010.01.08-00:20", "yyyy.MM.dd-HH:mm"), 108.0));
+        expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_ELEVATION_30, TimestampUtils.createCleanTimestamp("2010.01.08-00:20", "yyyy.MM.dd-HH:mm"), -46.0));
         expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TimestampUtils.createCleanTimestamp("2010.01.08-00:20", "yyyy.MM.dd-HH:mm"), 122.0));
         expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_RAW, TimestampUtils.createCleanTimestamp("2010.01.08-00:20", "yyyy.MM.dd-HH:mm"), 26.62));
         expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_ELEVATION_30, TimestampUtils.createCleanTimestamp("2010.01.08-00:25", "yyyy.MM.dd-HH:mm"), -48.0));
@@ -418,7 +433,7 @@ public class GapRemoverTest {
         expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TimestampUtils.createCleanTimestamp("2010.01.08-00:25", "yyyy.MM.dd-HH:mm"), 113.0));
 
         GapRemoverPreprocessorOption gapRemoverPreprocessorOption = new GapRemoverPreprocessorOption(VaultEntryType.GLUCOSE_CGM, 5);
-        instance = new GapRemover(gapRemoverPreprocessorOption);
+        instance = new GapRemover_enhanced(gapRemoverPreprocessorOption);
 
         System.out.println("testData_MultipleMatchingEntries_TwoGapsInMiddle_Successive");
         actualResult = instance.preprocess(data);
@@ -451,13 +466,13 @@ public class GapRemoverTest {
         data.add(new VaultEntry(VaultEntryType.HEART_RATE, TimestampUtils.createCleanTimestamp("2010.01.08-00:06", "yyyy.MM.dd-HH:mm"), 85.0));
         data.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_RAW, TimestampUtils.createCleanTimestamp("2010.01.08-00:11", "yyyy.MM.dd-HH:mm"), 28.09));
         data.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TimestampUtils.createCleanTimestamp("2010.01.08-00:11", "yyyy.MM.dd-HH:mm"), 139.0));
-        //--no data here--
+//--no data here
         data.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TimestampUtils.createCleanTimestamp("2010.01.08-00:17", "yyyy.MM.dd-HH:mm"), 126.0));
-        data.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_CALIBRATION, TimestampUtils.createCleanTimestamp("2010.01.08-00:15", "yyyy.MM.dd-HH:mm"), 125.0));
-        data.add(new VaultEntry(VaultEntryType.GLUCOSE_ELEVATION_30, TimestampUtils.createCleanTimestamp("2010.01.08-00:15", "yyyy.MM.dd-HH:mm"), -44.0));
-        data.add(new VaultEntry(VaultEntryType.STRESS, TimestampUtils.createCleanTimestamp("2010.01.08-00:16", "yyyy.MM.dd-HH:mm"), 77.5));
-        data.add(new VaultEntry(VaultEntryType.HEART_RATE_VARIABILITY, TimestampUtils.createCleanTimestamp("2010.01.08-00:16", "yyyy.MM.dd-HH:mm"), 24.0));
-        data.add(new VaultEntry(VaultEntryType.HEART_RATE, TimestampUtils.createCleanTimestamp("2010.01.08-00:16", "yyyy.MM.dd-HH:mm"), 63.0));
+        data.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_CALIBRATION, TimestampUtils.createCleanTimestamp("2010.01.08-00:17", "yyyy.MM.dd-HH:mm"), 125.0));
+        data.add(new VaultEntry(VaultEntryType.GLUCOSE_ELEVATION_30, TimestampUtils.createCleanTimestamp("2010.01.08-00:17", "yyyy.MM.dd-HH:mm"), -44.0));
+        data.add(new VaultEntry(VaultEntryType.STRESS, TimestampUtils.createCleanTimestamp("2010.01.08-00:17", "yyyy.MM.dd-HH:mm"), 77.5));
+        data.add(new VaultEntry(VaultEntryType.HEART_RATE_VARIABILITY, TimestampUtils.createCleanTimestamp("2010.01.08-00:17", "yyyy.MM.dd-HH:mm"), 24.0));
+        data.add(new VaultEntry(VaultEntryType.HEART_RATE, TimestampUtils.createCleanTimestamp("2010.01.08-00:17", "yyyy.MM.dd-HH:mm"), 63.0));
         data.add(new VaultEntry(VaultEntryType.PUMP_CGM_PREDICTION, TimestampUtils.createCleanTimestamp("2010.01.08-00:20", "yyyy.MM.dd-HH:mm"), 108.0));
         data.add(new VaultEntry(VaultEntryType.GLUCOSE_ELEVATION_30, TimestampUtils.createCleanTimestamp("2010.01.08-00:20", "yyyy.MM.dd-HH:mm"), -46.0));
         data.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TimestampUtils.createCleanTimestamp("2010.01.08-00:20", "yyyy.MM.dd-HH:mm"), 122.0));
@@ -472,19 +487,22 @@ public class GapRemoverTest {
         expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_BOLUS_CALCULATION, TimestampUtils.createCleanTimestamp("2010.01.08-00:04", "yyyy.MM.dd-HH:mm"), 125.0));
         expectedResult.add(new VaultEntry(VaultEntryType.BOLUS_NORMAL, TimestampUtils.createCleanTimestamp("2010.01.08-00:04", "yyyy.MM.dd-HH:mm"), 0.3));
         expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TimestampUtils.createCleanTimestamp("2010.01.08-00:05", "yyyy.MM.dd-HH:mm"), 144.0));
+        expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_RAW, TimestampUtils.createCleanTimestamp("2010.01.08-00:05", "yyyy.MM.dd-HH:mm"), 29.0));
+        expectedResult.add(new VaultEntry(VaultEntryType.PUMP_CGM_PREDICTION, TimestampUtils.createCleanTimestamp("2010.01.08-00:05", "yyyy.MM.dd-HH:mm"), 135.0));
+        expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_ELEVATION_30, TimestampUtils.createCleanTimestamp("2010.01.08-00:05", "yyyy.MM.dd-HH:mm"), -41.0));
         //--2 Gaps--
         expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TimestampUtils.createCleanTimestamp("2010.01.08-00:17", "yyyy.MM.dd-HH:mm"), 126.0));
-        expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_CALIBRATION, TimestampUtils.createCleanTimestamp("2010.01.08-00:15", "yyyy.MM.dd-HH:mm"), 125.0));
-        expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_ELEVATION_30, TimestampUtils.createCleanTimestamp("2010.01.08-00:15", "yyyy.MM.dd-HH:mm"), -44.0));
-        expectedResult.add(new VaultEntry(VaultEntryType.STRESS, TimestampUtils.createCleanTimestamp("2010.01.08-00:16", "yyyy.MM.dd-HH:mm"), 77.5));
-        expectedResult.add(new VaultEntry(VaultEntryType.HEART_RATE_VARIABILITY, TimestampUtils.createCleanTimestamp("2010.01.08-00:16", "yyyy.MM.dd-HH:mm"), 24.0));
-        expectedResult.add(new VaultEntry(VaultEntryType.HEART_RATE, TimestampUtils.createCleanTimestamp("2010.01.08-00:16", "yyyy.MM.dd-HH:mm"), 63.0));
+        expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_CALIBRATION, TimestampUtils.createCleanTimestamp("2010.01.08-00:17", "yyyy.MM.dd-HH:mm"), 125.0));
+        expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_ELEVATION_30, TimestampUtils.createCleanTimestamp("2010.01.08-00:17", "yyyy.MM.dd-HH:mm"), -44.0));
+        expectedResult.add(new VaultEntry(VaultEntryType.STRESS, TimestampUtils.createCleanTimestamp("2010.01.08-00:17", "yyyy.MM.dd-HH:mm"), 77.5));
+        expectedResult.add(new VaultEntry(VaultEntryType.HEART_RATE_VARIABILITY, TimestampUtils.createCleanTimestamp("2010.01.08-00:17", "yyyy.MM.dd-HH:mm"), 24.0));
+        expectedResult.add(new VaultEntry(VaultEntryType.HEART_RATE, TimestampUtils.createCleanTimestamp("2010.01.08-00:17", "yyyy.MM.dd-HH:mm"), 63.0));
         expectedResult.add(new VaultEntry(VaultEntryType.PUMP_CGM_PREDICTION, TimestampUtils.createCleanTimestamp("2010.01.08-00:20", "yyyy.MM.dd-HH:mm"), 108.0));
         expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_ELEVATION_30, TimestampUtils.createCleanTimestamp("2010.01.08-00:20", "yyyy.MM.dd-HH:mm"), -46.0));
         expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TimestampUtils.createCleanTimestamp("2010.01.08-00:20", "yyyy.MM.dd-HH:mm"), 122.0));
 
         GapRemoverPreprocessorOption gapRemoverPreprocessorOption = new GapRemoverPreprocessorOption(VaultEntryType.GLUCOSE_CGM, 5);
-        instance = new GapRemover(gapRemoverPreprocessorOption);
+        instance = new GapRemover_enhanced(gapRemoverPreprocessorOption);
 
         System.out.println("testData_MultipleMatchingEntries_TwoGapsInMiddle_Successive_WithoutDataInSecond");
         actualResult = instance.preprocess(data);
@@ -509,18 +527,18 @@ public class GapRemoverTest {
         data.add(new VaultEntry(VaultEntryType.GLUCOSE_BOLUS_CALCULATION, TimestampUtils.createCleanTimestamp("2010.01.08-00:04", "yyyy.MM.dd-HH:mm"), 125.0));
         data.add(new VaultEntry(VaultEntryType.BOLUS_NORMAL, TimestampUtils.createCleanTimestamp("2010.01.08-00:04", "yyyy.MM.dd-HH:mm"), 0.3));
         data.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TimestampUtils.createCleanTimestamp("2010.01.08-00:05", "yyyy.MM.dd-HH:mm"), 144.0));
-        //--no data here--
+//--no data here
         data.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TimestampUtils.createCleanTimestamp("2010.01.08-00:11", "yyyy.MM.dd-HH:mm"), 139.0));
         data.add(new VaultEntry(VaultEntryType.PUMP_CGM_PREDICTION, TimestampUtils.createCleanTimestamp("2010.01.08-00:11", "yyyy.MM.dd-HH:mm"), 126.0));
         data.add(new VaultEntry(VaultEntryType.GLUCOSE_ELEVATION_30, TimestampUtils.createCleanTimestamp("2010.01.08-00:11", "yyyy.MM.dd-HH:mm"), -42.0));
         data.add(new VaultEntry(VaultEntryType.PUMP_CGM_PREDICTION, TimestampUtils.createCleanTimestamp("2010.01.08-00:15", "yyyy.MM.dd-HH:mm"), 114.0));
         data.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_RAW, TimestampUtils.createCleanTimestamp("2010.01.08-00:15", "yyyy.MM.dd-HH:mm"), 27.38));
         data.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TimestampUtils.createCleanTimestamp("2010.01.08-00:17", "yyyy.MM.dd-HH:mm"), 126.0));
-        data.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_CALIBRATION, TimestampUtils.createCleanTimestamp("2010.01.08-00:15", "yyyy.MM.dd-HH:mm"), 125.0));
-        data.add(new VaultEntry(VaultEntryType.GLUCOSE_ELEVATION_30, TimestampUtils.createCleanTimestamp("2010.01.08-00:15", "yyyy.MM.dd-HH:mm"), -44.0));
-        data.add(new VaultEntry(VaultEntryType.STRESS, TimestampUtils.createCleanTimestamp("2010.01.08-00:16", "yyyy.MM.dd-HH:mm"), 77.5));
-        data.add(new VaultEntry(VaultEntryType.HEART_RATE_VARIABILITY, TimestampUtils.createCleanTimestamp("2010.01.08-00:16", "yyyy.MM.dd-HH:mm"), 24.0));
-        data.add(new VaultEntry(VaultEntryType.HEART_RATE, TimestampUtils.createCleanTimestamp("2010.01.08-00:16", "yyyy.MM.dd-HH:mm"), 63.0));
+        data.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_CALIBRATION, TimestampUtils.createCleanTimestamp("2010.01.08-00:17", "yyyy.MM.dd-HH:mm"), 125.0));
+        data.add(new VaultEntry(VaultEntryType.GLUCOSE_ELEVATION_30, TimestampUtils.createCleanTimestamp("2010.01.08-00:17", "yyyy.MM.dd-HH:mm"), -44.0));
+        data.add(new VaultEntry(VaultEntryType.STRESS, TimestampUtils.createCleanTimestamp("2010.01.08-00:17", "yyyy.MM.dd-HH:mm"), 77.5));
+        data.add(new VaultEntry(VaultEntryType.HEART_RATE_VARIABILITY, TimestampUtils.createCleanTimestamp("2010.01.08-00:17", "yyyy.MM.dd-HH:mm"), 24.0));
+        data.add(new VaultEntry(VaultEntryType.HEART_RATE, TimestampUtils.createCleanTimestamp("2010.01.08-00:17", "yyyy.MM.dd-HH:mm"), 63.0));
         data.add(new VaultEntry(VaultEntryType.PUMP_CGM_PREDICTION, TimestampUtils.createCleanTimestamp("2010.01.08-00:20", "yyyy.MM.dd-HH:mm"), 108.0));
         data.add(new VaultEntry(VaultEntryType.GLUCOSE_ELEVATION_30, TimestampUtils.createCleanTimestamp("2010.01.08-00:20", "yyyy.MM.dd-HH:mm"), -46.0));
         data.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TimestampUtils.createCleanTimestamp("2010.01.08-00:20", "yyyy.MM.dd-HH:mm"), 122.0));
@@ -537,17 +555,17 @@ public class GapRemoverTest {
         expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TimestampUtils.createCleanTimestamp("2010.01.08-00:05", "yyyy.MM.dd-HH:mm"), 144.0));
         //--2 Gaps--
         expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TimestampUtils.createCleanTimestamp("2010.01.08-00:17", "yyyy.MM.dd-HH:mm"), 126.0));
-        expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_CALIBRATION, TimestampUtils.createCleanTimestamp("2010.01.08-00:15", "yyyy.MM.dd-HH:mm"), 125.0));
-        expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_ELEVATION_30, TimestampUtils.createCleanTimestamp("2010.01.08-00:15", "yyyy.MM.dd-HH:mm"), -44.0));
-        expectedResult.add(new VaultEntry(VaultEntryType.STRESS, TimestampUtils.createCleanTimestamp("2010.01.08-00:16", "yyyy.MM.dd-HH:mm"), 77.5));
-        expectedResult.add(new VaultEntry(VaultEntryType.HEART_RATE_VARIABILITY, TimestampUtils.createCleanTimestamp("2010.01.08-00:16", "yyyy.MM.dd-HH:mm"), 24.0));
-        expectedResult.add(new VaultEntry(VaultEntryType.HEART_RATE, TimestampUtils.createCleanTimestamp("2010.01.08-00:16", "yyyy.MM.dd-HH:mm"), 63.0));
+        expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_CALIBRATION, TimestampUtils.createCleanTimestamp("2010.01.08-00:17", "yyyy.MM.dd-HH:mm"), 125.0));
+        expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_ELEVATION_30, TimestampUtils.createCleanTimestamp("2010.01.08-00:17", "yyyy.MM.dd-HH:mm"), -44.0));
+        expectedResult.add(new VaultEntry(VaultEntryType.STRESS, TimestampUtils.createCleanTimestamp("2010.01.08-00:17", "yyyy.MM.dd-HH:mm"), 77.5));
+        expectedResult.add(new VaultEntry(VaultEntryType.HEART_RATE_VARIABILITY, TimestampUtils.createCleanTimestamp("2010.01.08-00:17", "yyyy.MM.dd-HH:mm"), 24.0));
+        expectedResult.add(new VaultEntry(VaultEntryType.HEART_RATE, TimestampUtils.createCleanTimestamp("2010.01.08-00:17", "yyyy.MM.dd-HH:mm"), 63.0));
         expectedResult.add(new VaultEntry(VaultEntryType.PUMP_CGM_PREDICTION, TimestampUtils.createCleanTimestamp("2010.01.08-00:20", "yyyy.MM.dd-HH:mm"), 108.0));
         expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_ELEVATION_30, TimestampUtils.createCleanTimestamp("2010.01.08-00:20", "yyyy.MM.dd-HH:mm"), -46.0));
         expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TimestampUtils.createCleanTimestamp("2010.01.08-00:20", "yyyy.MM.dd-HH:mm"), 122.0));
 
         GapRemoverPreprocessorOption gapRemoverPreprocessorOption = new GapRemoverPreprocessorOption(VaultEntryType.GLUCOSE_CGM, 5);
-        instance = new GapRemover(gapRemoverPreprocessorOption);
+        instance = new GapRemover_enhanced(gapRemoverPreprocessorOption);
 
         System.out.println("testData_MultipleMatchingEntries_TwoGapsInMiddle_Successive_WithoutDataInFirst");
         actualResult = instance.preprocess(data);
@@ -615,7 +633,7 @@ public class GapRemoverTest {
         expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TimestampUtils.createCleanTimestamp("2010.01.08-00:20", "yyyy.MM.dd-HH:mm"), 122.0));
 
         GapRemoverPreprocessorOption gapRemoverPreprocessorOption = new GapRemoverPreprocessorOption(VaultEntryType.GLUCOSE_CGM, 5);
-        instance = new GapRemover(gapRemoverPreprocessorOption);
+        instance = new GapRemover_enhanced(gapRemoverPreprocessorOption);
 
         System.out.println("testData_MultipleMatchingEntries_GapInMiddle_WithoutData");
         actualResult = instance.preprocess(data);

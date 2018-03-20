@@ -262,9 +262,10 @@ public class VaultEntryUtils {
     public static FilterResult slice(List<VaultEntry> data, List<Filter> filters) {
         FilterResult result = new FilterResult();
         if (data != null && filters != null) {
+            System.out.println("Start Slicing");
             FilterResult lastResult = null;
             for (Filter filter : filters) {
-                //System.out.println(filter);
+                System.out.println(filter);
                 if (lastResult == null) {
                     lastResult = filter.filter(data);
                 } else {
@@ -272,6 +273,7 @@ public class VaultEntryUtils {
                 }
             }
             result = lastResult;
+            System.out.println("Finished Slicing: Removed " + (data.size() - result.size()));
         }
 
         return result;

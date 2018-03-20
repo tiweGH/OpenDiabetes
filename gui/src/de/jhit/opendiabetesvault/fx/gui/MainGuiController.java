@@ -32,18 +32,39 @@ import de.jhit.opendiabetes.vault.processing.DataSlicer;
 import de.jhit.opendiabetes.vault.processing.DataSlicerOptions;
 import de.jhit.opendiabetes.vault.processing.StaticInsulinSensivityCalculator;
 import de.jhit.opendiabetes.vault.processing.StaticInsulinSensivityCalculatorOptions;
+import de.jhit.opendiabetes.vault.processing.filter.AndFilter;
+import de.jhit.opendiabetes.vault.processing.filter.CombinationFilter;
+import de.jhit.opendiabetes.vault.processing.filter.DateTimeSpanFilter;
+import de.jhit.opendiabetes.vault.processing.filter.Filter;
+import de.jhit.opendiabetes.vault.processing.filter.NegateFilter;
+import de.jhit.opendiabetes.vault.processing.filter.ThresholdFilter;
+import de.jhit.opendiabetes.vault.processing.filter.TimePointFilter;
 import de.jhit.opendiabetes.vault.processing.filter.TypeAbsenceFilter;
+import de.jhit.opendiabetes.vault.processing.filter.TypeGroupFilter;
+import de.jhit.opendiabetes.vault.processing.filter.VaultEntryTypeFilter;
+import de.jhit.opendiabetes.vault.processing.filter.options.AndFilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.CombinationFilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.DateTimeSpanFilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.NegateFilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.ThresholdFilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.TimePointFilterOption;
 import de.jhit.opendiabetes.vault.processing.filter.options.TypeAbsenceFilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.TypeGroupFilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.VaultEntryTypeFilterOption;
 import de.jhit.opendiabetes.vault.processing.preprocessing.ClusterPreprocessor;
 import de.jhit.opendiabetes.vault.processing.preprocessing.GapRemover;
+import de.jhit.opendiabetes.vault.processing.preprocessing.GapRemover_enhanced;
 import de.jhit.opendiabetes.vault.processing.preprocessing.Preprocessor;
 import de.jhit.opendiabetes.vault.util.FileCopyUtil;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
+import de.jhit.opendiabetes.vault.util.VaultEntryUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -780,14 +801,28 @@ public class MainGuiController implements Initializable {
 //                            System.out.println("Filtered: " + data.get(0).getTimestamp() + " + " + TimestampUtils.addMinutesToTimestamp(data.get(0).getTimestamp(), 48 * 60).toString());
 //                            data = fl.filter(data).filteredData;
 
-                            odvExpotFileName = new File(path).getAbsolutePath()
-                                    + "/"
-                                    + "exportBuckets_X2-"
-                                    + VaultCsvEntry.VERSION_STRING
-                                    + "-"
-                                    + formatter.format(new Date());
-                            MLExporter exp = new MLExporter(1, odvExpotFileName);
-                            exp.exportDataToFile(data);
+                            List<Filter> filters = new ArrayList<>();
+//... einen Bolus bei einem CGM Wert > 180 enthalten und 3h davor oder danach keine Meal-Events sind.
+//                            filters.add(
+//                                    new NegateFilter(new NegateFilterOption(
+//                                            new CombinationFilter(new CombinationFilterOption(
+//                                                    data,
+//                                                    new TypeGroupFilter(new TypeGroupFilterOption(VaultEntryTypeGroup.MEAL)),
+//                                                    new TimePointFilter(new TimePointFilterOption(LocalTime.MIN, 3 * 60)))))));
+//                            filters.add(
+//                                    new AndFilter(new AndFilterOption(
+//                                            new TypeGroupFilter(new TypeGroupFilterOption(VaultEntryTypeGroup.BOLUS)),
+//                                            new ThresholdFilter(new ThresholdFilterOption(180, ThresholdFilter.OVER)))));
+
+//                            data = VaultEntryUtils.slice(data, filters).filteredData;
+//                            odvExpotFileName = new File(path).getAbsolutePath()
+//                                    + "/"
+//                                    + "exportBuckets_X2-"
+//                                    + VaultCsvEntry.VERSION_STRING
+//                                    + "-"
+//                                    + formatter.format(new Date());
+//                            MLExporter exp = new MLExporter(1, odvExpotFileName);
+//                            exp.exportDataToFile(data);
                             // Java code exporter
 //                            System.out.println("Code Export");
 //                            odvExpotFileName = "ExportDataset";

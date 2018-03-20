@@ -18,12 +18,16 @@ package de.jhit.opendiabetes.vault.processing.preprocessing;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
+import de.jhit.opendiabetes.vault.processing.preprocessing.options.ClusterPreprocessorOption;
+import de.jhit.opendiabetes.vault.processing.preprocessing.options.PreprocessorOption;
+import de.jhit.opendiabetes.vault.processing.preprocessing.options.QueryPreprocessorOption;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import de.jhit.opendiabetes.vault.util.VaultEntryUtils;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -35,11 +39,22 @@ public class ClusterPreprocessor extends Preprocessor {
     private final VaultEntryType clusterType;
     private final VaultEntryType typeToBeClustered;
 
-    public ClusterPreprocessor(long clusterTimeInMinutes, VaultEntryType typeToBeClustered, VaultEntryType clusterType) {
-        //clusterParams.add(new Pair<>(clusterTimeInMillis, new Pair<>(typeToBeClustered, clusterType)));
-        this.clusterTimeInMinutes = clusterTimeInMinutes;
-        this.clusterType = typeToBeClustered;
-        this.typeToBeClustered = typeToBeClustered;
+    public ClusterPreprocessor(PreprocessorOption preprocessorOption) {
+        
+        super(preprocessorOption);
+        if (preprocessorOption instanceof ClusterPreprocessorOption) {
+            ClusterPreprocessorOption clusterPreprocessorOption = (ClusterPreprocessorOption) preprocessorOption;
+            
+            this.clusterTimeInMinutes = clusterPreprocessorOption.getClusterTimeInMinutes();
+            this.clusterType = clusterPreprocessorOption.getClusterType();
+            this.typeToBeClustered = clusterPreprocessorOption.getTypeToBeClustered();    
+        } else {
+            String msg = "Option has to be an instance of ClusterPreprocessorOption";
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, msg);
+            throw new Error(msg);//IllegalArgumentException("Option has to be an instance of CombinationFilterOption");
+        }        
+        
+         
     }
 
     @Override

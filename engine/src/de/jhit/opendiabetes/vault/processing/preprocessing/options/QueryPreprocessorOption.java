@@ -14,28 +14,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.jhit.opendiabetes.vault.processing.preprocessing;
+package de.jhit.opendiabetes.vault.processing.preprocessing.options;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.processing.VaultEntrySlicer;
-import de.jhit.opendiabetes.vault.processing.preprocessing.options.PreprocessorOption;
+import de.jhit.opendiabetes.vault.processing.filter.Filter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
 /**
- * This class is used to preprocess the data for the slicer.
- * 
+ *
  * @author tiweGH
  */
-public abstract class Preprocessor {
+public class QueryPreprocessorOption extends PreprocessorOption{
 
-    protected static final Logger LOG = Logger.getLogger(VaultEntrySlicer.class.getName());
+    private final List<Filter> queryFilters;
+
+    public QueryPreprocessorOption(List<Filter> queryFilters) {
+        this.queryFilters  = queryFilters;
+    }    
     
-    private final PreprocessorOption preprocessorOption;
-
-    public Preprocessor(PreprocessorOption preprocessorOption) {
-        this.preprocessorOption = preprocessorOption;
+    public QueryPreprocessorOption(Filter queryFilter) {
+        this.queryFilters = new ArrayList<>();
+        queryFilters.add(queryFilter);
+    }    
+    
+    public List<Filter> getQueryFilters() {
+        return queryFilters;
     }
 
-    public abstract List<VaultEntry> preprocess(List<VaultEntry> data);
 }

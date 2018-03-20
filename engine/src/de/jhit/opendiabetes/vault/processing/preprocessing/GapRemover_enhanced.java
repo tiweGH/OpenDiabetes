@@ -20,7 +20,6 @@ import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.processing.preprocessing.options.GapRemoverPreprocessorOption;
 import de.jhit.opendiabetes.vault.processing.preprocessing.options.PreprocessorOption;
-import de.jhit.opendiabetes.vault.processing.preprocessing.options.QueryPreprocessorOption;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,7 +31,7 @@ import java.util.logging.Logger;
  *
  * @author tiweGH
  */
-public class GapRemover extends Preprocessor {
+public class GapRemover_enhanced extends Preprocessor {
 
     private final long gapTimeInMinutes;
     private final VaultEntryType gapType;
@@ -44,9 +43,8 @@ public class GapRemover extends Preprocessor {
      * @param removeType specific type for gap search
      * @param gapTimeInMinutes max time between two entries before it's a "gap"
      */
-    public GapRemover(PreprocessorOption preprocessorOption) {
-        
-        super(preprocessorOption);
+    public GapRemover_enhanced(PreprocessorOption preprocessorOption) {
+         super(preprocessorOption);
         if (preprocessorOption instanceof GapRemoverPreprocessorOption) {
             
             this.gapTimeInMinutes = ((GapRemoverPreprocessorOption) preprocessorOption).getGapTimeInMinutes();
@@ -56,15 +54,18 @@ public class GapRemover extends Preprocessor {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, msg);
             throw new Error(msg);//IllegalArgumentException("Option has to be an instance of CombinationFilterOption");
         }
-        
     }
 
     @Override
     public List<VaultEntry> preprocess(List<VaultEntry> data) {
         List<VaultEntry> result = new ArrayList<>();
-        List<VaultEntry> tempList = new ArrayList<>();
+        List<VaultEntry> currentSubList = new ArrayList<>();
+        List<VaultEntry> tmpEntriesWithSameDateAsCurrentFoundEndDate = new ArrayList<>();
         Date startTime = null;
         Date endDate = null;
+        Date currentFoundEndDate = null;
+        VaultEntry subListEntry = null;
+
         if (data != null && gapType != null && gapTimeInMinutes > 0) {
 
             int dataSize = data.size();
@@ -74,38 +75,57 @@ public class GapRemover extends Preprocessor {
 
             System.out.println("Preprocessing: Removing Gaps");
             for (VaultEntry vaultEntry : data) {
-                if (vaultEntry.getType() == gapType && startTime == null) {
-                    startTime = vaultEntry.getTimestamp();
-                    tempList.add(vaultEntry);
-                    endDate = TimestampUtils.addMinutesToTimestamp(startTime, gapTimeInMinutes);//new Date(startTime.getTime() + gapTimeInMinutes);
-                } else if (vaultEntry.getType() == gapType && startTime != null) {
-                    if (TimestampUtils.withinDateTimeSpan(startTime, endDate, vaultEntry.getTimestamp())) {
-                        tempList.add(vaultEntry);
-                        result.addAll(tempList);
-                        tempList = new ArrayList<>();
+
+                //this is used so that all entries with the same timestamp as the found gapType-entry are handled, not only the entry itself
+                if (currentFoundEndDate != null && vaultEntry.getTimestamp().after(currentFoundEndDate)) {
+                    if (TimestampUtils.withinDateTimeSpan(startTime, endDate, currentFoundEndDate)) {
+                        result.addAll(currentSubList);
+                        currentSubList = new ArrayList<>();
+                        //currentSubList.add(vaultEntry);
                     } else {
-                        //System.out.println("Removed from " + startTime + " to " + endDate + " with " + tempList.size());
-                        tempList = new ArrayList<>();
-                        tempList.add(vaultEntry);//add, otherwise entries might get lost
+                        //if the last subList is removed (gap), entries with the same timestamp as the found
+                        //gapType-entry shouldn't get lost, since they now belong to the start of the next series
+                        tmpEntriesWithSameDateAsCurrentFoundEndDate = new ArrayList<>();
+                        for (int subListIndex = currentSubList.size() - 1; subListIndex >= 0; subListIndex--) {
+                            subListEntry = currentSubList.get(subListIndex);
+                            if (subListEntry.getTimestamp().equals(currentFoundEndDate)) {
+                                //to keep the same order as given
+                                tmpEntriesWithSameDateAsCurrentFoundEndDate.add(0, subListEntry);
+                            } else {
+                                break;
+                            }
+                        }
+                        //System.out.println("Removed from " + startTime + " to " + endDate + " with " + (currentSubList.size() - tmpEntriesWithSameDateAsCurrentFoundEndDate.size()));
+                        currentSubList = tmpEntriesWithSameDateAsCurrentFoundEndDate;
                     }
+                    //currentSubList.add(vaultEntry); //is handled in the other if cases
                     //tempList = new ArrayList<>();
-                    startTime = vaultEntry.getTimestamp();
+                    startTime = currentFoundEndDate;
                     endDate = TimestampUtils.addMinutesToTimestamp(startTime, gapTimeInMinutes);//new Date(startTime.getTime() + gapTimeInMinutes);
+                    currentFoundEndDate = null;
+                }
+
+                if (vaultEntry.getType() == gapType) {
+                    if (startTime == null) {
+                        startTime = vaultEntry.getTimestamp();
+                        endDate = TimestampUtils.addMinutesToTimestamp(startTime, gapTimeInMinutes);//new Date(startTime.getTime() + gapTimeInMinutes);
+                    } else {
+                        currentFoundEndDate = vaultEntry.getTimestamp();
+                    }
+                    currentSubList.add(vaultEntry);
+
                 } else if (startTime == null && vaultEntry.getType() != gapType) {
                     result.add(vaultEntry);
                 } else {
-                    tempList.add(vaultEntry);
+                    currentSubList.add(vaultEntry);
                 }
                 //add last temp List if in time span
                 if (index == dataSize - 1 && startTime != null) {
                     if (TimestampUtils.withinDateTimeSpan(startTime, endDate, vaultEntry.getTimestamp())) {
-                        result.addAll(tempList);
+                        result.addAll(currentSubList);
                     }
 //                    else {
-//                        System.out.println("Removed LAST from " + startTime + " to " + endDate + " with " + tempList.size());
-////                        for (VaultEntry vaultEntry1 : tempList) {
-////                            System.out.println(vaultEntry1.toString());
-////                        }
+//                        System.out.println("Removed LAST from " + startTime + " to " + endDate + " with " + currentSubList.size());
 //                    }
                 }
 

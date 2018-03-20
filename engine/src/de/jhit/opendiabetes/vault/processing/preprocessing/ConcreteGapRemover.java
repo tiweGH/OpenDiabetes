@@ -17,25 +17,20 @@
 package de.jhit.opendiabetes.vault.processing.preprocessing;
 
 import de.jhit.opendiabetes.vault.container.VaultEntry;
-import de.jhit.opendiabetes.vault.processing.VaultEntrySlicer;
-import de.jhit.opendiabetes.vault.processing.preprocessing.options.PreprocessorOption;
+import de.jhit.opendiabetes.vault.container.VaultEntryType;
+import de.jhit.opendiabetes.vault.processing.preprocessing.options.GapRemoverPreprocessorOption;
 import java.util.List;
-import java.util.logging.Logger;
 
 /**
- * This class is used to preprocess the data for the slicer.
- * 
+ *
  * @author tiweGH
  */
-public abstract class Preprocessor {
+public class ConcreteGapRemover {
 
-    protected static final Logger LOG = Logger.getLogger(VaultEntrySlicer.class.getName());
-    
-    private final PreprocessorOption preprocessorOption;
-
-    public Preprocessor(PreprocessorOption preprocessorOption) {
-        this.preprocessorOption = preprocessorOption;
+    public List<VaultEntry> preprocess(List<VaultEntry> data) {
+        GapRemoverPreprocessorOption gapRemoverPreprocessorOption = new GapRemoverPreprocessorOption(VaultEntryType.GLUCOSE_CGM, 30);
+        GapRemover gapRemover = new GapRemover(gapRemoverPreprocessorOption);
+        return gapRemover.preprocess(data);
     }
 
-    public abstract List<VaultEntry> preprocess(List<VaultEntry> data);
 }
