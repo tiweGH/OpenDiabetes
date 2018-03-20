@@ -56,6 +56,6 @@ public class VaultEntryTypeFilter extends Filter {
 
     @Override
     Filter update(VaultEntry vaultEntry) {
-        return new VaultEntryTypeFilter(option);
+        return new VaultEntryTypeFilter(new VaultEntryTypeFilterOption(vaultEntry.getType()));
     }
 }

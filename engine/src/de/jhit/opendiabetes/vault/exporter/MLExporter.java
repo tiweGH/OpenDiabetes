@@ -108,7 +108,7 @@ public class MLExporter {
     }
 
     private void writeToFile(List<FinalBucketEntry> buckets) throws IOException, ParseException {
-        int x = buckets.get(1).getFullOnehotInformationArray().length;
+        //int x = buckets.get(1).getFullOnehotInformationArray().length;
         FileWriter fw;
         //System.out.println("writing File to " + filePath + ".csv");
         fw = new FileWriter(filePath + ".csv");
@@ -116,7 +116,7 @@ public class MLExporter {
         try {
             //int j = 0;
             for (FinalBucketEntry bucket : buckets) {
-                for (int i = 0; i < x; i++) {
+                for (int i = 0; i < bucket.getFullOnehotInformationArray().length; i++) {
                     shortenValues(bucket, i);
                 }
                 String line = Arrays.toString(bucket.getFullOnehotInformationArray());
