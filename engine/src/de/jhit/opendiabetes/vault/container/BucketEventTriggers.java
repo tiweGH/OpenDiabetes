@@ -16,8 +16,10 @@
  */
 package de.jhit.opendiabetes.vault.container;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * overview of all hashsets and hashmaps =====================================
@@ -54,12 +56,43 @@ import java.util.HashSet;
  * TRIGGER_EVENT_NOT_ONE_HOT_VALUE_IS_A_TIMESTAMP -> triggers (ML + !OH) with a
  * timestamp as value ???
  */
+
 /**
- *
+ * This class contains all the HashSets and HashMaps needed during the creation
+ * of BucketEntrys and for the computation of internal data.
+ * 
  * @author a.a.aponte
  */
 public class BucketEventTriggers {
-
+    public static final HashMap<VaultEntryType, Integer> ARRAY_ENTRY_TRIGGER_HASHMAP__TEST = new HashMap<>();
+    public static final HashMap<VaultEntryType, Integer> ARRAY_ENTRIES_AFTER_MERGE_TO__TEST = new HashMap<>();
+    
+    /**
+     * This method fills the HashMaps for the VaultEntryTypes and 
+     * VaultEntry-merge-to-Types.
+     */
+    public BucketEventTriggers() {
+        int indexType = 0;
+        int indexMergeTo = 0;
+        for (VaultEntryType type : VaultEntryType.values()) {
+            // fill VaultEntryType HashMap
+            ARRAY_ENTRY_TRIGGER_HASHMAP__TEST.put(type, indexType);
+            indexType++;
+            /*
+            if (!ARRAY_ENTRY_TRIGGER_HASHMAP__TEST.containsKey(type)) {
+                ARRAY_ENTRY_TRIGGER_HASHMAP__TEST.put(type, indexType);
+                indexType++;
+            }
+            */
+            // fill VaultEntryType merge-to HashMap
+            VaultEntryType mergeToType = type.getMergeTo();
+            if (!ARRAY_ENTRIES_AFTER_MERGE_TO__TEST.containsKey(mergeToType)) {
+                ARRAY_ENTRIES_AFTER_MERGE_TO__TEST.put(mergeToType, indexMergeTo);
+                indexMergeTo++;
+            }
+        }
+    }
+    
     // ArrayEntryTriggerHashMap
     // FIRST
     //      ML-relevant and one hot
@@ -68,6 +101,11 @@ public class BucketEventTriggers {
     //
     // HashMap key   == VaultEntryType
     // HashMap value == position in the info array (array used in BucketEntry)
+    
+    /**
+     * This HashMap contains all the VaultEntryTypes and an int number for the 
+     * position in the resulting array created to match the size of this HashMap.
+     */
     public static final HashMap<VaultEntryType, Integer> ARRAY_ENTRY_TRIGGER_HASHMAP;
 
     static {
@@ -129,6 +167,12 @@ public class BucketEventTriggers {
     //
     // HashMap key   == VaultEntryType
     // HashMap value == position in the info array (array used in BucketEntry)
+    
+    /**
+     * This HashMap contains all the merge-to VaultEntryTypes and an int number 
+     * for the position in the resulting array created to match the size of this
+     * HashMap.
+     */
     public static final HashMap<VaultEntryType, Integer> ARRAY_ENTRIES_AFTER_MERGE_TO;
 
     static {
@@ -178,6 +222,11 @@ public class BucketEventTriggers {
     // single hashmaps for ML-rev and one hot
     // ======================================
     // triggerEventActTimeGiven (act time given as a value in VaultEntry)
+    
+    /**
+     * This HashSet contains all VaultEntryTypes that are onehot and ML-relevant
+     * and have a given act time which is inside the VaultEntry as a Double.
+     */
     public static final HashSet<VaultEntryType> TRIGGER_EVENT_ACT_TIME_GIVEN;
 
     static {
@@ -201,6 +250,17 @@ public class BucketEventTriggers {
     //
     // HashMap key   == VaultEntryType
     // HashMap value == VaultEntryType till which the key VaultEntryType is to be set to 1
+    
+    /**
+     * This HashMap contains all VaultEntryTypes that are onehot and ML-relevant
+     * and have an act time till the occurrence of a specific VaultEntryType. 
+     * The first VaultEntryType is the VaultEntryType with an act time. The 
+     * second VaultEntryType is the VaultEntryType that ends the act time of the
+     * first VaultEntryType. 
+     * 
+     * The VaultEntrytype that ends the act time will not change throughout the 
+     * run time of this program and thus is hardcoded here.
+     */
     public static final HashMap<VaultEntryType, VaultEntryType> TRIGGER_EVENT_ACT_TIME_TILL_NEXT_EVENT;
 
     static {
@@ -215,6 +275,11 @@ public class BucketEventTriggers {
     }
 
     // triggerEventActTimeOne (Alert for 1 frame)
+    
+    /**
+     * This HashSet contains all VaultEntryTypes that are onehot and ML-relevant
+     * and have an act time of only one minute (one BucketEntry).
+     */
     public static final HashSet<VaultEntryType> TRIGGER_EVENT_ACT_TIME_ONE;
 
     static {
@@ -227,6 +292,11 @@ public class BucketEventTriggers {
     }
 
     // triggerEventsNotYetSet
+    
+    /**
+     * This HashSet contains all VaultEntryTypes that are onehot and ML-relevant
+     * and to this point don't havea given or set act time.
+     */
     public static final HashSet<VaultEntryType> TRIGGER_EVENTS_NOT_YET_SET;
 
     static {
@@ -238,6 +308,14 @@ public class BucketEventTriggers {
     // single hashmaps for ML-rev and NOT one hot
     // ==========================================
     // triggerEventNotOneHotActTimeSet (act time (in minutes) is set to THIS time, value is found in the VaultEntry)
+    
+    /**
+     * This HashSet contains all VaultEntryTypes that are not onehot but are 
+     * ML-relevant and have a set act time.
+     * 
+     * Since the act time does not change throughout the run time of this 
+     * program it is hardcoded here.
+     */
     public static final HashMap<VaultEntryType, Integer> TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_SET;
 
     static {
@@ -249,6 +327,14 @@ public class BucketEventTriggers {
     }
 
     // triggerEventNotOneHotActTimeGiven (act time given as a value in VaultEntry as value2)
+    
+    /**
+     * This HashSet contains all VaultEntryTypes that are not onehot but are 
+     * ML-relevant and have a set act time.
+     * 
+     * Since the act time does not change throughout the run time of this 
+     * program it is hard coded here.
+     */
     public static final HashSet<VaultEntryType> TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_GIVEN;
 
     static {
@@ -256,7 +342,13 @@ public class BucketEventTriggers {
         TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_GIVEN.add(VaultEntryType.BOLUS_SQARE);
     }
 
-    // triggerEventNotOneHotActTimeTillNextEvent ??? TODO
+    // triggerEventNotOneHotActTimeTillNextEvent
+    
+    /**
+     * This HashSet contains all VaultEntryTypes that are not onehot but are 
+     * ML-relevant and have an act time till the occurrence of the next 
+     * same VaultEntryType.
+     */
     public static final HashSet<VaultEntryType> TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_TILL_NEXT_EVENT;
 
     static {
@@ -266,6 +358,11 @@ public class BucketEventTriggers {
     }
 
     // triggerEventNotOneHotActTimeOne (value only displayed for 1 frame)
+    
+    /**
+     * This HashSet contains all VaultEntryTypes that are not onehot but are 
+     * ML-relevant and have an act time of only one minute (one BucketEntry).
+     */
     public static final HashSet<VaultEntryType> TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_ONE;
 
     static {
@@ -286,6 +383,11 @@ public class BucketEventTriggers {
     }
 
     // triggerEventNotOneHotVauleIsATimestamp ??? TODO the given value might be a timestamp
+    
+    /**
+     * This HashSet contains all VaultEntryTypes that are not onehot but are 
+     * ML-relevant and have a timestamp as a value.
+     */
     public static final HashSet<VaultEntryType> TRIGGER_EVENT_NOT_ONE_HOT_VALUE_IS_A_TIMESTAMP;
 
     static {
@@ -301,6 +403,10 @@ public class BucketEventTriggers {
     // IF NEW HASHSETS ARE ADDED PLEASE ALSO ADD THE NEW HASHSETS INTO THE HASHSETS_TO_SUM_UP HASHSET BELOW !!!
     // !!!
     // basalHashset
+    
+    /**
+     * This HashSet contains all BASAL_* VaultEntryTypes for later computation.
+     */
     public static final HashSet<VaultEntryType> BASAL_PROFILE_HASHSET;
 
     static {
@@ -311,6 +417,10 @@ public class BucketEventTriggers {
     }
 
     // bolusHashset
+    
+    /**
+     * This HashSet contains all BOLUS_* VaultEntryTypes for later computation.
+     */
     public static final HashSet<VaultEntryType> BOLUS_HASHSET;
 
     static {
@@ -320,6 +430,10 @@ public class BucketEventTriggers {
     }
 
     // mealHashset
+    
+    /**
+     * This HashSet contains all MEAL_* VaultEntryTypes for later computation.
+     */
     public static final HashSet<VaultEntryType> MEAL_BOLUS_CALCULATOR_HASHSET;
 
     static {
@@ -328,6 +442,9 @@ public class BucketEventTriggers {
         MEAL_BOLUS_CALCULATOR_HASHSET.add(VaultEntryType.MEAL_MANUAL);
     }
 
+    /**
+     * This HashSet contains all VaultEntryTypes that are to be sumed up.
+     */
     public static final HashSet<VaultEntryType> HASHSETS_TO_SUM_UP;
 
     static {
@@ -341,6 +458,10 @@ public class BucketEventTriggers {
     }
 
     // hashset für lineare interpolation (avg)
+    
+    /**
+     * This HashSet contains all VaultEntryTypes that are to be interpolated.
+     */
     public static final HashSet<VaultEntryType> HASHSET_FOR_LINEAR_INTERPOLATION;
 
     static {

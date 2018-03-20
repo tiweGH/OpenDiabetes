@@ -31,7 +31,9 @@ import java.util.List;
 import javafx.util.Pair;
 
 /**
- *
+ * This class contains all the methods to create the list of FinalBucketEntrys 
+ * for the ML-exporter.
+ * 
  * @author Chryat1s
  */
 public class BucketProcessor {
@@ -45,12 +47,7 @@ public class BucketProcessor {
     }
 
     final BucketAverageCalculationUtils averageCalculationMethods = new BucketAverageCalculationUtils();
-
-//    /* TEMP for MainGuiController */
-//    public List<FinalBucketEntry> processor(List<VaultEntry> entryList, int wantedBucketSize) throws ParseException {
-//        List<FinalBucketEntry> outputList = bucketProcessing(0, entryList, wantedBucketSize);
-//        return outputList;
-//    }
+    
     /**
      * This method receives a list of VaultEntrys and a wanted step size (in
      * minutes) for the resulting list of FinalBucketEntrys. In this method the
@@ -70,7 +67,7 @@ public class BucketProcessor {
      * BucketEntrys will be added as empty BucketEntrys at the end of the list
      * of BucketEntrys.
      *
-     * @param firstBucketNumber starting index
+     * @param firstBucketNumber starting index.
      * @param entryList The list of VaultEntrys that will be transformed into a
      * list of FinalBucketEntrys.
      * @param wantedBucketSize This is the wanted bucket size (in minutes).
@@ -391,6 +388,28 @@ public class BucketProcessor {
         for (int i = (inverseOutputBucketList.size() - 1); i > -1; i--) {
             outputBucketList.add(bucketEntryCreator.recreateBucketEntry(inverseOutputBucketList.get(i)));
             outputBucketList.get(outputBucketList.size() - 1).setBucketNumber(newConsecutiveBucketEntryNumber);
+            
+            // =======================
+            // ==INTERPOLATOR UPDATE==
+            // =======================
+            // the bucket number of all entries inside the listOfValuesForTheInterpolator list must be updated to the new bucket number
+            if (!outputBucketList.get(outputBucketList.size() - 1).getValuesForTheInterpolator().isEmpty()) {
+                // input
+                List<Pair<Integer, Pair<VaultEntryType, Double>>> updateThisList = outputBucketList.get(outputBucketList.size() - 1).getValuesForTheInterpolator();
+                // output
+                List<Pair<Integer, Pair<VaultEntryType, Double>>> updatedList = new ArrayList<>();
+                // run through the list that has to be updated pair by pair
+                for (Pair<Integer, Pair<VaultEntryType, Double>> updateThisPair : updateThisList) {
+                    Pair<Integer, Pair<VaultEntryType, Double>> updatedPair = new Pair(newConsecutiveBucketEntryNumber, updateThisPair.getValue());
+                    updatedList.add(updatedPair);
+                }
+                // update the BucketEntry listOfValuesForTheInterpolator list
+                outputBucketList.get(outputBucketList.size() - 1).setValuesForTheInterpolator(updatedList);
+            }
+            // =======================
+            // ==INTERPOLATOR UPDATE==
+            // =======================
+            
             newConsecutiveBucketEntryNumber = newConsecutiveBucketEntryNumber++;
         }
 
