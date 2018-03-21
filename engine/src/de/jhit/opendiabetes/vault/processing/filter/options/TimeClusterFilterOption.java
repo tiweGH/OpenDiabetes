@@ -19,6 +19,7 @@ package de.jhit.opendiabetes.vault.processing.filter.options;
 import de.jhit.opendiabetes.vault.processing.filter.Filter;
 import de.jhit.opendiabetes.vault.processing.filter.TimeClusterFilter;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -54,6 +55,31 @@ public class TimeClusterFilterOption extends FilterOption {
      * @param clusterSpacing length of the gaps between each timespan in minutes
      */
     public TimeClusterFilterOption(List<Filter> filters, LocalTime startTime, long clusterTimeInMinutes, long clusterSpacing) {
+        this.filters = filters;
+        this.clusterTimeInMinutes = clusterTimeInMinutes;
+        this.startTime = startTime;
+        this.clusterSpacing = clusterSpacing;
+    }
+
+    /**
+     * Filters given to the TimeClusterFilter will be applied to each timespan
+     * seperately. <br>
+     * The timespans can be a fragmentation of the whole entry dataset, or, with
+     * a gap greater than 0, spans between the clusters will be excluded from
+     * filtering.<p>
+     * For example, use <code>TimeClusterFilter.DAY</code> for
+     * <code>clusterSpacing</code>, to filter the same timespan of each day
+     * independently.
+     *
+     * @param filter filter, which will be applied to each timespan in a slicing
+     * process.
+     * @param startTime start time of the timespan
+     * @param clusterTimeInMinutes length of the timespan in minutes
+     * @param clusterSpacing length of the gaps between each timespan in minutes
+     */
+    public TimeClusterFilterOption(Filter filter, LocalTime startTime, long clusterTimeInMinutes, long clusterSpacing) {
+        List<Filter> filters = new ArrayList<>();
+        filters.add(filter);
         this.filters = filters;
         this.clusterTimeInMinutes = clusterTimeInMinutes;
         this.startTime = startTime;

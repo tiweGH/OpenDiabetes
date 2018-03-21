@@ -79,13 +79,14 @@ public class TimeClusterFilter extends Filter {
             Date startTimestamp = null;
             Date compareDate = null;
             boolean isLastIndex;
+            int index = 0;
 
             for (VaultEntry vaultEntry : result) {
                 if (startTimestamp == null) {
                     startTimestamp = (this.startTime != null) ? TimestampUtils.setTimeOfDate(vaultEntry.getTimestamp(), this.startTime) : vaultEntry.getTimestamp();
                     compareDate = TimestampUtils.addMinutesToTimestamp(startTimestamp, clusterTimeInMinutes);
                 }
-                isLastIndex = result.indexOf(vaultEntry) == result.size() - 1;
+                isLastIndex = index == result.size() - 1;
                 // compareDate = TimestampUtils.addMinutesToTimestamp(startTimestamp, clusterTimeInMinutes);
                 if (!vaultEntry.getTimestamp().before(startTimestamp) && vaultEntry.getTimestamp().before(compareDate)) {
                     clusteredList.add(vaultEntry);
@@ -125,6 +126,7 @@ public class TimeClusterFilter extends Filter {
                         }
                     }
                 }
+                index++;
 
             }
             result = clusterResult;

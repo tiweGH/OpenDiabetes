@@ -55,6 +55,7 @@ import de.jhit.opendiabetes.vault.processing.preprocessing.ClusterPreprocessor;
 import de.jhit.opendiabetes.vault.processing.preprocessing.GapRemover;
 import de.jhit.opendiabetes.vault.processing.preprocessing.GapRemover_enhanced;
 import de.jhit.opendiabetes.vault.processing.preprocessing.Preprocessor;
+import de.jhit.opendiabetes.vault.processing.preprocessing.options.GapRemoverPreprocessorOption;
 import de.jhit.opendiabetes.vault.util.FileCopyUtil;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import de.jhit.opendiabetes.vault.util.VaultEntryUtils;
@@ -431,6 +432,10 @@ public class MainGuiController implements Initializable {
                 !importPeriodAllCheckbox.isSelected(),
                 TimestampUtils.fromLocalDate(importPeriodFromPicker.getValue()),
                 TimestampUtils.fromLocalDate(importPeriodToPicker.getValue(), 86399000)); //86399000 = 1 day - 1 second
+        System.out.println("iOptions: " + prefs.getBoolean(Constants.INTERPRETER_FILL_AS_KAT_KEY, false));
+        System.out.println("iOptions: " + prefs.getInt(Constants.INTERPRETER_FILL_AS_KAT_COOLDOWN_KEY, 60));
+        System.out.println("iOptions: " + !importPeriodAllCheckbox.isSelected());
+        System.out.println("iOptions: " + importPeriodFromPicker.getValue());
 
         ExerciseInterpreterOptions fOptions = new ExerciseInterpreterOptions(
                 !importPeriodAllCheckbox.isSelected(),
@@ -793,7 +798,7 @@ public class MainGuiController implements Initializable {
 //                                });
 //                            }
                             // ML Exporter
-                            Preprocessor gapper = new GapRemover(VaultEntryType.GLUCOSE_CGM, 30);
+                            Preprocessor gapper = new GapRemover(new GapRemoverPreprocessorOption(VaultEntryType.GLUCOSE_CGM, 30));
                             data = gapper.preprocess(data);
 //                            Preprocessor clusterer = new ClusterPreprocessor(30, VaultEntryType.GLUCOSE_CGM, VaultEntryType.CLUSTER_GLUCOSE_CGM);
 //                            data = clusterer.preprocess(data);

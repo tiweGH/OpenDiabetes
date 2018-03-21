@@ -55,6 +55,6 @@ public class TypeGroupFilter extends Filter {
 
     @Override
     Filter update(VaultEntry vaultEntry) {
-        return new TypeGroupFilter(option);
+        return new TypeGroupFilter(new TypeGroupFilterOption(vaultEntry.getType().getGroup()));
     }
 }

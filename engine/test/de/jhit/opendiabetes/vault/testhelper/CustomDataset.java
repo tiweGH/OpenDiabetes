@@ -76,7 +76,7 @@ public class CustomDataset {
         vaultEntries.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TimestampUtils.createCleanTimestamp("2016.04.18-11:29", "yyyy.MM.dd-HH:mm"), 103));
         vaultEntries.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_ALERT, TimestampUtils.createCleanTimestamp("2016.04.18-11:39", "yyyy.MM.dd-HH:mm"), 192));
         vaultEntries.add(new VaultEntry(VaultEntryType.BOLUS_NORMAL, TimestampUtils.createCleanTimestamp("2016.04.18-11:40", "yyyy.MM.dd-HH:mm"), 0.5));
-        vaultEntries.add(new VaultEntry(VaultEntryType.STRESS, TimestampUtils.createCleanTimestamp("2016.04.18-11:40", "yyyy.MM.dd-HH:mm"), 129));
+        //vaultEntries.add(new VaultEntry(VaultEntryType.STRESS, TimestampUtils.createCleanTimestamp("2016.04.18-11:40", "yyyy.MM.dd-HH:mm"), 129));
         vaultEntries.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TimestampUtils.createCleanTimestamp("2016.04.18-11:44", "yyyy.MM.dd-HH:mm"), 198));
 
         vaultEntries.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_ALERT, TimestampUtils.createCleanTimestamp("2016.04.19-11:01", "yyyy.MM.dd-HH:mm"), 170));

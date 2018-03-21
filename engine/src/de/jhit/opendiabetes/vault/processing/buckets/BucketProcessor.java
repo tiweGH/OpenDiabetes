@@ -71,186 +71,188 @@ public class BucketProcessor {
      */
     public List<FinalBucketEntry> runProcess(int firstBucketNumber, List<VaultEntry> entryList, int wantedBucketSize) throws ParseException {
         List<FinalBucketEntry> outputFinalBucketList = new ArrayList<>();
-        // FinalBucketEntry counter
-        int finalBucketEntryListCounter = firstBucketNumber;
+        if (entryList != null && entryList.size() > 0) {
+            // FinalBucketEntry counter
+            int finalBucketEntryListCounter = firstBucketNumber;
 
-        // Bucket size == 1 min.
-        List<BucketEntry> listOfBucketEntries = bucketListCreator.createListOfBuckets(firstBucketNumber, entryList);
-        // set all the array information
-        bucketListCreator.transferBucketEntryValues(listOfBucketEntries);
+            // Bucket size == 1 min.
+            List<BucketEntry> listOfBucketEntries = bucketListCreator.createListOfBuckets(firstBucketNumber, entryList);
+            // set all the array information
+            bucketListCreator.transferBucketEntryValues(listOfBucketEntries);
 
-        // remove duplicate timestamp BucketEntrys
-        listOfBucketEntries = removeUnneededBucketEntries_old(firstBucketNumber, listOfBucketEntries);
-        // calculate averages
-        // for each BucketEntry in the list
-        for (BucketEntry entry : listOfBucketEntries) {
-            averageCalculationMethods.calculateAverageForSmallestBucketSize(entry);
-        }
-
-        // ==============================
-        // =====SET UP INTERPOLATION=====
-        // ==============================
-        // create a new hashmap for creating a matrix that contains all computed interpolation information
-        // array start position
-        int arrayPositionInHashmap = 0;
-        // HashMap containing matrix positions for the types
-        HashMap<VaultEntryType, Integer> tempHashMapForMatrixPositionsOfTheVaultEntryTypes = new HashMap<>();
-        // generate HashMap
-        for (VaultEntryType type : HASHSET_FOR_LINEAR_INTERPOLATION) {
-            tempHashMapForMatrixPositionsOfTheVaultEntryTypes.put(type, arrayPositionInHashmap);
-            arrayPositionInHashmap++;
-        }
-        // create a matrix for the computed interpolation information
-        // at this point there will be a interpolation value for every BucketEntry
-        double[][] interpolationMatrix = new double[tempHashMapForMatrixPositionsOfTheVaultEntryTypes.size()][listOfBucketEntries.size()];       // TODO check if array sizes are ok
-        // Fill interpolationMatrix with 0.0
-        for (int i = 0; i < interpolationMatrix.length; i++) {
-            for (int j = 0; j < interpolationMatrix[0].length; j++) {
-                interpolationMatrix[i][j] = 0.0;
+            // remove duplicate timestamp BucketEntrys
+            listOfBucketEntries = removeUnneededBucketEntries_old(firstBucketNumber, listOfBucketEntries);
+            // calculate averages
+            // for each BucketEntry in the list
+            for (BucketEntry entry : listOfBucketEntries) {
+                averageCalculationMethods.calculateAverageForSmallestBucketSize(entry);
             }
-        }
-        // ==============================
-        // =====SET UP INTERPOLATION=====
-        // ==============================
 
-        // ===========================
-        // ===RUN THE INTERPOLATION===
-        // ===========================
-        // get data
-        List<Pair<Integer, Pair<VaultEntryType, Double>>> rawData = collectInterpolationDataFromBucketEntries(listOfBucketEntries);
-        //
-        // sort rawData
-        for (VaultEntryType type : HASHSET_FOR_LINEAR_INTERPOLATION) {
-            // sort rawData for the wanted VaultEntryType
-            List<Pair<Integer, Pair<VaultEntryType, Double>>> sortedRawData = sortDataByTypeForInterpolation(type, rawData);
-
-            // list for sorted data from start till last entry ... not found entries will be set so that the interpolateGaps method know what to compute
-            List<Pair<Integer, Pair<VaultEntryType, Double>>> sortedData = new ArrayList();
-
-            // sort the data so that the pairs are storted according to the bucket number ... BUCKET_START_NUMBER to x
-            // (i - BUCKET_START_NUMBER) < listOfBucketEntries.size() because i - BUCKET_START_NUMBER == 0 on first run e.g. 0 - 0 = 0 and 1 - 1 = 0
-            for (int i = 0; i < listOfBucketEntries.size(); i++) {
-
-                // if list is empty then don't add anymore entries
-                if (!sortedRawData.isEmpty()) {
-                    Pair<Boolean, Integer> tempTest = checkIfBucketEntryNumberIsAvailableAndAtWhichPositionTheNumberIsFoundInsideTheList(i, sortedRawData);
-
-                    // BucketEntry number has been found inside the list of sortedRawData
-                    if (tempTest.getKey()) {
-            //            sortedData.add(sortedRawData.remove((int) tempTest.getValue()));
-                        Pair<List<Pair<Integer, Pair<VaultEntryType, Double>>>, Pair<Integer, Pair<VaultEntryType, Double>>> getTheRestOfTheListAndTheRemovedPair = removePairOutOfSortedRawData(sortedRawData, (int) tempTest.getValue());
-                        sortedRawData = getTheRestOfTheListAndTheRemovedPair.getKey();
-                        sortedData.add(getTheRestOfTheListAndTheRemovedPair.getValue());
-                    } else {
-                        // BucketEntry number not found
-                        // if the sorted list is not empty then will with entries telling the interpolateGaps method that this entry is missing
-                        if (!sortedData.isEmpty()) {
-                            sortedData.add(new Pair(i, new Pair(type, null)));
-                        }
-                    }
-                } else {
-                    // sortedRawData is empty
+            // ==============================
+            // =====SET UP INTERPOLATION=====
+            // ==============================
+            // create a new hashmap for creating a matrix that contains all computed interpolation information
+            // array start position
+            int arrayPositionInHashmap = 0;
+            // HashMap containing matrix positions for the types
+            HashMap<VaultEntryType, Integer> tempHashMapForMatrixPositionsOfTheVaultEntryTypes = new HashMap<>();
+            // generate HashMap
+            for (VaultEntryType type : HASHSET_FOR_LINEAR_INTERPOLATION) {
+                tempHashMapForMatrixPositionsOfTheVaultEntryTypes.put(type, arrayPositionInHashmap);
+                arrayPositionInHashmap++;
+            }
+            // create a matrix for the computed interpolation information
+            // at this point there will be a interpolation value for every BucketEntry
+            double[][] interpolationMatrix = new double[tempHashMapForMatrixPositionsOfTheVaultEntryTypes.size()][listOfBucketEntries.size()];       // TODO check if array sizes are ok
+            // Fill interpolationMatrix with 0.0
+            for (int i = 0; i < interpolationMatrix.length; i++) {
+                for (int j = 0; j < interpolationMatrix[0].length; j++) {
+                    interpolationMatrix[i][j] = 0.0;
                 }
             }
+            // ==============================
+            // =====SET UP INTERPOLATION=====
+            // ==============================
 
-            // data is now ready for the interpolateGaps method
-            System.out.println("Hallo ich interpoliere");
-            List<Pair<Integer, Pair<VaultEntryType, Double>>> interpolatedData = interpolateGaps(sortedData);
-
-            // ===============================================================
-            // ==interpolatedData contains all data for this mergeToThisType==
-            // ====there is a value for every BucketEntry that is available===
-            // ========fill the interpolationMatrix with these values=========
-            // ===============================================================
-            // mergeToThisType position inside of the matrix
-            int typePositionInsideTheMatrix = tempHashMapForMatrixPositionsOfTheVaultEntryTypes.get(type);
-
-            // fill the matrix at the positions that have availabe values
-            for (Pair<Integer, Pair<VaultEntryType, Double>> pair : interpolatedData) {
-                // typePositionInsideTheMatrix gives the position of the VaultEntryType in the matrix
-                // pair.getKey() gives the BucketEntry number that is also the position inside the matrix for this bucket
-                // e.g. BucketEntry number = 1 matrix position = 1 - BUCKET_START_NUMBER = 0
-                interpolationMatrix[typePositionInsideTheMatrix][pair.getKey()] = (double) pair.getValue().getValue();          // TODO check if this position is ok (pair.getKey() - BUCKET_START_NUMBER)
-            }
-        }
-        // ===========================
-        // ===RUN THE INTERPOLATION===
-        // ===========================
-
-        // the interpolationMatrix now contains all the values for the BucketEntrys
-        // set the values into the BucketEntrys
-        for (BucketEntry bucket : listOfBucketEntries) {
-            int bucketNumber = bucket.getBucketNumber();
-
+            // ===========================
+            // ===RUN THE INTERPOLATION===
+            // ===========================
+            // get data
+            List<Pair<Integer, Pair<VaultEntryType, Double>>> rawData = collectInterpolationDataFromBucketEntries(listOfBucketEntries);
+            //
+            // sort rawData
             for (VaultEntryType type : HASHSET_FOR_LINEAR_INTERPOLATION) {
+                // sort rawData for the wanted VaultEntryType
+                List<Pair<Integer, Pair<VaultEntryType, Double>>> sortedRawData = sortDataByTypeForInterpolation(type, rawData);
+
+                // list for sorted data from start till last entry ... not found entries will be set so that the interpolateGaps method know what to compute
+                List<Pair<Integer, Pair<VaultEntryType, Double>>> sortedData = new ArrayList();
+
+                // sort the data so that the pairs are storted according to the bucket number ... BUCKET_START_NUMBER to x
+                // (i - BUCKET_START_NUMBER) < listOfBucketEntries.size() because i - BUCKET_START_NUMBER == 0 on first run e.g. 0 - 0 = 0 and 1 - 1 = 0
+                for (int i = 0; i < listOfBucketEntries.size(); i++) {
+
+                    // if list is empty then don't add anymore entries
+                    if (!sortedRawData.isEmpty()) {
+                        Pair<Boolean, Integer> tempTest = checkIfBucketEntryNumberIsAvailableAndAtWhichPositionTheNumberIsFoundInsideTheList(i, sortedRawData);
+
+                        // BucketEntry number has been found inside the list of sortedRawData
+                        if (tempTest.getKey()) {
+                //            sortedData.add(sortedRawData.remove((int) tempTest.getValue()));
+                            Pair<List<Pair<Integer, Pair<VaultEntryType, Double>>>, Pair<Integer, Pair<VaultEntryType, Double>>> getTheRestOfTheListAndTheRemovedPair = removePairOutOfSortedRawData(sortedRawData, (int) tempTest.getValue());
+                            sortedRawData = getTheRestOfTheListAndTheRemovedPair.getKey();
+                            sortedData.add(getTheRestOfTheListAndTheRemovedPair.getValue());
+                        } else {
+                            // BucketEntry number not found
+                            // if the sorted list is not empty then will with entries telling the interpolateGaps method that this entry is missing
+                            if (!sortedData.isEmpty()) {
+                                sortedData.add(new Pair(i, new Pair(type, null)));
+                            }
+                        }
+                    } else {
+                    // sortedRawData is empty
+                    }
+                }
+
+                // data is now ready for the interpolateGaps method
+                System.out.println("Hallo ich interpoliere");
+                List<Pair<Integer, Pair<VaultEntryType, Double>>> interpolatedData = interpolateGaps(sortedData);
+
+                // ===============================================================
+                // ==interpolatedData contains all data for this mergeToThisType==
+                // ====there is a value for every BucketEntry that is available===
+                // ========fill the interpolationMatrix with these values=========
+                // ===============================================================
                 // mergeToThisType position inside of the matrix
                 int typePositionInsideTheMatrix = tempHashMapForMatrixPositionsOfTheVaultEntryTypes.get(type);
 
-                bucket.setValues(ARRAY_ENTRY_TRIGGER_HASHMAP.get(type), interpolationMatrix[typePositionInsideTheMatrix][bucketNumber]);
-            }
-        }
-
-        // now all BucketEntrys have the interpolated values inside there setValues
-        // if wantedBucketSize != 1 transform the list into the wanted size .. standard bucket size == 1
-        if (wantedBucketSize != 1) {
-
-            // set to wanted bucket size
-            // update average to the wanted bucket size
-            // TODO
-            // list of BucketEntrys to give average for wanted bucket size
-            List<BucketEntry> listOfWantedBucketSize = new ArrayList<>();
-            // bucketEntry counter
-
-            // for each BucketEntry
-            for (BucketEntry entry : listOfBucketEntries) {
-                // bucketNumber % wantedBucketSize
-                if (listOfWantedBucketSize.size() % wantedBucketSize == 0 && !listOfWantedBucketSize.isEmpty()) {
-                    // mod == 0
-                    // call average to the wanted bucket size
-                    // save output in outputFinalBucketList
-                    // start new list for call
-
-                    // call <average to the wanted bucket size> method
-                    outputFinalBucketList.add(averageCalculationMethods.calculateAverageForWantedBucketSize(finalBucketEntryListCounter, wantedBucketSize, listOfWantedBucketSize));
-                    // update FinalBucketEntry counter
-                    finalBucketEntryListCounter++;
-                    // start new list
-                    listOfWantedBucketSize = new ArrayList<>();
-                    listOfWantedBucketSize.add(entry);
-                } else {
-                    listOfWantedBucketSize.add(entry);
+                // fill the matrix at the positions that have availabe values
+                for (Pair<Integer, Pair<VaultEntryType, Double>> pair : interpolatedData) {
+                    // typePositionInsideTheMatrix gives the position of the VaultEntryType in the matrix
+                    // pair.getKey() gives the BucketEntry number that is also the position inside the matrix for this bucket
+                    // e.g. BucketEntry number = 1 matrix position = 1 - BUCKET_START_NUMBER = 0
+                    interpolationMatrix[typePositionInsideTheMatrix][pair.getKey()] = (double) pair.getValue().getValue();          // TODO check if this position is ok (pair.getKey() - BUCKET_START_NUMBER)
                 }
             }
-            // last call of the <average to the wanted bucket size> method
-            outputFinalBucketList.add(averageCalculationMethods.calculateAverageForWantedBucketSize(finalBucketEntryListCounter, wantedBucketSize, listOfWantedBucketSize));
-        } else {
-            // wantedBucketSize == 1
-            // transform all BucketEntrys into FinalBucketEntrys
-            for (BucketEntry entry : listOfBucketEntries) {
-                outputFinalBucketList.add(new FinalBucketEntry(entry.getBucketNumber()));
-                // set all BucketEntry information into the new FinalBucketEntry array
+            // ===========================
+            // ===RUN THE INTERPOLATION===
+            // ===========================
 
-                // go through all arrays / lists containing information (listOfComputedValuesForTheFinalBucketEntry and onehotInformationArray)
-                // first run through the full length of the onehotInformationArray and set the entries into the after merge-to array form
-                for (VaultEntryType type : ARRAY_ENTRY_TRIGGER_HASHMAP.keySet()) {
+            // the interpolationMatrix now contains all the values for the BucketEntrys
+            // set the values into the BucketEntrys
+            for (BucketEntry bucket : listOfBucketEntries) {
+                int bucketNumber = bucket.getBucketNumber();
 
-                    // check if a merge-to VaultEntryType is found or not
-                    if (ARRAY_ENTRIES_AFTER_MERGE_TO.containsKey(type)) {
-                        // not a merged mergeToThisType
-                        outputFinalBucketList.get(outputFinalBucketList.size() - 1).setOnehotInformationArray(ARRAY_ENTRIES_AFTER_MERGE_TO.get(type), entry.getValues(ARRAY_ENTRY_TRIGGER_HASHMAP.get(type)));
+                for (VaultEntryType type : HASHSET_FOR_LINEAR_INTERPOLATION) {
+                    // mergeToThisType position inside of the matrix
+                    int typePositionInsideTheMatrix = tempHashMapForMatrixPositionsOfTheVaultEntryTypes.get(type);
+
+                    bucket.setValues(ARRAY_ENTRY_TRIGGER_HASHMAP.get(type), interpolationMatrix[typePositionInsideTheMatrix][bucketNumber]);
+                }
+            }
+
+            // now all BucketEntrys have the interpolated values inside there setValues
+            // if wantedBucketSize != 1 transform the list into the wanted size .. standard bucket size == 1
+            if (wantedBucketSize != 1) {
+
+                // set to wanted bucket size
+                // update average to the wanted bucket size
+                // TODO
+                // list of BucketEntrys to give average for wanted bucket size
+                List<BucketEntry> listOfWantedBucketSize = new ArrayList<>();
+                // bucketEntry counter
+
+                // for each BucketEntry
+                for (BucketEntry entry : listOfBucketEntries) {
+                    // bucketNumber % wantedBucketSize
+                    if (listOfWantedBucketSize.size() % wantedBucketSize == 0 && !listOfWantedBucketSize.isEmpty()) {
+                        // mod == 0
+                        // call average to the wanted bucket size
+                        // save output in outputFinalBucketList
+                        // start new list for call
+
+                        // call <average to the wanted bucket size> method
+                        outputFinalBucketList.add(averageCalculationMethods.calculateAverageForWantedBucketSize(finalBucketEntryListCounter, wantedBucketSize, listOfWantedBucketSize));
+                        // update FinalBucketEntry counter
+                        finalBucketEntryListCounter++;
+                        // start new list
+                        listOfWantedBucketSize = new ArrayList<>();
+                        listOfWantedBucketSize.add(entry);
                     } else {
-                        // a merged mergeToThisType
-
-                        // ignore for now since listOfComputedValuesForTheFinalBucketEntry contains the valid values
+                        listOfWantedBucketSize.add(entry);
                     }
                 }
+                // last call of the <average to the wanted bucket size> method
+                outputFinalBucketList.add(averageCalculationMethods.calculateAverageForWantedBucketSize(finalBucketEntryListCounter, wantedBucketSize, listOfWantedBucketSize));
+            } else {
+                // wantedBucketSize == 1
+                // transform all BucketEntrys into FinalBucketEntrys
+                for (BucketEntry entry : listOfBucketEntries) {
+                    outputFinalBucketList.add(new FinalBucketEntry(entry.getBucketNumber()));
+                    // set all BucketEntry information into the new FinalBucketEntry array
 
-                // second run through the whole listOfComputedValuesForTheFinalBucketEntry
-                for (Pair<VaultEntryType, Double> pair : entry.getComputedValuesForTheFinalBucketEntry()) {
-                    // place found entries into the right array position
-                    // look for the position of the entry that matches this merge-to VaultEntryType
-                    //
-                    outputFinalBucketList.get(outputFinalBucketList.size() - 1).setOnehotInformationArray(ARRAY_ENTRIES_AFTER_MERGE_TO.get(pair.getKey()), pair.getValue());
+                    // go through all arrays / lists containing information (listOfComputedValuesForTheFinalBucketEntry and onehotInformationArray)
+                    // first run through the full length of the onehotInformationArray and set the entries into the after merge-to array form
+                    for (VaultEntryType type : ARRAY_ENTRY_TRIGGER_HASHMAP.keySet()) {
+
+                        // check if a merge-to VaultEntryType is found or not
+                        if (ARRAY_ENTRIES_AFTER_MERGE_TO.containsKey(type)) {
+                            // not a merged mergeToThisType
+                            outputFinalBucketList.get(outputFinalBucketList.size() - 1).setOnehotInformationArray(ARRAY_ENTRIES_AFTER_MERGE_TO.get(type), entry.getValues(ARRAY_ENTRY_TRIGGER_HASHMAP.get(type)));
+                        } else {
+                            // a merged mergeToThisType
+
+                            // ignore for now since listOfComputedValuesForTheFinalBucketEntry contains the valid values
+                        }
+                    }
+
+                    // second run through the whole listOfComputedValuesForTheFinalBucketEntry
+                    for (Pair<VaultEntryType, Double> pair : entry.getComputedValuesForTheFinalBucketEntry()) {
+                        // place found entries into the right array position
+                        // look for the position of the entry that matches this merge-to VaultEntryType
+                        //
+                        outputFinalBucketList.get(outputFinalBucketList.size() - 1).setOnehotInformationArray(ARRAY_ENTRIES_AFTER_MERGE_TO.get(pair.getKey()), pair.getValue());
+                    }
                 }
             }
         }

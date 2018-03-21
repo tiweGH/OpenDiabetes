@@ -21,10 +21,16 @@ import de.jhit.opendiabetes.vault.container.VaultEntryTypeGroup;
 import de.jhit.opendiabetes.vault.processing.filter.CombinationFilter;
 import de.jhit.opendiabetes.vault.processing.filter.DateTimeSpanFilter;
 import de.jhit.opendiabetes.vault.processing.filter.Filter;
+import de.jhit.opendiabetes.vault.processing.filter.NoneFilter;
+import de.jhit.opendiabetes.vault.processing.filter.QueryFilter;
+import de.jhit.opendiabetes.vault.processing.filter.TimeClusterFilter;
 import de.jhit.opendiabetes.vault.processing.filter.TypeGroupFilter;
 import de.jhit.opendiabetes.vault.processing.filter.options.CombinationFilterOption;
 import de.jhit.opendiabetes.vault.processing.filter.options.DateTimeSpanFilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.QueryFilterOption;
+import de.jhit.opendiabetes.vault.processing.filter.options.TimeClusterFilterOption;
 import de.jhit.opendiabetes.vault.processing.filter.options.TypeGroupFilterOption;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -37,12 +43,23 @@ public class NoDateTimeSpansWithoutGroup extends FilterFactory {
 
     List<Filter> filters = new ArrayList<>();
 
-    public NoDateTimeSpansWithoutGroup(List<VaultEntry> data, VaultEntryTypeGroup group, Date startTime, Date endTime) {
+    public NoDateTimeSpansWithoutGroup(List<VaultEntry> data, VaultEntryTypeGroup group, int spanMinutes) {
+//        filters.add(
+//                new CombinationFilter(new CombinationFilterOption(
+//                        data,
+//                        new TypeGroupFilter(new TypeGroupFilterOption(group)),
+//                        new DateTimeSpanFilter(new DateTimeSpanFilterOption(startTime, endTime)))));
+        List<Filter> innerfilters = new ArrayList<>();
+        innerfilters.add(new QueryFilter(new QueryFilterOption(
+                new TypeGroupFilter(new TypeGroupFilterOption(group)),
+                1,
+                QueryFilterOption.DONT_CARE)));
         filters.add(
-                new CombinationFilter(new CombinationFilterOption(
-                        data,
-                        new TypeGroupFilter(new TypeGroupFilterOption(group)),
-                        new DateTimeSpanFilter(new DateTimeSpanFilterOption(startTime, endTime)))));
+                new TimeClusterFilter(new TimeClusterFilterOption(
+                        innerfilters,
+                        null,
+                        spanMinutes,
+                        0)));
 
     }
 
