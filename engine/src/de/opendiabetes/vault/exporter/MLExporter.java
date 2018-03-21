@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -44,7 +45,7 @@ import java.util.logging.Logger;
  *
  * @author jorg
  */
-public class MLExporter implements Exporter{
+public class MLExporter extends de.opendiabetes.vault.plugin.exporter.FileExporter{
 
     private int wantedBucketSize;
     private String filePath;
@@ -98,6 +99,7 @@ public class MLExporter implements Exporter{
     }
 
     private void writeToFile(List<FinalBucketEntry> buckets) throws IOException, ParseException {
+        List<ExportEntry> exportEntrys = new ArrayList<>();
         //int x = buckets.get(1).getFullOnehotInformationArray().length;
         FileWriter fw;
         //System.out.println("writing File to " + filePath + ".csv");
@@ -143,18 +145,21 @@ public class MLExporter implements Exporter{
     }
 
     @Override
-    public boolean loadConfiguration(Properties configuration) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    protected List<ExportEntry> prepareData(List<VaultEntry> data) {
+        
+        BucketProcessor processor = new BucketProcessor();
+        
+        List<ExportEntry> exportEntrys = new ArrayList<>();
+        
+        try{            
+            for (FinalBucketEntry runProces : processor.runProcess(0, data, wantedBucketSize)) {
+                exportEntrys.add(runProces);
+            }
+        }catch (Throwable t)
+        {
+            t.printStackTrace();
+        }
+        
+        return exportEntrys;
     }
-
-    @Override
-    public List<String> getListOfCompatiblePluginIDs() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void registerStatusCallback(StatusListener listener) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
 }

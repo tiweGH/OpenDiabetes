@@ -17,12 +17,15 @@
 package de.opendiabetes.vault.container;
 
 import static de.opendiabetes.vault.container.BucketEventTriggers.ARRAY_ENTRIES_AFTER_MERGE_TO;
+import java.io.IOException;
+import java.util.Arrays;
+import de.opendiabetes.vault.container.csv.ExportEntry;
 
 /**
  *
  * @author a.a.aponte
  */
-public class FinalBucketEntry {
+public class FinalBucketEntry implements de.opendiabetes.vault.container.csv.ExportEntry{
     
     // BucketEntry list counter
     private int bucketEntryNumber;
@@ -93,5 +96,15 @@ public class FinalBucketEntry {
     // ArrayOutOfBounds
     public void setOnehotInformationArray(int position, double value) {
         onehotInformationArray[position] = value;
+    }
+
+    @Override
+    public byte[] toByteEntryLine() throws IOException {
+        String line = Arrays.toString(this.onehotInformationArray);
+        line = line.replace("[", "");
+        line = line.replace("]", "");
+        line = bucketEntryNumber + ", " + line;
+        
+        return line.getBytes();
     }
 }
