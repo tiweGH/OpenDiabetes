@@ -21,6 +21,7 @@ import de.jhit.opendiabetes.vault.container.VaultEntry;
 import de.jhit.opendiabetes.vault.container.VaultEntryType;
 import de.jhit.opendiabetes.vault.processing.filter.Filter;
 import de.jhit.opendiabetes.vault.processing.filter.FilterResult;
+import de.jhit.opendiabetes.vault.processing.preprocessing.Preprocessor;
 import de.jhit.opendiabetes.vault.util.SortVaultEntryByDate;
 import de.jhit.opendiabetes.vault.util.TimestampUtils;
 import de.jhit.opendiabetes.vault.util.VaultEntryUtils;
@@ -37,6 +38,7 @@ import javafx.util.Pair;
 public class DataSlicer extends VaultEntrySlicer {
 
     private final List<Filter> registeredFilter = new ArrayList<>();
+    private final List<Preprocessor> preprocessors = new ArrayList<>();
     private final DataSlicerOptions options;
 
     public DataSlicer(DataSlicerOptions options) {
@@ -52,6 +54,8 @@ public class DataSlicer extends VaultEntrySlicer {
      */
     public List<SliceEntry> sliceData(List<VaultEntry> data) {
 
+        data = preprocessing(data);
+        
         List<SliceEntry> retVal = new ArrayList<>();
         FilterResult lastResult = sliceEntries(data);
 
@@ -106,6 +110,47 @@ public class DataSlicer extends VaultEntrySlicer {
         } else {
             return null;
         }
+    }
+    
+    
+    /**
+     * Registeres a PreProcess for slicing. Should be called before slicing.
+     * Registered PreProcess are always combined as logical AND.
+     * 
+     * @param preProcesses 
+     */
+    public void registerPreProcess(Preprocessor preprocess)
+    {
+        preprocessors.add(preprocess);
+    }
+    
+
+    /**
+     * Registeres a PreProcess for slicing. Should be called before slicing.
+     * Registered PreProcess are always combined as logical AND.
+     * 
+     * @param preProcesses 
+     */
+    public void registerPreProcess(List<Preprocessor> preprocessors)
+    {
+        this.preprocessors.addAll(preprocessors);
+    }    
+
+    /**
+     * Preprocessing for slicing. Prerocessing calls different Methods, which
+     * will be set specific sst methods.
+     *
+     * @param data
+     * @return
+     */
+    public List<VaultEntry> preprocessing(List<VaultEntry> data) {
+        List<VaultEntry> result = data;
+
+        for (Preprocessor preprocessor : preprocessors) {
+            result = preprocessor.preprocess(result);
+        }
+        
+        return result;
     }
 
 }
