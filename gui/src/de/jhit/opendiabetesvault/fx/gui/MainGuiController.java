@@ -5,60 +5,55 @@
  */
 package de.jhit.opendiabetesvault.fx.gui;
 
-import de.jhit.opendiabetes.vault.container.SliceEntry;
-import de.jhit.opendiabetes.vault.container.VaultEntry;
-import de.jhit.opendiabetes.vault.container.VaultEntryType;
-import de.jhit.opendiabetes.vault.container.VaultEntryTypeGroup;
-import de.jhit.opendiabetes.vault.container.csv.VaultCsvEntry;
-import de.jhit.opendiabetes.vault.data.VaultDao;
-import de.jhit.opendiabetes.vault.exporter.ExporterOptions;
-import de.jhit.opendiabetes.vault.exporter.FileExporter;
-import de.jhit.opendiabetes.vault.exporter.MLExporter;
-import de.jhit.opendiabetes.vault.exporter.OdvDbJsonExporter;
-import de.jhit.opendiabetes.vault.exporter.VaultCsvExporter;
-import de.jhit.opendiabetes.vault.exporter.VaultEntryJavacodeExporter;
-import de.jhit.opendiabetes.vault.importer.FileImporter;
-import de.jhit.opendiabetes.vault.importer.GoogleFitCsvImporter;
-import de.jhit.opendiabetes.vault.importer.LibreTxtImporter;
-import de.jhit.opendiabetes.vault.importer.MedtronicCsvImporter;
-import de.jhit.opendiabetes.vault.importer.OdvDbJsonImporter;
-import de.jhit.opendiabetes.vault.importer.SonySWR12Importer;
-import de.jhit.opendiabetes.vault.importer.interpreter.ExerciseInterpreter;
-import de.jhit.opendiabetes.vault.importer.interpreter.ExerciseInterpreterOptions;
-import de.jhit.opendiabetes.vault.importer.interpreter.NonInterpreter;
-import de.jhit.opendiabetes.vault.importer.interpreter.PumpInterpreter;
-import de.jhit.opendiabetes.vault.importer.interpreter.PumpInterpreterOptions;
-import de.jhit.opendiabetes.vault.processing.DataSlicer;
-import de.jhit.opendiabetes.vault.processing.DataSlicerOptions;
-import de.jhit.opendiabetes.vault.processing.StaticInsulinSensivityCalculator;
-import de.jhit.opendiabetes.vault.processing.StaticInsulinSensivityCalculatorOptions;
-import de.jhit.opendiabetes.vault.processing.filter.AndFilter;
-import de.jhit.opendiabetes.vault.processing.filter.CombinationFilter;
-import de.jhit.opendiabetes.vault.processing.filter.DateTimeSpanFilter;
-import de.jhit.opendiabetes.vault.processing.filter.Filter;
-import de.jhit.opendiabetes.vault.processing.filter.NegateFilter;
-import de.jhit.opendiabetes.vault.processing.filter.ThresholdFilter;
-import de.jhit.opendiabetes.vault.processing.filter.TimePointFilter;
-import de.jhit.opendiabetes.vault.processing.filter.TypeAbsenceFilter;
-import de.jhit.opendiabetes.vault.processing.filter.TypeGroupFilter;
-import de.jhit.opendiabetes.vault.processing.filter.VaultEntryTypeFilter;
-import de.jhit.opendiabetes.vault.processing.filter.options.AndFilterOption;
-import de.jhit.opendiabetes.vault.processing.filter.options.CombinationFilterOption;
-import de.jhit.opendiabetes.vault.processing.filter.options.DateTimeSpanFilterOption;
-import de.jhit.opendiabetes.vault.processing.filter.options.NegateFilterOption;
-import de.jhit.opendiabetes.vault.processing.filter.options.ThresholdFilterOption;
-import de.jhit.opendiabetes.vault.processing.filter.options.TimePointFilterOption;
-import de.jhit.opendiabetes.vault.processing.filter.options.TypeAbsenceFilterOption;
-import de.jhit.opendiabetes.vault.processing.filter.options.TypeGroupFilterOption;
-import de.jhit.opendiabetes.vault.processing.filter.options.VaultEntryTypeFilterOption;
-import de.jhit.opendiabetes.vault.processing.preprocessing.ClusterPreprocessor;
-import de.jhit.opendiabetes.vault.processing.preprocessing.GapRemover;
-import de.jhit.opendiabetes.vault.processing.preprocessing.GapRemover_enhanced;
-import de.jhit.opendiabetes.vault.processing.preprocessing.Preprocessor;
-import de.jhit.opendiabetes.vault.processing.preprocessing.options.GapRemoverPreprocessorOption;
-import de.jhit.opendiabetes.vault.util.FileCopyUtil;
-import de.jhit.opendiabetes.vault.util.TimestampUtils;
-import de.jhit.opendiabetes.vault.util.VaultEntryUtils;
+import de.opendiabetes.vault.container.SliceEntry;
+import de.opendiabetes.vault.container.VaultEntry;
+import de.opendiabetes.vault.container.VaultEntryType;
+import de.opendiabetes.vault.container.VaultEntryTypeGroup;
+import de.opendiabetes.vault.container.csv.VaultCsvEntry;
+import de.opendiabetes.vault.data.VaultDao;
+import de.opendiabetes.vault.exporter.ExporterOptions;
+import de.opendiabetes.vault.exporter.FileExporter;
+import de.opendiabetes.vault.exporter.MLExporter;
+import de.opendiabetes.vault.exporter.OdvDbJsonExporter;
+import de.opendiabetes.vault.exporter.VaultCsvExporter;
+import de.opendiabetes.vault.exporter.VaultEntryJavacodeExporter;
+import de.opendiabetes.vault.plugin.fileimporter.FileImporter;
+import de.opendiabetes.vault.processing.DataSlicer;
+import de.opendiabetes.vault.processing.DataSlicerOptions;
+import de.opendiabetes.vault.processing.StaticInsulinSensivityCalculator;
+import de.opendiabetes.vault.processing.StaticInsulinSensivityCalculatorOptions;
+import de.opendiabetes.vault.processing.filter.AndFilter;
+import de.opendiabetes.vault.processing.filter.CombinationFilter;
+import de.opendiabetes.vault.processing.filter.DateTimeSpanFilter;
+import de.opendiabetes.vault.processing.filter.Filter;
+import de.opendiabetes.vault.processing.filter.NegateFilter;
+import de.opendiabetes.vault.processing.filter.ThresholdFilter;
+import de.opendiabetes.vault.processing.filter.TimePointFilter;
+import de.opendiabetes.vault.processing.filter.TypeAbsenceFilter;
+import de.opendiabetes.vault.processing.filter.TypeGroupFilter;
+import de.opendiabetes.vault.processing.filter.VaultEntryTypeFilter;
+import de.opendiabetes.vault.processing.filter.options.AndFilterOption;
+import de.opendiabetes.vault.processing.filter.options.CombinationFilterOption;
+import de.opendiabetes.vault.processing.filter.options.DateTimeSpanFilterOption;
+import de.opendiabetes.vault.processing.filter.options.NegateFilterOption;
+import de.opendiabetes.vault.processing.filter.options.ThresholdFilterOption;
+import de.opendiabetes.vault.processing.filter.options.TimePointFilterOption;
+import de.opendiabetes.vault.processing.filter.options.TypeAbsenceFilterOption;
+import de.opendiabetes.vault.processing.filter.options.TypeGroupFilterOption;
+import de.opendiabetes.vault.processing.filter.options.VaultEntryTypeFilterOption;
+import de.opendiabetes.vault.processing.preprocessing.ClusterPreprocessor;
+import de.opendiabetes.vault.processing.preprocessing.GapRemover;
+import de.opendiabetes.vault.processing.preprocessing.GapRemover_enhanced;
+import de.opendiabetes.vault.processing.preprocessing.Preprocessor;
+import de.opendiabetes.vault.processing.preprocessing.options.GapRemoverPreprocessorOption;
+import de.opendiabetes.vault.util.FileCopyUtil;
+import de.opendiabetes.vault.util.TimestampUtils;
+import de.opendiabetes.vault.util.VaultEntryUtils;
+import de.opendiabetes.vault.plugin.importer.googlefit.GoogleFitCSVImporter;
+import de.opendiabetes.vault.plugin.importer.libretext.LibreTextImporter;
+import de.opendiabetes.vault.plugin.importer.sony.SonySWR12Importer;
+import de.opendiabetes.vault.plugin.interpreter.exerciseInterpreter.ExerciseInterpreter;
+import de.opendiabetes.vault.plugin.interpreter.pumpInterpreter.PumpInterpreter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URL;
@@ -479,7 +474,7 @@ public class MainGuiController implements Initializable {
                     if (abbottCheckBox.isSelected()) {
                         for (String filePath : abbottTextField.getText().split(Constants.MULTI_FILE_PATH_DELIMITER)) {
                             if (filePath != null && !filePath.isEmpty()) {
-                                LibreTxtImporter.parseData(filePath);
+                                LibreTextImporter.parseData(filePath);
                             }
                         }
                     }
@@ -489,7 +484,7 @@ public class MainGuiController implements Initializable {
                     if (googleFitCheckBox.isSelected()) {
                         ExerciseInterpreter interpreter
                                 = new ExerciseInterpreter(
-                                        new GoogleFitCsvImporter(null),
+                                        new GoogleFitCSVImporter(null),
                                         fOptions, VaultDao.getInstance());
                         for (String filePath : googleFitTextField.getText().split(Constants.MULTI_FILE_PATH_DELIMITER)) {
                             if (filePath != null && !filePath.isEmpty()) {
@@ -650,9 +645,9 @@ public class MainGuiController implements Initializable {
     private void handleButtonProcessing(ActionEvent event) {
         List<VaultEntry> data = null;
         if (exportPeriodAllCheckbox.isSelected()) {
-            data = VaultDao.getInstance().queryAllVaultEntrys();
+            data = VaultDao.getInstance().queryAllVaultEntries();
         } else {
-            data = VaultDao.getInstance().queryVaultEntrysBetween(TimestampUtils.fromLocalDate(
+            data = VaultDao.getInstance().queryVaultEntriesBetween(TimestampUtils.fromLocalDate(
                     exportPeriodFromPicker.getValue()),
                     TimestampUtils.fromLocalDate(
                             exportPeriodToPicker.getValue(), 86399000));
@@ -735,9 +730,9 @@ public class MainGuiController implements Initializable {
                 // query data
                 List<VaultEntry> data = null;
                 if (exportPeriodAllCheckbox.isSelected()) {
-                    data = VaultDao.getInstance().queryAllVaultEntrys();
+                    data = VaultDao.getInstance().queryAllVaultEntries();
                 } else {
-                    data = VaultDao.getInstance().queryVaultEntrysBetween(TimestampUtils.fromLocalDate(
+                    data = VaultDao.getInstance().queryVaultEntriesBetween(TimestampUtils.fromLocalDate(
                             exportPeriodFromPicker.getValue()),
                             TimestampUtils.fromLocalDate(
                                     exportPeriodToPicker.getValue(), 86399000));

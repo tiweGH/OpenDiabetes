@@ -5,7 +5,7 @@
  */
 package de.jhit.opendiabetesvault.fx.gui;
 
-import de.jhit.opendiabetes.vault.data.VaultDao;
+import de.opendiabetes.vault.data.VaultDao;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;

@@ -5,8 +5,8 @@
  */
 package deprecated_code;
 
-import de.jhit.opendiabetes.vault.importer.GoogleFitCsvImporter;
-import de.jhit.opendiabetes.vault.importer.LibreTxtImporter;
+
+import de.opendiabetes.vault.plugin.importer.libretext.LibreTextImporter;
 import deprecated_code.DataHelper;
 import deprecated_code.RawDataEntry;
 import java.awt.Cursor;
@@ -643,43 +643,32 @@ public class MainFrame extends javax.swing.JFrame {
             setNormalCursor();
             return;
         }
-        try {
-            // Parse data
-            List<RawDataEntry> importData = null;
-            if (carelinkRadioButton.isSelected()) {
-                importData = null;// MedtronicCsvImporter.parseData(path);
-            } else if (libreRadioButton.isSelected()) {
-                importData = LibreTxtImporter.parseData(path);
-            } else if (googleFitRadioButton.isSelected()) {
-                importData = new ArrayList<>();
-                File folder = new File(csvFile.getParent());
-                for (File googleFile : folder.listFiles()) {
-                 //   GoogleFitCsvImporter.parseData(googleFile.getAbsolutePath());
-                }
-            } else {
-                JOptionPane.showMessageDialog(this, "Programming Error",
-                        "Error in radio button selection!", JOptionPane.ERROR_MESSAGE);
-                setNormalCursor();
-                return;
+        // Parse data
+        List<RawDataEntry> importData = null;
+        if (carelinkRadioButton.isSelected()) {
+            importData = null;// MedtronicCsvImporter.parseData(path);
+        } else if (libreRadioButton.isSelected()) {
+            //importData = LibreTextImporter.parseData(path);
+        } else if (googleFitRadioButton.isSelected()) {
+            importData = new ArrayList<>();
+            File folder = new File(csvFile.getParent());
+            for (File googleFile : folder.listFiles()) {
+                //   GoogleFitCsvImporter.parseData(googleFile.getAbsolutePath());
             }
-            if (importData == null) { //|| importData.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Error while reading file.",
-                        "Reading File Error", JOptionPane.ERROR_MESSAGE);
-                setNormalCursor();
-                return;
-            }
-            entrys.addAll(importData);
-            updateCarelinkData();
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE,
-                    "Carelink CSV File not found", ex);
-            JOptionPane.showMessageDialog(this, "Unknown Error\n"
-                    + "Please send the log file to info@jensheuschkel-it.de",
-                    "Error", JOptionPane.ERROR_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, "Programming Error",
+                    "Error in radio button selection!", JOptionPane.ERROR_MESSAGE);
             setNormalCursor();
             return;
         }
-        // TODO import google data
+        if (importData == null) { //|| importData.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Error while reading file.",
+                    "Reading File Error", JOptionPane.ERROR_MESSAGE);
+            setNormalCursor();
+            return;
+        }
+        entrys.addAll(importData);
+        updateCarelinkData();
 
         setComonents(true);
         setNormalCursor();
