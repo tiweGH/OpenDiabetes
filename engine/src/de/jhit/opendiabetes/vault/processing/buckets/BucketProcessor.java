@@ -38,14 +38,8 @@ import javafx.util.Pair;
  */
 public class BucketProcessor {
 
-    final BucketEntryCreator bucketEntryCreator;
-    final ListOfBucketEntriesCreator bucketListCreator;
-
-    public BucketProcessor() throws ParseException {
-        this.bucketEntryCreator = new BucketEntryCreator();
-        this.bucketListCreator = new ListOfBucketEntriesCreator();
-    }
-
+    final BucketEntryCreator bucketEntryCreator = new BucketEntryCreator();
+    final ListOfBucketEntriesCreator bucketListCreator = new ListOfBucketEntriesCreator();
     final BucketAverageCalculationUtils averageCalculationMethods = new BucketAverageCalculationUtils();
     
     /**
@@ -143,7 +137,10 @@ public class BucketProcessor {
 
                     // BucketEntry number has been found inside the list of sortedRawData
                     if (tempTest.getKey()) {
-                        sortedData.add(sortedRawData.remove((int) tempTest.getValue()));
+            //            sortedData.add(sortedRawData.remove((int) tempTest.getValue()));
+                        Pair<List<Pair<Integer, Pair<VaultEntryType, Double>>>, Pair<Integer, Pair<VaultEntryType, Double>>> getTheRestOfTheListAndTheRemovedPair = removePairOutOfSortedRawData(sortedRawData, (int) tempTest.getValue());
+                        sortedRawData = getTheRestOfTheListAndTheRemovedPair.getKey();
+                        sortedData.add(getTheRestOfTheListAndTheRemovedPair.getValue());
                     } else {
                         // BucketEntry number not found
                         // if the sorted list is not empty then will with entries telling the interpolateGaps method that this entry is missing
@@ -335,6 +332,42 @@ public class BucketProcessor {
         }
 
         return new Pair(false, 0);
+    }
+    
+    /**
+     * This method removes the Pair at the wanted position and returns the 
+     * removed Pair and the given list without the removed Pair.
+     * 
+     * @param oldSortedRawData This is the list of Pairs from which the Pair
+     * at the given position will be removed from.
+     * @param position The Pair at this position will be removed.
+     * @return This method returns a Pair containing the new list of pairs
+     * without the removed pair and the removed pair.
+     */
+    protected Pair<List<Pair<Integer, Pair<VaultEntryType, Double>>>, Pair<Integer, Pair<VaultEntryType, Double>>> removePairOutOfSortedRawData(List<Pair<Integer, Pair<VaultEntryType, Double>>> oldSortedRawData, int position) {
+        List<Pair<Integer, Pair<VaultEntryType, Double>>> newSortedRawData = new ArrayList<>();
+        Pair<Integer, Pair<VaultEntryType, Double>> removedPair = null;
+        int counter = 0;
+
+        for (Pair<Integer, Pair<VaultEntryType, Double>> thisPair : oldSortedRawData) {
+            
+            if (counter != position) {
+                Pair<Integer, Pair<VaultEntryType, Double>> newPair = new Pair(thisPair.getKey(), new Pair(thisPair.getValue().getKey(), thisPair.getValue().getValue()));
+                // add to the outputList
+                newSortedRawData.add(newPair);
+            } else {
+                // this is the Pair that is to be removed
+                removedPair = new Pair(thisPair.getKey(), new Pair(thisPair.getValue().getKey(), thisPair.getValue().getValue()));
+            }
+            
+            counter++;
+        }
+        
+        if (removedPair == null) {
+                throw new Error("The_pair_that_is_to_be_removed_was_not_found!");
+        } else {
+            return new Pair(newSortedRawData, removedPair);
+        }
     }
 
     // =========================================================================

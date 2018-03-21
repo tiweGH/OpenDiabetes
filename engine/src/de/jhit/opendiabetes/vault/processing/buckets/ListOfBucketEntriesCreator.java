@@ -36,7 +36,7 @@ import javafx.util.Pair;
  */
 public class ListOfBucketEntriesCreator {
 
-    protected final BucketEntryCreator instance = new BucketEntryCreator();
+    protected final BucketEntryCreator bucketEntryCreator = new BucketEntryCreator();
 
     /**
      * This method receives a first bucket number and a list of VaultEntrys.
@@ -115,14 +115,14 @@ public class ListOfBucketEntriesCreator {
                                 outputBucketList = removeLastBucketEntry(outputBucketList);
                                 // create a new Bucket with the given VaultEntry
                                 // the new BucketEntry has the currentBucketEntryNumber from the removed BucketEntry
-                                newBucketEntry = instance.createNewBucketEntry((currentBucketEntryNumber - 1), entryList.get(vaultEntryListPosition));
+                                newBucketEntry = bucketEntryCreator.createNewBucketEntry((currentBucketEntryNumber - 1), entryList.get(vaultEntryListPosition));
                                 outputBucketList.add(newBucketEntry);
 
                                 // DO NOT UPDATE currentBucketEntryNumber SINCE THE LAST POSITION HAS BEEN OVERWRITTEN
                             } else {
                                 // add a new BucketEntry to the output list
 
-                                newBucketEntry = instance.createNewBucketEntry(currentBucketEntryNumber, entryList.get(vaultEntryListPosition));
+                                newBucketEntry = bucketEntryCreator.createNewBucketEntry(currentBucketEntryNumber, entryList.get(vaultEntryListPosition));
                                 outputBucketList.add(newBucketEntry);
                                 // update currentBucketEntryNumber
                                 currentBucketEntryNumber++;
@@ -143,7 +143,7 @@ public class ListOfBucketEntriesCreator {
                             // create a new BucketEntry
                             BucketEntry newBucketEntry;
 
-                            newBucketEntry = instance.createNewBucketEntry(currentBucketEntryNumber, entryList.get(vaultEntryListPosition));
+                            newBucketEntry = bucketEntryCreator.createNewBucketEntry(currentBucketEntryNumber, entryList.get(vaultEntryListPosition));
                             outputBucketList.add(newBucketEntry);
                             // update currentBucketEntryNumber
                             currentBucketEntryNumber++;
@@ -156,7 +156,7 @@ public class ListOfBucketEntriesCreator {
                             // create a new empty Bucket
                             BucketEntry newBucketEntry;
 
-                            newBucketEntry = instance.createEmptyBucketEntry(currentBucketEntryNumber, lookForThisDateInsideTheGivenVaultEntryList);
+                            newBucketEntry = bucketEntryCreator.createEmptyBucketEntry(currentBucketEntryNumber, lookForThisDateInsideTheGivenVaultEntryList);
                             outputBucketList.add(newBucketEntry);
                             // update currentBucketEntryNumber
                             currentBucketEntryNumber++;
@@ -174,7 +174,7 @@ public class ListOfBucketEntriesCreator {
                         BucketEntry newBucketEntry;
 
                         // create a new empty Bucket
-                        newBucketEntry = instance.createEmptyBucketEntry(currentBucketEntryNumber, lookForThisDateInsideTheGivenVaultEntryList);
+                        newBucketEntry = bucketEntryCreator.createEmptyBucketEntry(currentBucketEntryNumber, lookForThisDateInsideTheGivenVaultEntryList);
                         outputBucketList.add(newBucketEntry);
                         // update currentBucketEntryNumber
                         currentBucketEntryNumber++;
@@ -570,7 +570,7 @@ public class ListOfBucketEntriesCreator {
         for (int i = 0; i < (listOfBuckets.size() - 1); i++) {
             BucketEntry thisEntry = listOfBuckets.get(i);
             
-            BucketEntry newEntry = instance.recreateBucketEntry(thisEntry);
+            BucketEntry newEntry = bucketEntryCreator.recreateBucketEntry(thisEntry);
             
             /*
             BucketEntry newEntry = new BucketEntry(thisEntry.getBucketNumber(), thisEntry.getVaultEntry());
