@@ -23,6 +23,8 @@ import java.util.List;
 import javafx.util.Pair;
 
 /**
+ * This class contains the constructor and all needed getters and setters for a
+ * BucketEntry.
  *
  * @author a.a.aponte
  */
@@ -47,7 +49,7 @@ public class BucketEntry {
     private List<Pair<VaultEntryType, Pair<Double, Double>>> valuesForRunningComputation;
     // wait till next entry
     private VaultEntryType[] findNextVaultEntryType;
-    
+
     // this is the list of final sum and avg calculations
     private List<Pair<VaultEntryType, Double>> computedValuesForTheFinalBucketEntry;
     // this list is for calculating the linear interpolator
@@ -65,7 +67,7 @@ public class BucketEntry {
         values = new double[NUMBER_OF_VAULT_ENTRY_TRIGGER_TYPES];
         valuesForRunningComputation = new ArrayList<>();
         findNextVaultEntryType = new VaultEntryType[NUMBER_OF_VAULT_ENTRY_TRIGGER_TYPES];
-        
+
         computedValuesForTheFinalBucketEntry = new ArrayList<>();
         valuesForTheInterpolator = new ArrayList<>();
 
@@ -137,23 +139,22 @@ public class BucketEntry {
     public List<Pair<VaultEntryType, Pair<Double, Double>>> getValuesForRunningComputation() {
         return valuesForRunningComputation;
     }
-    
+
     // get find next
     // ArrayOutOfBounds
     public VaultEntryType getFindNextVaultEntryType(int position) {
         return findNextVaultEntryType[position];
     }
-    
+
     // get list of computed values for the final bucket entry
-    public List<Pair<VaultEntryType, Double>> getComputedValuesForTheFinalBucketEntry(){
+    public List<Pair<VaultEntryType, Double>> getComputedValuesForTheFinalBucketEntry() {
         return computedValuesForTheFinalBucketEntry;
     }
-    
+
     // get list of values for the interpolator
-    public List<Pair<Integer, Pair<VaultEntryType, Double>>> getValuesForTheInterpolator(){
+    public List<Pair<Integer, Pair<VaultEntryType, Double>>> getValuesForTheInterpolator() {
         return valuesForTheInterpolator;
     }
-
 
     //
     // SETTER
@@ -173,39 +174,39 @@ public class BucketEntry {
     // set runningComputations
     // list will be newly generated with the given input
     public void setValuesForRunningComputation(List<Pair<VaultEntryType, Pair<Double, Double>>> newList) {
-        valuesForRunningComputation =  new ArrayList<>();
+        valuesForRunningComputation = new ArrayList<>();
         valuesForRunningComputation = newList;
     }
-    
+
     // set find next
     // ArrayOutOfBounds
     public void setFindNextVaultEntryType(int position, VaultEntryType entry) {
         findNextVaultEntryType[position] = entry;
     }
-    
+
     // set list of computed values for the final bucket entry
-    public void setComputedValuesForTheFinalBucketEntry(List<Pair<VaultEntryType, Double>> list){
-        computedValuesForTheFinalBucketEntry =  new ArrayList<>();
+    public void setComputedValuesForTheFinalBucketEntry(List<Pair<VaultEntryType, Double>> list) {
+        computedValuesForTheFinalBucketEntry = new ArrayList<>();
         computedValuesForTheFinalBucketEntry = list;
     }
 
     // set list of values for the interpolator
-    public void setValuesForTheInterpolator(List<Pair<Integer, Pair<VaultEntryType, Double>>> list){
-        valuesForTheInterpolator =  new ArrayList<>();
+    public void setValuesForTheInterpolator(List<Pair<Integer, Pair<VaultEntryType, Double>>> list) {
+        valuesForTheInterpolator = new ArrayList<>();
         valuesForTheInterpolator = list;
     }
-    
+
     @Override
-    public String toString(){
-        String result = "BucketEntry{id="+this.getBucketNumber()
-                +", "+this.getVaultEntry().toString()
-                +", findNextArray="+Arrays.toString(this.findNextVaultEntryType)
-                +", onehotInformationArray="+Arrays.toString(this.values)
-                +", timeCountDownArray="+Arrays.toString(this.valueTimer)
-                +", runningComputation="+this.valuesForRunningComputation.toString()
-                +", listOfComputedValuesForTheFinalBucketEntry="+this.computedValuesForTheFinalBucketEntry.toString()
-                +", listOfValuesForTheInterpolator="+this.valuesForTheInterpolator.toString()
-                +"}";
+    public String toString() {
+        String result = "BucketEntry{id=" + this.getBucketNumber()
+                + ", " + this.getVaultEntry().toString()
+                + ", findNextArray=" + Arrays.toString(this.findNextVaultEntryType)
+                + ", onehotInformationArray=" + Arrays.toString(this.values)
+                + ", timeCountDownArray=" + Arrays.toString(this.valueTimer)
+                + ", runningComputation=" + this.valuesForRunningComputation.toString()
+                + ", listOfComputedValuesForTheFinalBucketEntry=" + this.computedValuesForTheFinalBucketEntry.toString()
+                + ", listOfValuesForTheInterpolator=" + this.valuesForTheInterpolator.toString()
+                + "}";
         return result;//System.lineSeparator();
     }
 }

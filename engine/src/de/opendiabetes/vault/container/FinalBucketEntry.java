@@ -22,11 +22,13 @@ import java.util.Arrays;
 import de.opendiabetes.vault.container.csv.ExportEntry;
 
 /**
+ * This class contains the constructor and all needed getters and setters for a
+ * FinalBucketEntry.
  *
  * @author a.a.aponte
  */
-public class FinalBucketEntry implements de.opendiabetes.vault.container.csv.ExportEntry{
-    
+public class FinalBucketEntry implements de.opendiabetes.vault.container.csv.ExportEntry {
+
     // BucketEntry list counter
     private int bucketEntryNumber;
 
@@ -44,7 +46,7 @@ public class FinalBucketEntry implements de.opendiabetes.vault.container.csv.Exp
 
         // Arrays containing OneHot information
         onehotInformationArray = new double[NUMBER_OF_VAULT_ENTRY_TRIGGER_TYPES_AFTER_MERGE];
-        
+
     }
 
     //
@@ -104,7 +106,7 @@ public class FinalBucketEntry implements de.opendiabetes.vault.container.csv.Exp
         line = line.replace("[", "");
         line = line.replace("]", "");
         line = bucketEntryNumber + ", " + line;
-        
+
         return line.getBytes();
     }
 }

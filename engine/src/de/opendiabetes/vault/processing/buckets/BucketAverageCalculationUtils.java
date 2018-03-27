@@ -26,12 +26,13 @@ import java.util.List;
 import javafx.util.Pair;
 
 /**
- * This class contains all the methods needed to compute the average of the values inside of BucketEntrys.
- * 
+ * This class contains all the methods needed to compute the average of the
+ * values inside of BucketEntrys.
+ *
  * @author Chryat1s
  */
 public class BucketAverageCalculationUtils {
-    
+
     /**
      * This method computes the values taken from the runningComputation array
      * in the given BucketEntry. The values are calculated according to the set
@@ -146,27 +147,35 @@ public class BucketAverageCalculationUtils {
     }
 
     /**
-     * This method receives a first BucketEntry number, a wanted BucketEntry size, and a list of BucketEntrys.
-     * This method computes the average value of the information found inside the BucketEntrys of the list.
-     * The given list of BucketEntrys has to be smaller or eqaul to the wanted BucketEntry size.
-     * If this is false an error will be thrown.
-     * 
-     * There are two cases for the average computation. The first is that the computed value is a onehot value (0 or 1).
-     * The second is that the computed value is a normal value.
-     * If the value is onehot and greater than or equal to 0,5 a 1 will be displayed, other values will be taken as they are.
-     * 
-     * After the average is computed the values are saved inside a FinalBucketEntry which is then returned.
+     * This method receives a first BucketEntry number, a wanted BucketEntry
+     * size, and a list of BucketEntrys. This method computes the average value
+     * of the information found inside the BucketEntrys of the list. The given
+     * list of BucketEntrys has to be smaller or eqaul to the wanted BucketEntry
+     * size. If this is false an error will be thrown.
+     *
+     * There are two cases for the average computation. The first is that the
+     * computed value is a onehot value (0 or 1). The second is that the
+     * computed value is a normal value. If the value is onehot and greater than
+     * or equal to 0,5 a 1 will be displayed, other values will be taken as they
+     * are.
+     *
+     * After the average is computed the values are saved inside a
+     * FinalBucketEntry which is then returned.
      *
      * @param bucketNumber This is the consecutive FinalBucketEntry number.
-     * @param wantedBucketSize This is the wanted FinalBucketEntry size. This number will be used to calculate the average value for the FinalBucketEntry.
-     * @param bucketsToMerge This is the list of BucketEntrys that will be merged and averaged into the resulting FinalBucketEntry.
-     * @return This method returns a FinalBucketEntry containing all the averaged information of the given BucketEntrys inside the list.
+     * @param wantedBucketSize This is the wanted FinalBucketEntry size. This
+     * number will be used to calculate the average value for the
+     * FinalBucketEntry.
+     * @param bucketsToMerge This is the list of BucketEntrys that will be
+     * merged and averaged into the resulting FinalBucketEntry.
+     * @return This method returns a FinalBucketEntry containing all the
+     * averaged information of the given BucketEntrys inside the list.
      */
     protected FinalBucketEntry calculateAverageForWantedBucketSize(int bucketNumber, double wantedBucketSize, List<BucketEntry> bucketsToMerge) {
         // the list of BucketEntrys contains all entries that are relavent for the average computation
         final int MAX_ARRAY_SIZE = ARRAY_ENTRIES_AFTER_MERGE_TO.size();
         final double WANTED_BUCKET_SIZE = wantedBucketSize;
-        
+
         // check for the list size
         if (bucketsToMerge.size() > WANTED_BUCKET_SIZE) {
             // data will be lost if continued
@@ -219,7 +228,8 @@ public class BucketAverageCalculationUtils {
             int arrayPos = ARRAY_ENTRIES_AFTER_MERGE_TO.get(type);
 
             // comput the average Value
-            double avgValue = valueComputaion[arrayPos] / WANTED_BUCKET_SIZE;                // onehot is OK ... check for other normal values and avg values TODO
+            // onehot is OK ... check for other normal values and avg values TODO
+            double avgValue = valueComputaion[arrayPos] / WANTED_BUCKET_SIZE;
 
             // one hots ... if avgValue >= 0.5 then 1 else 0
             if (type.isOneHot()) {
@@ -232,7 +242,8 @@ public class BucketAverageCalculationUtils {
 
                 // other values
                 // average of all other values should be valid if calculated this way
-                valueComputaion[arrayPos] = avgValue;                                        // other values TODO check
+                // other values TODO check
+                valueComputaion[arrayPos] = avgValue;
 
             }
         }

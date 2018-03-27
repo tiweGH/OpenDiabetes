@@ -222,16 +222,17 @@ public class BucketEntryCreator {
         return newBucket;
 
     }
-    
+
     /**
-     * This method gets a BucketEntry and creates a new BucketEntry with the same information.
-     * 
+     * This method gets a BucketEntry and creates a new BucketEntry with the
+     * same information.
+     *
      * @param oldBucketEntry This is the BucketEntry that will be recreated.
      * @return The method returns the recreated BucketEntry.
      */
     protected BucketEntry recreateBucketEntry(BucketEntry oldBucketEntry) {
         BucketEntry newEntry = new BucketEntry(oldBucketEntry.getBucketNumber(), oldBucketEntry.getVaultEntry());
-        
+
         for (int j = 0; j < BucketEntry.getNumberOfVaultEntryTriggerTypes(); j++) {
             newEntry.setValueTimer(j, oldBucketEntry.getValueTimer(j));
             newEntry.setValues(j, oldBucketEntry.getValues(j));
@@ -261,7 +262,7 @@ public class BucketEntryCreator {
             tempValuesForTheInterpolator.add(newPair);
         }
         newEntry.setValuesForTheInterpolator(tempValuesForTheInterpolator);
-            
+
         return newEntry;
     }
 }
