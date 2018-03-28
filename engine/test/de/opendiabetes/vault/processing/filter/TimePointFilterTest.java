@@ -136,7 +136,7 @@ public class TimePointFilterTest extends Assert {
     }
 
     @Test
-    public void testDateTimePointFilter_0640_30() throws ParseException {
+    public void testTimePointFilter_0640_30() throws ParseException {
         TimePointFilter instance = setUpFilter(LocalTime.parse("06:40"), 30);
         FilterResult result = instance.filter(data);
 
@@ -173,7 +173,7 @@ public class TimePointFilterTest extends Assert {
     }
 
     @Test
-    public void testDateTimePointFilter_0900_60() throws ParseException {
+    public void testTimePointFilter_0900_60() throws ParseException {
         TimePointFilter instance = setUpFilter(LocalTime.parse("09:00"), 60);
         FilterResult result = instance.filter(newData);
 
