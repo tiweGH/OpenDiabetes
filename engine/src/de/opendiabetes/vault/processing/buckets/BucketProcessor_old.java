@@ -862,6 +862,7 @@ public class BucketProcessor_old {
      * creates FinalBucketEntry and sets the computed and needed values
      *
      * @param bucketNumber
+     * @param wantedBucketSize
      * @param bucketsToMerge
      * @return
      */

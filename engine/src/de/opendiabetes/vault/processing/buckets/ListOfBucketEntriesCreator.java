@@ -188,6 +188,8 @@ public class ListOfBucketEntriesCreator {
 
                         break;
 
+                    default:
+                        break;
                 }
             }
         }
@@ -302,7 +304,7 @@ public class ListOfBucketEntriesCreator {
         // *****************************
         Date lastFoundDate = null;
         boolean newDateFound = false;
-        final int firstBucketEntryNumber = listOfBuckets.get(0).getBucketNumber();
+//        final int firstBucketEntryNumber = listOfBuckets.get(0).getBucketNumber();
 
         // get the BucketEntry
         for (BucketEntry thisBucketEntry : listOfBuckets) {
@@ -371,7 +373,7 @@ public class ListOfBucketEntriesCreator {
             // *************
             // ARRAY UPDATES
             // *************
-            // iterate through the array positions                    
+            // iterate through the array positions
             for (int i = 0; i < maxArraySize; i++) {
                 VaultEntryType vaultEntryTypeAtThisPosition = null;
 
@@ -400,7 +402,7 @@ public class ListOfBucketEntriesCreator {
                     if (tempValueTimer[i] > 0) {
                         tempValueTimer[i] = tempValueTimer[i] - 1;
                     }
-                    // when reaching the last thisBucketEntry for this timestamp 
+                    // when reaching the last thisBucketEntry for this timestamp
                     if ((i + 1) == maxArraySize) {
                         newDateFound = false;
                     }
@@ -456,7 +458,7 @@ public class ListOfBucketEntriesCreator {
                     } else {
                         // update other values
                         if (conditionValueTimer && conditionFindNextVaultEntryType) {
-                            // correct the FindNextVaultEntryType info 
+                            // correct the FindNextVaultEntryType info
                             // VaultEntryType has been found
                             if (!tempFindNextVaultEntryType[i].equals(VaultEntryType.EMPTY)) {
                                 tempFindNextVaultEntryType[i] = VaultEntryType.EMPTY;
@@ -569,9 +571,9 @@ public class ListOfBucketEntriesCreator {
 
         for (int i = 0; i < (listOfBuckets.size() - 1); i++) {
             BucketEntry thisEntry = listOfBuckets.get(i);
-            
+
             BucketEntry newEntry = bucketEntryCreator.recreateBucketEntry(thisEntry);
-            
+
             /*
             BucketEntry newEntry = new BucketEntry(thisEntry.getBucketNumber(), thisEntry.getVaultEntry());
 
@@ -605,8 +607,7 @@ public class ListOfBucketEntriesCreator {
                 tempValuesForTheInterpolator.add(newPair);
             }
             newEntry.setValuesForTheInterpolator(tempValuesForTheInterpolator);
-            */
-
+             */
             // add to the outputList
             outputList.add(newEntry);
         }

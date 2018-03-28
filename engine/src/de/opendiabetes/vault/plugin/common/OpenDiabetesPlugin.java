@@ -22,11 +22,14 @@ import java.util.logging.Logger;
 
 /**
  * The most general Plugin Interface that all OpenDiabetes Plugins share.
+ *
  * @author magnus
  */
 public interface OpenDiabetesPlugin {
+
     /**
-     * Logger object of all Plugins. Logs all messages of the plugins to a human readable file.
+     * Logger object of all Plugins. Logs all messages of the plugins to a human
+     * readable file.
      */
     Logger LOG = Logger.getLogger(OpenDiabetesPlugin.class.getName());
 
@@ -39,31 +42,40 @@ public interface OpenDiabetesPlugin {
     boolean loadConfiguration(Properties configuration);
 
     /**
-     * Takes the list of compatible plugins from a configuration file and returns it.
-     * @see {@link AbstractPlugin#loadConfiguration(Properties)} {@link AbstractPlugin#getListOfCompatiblePluginIDs()}
+     * Takes the list of compatible plugins from a configuration file and
+     * returns it.
+     *
+     * @return
+     * @see
+     * {@link AbstractPlugin#loadConfiguration(Properties)} {@link AbstractPlugin#getListOfCompatiblePluginIDs()}
      * for an implementation.
-     * @return a list of plugin names that are known to be compatible with this plugin
+     *
+     * @return a list of plugin names that are known to be compatible with this
+     * plugin
      */
     List<String> getListOfCompatiblePluginIDs();
 
     /**
-     * Method to register listeners to the Plugins.
-     * The GUI for example can implement onStatusCallback behavior and register its interface here to get notified by a status update.
+     * Method to register listeners to the Plugins. The GUI for example can
+     * implement onStatusCallback behavior and register its interface here to
+     * get notified by a status update.
      *
      * @param listener A listener.
      */
     void registerStatusCallback(StatusListener listener);
 
     /**
-     * Interface which defines the methods called on a status update.
-     * Must be implemented by any listener of this plugin to handle the status update.
+     * Interface which defines the methods called on a status update. Must be
+     * implemented by any listener of this plugin to handle the status update.
      */
     interface StatusListener {
+
         /**
-         * Is called multiple times on all listeners during processing to notify them about the current progress.
+         * Is called multiple times on all listeners during processing to notify
+         * them about the current progress.
          *
          * @param progress Percentage of completion.
-         * @param status   Current Status.
+         * @param status Current Status.
          */
         void onStatusCallback(int progress, String status);
     }

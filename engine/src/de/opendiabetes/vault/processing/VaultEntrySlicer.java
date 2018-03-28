@@ -17,18 +17,15 @@
 package de.opendiabetes.vault.processing;
 
 import de.opendiabetes.vault.container.VaultEntry;
-import de.opendiabetes.vault.container.VaultEntryType;
 import de.opendiabetes.vault.processing.filter.Filter;
 import de.opendiabetes.vault.processing.filter.FilterResult;
-import de.opendiabetes.vault.processing.preprocessing.ClusterPreprocessor;
-import de.opendiabetes.vault.processing.preprocessing.GapRemover;
 import de.opendiabetes.vault.processing.preprocessing.Preprocessor;
-import de.opendiabetes.vault.processing.preprocessing.QueryPreprocessor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
 /**
+ * Slices dataset with respect to registered filters.
  *
  * @author juehv, tiweGH
  */
@@ -94,25 +91,22 @@ public class VaultEntrySlicer {
     /**
      * Registeres a PreProcess for slicing. Should be called before slicing.
      * Registered PreProcess are always combined as logical AND.
-     * 
-     * @param preProcesses 
+     *
+     * @param preprocess
      */
-    public void registerPreProcess(Preprocessor preprocess)
-    {
+    public void registerPreProcess(Preprocessor preprocess) {
         preprocessors.add(preprocess);
     }
-    
 
     /**
      * Registeres a PreProcess for slicing. Should be called before slicing.
      * Registered PreProcess are always combined as logical AND.
-     * 
-     * @param preProcesses 
+     *
+     * @param preprocessors
      */
-    public void registerPreProcess(List<Preprocessor> preprocessors)
-    {
+    public void registerPreProcess(List<Preprocessor> preprocessors) {
         this.preprocessors.addAll(preprocessors);
-    }    
+    }
 
     /**
      * Preprocessing for slicing. Prerocessing calls different Methods, which
@@ -127,7 +121,7 @@ public class VaultEntrySlicer {
         for (Preprocessor preprocessor : preprocessors) {
             result = preprocessor.preprocess(result);
         }
-        
+
         return result;
     }
 

@@ -33,7 +33,7 @@ public class PositionFilter extends Filter {
 
     private Filter filter;
     private final int filterMode;
-    private VaultEntry positionResult;
+    private VaultEntry positionResult = null;
     private VaultEntryType weightedType;
 
     /**
@@ -64,7 +64,8 @@ public class PositionFilter extends Filter {
         if (option instanceof PositionFilterOption) {
             this.filter = ((PositionFilterOption) option).getFilter();
             this.filterMode = ((PositionFilterOption) option).getFilterMode();
-            positionResult = null;
+            this.weightedType = ((PositionFilterOption) option).getWeightedType();
+
         } else {
             String msg = "Option has to be an instance of PositionFilterOption";
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, msg);

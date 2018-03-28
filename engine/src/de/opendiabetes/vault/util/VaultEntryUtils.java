@@ -184,16 +184,6 @@ public class VaultEntryUtils {
                 result = TimestampUtils.createCleanTimestamp(new Date((weightedTimeSum / weightSum)));
                 //System.out.println(result);
             }
-//            if (result == null) {
-//                System.out.println("NULL");
-//                for (VaultEntry vaultEntry : data) {
-//                    System.out.println(vaultEntry.toString());
-//                }
-//                System.out.println("size = " + data.size());
-//                System.out.println("weightedTimeSum = " + weightedTimeSum);
-//                System.out.println("weightSum = " + weightSum);
-//
-//            }
         }
 
         return result;
@@ -243,6 +233,8 @@ public class VaultEntryUtils {
      * Shorthand, sorts the given list of VaultEntries by Date
      *
      * @param data the List to be sorted
+     *
+     * @return
      */
     public static List<VaultEntry> sort(List<VaultEntry> data) {
         if (data != null) {

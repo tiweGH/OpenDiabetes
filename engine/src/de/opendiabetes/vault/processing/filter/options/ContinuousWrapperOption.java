@@ -32,18 +32,17 @@ public class ContinuousWrapperOption extends FilterOption {
     List<VaultEntry> baseData;
     protected int marginBefore;
     protected int marginAfter;
-    List<Pair<Date, Date>> timeSpansForContinuousData;
-    
+
     public ContinuousWrapperOption(List<VaultEntry> baseData, int marginBefore, int marginAfter) {
         if (marginBefore < 0 || marginAfter < 0) {
             throw new IllegalArgumentException("Expected a margin >= 0 but was " + marginBefore + " and " + marginAfter);
         }
-        
+
         this.marginBefore = marginBefore;
         this.marginAfter = marginAfter;
-        this.baseData = baseData;        
+        this.baseData = baseData;
     }
-    
+
     public ContinuousWrapperOption(List<VaultEntry> baseData, int marginInMinutes) {
         this(baseData, marginInMinutes, marginInMinutes);
     }

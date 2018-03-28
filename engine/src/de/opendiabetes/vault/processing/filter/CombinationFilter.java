@@ -47,7 +47,7 @@ public class CombinationFilter extends Filter {
         } else {
             String msg = "Option has to be an instance of CombinationFilterOption";
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, msg);
-            throw new Error(msg);//IllegalArgumentException("Option has to be an instance of CombinationFilterOption");
+            throw new Error(msg);
         }
     }
 

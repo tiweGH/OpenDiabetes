@@ -55,7 +55,7 @@ public class DataSlicer extends VaultEntrySlicer {
     public List<SliceEntry> sliceData(List<VaultEntry> data) {
 
         data = preprocessing(data);
-        
+
         List<SliceEntry> retVal = new ArrayList<>();
         FilterResult lastResult = sliceEntries(data);
 
@@ -111,46 +111,4 @@ public class DataSlicer extends VaultEntrySlicer {
             return null;
         }
     }
-    
-    
-    /**
-     * Registeres a PreProcess for slicing. Should be called before slicing.
-     * Registered PreProcess are always combined as logical AND.
-     * 
-     * @param preProcesses 
-     */
-    public void registerPreProcess(Preprocessor preprocess)
-    {
-        preprocessors.add(preprocess);
-    }
-    
-
-    /**
-     * Registeres a PreProcess for slicing. Should be called before slicing.
-     * Registered PreProcess are always combined as logical AND.
-     * 
-     * @param preProcesses 
-     */
-    public void registerPreProcess(List<Preprocessor> preprocessors)
-    {
-        this.preprocessors.addAll(preprocessors);
-    }    
-
-    /**
-     * Preprocessing for slicing. Prerocessing calls different Methods, which
-     * will be set specific sst methods.
-     *
-     * @param data
-     * @return
-     */
-    public List<VaultEntry> preprocessing(List<VaultEntry> data) {
-        List<VaultEntry> result = data;
-
-        for (Preprocessor preprocessor : preprocessors) {
-            result = preprocessor.preprocess(result);
-        }
-        
-        return result;
-    }
-
 }

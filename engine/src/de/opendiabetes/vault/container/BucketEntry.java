@@ -174,7 +174,6 @@ public class BucketEntry {
     // set runningComputations
     // list will be newly generated with the given input
     public void setValuesForRunningComputation(List<Pair<VaultEntryType, Pair<Double, Double>>> newList) {
-        valuesForRunningComputation = new ArrayList<>();
         valuesForRunningComputation = newList;
     }
 
@@ -186,13 +185,13 @@ public class BucketEntry {
 
     // set list of computed values for the final bucket entry
     public void setComputedValuesForTheFinalBucketEntry(List<Pair<VaultEntryType, Double>> list) {
-        computedValuesForTheFinalBucketEntry = new ArrayList<>();
+
         computedValuesForTheFinalBucketEntry = list;
     }
 
     // set list of values for the interpolator
     public void setValuesForTheInterpolator(List<Pair<Integer, Pair<VaultEntryType, Double>>> list) {
-        valuesForTheInterpolator = new ArrayList<>();
+
         valuesForTheInterpolator = list;
     }
 

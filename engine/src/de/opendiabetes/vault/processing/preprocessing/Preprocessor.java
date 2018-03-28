@@ -24,13 +24,13 @@ import java.util.logging.Logger;
 
 /**
  * This class is used to preprocess the data for the slicer.
- * 
+ *
  * @author tiweGH
  */
 public abstract class Preprocessor {
 
     protected static final Logger LOG = Logger.getLogger(VaultEntrySlicer.class.getName());
-    
+
     private final PreprocessorOption preprocessorOption;
 
     public Preprocessor(PreprocessorOption preprocessorOption) {
@@ -38,4 +38,8 @@ public abstract class Preprocessor {
     }
 
     public abstract List<VaultEntry> preprocess(List<VaultEntry> data);
+
+    public PreprocessorOption getPreprocessorOption() {
+        return preprocessorOption;
+    }
 }

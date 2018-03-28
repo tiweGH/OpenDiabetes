@@ -44,19 +44,16 @@ public class ContinuousWrapper extends Filter {
      * in minutes, on the initial List of VaultEntrys and returns only entries
      * located in these time spans
      *
-     * @param baseData Dataset which provides the original entries for the
-     * margin applied after other filters where used
-     * @param marginBefore margin before each timespamp
-     * @param marginAfter margin after each timespamp
+     * @param option
      */
     public ContinuousWrapper(FilterOption option) {
-        
+
         super(option);
         if (option instanceof ContinuousWrapperOption) {
-            
-            this.marginBefore = ((ContinuousWrapperOption)option).getMarginBefore();
-            this.marginAfter = ((ContinuousWrapperOption)option).getMarginAfter();
-            this.baseData = ((ContinuousWrapperOption)option).getBaseData();
+
+            this.marginBefore = ((ContinuousWrapperOption) option).getMarginBefore();
+            this.marginAfter = ((ContinuousWrapperOption) option).getMarginAfter();
+            this.baseData = ((ContinuousWrapperOption) option).getBaseData();
         } else {
             String msg = "Option has to be an instance of VaultEntryTypeFilterOption";
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, msg);

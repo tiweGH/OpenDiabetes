@@ -40,27 +40,26 @@ public class ClusterPreprocessor extends Preprocessor {
     private final VaultEntryType typeToBeClustered;
 
     public ClusterPreprocessor(PreprocessorOption preprocessorOption) {
-        
+
         super(preprocessorOption);
         if (preprocessorOption instanceof ClusterPreprocessorOption) {
             ClusterPreprocessorOption clusterPreprocessorOption = (ClusterPreprocessorOption) preprocessorOption;
-            
+
             this.clusterTimeInMinutes = clusterPreprocessorOption.getClusterTimeInMinutes();
             this.clusterType = clusterPreprocessorOption.getClusterType();
-            this.typeToBeClustered = clusterPreprocessorOption.getTypeToBeClustered();    
+            this.typeToBeClustered = clusterPreprocessorOption.getTypeToBeClustered();
         } else {
             String msg = "Option has to be an instance of ClusterPreprocessorOption";
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, msg);
             throw new Error(msg);//IllegalArgumentException("Option has to be an instance of CombinationFilterOption");
-        }        
-        
-         
+        }
+
     }
 
     @Override
     public List<VaultEntry> preprocess(List<VaultEntry> data) {
         long temp1, temp2;
-        temp1 = System.currentTimeMillis();
+        //temp1 = System.currentTimeMillis();
 
         List<VaultEntry> result = data;
         if (data != null && clusterTimeInMinutes > 0 && typeToBeClustered != null) {
@@ -72,8 +71,8 @@ public class ClusterPreprocessor extends Preprocessor {
             List<VaultEntry> tmpSubList;
 
             int dataSize = data.size();
-            double tenthCounter = 1.0;
-            int nextTenth = (int) Math.round(((double) dataSize / 10.0));
+//            double tenthCounter = 1.0;
+//            int nextTenth = (int) Math.round(((double) dataSize / 10.0));
             int index = 0;
             int startTimeIndex = 0;
 
@@ -118,7 +117,7 @@ public class ClusterPreprocessor extends Preprocessor {
             VaultEntryUtils.sort(result);
             System.out.println("Added " + (result.size() - data.size()) + " Cluster-Entries");
         }
-        temp2 = System.currentTimeMillis();
+//        temp2 = System.currentTimeMillis();
         //System.out.println(temp2 - temp1);
         return result;
     }

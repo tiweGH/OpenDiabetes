@@ -31,9 +31,9 @@ import java.util.List;
 import javafx.util.Pair;
 
 /**
- * This class contains all the methods to create the list of FinalBucketEntrys 
+ * This class contains all the methods to create the list of FinalBucketEntrys
  * for the ML-exporter.
- * 
+ *
  * @author Chryat1s
  */
 public class BucketProcessor {
@@ -41,7 +41,7 @@ public class BucketProcessor {
     final BucketEntryCreator bucketEntryCreator = new BucketEntryCreator();
     final ListOfBucketEntriesCreator bucketListCreator = new ListOfBucketEntriesCreator();
     final BucketAverageCalculationUtils averageCalculationMethods = new BucketAverageCalculationUtils();
-    
+
     /**
      * This method receives a list of VaultEntrys and a wanted step size (in
      * minutes) for the resulting list of FinalBucketEntrys. In this method the
@@ -138,7 +138,7 @@ public class BucketProcessor {
 
                         // BucketEntry number has been found inside the list of sortedRawData
                         if (tempTest.getKey()) {
-                //            sortedData.add(sortedRawData.remove((int) tempTest.getValue()));
+                            //            sortedData.add(sortedRawData.remove((int) tempTest.getValue()));
                             Pair<List<Pair<Integer, Pair<VaultEntryType, Double>>>, Pair<Integer, Pair<VaultEntryType, Double>>> getTheRestOfTheListAndTheRemovedPair = removePairOutOfSortedRawData(sortedRawData, (int) tempTest.getValue());
                             sortedRawData = getTheRestOfTheListAndTheRemovedPair.getKey();
                             sortedData.add(getTheRestOfTheListAndTheRemovedPair.getValue());
@@ -150,7 +150,7 @@ public class BucketProcessor {
                             }
                         }
                     } else {
-                    // sortedRawData is empty
+                        // sortedRawData is empty
                     }
                 }
 
@@ -335,13 +335,13 @@ public class BucketProcessor {
 
         return new Pair(false, 0);
     }
-    
+
     /**
-     * This method removes the Pair at the wanted position and returns the 
+     * This method removes the Pair at the wanted position and returns the
      * removed Pair and the given list without the removed Pair.
-     * 
-     * @param oldSortedRawData This is the list of Pairs from which the Pair
-     * at the given position will be removed from.
+     *
+     * @param oldSortedRawData This is the list of Pairs from which the Pair at
+     * the given position will be removed from.
      * @param position The Pair at this position will be removed.
      * @return This method returns a Pair containing the new list of pairs
      * without the removed pair and the removed pair.
@@ -352,7 +352,7 @@ public class BucketProcessor {
         int counter = 0;
 
         for (Pair<Integer, Pair<VaultEntryType, Double>> thisPair : oldSortedRawData) {
-            
+
             if (counter != position) {
                 Pair<Integer, Pair<VaultEntryType, Double>> newPair = new Pair(thisPair.getKey(), new Pair(thisPair.getValue().getKey(), thisPair.getValue().getValue()));
                 // add to the outputList
@@ -361,12 +361,12 @@ public class BucketProcessor {
                 // this is the Pair that is to be removed
                 removedPair = new Pair(thisPair.getKey(), new Pair(thisPair.getValue().getKey(), thisPair.getValue().getValue()));
             }
-            
+
             counter++;
         }
-        
+
         if (removedPair == null) {
-                throw new Error("The_pair_that_is_to_be_removed_was_not_found!");
+            throw new Error("The_pair_that_is_to_be_removed_was_not_found!");
         } else {
             return new Pair(newSortedRawData, removedPair);
         }
@@ -423,7 +423,7 @@ public class BucketProcessor {
         for (int i = (inverseOutputBucketList.size() - 1); i > -1; i--) {
             outputBucketList.add(bucketEntryCreator.recreateBucketEntry(inverseOutputBucketList.get(i)));
             outputBucketList.get(outputBucketList.size() - 1).setBucketNumber(newConsecutiveBucketEntryNumber);
-            
+
             // =======================
             // ==INTERPOLATOR UPDATE==
             // =======================
@@ -444,8 +444,8 @@ public class BucketProcessor {
             // =======================
             // ==INTERPOLATOR UPDATE==
             // =======================
-            
-            newConsecutiveBucketEntryNumber = newConsecutiveBucketEntryNumber++;
+
+            newConsecutiveBucketEntryNumber++;
         }
 
         // check if everything is correct
@@ -557,24 +557,6 @@ public class BucketProcessor {
         return outputBucketList;
     }
 
-//      liste beinhält alles vom ersten auftretten eines wertes bis zum letzten
-//      vorkommenden wert anfang ohne NULL und ende ohne NULL
-//
-//
-//      TODO für Adrian: Im averageForSmallesBucketSize werden alle werte die für
-//      diese methode benötigt werden in eine liste gepackt und später in teil
-//      listen unterteilt um dieser methode übergeben zu werden. Die werte werden
-//      willkührlich nach fund in die liste aufgenommen und vor der übergabe
-//      zwischen den einzelnen werten mit sinn vollen listen einträgen befüllt
-//      die mit NULL symbolisieren das noch kein double Wert für diesen
-//      BucketEntry vorhanden ist. Die rückgabe dieser methode wird dann zurück
-//      in die zugehörigen BucketEntrys (anhand der bucketNumber) in die arrays
-//      an der richtigen position eingetragen ... ggf. erst im FinalBucketEntry.
-//
-//      Anmerkung von Timm: wegen der Art und weise wie wir die Methode benutzen
-//      (Dh wir überprüfen ja nicht nochmal ob die liste korrekt ist, also ob
-//      alle typen gleich sind) Sollten wir die Methode vllt private machen ->
-//      protected um sie testen zu können
     /**
      *
      * Interpolates gaps (as null values) of a specific VaultEntryType in a
@@ -622,14 +604,6 @@ public class BucketProcessor {
                 result.add(new Pair(tmpIndex, new Pair(resultType, tmpValue)));
             }
         }
-        //    System.out.println(resultType);
-
-        //    for (int i = 0; i < input.size(); i++) {
-        //        Pair<Integer, Pair<VaultEntryType, Double>> tmp1 = input.get(i);
-        //        Pair<Integer, Pair<VaultEntryType, Double>> tmp2 = result.get(i);
-        //        System.out.println(tmp1.getKey() + " " + tmp1.getValue().getValue() + " " + tmp2.getValue().getValue());
-        //    }
-        //    System.out.println("interpolation end");
         return result;
     }
 }

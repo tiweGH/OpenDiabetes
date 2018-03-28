@@ -114,8 +114,8 @@ public class PositionFilterOption extends FilterOption {
         return filterMode;
     }
 
-    public int getWeightedType() {
-        return filterMode;
+    public VaultEntryType getWeightedType() {
+        return weightedType;
     }
 
 }

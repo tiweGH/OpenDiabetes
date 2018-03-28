@@ -852,6 +852,7 @@ public class BucketProcessor_runable {
      * creates FinalBucketEntry and sets the computed and needed values
      *
      * @param bucketNumber
+     * @param wantedBucketSize
      * @param bucketsToMerge
      * @return
      */
@@ -1139,7 +1140,6 @@ public class BucketProcessor_runable {
 //
 //            }
             //---------------------------------
-
             // data is now ready for the interpolateGaps method
             List<Pair<Integer, Pair<VaultEntryType, Double>>> interpolatedData = interpolateGaps(sortedDataFilledGaps);
 

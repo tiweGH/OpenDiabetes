@@ -41,14 +41,13 @@ public class GapRemover extends Preprocessor {
      * Get's a dataset of VaultEntries and removes gaps between entries of the
      * given types, which are bigger than the given time in minutes
      *
-     * @param removeType specific type for gap search
-     * @param gapTimeInMinutes max time between two entries before it's a "gap"
+     * @param preprocessorOption options for gapremoving
      */
     public GapRemover(PreprocessorOption preprocessorOption) {
-        
+
         super(preprocessorOption);
         if (preprocessorOption instanceof GapRemoverPreprocessorOption) {
-            
+
             this.gapTimeInMinutes = ((GapRemoverPreprocessorOption) preprocessorOption).getGapTimeInMinutes();
             this.gapType = ((GapRemoverPreprocessorOption) preprocessorOption).getGapType();
         } else {
@@ -56,7 +55,7 @@ public class GapRemover extends Preprocessor {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, msg);
             throw new Error(msg);//IllegalArgumentException("Option has to be an instance of CombinationFilterOption");
         }
-        
+
     }
 
     @Override
@@ -68,8 +67,8 @@ public class GapRemover extends Preprocessor {
         if (data != null && gapType != null && gapTimeInMinutes > 0) {
 
             int dataSize = data.size();
-            double tenthCounter = 1.0;
-            int nextTenth = (int) Math.round(((double) dataSize / 10.0));
+            //           double tenthCounter = 1.0;
+//            int nextTenth = (int) Math.round(((double) dataSize / 10.0));
             int index = 0; //we use an additional index because of performance issues vs "indexOf(...)"
 
             System.out.println("Preprocessing: Removing Gaps");

@@ -45,7 +45,7 @@ import java.util.logging.Logger;
  *
  * @author jorg
  */
-public class MLExporter extends de.opendiabetes.vault.plugin.exporter.FileExporter{
+public class MLExporter extends de.opendiabetes.vault.plugin.exporter.FileExporter {
 
     private int wantedBucketSize;
     private String filePath;
@@ -89,7 +89,7 @@ public class MLExporter extends de.opendiabetes.vault.plugin.exporter.FileExport
     }
 
     public void exportDataToFile(List<VaultEntry> data) throws IOException, ParseException {
-        String temp = filePath;
+
         long start;
         start = System.currentTimeMillis();
         System.out.println("Start new BProc at " + new Date(start));
@@ -99,13 +99,13 @@ public class MLExporter extends de.opendiabetes.vault.plugin.exporter.FileExport
     }
 
     private void writeToFile(List<FinalBucketEntry> buckets) throws IOException, ParseException {
-        List<ExportEntry> exportEntrys = new ArrayList<>();
+
         //int x = buckets.get(1).getFullOnehotInformationArray().length;
         FileWriter fw;
         //System.out.println("writing File to " + filePath + ".csv");
         fw = new FileWriter(filePath + ".csv");
-        fw.write("index, " + createHeader() + "\n");
         try {
+            fw.write("index, " + createHeader() + "\n");
             //int j = 0;
             for (FinalBucketEntry bucket : buckets) {
                 for (int i = 0; i < bucket.getFullOnehotInformationArray().length; i++) {
@@ -146,20 +146,19 @@ public class MLExporter extends de.opendiabetes.vault.plugin.exporter.FileExport
 
     @Override
     protected List<ExportEntry> prepareData(List<VaultEntry> data) {
-        
+
         BucketProcessor processor = new BucketProcessor();
-        
+
         List<ExportEntry> exportEntrys = new ArrayList<>();
-        
-        try{            
+
+        try {
             for (FinalBucketEntry runProces : processor.runProcess(0, data, wantedBucketSize)) {
                 exportEntrys.add(runProces);
             }
-        }catch (Throwable t)
-        {
+        } catch (Throwable t) {
             t.printStackTrace();
         }
-        
+
         return exportEntrys;
     }
 }

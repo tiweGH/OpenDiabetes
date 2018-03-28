@@ -29,7 +29,7 @@ public class TypeGroupFilterOption extends FilterOption {
     /**
      * Filters entries with a type in the matching type-group
      *
-     * @param entryTypeGroup
+     * @param vaultEntryTypeGroup
      */
     public TypeGroupFilterOption(VaultEntryTypeGroup vaultEntryTypeGroup) {
         this.vaultEntryTypeGroup = vaultEntryTypeGroup;

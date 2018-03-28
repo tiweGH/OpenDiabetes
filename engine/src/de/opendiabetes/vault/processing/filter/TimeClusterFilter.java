@@ -44,7 +44,6 @@ import java.util.logging.Logger;
 public class TimeClusterFilter extends Filter {
 
 //    private DatasetMarker dataPointer;
-    private TimeClusterFilterOption option;
     private List<VaultEntry> clusterFilterResult;
     private List<Filter> filters;
     private final LocalTime startTime;
@@ -57,7 +56,9 @@ public class TimeClusterFilter extends Filter {
     public static final long YEAR = 365 * DAY;
 
     /**
-     * Sets the filters, clusterTime, startTime an Clusterspacing from the given Options Object.
+     * Sets the filters, clusterTime, startTime an Clusterspacing from the given
+     * Options Object.
+     *
      * @param option TimeClusterFilterOption
      */
     public TimeClusterFilter(FilterOption option) {
@@ -70,7 +71,7 @@ public class TimeClusterFilter extends Filter {
         } else {
             String msg = "Option has to be an instance of TimeClusterFilterOption";
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, msg);
-            throw new Error(msg);//IllegalArgumentException("Option has to be an instance of CombinationFilterOption");
+            throw new Error(msg);
         }
     }
 
@@ -94,26 +95,16 @@ public class TimeClusterFilter extends Filter {
                 // compareDate = TimestampUtils.addMinutesToTimestamp(startTimestamp, clusterTimeInMinutes);
                 if (!vaultEntry.getTimestamp().before(startTimestamp) && vaultEntry.getTimestamp().before(compareDate)) {
                     clusteredList.add(vaultEntry);
-                } //else {
-//                    System.out.println("not " + vaultEntry.getTimestamp());
-//                    System.out.println(!vaultEntry.getTimestamp().before(startTimestamp) + " && " + vaultEntry.getTimestamp().before(compareDate) + " || " + isLastIndex);
-//                }
+                }
                 if (isLastIndex || !vaultEntry.getTimestamp().before(compareDate)) {
 
                     if (clusteredList.size() > 0) {
-//                        System.out.println("New Cluster between " + startTimestamp + " and " + compareDate);
-//                        System.out.println("with " + clusteredList.size() + " entries");
-//                        System.out.println("first " + clusteredList.get(0).getTimestamp() + " last " + clusteredList.get(clusteredList.size() - 1).getTimestamp());
-//                        System.out.println();
+
                         clusteredList = VaultEntryUtils.slice(clusteredList, filters).filteredData;
                     }
-//                    else {
-//                        System.out.println("wo? " + vaultEntry.getTimestamp());
-//                    }
 
                     startTimestamp = TimestampUtils.addMinutesToTimestamp(compareDate, clusterSpacing);
-//                    System.out.println("new start: " + startTimestamp);
-//                    System.out.println("we're here: " + vaultEntry.getTimestamp());
+
                     compareDate = TimestampUtils.addMinutesToTimestamp(startTimestamp, clusterTimeInMinutes);
                     clusterResult.addAll(clusteredList);
                     clusteredList = new ArrayList<>();
@@ -123,17 +114,14 @@ public class TimeClusterFilter extends Filter {
                         if (isLastIndex && !clusterResult.contains(vaultEntry)) {
                             clusteredList = VaultEntryUtils.slice(clusteredList, filters).filteredData;
                             clusterResult.addAll(clusteredList);
-//                            System.out.println("New Cluster between " + startTimestamp + " and " + compareDate);
-//                            System.out.println("with " + clusteredList.size() + " entries");
-//                            System.out.println("first " + clusteredList.get(0).getTimestamp() + " last " + clusteredList.get(clusteredList.size() - 1).getTimestamp());
-//                            System.out.println();
+
                         }
                     }
                 }
                 index++;
 
             }
-            result = clusterResult;
+            //result = clusterResult;
             this.clusterFilterResult = clusterResult;
             //result = VaultEntryUtils.sort(result);
         }

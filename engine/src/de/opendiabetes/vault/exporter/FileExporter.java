@@ -52,7 +52,7 @@ public abstract class FileExporter {
     }
 
     public int exportDataToFile(List<VaultEntry> data) {
-        // check file stuff        
+        // check file stuff
         File checkFile = new File(filePath);
         if (checkFile.exists()
                 && (!checkFile.isFile() || !checkFile.canWrite())) {
@@ -90,6 +90,7 @@ public abstract class FileExporter {
     /**
      * Prepare eata for export (put it into a exportable container)
      *
+     * @param data
      * @return
      */
     protected abstract List<ExportEntry> prepareData(List<VaultEntry> data);
