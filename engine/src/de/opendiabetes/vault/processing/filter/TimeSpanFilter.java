@@ -27,12 +27,18 @@ import java.util.logging.Logger;
 /**
  *
  * @author juehv
+ * This Filter extends Filter and checks durring the filter() method if the vaultentry lays between two localTimes.
  */
 public class TimeSpanFilter extends Filter {
 
     private final LocalTime startTime;
     private final LocalTime endTime;
 
+    /**
+     * Sets the startTime and the endTime, which will be given from the options object.
+     * 
+     * @param option TimeSpanFilterOption
+     */
     public TimeSpanFilter(FilterOption option) {
         super(option);
         if (option instanceof TimeSpanFilterOption) {

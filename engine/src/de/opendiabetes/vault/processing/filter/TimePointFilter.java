@@ -38,6 +38,11 @@ public class TimePointFilter extends Filter {
     private final int marginBeforeInMinutes;
     private final int marginAfterInMinutes;
 
+    /**
+     * Sets the startTime, endTime, which will be calculated from the marginBefore, marginAfter and timePoint. This attributes will be given from the options Object.
+     * 
+     * @param option TimePointFilterOption
+     */
     public TimePointFilter(FilterOption option) {
 
         super(option);

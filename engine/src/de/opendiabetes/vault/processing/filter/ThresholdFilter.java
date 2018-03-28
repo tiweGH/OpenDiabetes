@@ -23,7 +23,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * This Filter is the superclass for the Thresholdfilter.
+ * This Filter checks if a given value is greater/lesser or in a given range.
  *
  * @author juehv, Daniel, tiweGH
  */
@@ -37,6 +37,10 @@ public class ThresholdFilter extends Filter {
     public static final int UNDER = 1;
     public static final int BANDPASS = 2;
 
+    /**
+     * 
+     * @param option 
+     */
     public ThresholdFilter(FilterOption option) {
         super(option);
         if (option instanceof ThresholdFilterOption) {

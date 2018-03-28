@@ -44,6 +44,6 @@ public enum FilterType {
     COUNTER,
     LOGIC,
     POSITION,
-    QUERY;
+    QUERY, VAULT_ENTRY_TYPE_FILTER;
 
 }

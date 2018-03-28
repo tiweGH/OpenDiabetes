@@ -56,6 +56,10 @@ public class TimeClusterFilter extends Filter {
     public static final long WEEK = 7 * DAY;
     public static final long YEAR = 365 * DAY;
 
+    /**
+     * Sets the filters, clusterTime, startTime an Clusterspacing from the given Options Object.
+     * @param option TimeClusterFilterOption
+     */
     public TimeClusterFilter(FilterOption option) {
         super(option);
         if (option instanceof TimeClusterFilterOption) {
