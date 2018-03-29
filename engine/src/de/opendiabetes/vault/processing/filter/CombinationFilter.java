@@ -40,6 +40,10 @@ public class CombinationFilter extends Filter {
     private CombinationFilterOption option;
     private List<Filter> filters;
 
+    /**
+     * 
+     * @param option CombinationFilterOption contains all options, which will be used later on.
+     */
     public CombinationFilter(FilterOption option) {
         super(option);
         if (option instanceof CombinationFilterOption) {

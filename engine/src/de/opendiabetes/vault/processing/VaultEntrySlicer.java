@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 /**
- * Slices dataset with respect to registered filters.
+ * Slices dataset with respect to registered filters. And preprocess the data if wished.
  *
  * @author juehv, tiweGH
  */
@@ -44,7 +44,9 @@ public class VaultEntrySlicer {
     }
 
     /**
-     * Slices dataset with respect to registered filters.
+     * Slices dataset with respect to registered filters. At the beginning the 
+     * data will be preprocessed, if no Preprocessors is register the data will not change.
+     * After that all Filters will be used after each other.
      *
      * @param data the data set which should be filtered
      * @return a list of slice entrys matching the registered filters or an
@@ -52,6 +54,7 @@ public class VaultEntrySlicer {
      */
     public FilterResult sliceEntries(List<VaultEntry> data) {
 
+        
         data = preprocessing(data);
 
         FilterResult lastResult = null;
