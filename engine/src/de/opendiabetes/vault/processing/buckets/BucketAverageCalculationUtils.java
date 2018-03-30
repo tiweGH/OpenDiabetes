@@ -60,8 +60,9 @@ public class BucketAverageCalculationUtils {
         // iterate over all given pairs in the runningComputation list and add them up acording to their VaultEntryType
         for (Pair<VaultEntryType, Pair<Double, Double>> iteratorPair : bucket.getValuesForRunningComputation()) {
             VaultEntryType type = iteratorPair.getKey();
+            VaultEntryType mergeToThisType = type.getMergeTo();
 
-            doesListOfComputedValuesContainOutput = doesListOfComputedValuesContain(type, listOfComputedValues);
+            doesListOfComputedValuesContainOutput = doesListOfComputedValuesContain(mergeToThisType, listOfComputedValues);
             if (doesListOfComputedValuesContainOutput.getKey()) {
                 // a pair for the given mergeToThisType is already created
                 // sum up values
@@ -75,7 +76,7 @@ public class BucketAverageCalculationUtils {
                 listOfComputedValues.add(tempPair);
             } else {
                 // create a new pair for the given mergeToThisType
-                Pair<VaultEntryType, Double> tempPair = new Pair(type, iteratorPair.getValue().getValue());
+                Pair<VaultEntryType, Double> tempPair = new Pair(mergeToThisType, iteratorPair.getValue().getValue());
                 // add the pair to the list
                 listOfComputedValues.add(tempPair);
             }
@@ -251,7 +252,7 @@ public class BucketAverageCalculationUtils {
         // create FinalBucketEntry
         FinalBucketEntry result = new FinalBucketEntry(bucketNumber);
         // clone the computed Values into the FinalBucketEntry
-        result.setFullOnehotInformationArray(valueComputaion.clone());
+        result.setFullValues(valueComputaion.clone());
 
         return result;
     }

@@ -238,7 +238,7 @@ public class BucketProcessor {
                         // check if a merge-to VaultEntryType is found or not
                         if (ARRAY_ENTRIES_AFTER_MERGE_TO.containsKey(type)) {
                             // not a merged mergeToThisType
-                            outputFinalBucketList.get(outputFinalBucketList.size() - 1).setOnehotInformationArray(ARRAY_ENTRIES_AFTER_MERGE_TO.get(type), entry.getValues(ARRAY_ENTRY_TRIGGER_HASHMAP.get(type)));
+                            outputFinalBucketList.get(outputFinalBucketList.size() - 1).setValues(ARRAY_ENTRIES_AFTER_MERGE_TO.get(type), entry.getValues(ARRAY_ENTRY_TRIGGER_HASHMAP.get(type)));
                         } else {
                             // a merged mergeToThisType
 
@@ -251,7 +251,7 @@ public class BucketProcessor {
                         // place found entries into the right array position
                         // look for the position of the entry that matches this merge-to VaultEntryType
                         //
-                        outputFinalBucketList.get(outputFinalBucketList.size() - 1).setOnehotInformationArray(ARRAY_ENTRIES_AFTER_MERGE_TO.get(pair.getKey()), pair.getValue());
+                        outputFinalBucketList.get(outputFinalBucketList.size() - 1).setValues(ARRAY_ENTRIES_AFTER_MERGE_TO.get(pair.getKey()), pair.getValue());
                     }
                 }
             }

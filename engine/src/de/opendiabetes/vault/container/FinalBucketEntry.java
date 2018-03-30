@@ -19,7 +19,6 @@ package de.opendiabetes.vault.container;
 import static de.opendiabetes.vault.container.BucketEventTriggers.ARRAY_ENTRIES_AFTER_MERGE_TO;
 import java.io.IOException;
 import java.util.Arrays;
-import de.opendiabetes.vault.container.csv.ExportEntry;
 
 /**
  * This class contains the constructor and all needed getters and setters for a
@@ -37,15 +36,22 @@ public class FinalBucketEntry implements de.opendiabetes.vault.container.csv.Exp
     private static final int NUMBER_OF_VAULT_ENTRY_TRIGGER_TYPES_AFTER_MERGE = ARRAY_ENTRIES_AFTER_MERGE_TO.size();
 
     // onehot information Array
-    private double[] onehotInformationArray;
+    private double[] values;
 
+    /**
+     * This constructor generates an empty FinalBucketEntry and creates the
+     * needed array with the correct size to save all information needed for the
+     * machine lerner.
+     *
+     * @param bucketNumber This is the consecutive BucketEntry number.
+     */
     public FinalBucketEntry(int bucketNumber) {
 
         // counter
         bucketEntryNumber = bucketNumber;
 
         // Arrays containing OneHot information
-        onehotInformationArray = new double[NUMBER_OF_VAULT_ENTRY_TRIGGER_TYPES_AFTER_MERGE];
+        values = new double[NUMBER_OF_VAULT_ENTRY_TRIGGER_TYPES_AFTER_MERGE];
 
     }
 
@@ -72,37 +78,37 @@ public class FinalBucketEntry implements de.opendiabetes.vault.container.csv.Exp
     //
     // GETTER - SETTER full arrays of a BucketEntry
     //
-    // get full time countdown
-    public double[] getFullOnehotInformationArray() {
-        return onehotInformationArray.clone();
+    // get values
+    public double[] getFullValues() {
+        return values.clone();
     }
 
-    // set full time countdown
-    public void setFullOnehotInformationArray(double[] array) {
-        onehotInformationArray = array;
+    // set values
+    public void setFullValues(double[] array) {
+        values = array;
     }
 
     //
     // GETTER
     //
-    // get boolean
+    // get value
     // ArrayOutOfBounds
-    public double getOnehotInformationArray(int position) {
-        return onehotInformationArray[position];
+    public double getValues(int position) {
+        return values[position];
     }
 
     //
     // SETTER
     //
-    // set boolean
+    // set value
     // ArrayOutOfBounds
-    public void setOnehotInformationArray(int position, double value) {
-        onehotInformationArray[position] = value;
+    public void setValues(int position, double value) {
+        values[position] = value;
     }
 
     @Override
     public byte[] toByteEntryLine() throws IOException {
-        String line = Arrays.toString(this.onehotInformationArray);
+        String line = Arrays.toString(this.values);
         line = line.replace("[", "");
         line = line.replace("]", "");
         line = bucketEntryNumber + ", " + line;

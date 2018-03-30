@@ -81,10 +81,10 @@ public class MLExporter extends de.opendiabetes.vault.plugin.exporter.FileExport
     }
 
     private void shortenValues(FinalBucketEntry bucket, int i) throws ParseException {
-        if ((bucket.getOnehotInformationArray(i) != 0.0) && (bucket.getOnehotInformationArray(i) != 1.0)) {
-            BigDecimal bd = new BigDecimal(bucket.getOnehotInformationArray(i));
+        if ((bucket.getValues(i) != 0.0) && (bucket.getValues(i) != 1.0)) {
+            BigDecimal bd = new BigDecimal(bucket.getValues(i));
             bd = bd.setScale(2, RoundingMode.HALF_UP);
-            bucket.setOnehotInformationArray(i, bd.doubleValue());
+            bucket.setValues(i, bd.doubleValue());
         }
     }
 
@@ -108,10 +108,10 @@ public class MLExporter extends de.opendiabetes.vault.plugin.exporter.FileExport
             fw.write("index, " + createHeader() + "\n");
             //int j = 0;
             for (FinalBucketEntry bucket : buckets) {
-                for (int i = 0; i < bucket.getFullOnehotInformationArray().length; i++) {
+                for (int i = 0; i < bucket.getFullValues().length; i++) {
                     shortenValues(bucket, i);
                 }
-                String line = Arrays.toString(bucket.getFullOnehotInformationArray());
+                String line = Arrays.toString(bucket.getFullValues());
                 line = line.replace("[", "");
                 line = line.replace("]", "");
                 fw.write(bucket.getBucketNumber() + ", " + line);
