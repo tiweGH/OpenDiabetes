@@ -56,6 +56,13 @@ public class BucketEntry {
     // this list must be sorted for each VaultEntryType and filled will NULLs to show the interpolateGaps method what needs to be calculated
     private List<Pair<Integer, Pair<VaultEntryType, Double>>> valuesForTheInterpolator;
 
+    /**
+     * This constructor generates an empty BucketEntry and creates all lists and
+     * arrays with the correct size.
+     *
+     * @param bucketNumber This is the consecutive BucketEntry number.
+     * @param entry This is the VaultEntry that is saved inside the BucketEntry.
+     */
     public BucketEntry(int bucketNumber, VaultEntry entry) {
         vaultEntry = entry;
 
@@ -110,7 +117,7 @@ public class BucketEntry {
         return valueTimer.clone();
     }
 
-    // get full time countdown
+    // get full values
     public double[] getFullValues() {
         return values.clone();
     }
@@ -129,7 +136,7 @@ public class BucketEntry {
         return valueTimer[position];
     }
 
-    // get boolean
+    // get value
     // ArrayOutOfBounds
     public double getValues(int position) {
         return values[position];
@@ -165,7 +172,7 @@ public class BucketEntry {
         valueTimer[position] = time;
     }
 
-    // set boolean
+    // set value
     // ArrayOutOfBounds
     public void setValues(int position, double value) {
         values[position] = value;

@@ -16,8 +16,6 @@
  */
 package de.opendiabetes.vault.processing.buckets;
 
-import de.opendiabetes.vault.processing.buckets.ListOfBucketEntriesCreator;
-import de.opendiabetes.vault.processing.buckets.BucketProcessor;
 import de.opendiabetes.vault.container.BucketEntry;
 import static de.opendiabetes.vault.container.BucketEntry.getNumberOfVaultEntryTriggerTypes;
 import de.opendiabetes.vault.container.FinalBucketEntry;
@@ -40,14 +38,14 @@ import org.junit.Test;
  *
  * @author Chryat1s
  */
-public class BucketProcessor_new_all_tests extends Assert {
+public class BucketProcessorNewAllTests extends Assert {
     
     List<BucketEntry> resultBuckets;
     List<FinalBucketEntry> resultFinalBuckets;
     BucketProcessor bp;
     ListOfBucketEntriesCreator lbe;
 
-    public BucketProcessor_new_all_tests() {
+    public BucketProcessorNewAllTests() {
     }
 
     @BeforeClass
@@ -286,11 +284,6 @@ public class BucketProcessor_new_all_tests extends Assert {
         wantedListOfBuckets.get(8).setValues(0, 1);
 
         testBucketInformation(wantedListOfBuckets, result);
-    }
-    
-    @Test
-    public void testBucketProcessor_setBucketArrayInformation() throws ParseException {
-        
     }
       
 }

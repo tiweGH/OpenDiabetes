@@ -928,7 +928,7 @@ public class BucketProcessor_runable {
         // create FinalBucketEntry
         FinalBucketEntry result = new FinalBucketEntry(bucketNumber);
         // clone the computed Values into the FinalBucketEntry
-        result.setFullOnehotInformationArray(valueComputaion.clone());
+        result.setFullValues(valueComputaion.clone());
 
         return result;
     }
@@ -1223,7 +1223,7 @@ public class BucketProcessor_runable {
                     // check if a merge-to VaultEntryType is found or not
                     if (ARRAY_ENTRIES_AFTER_MERGE_TO.containsKey(type)) {
                         // not a merged type
-                        outputFinalBucketList.get(outputFinalBucketList.size() - 1).setOnehotInformationArray(ARRAY_ENTRIES_AFTER_MERGE_TO.get(type), entry.getValues(ARRAY_ENTRY_TRIGGER_HASHMAP.get(type)));
+                        outputFinalBucketList.get(outputFinalBucketList.size() - 1).setValues(ARRAY_ENTRIES_AFTER_MERGE_TO.get(type), entry.getValues(ARRAY_ENTRY_TRIGGER_HASHMAP.get(type)));
                     } else {
                         // a merged type
 
@@ -1236,7 +1236,7 @@ public class BucketProcessor_runable {
                     // place found entries into the right array position
                     // look for the position of the entry that matches this merge-to VaultEntryType
                     //
-                    outputFinalBucketList.get(outputFinalBucketList.size() - 1).setOnehotInformationArray(ARRAY_ENTRIES_AFTER_MERGE_TO.get(pair.getKey()), pair.getValue());
+                    outputFinalBucketList.get(outputFinalBucketList.size() - 1).setValues(ARRAY_ENTRIES_AFTER_MERGE_TO.get(pair.getKey()), pair.getValue());
                 }
             }
         }
