@@ -574,40 +574,6 @@ public class ListOfBucketEntriesCreator {
 
             BucketEntry newEntry = bucketEntryCreator.recreateBucketEntry(thisEntry);
 
-            /*
-            BucketEntry newEntry = new BucketEntry(thisEntry.getBucketNumber(), thisEntry.getVaultEntry());
-
-            // copy all the info from the old BucketEntry into the new BucketEntry
-            for (int j = 0; j < BucketEntry.getNumberOfVaultEntryTriggerTypes(); j++) {
-                newEntry.setValueTimer(j, thisEntry.getValueTimer(j));
-                newEntry.setValues(j, thisEntry.getValues(j));
-                newEntry.setFindNextVaultEntryType(j, thisEntry.getFindNextVaultEntryType(j));
-            }
-
-            List<Pair<VaultEntryType, Pair<Double, Double>>> tempListValuesForRunningComputation = new ArrayList<>();
-            for (Pair<VaultEntryType, Pair<Double, Double>> thisPair : thisEntry.getValuesForRunningComputation()) {
-                Pair<VaultEntryType, Pair<Double, Double>> newPair;
-                newPair = new Pair(thisPair.getKey(), new Pair(thisPair.getValue().getKey(), thisPair.getValue().getValue()));
-                tempListValuesForRunningComputation.add(newPair);
-            }
-            newEntry.setValuesForRunningComputation(tempListValuesForRunningComputation);
-
-            List<Pair<VaultEntryType, Double>> tempComputedValuesForTheFinalBucketEntry = new ArrayList<>();
-            for (Pair<VaultEntryType, Double> thisPair : thisEntry.getComputedValuesForTheFinalBucketEntry()) {
-                Pair<VaultEntryType, Double> newPair;
-                newPair = new Pair(thisPair.getKey(), thisPair.getValue());
-                tempComputedValuesForTheFinalBucketEntry.add(newPair);
-            }
-            newEntry.setComputedValuesForTheFinalBucketEntry(tempComputedValuesForTheFinalBucketEntry);
-
-            List<Pair<Integer, Pair<VaultEntryType, Double>>> tempValuesForTheInterpolator = new ArrayList<>();
-            for (Pair<Integer, Pair<VaultEntryType, Double>> thisPair : thisEntry.getValuesForTheInterpolator()) {
-                Pair<Integer, Pair<VaultEntryType, Double>> newPair;
-                newPair = new Pair(thisPair.getKey(), new Pair(thisPair.getValue().getKey(), thisPair.getValue().getValue()));
-                tempValuesForTheInterpolator.add(newPair);
-            }
-            newEntry.setValuesForTheInterpolator(tempValuesForTheInterpolator);
-             */
             // add to the outputList
             outputList.add(newEntry);
         }

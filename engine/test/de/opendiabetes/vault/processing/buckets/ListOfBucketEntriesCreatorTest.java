@@ -111,6 +111,11 @@ public class ListOfBucketEntriesCreatorTest extends Assert {
     //
     // please ignore
     //
+    /**
+     * This test checks if a correct list of BucketEntrys is created.
+     *
+     * @throws ParseException
+     */
     @Test
     public void testBucketProcessor_1() throws ParseException {
         List<VaultEntry> vaultEntries = new ArrayList<>();
@@ -127,6 +132,11 @@ public class ListOfBucketEntriesCreatorTest extends Assert {
         testBucketInformation(wantedListOfBuckets, result);
     }
 
+    /**
+     * This test checks if a correct list of BucketEntrys is created.
+     *
+     * @throws ParseException
+     */
     @Test
     public void testBucketProcessor_2_date_before() throws ParseException {
         List<VaultEntry> vaultEntries = new ArrayList<>();
@@ -148,6 +158,11 @@ public class ListOfBucketEntriesCreatorTest extends Assert {
         testBucketInformation(wantedListOfBuckets, result);
     }
 
+    /**
+     * This test checks if a correct list of BucketEntrys is created.
+     *
+     * @throws ParseException
+     */
     @Test
     public void testBucketProcessor_2_date_equal() throws ParseException {
         List<VaultEntry> vaultEntries = new ArrayList<>();
@@ -169,6 +184,11 @@ public class ListOfBucketEntriesCreatorTest extends Assert {
         testBucketInformation(wantedListOfBuckets, result);
     }
 
+    /**
+     * This test checks if a correct list of BucketEntrys is created.
+     *
+     * @throws ParseException
+     */
     @Test
     public void testBucketProcessor_2_date_after() throws ParseException {
         List<VaultEntry> vaultEntries = new ArrayList<>();
@@ -194,6 +214,11 @@ public class ListOfBucketEntriesCreatorTest extends Assert {
         testBucketInformation(wantedListOfBuckets, result);
     }
 
+    /**
+     * This test checks if a correct list of BucketEntrys is created.
+     *
+     * @throws ParseException
+     */
     @Test
     public void testBucketProcessor_3() throws ParseException {
         List<VaultEntry> vaultEntries = new ArrayList<>();
@@ -230,6 +255,11 @@ public class ListOfBucketEntriesCreatorTest extends Assert {
         testBucketInformation(wantedListOfBuckets, result);
     }
 
+    /**
+     * This test checks if a correct list of BucketEntrys is created.
+     *
+     * @throws ParseException
+     */
     @Test
     public void testBucketProcessor_replace_a_bucket_entry() throws ParseException {
         List<VaultEntry> vaultEntries = new ArrayList<>();
@@ -249,6 +279,11 @@ public class ListOfBucketEntriesCreatorTest extends Assert {
         testBucketInformation(wantedListOfBuckets, result);
     }
 
+    /**
+     * This test checks if a correct list of BucketEntrys is created.
+     *
+     * @throws ParseException
+     */
     @Test
     public void testBucketProcessor_4() throws ParseException {
         List<VaultEntry> vaultEntries = new ArrayList<>();
@@ -304,6 +339,11 @@ public class ListOfBucketEntriesCreatorTest extends Assert {
         testBucketInformation(wantedListOfBuckets, result);
     }
 
+    /**
+     * This test checks if a correct list of BucketEntrys is created.
+     *
+     * @throws ParseException
+     */
     @Test
     public void testBucketProcessor_5() throws ParseException {
         List<VaultEntry> vaultEntries = new ArrayList<>();
@@ -362,6 +402,11 @@ public class ListOfBucketEntriesCreatorTest extends Assert {
     //
     // TEST_6
     //
+    /**
+     * This test checks if a correct list of BucketEntrys is created.
+     *
+     * @throws ParseException
+     */
     @Test
     public void testBucketProcessor_7_replace_first_BucketEntry() throws ParseException {
         List<VaultEntry> vaultEntries = new ArrayList<>();
@@ -384,6 +429,11 @@ public class ListOfBucketEntriesCreatorTest extends Assert {
         testBucketInformation(wantedListOfBuckets, result);
     }
 
+    /**
+     * This test checks if a correct list of BucketEntrys is created.
+     *
+     * @throws ParseException
+     */
     @Test
     public void testBucketProcessor_7_replace_second_BucketEntry() throws ParseException {
         List<VaultEntry> vaultEntries = new ArrayList<>();
@@ -406,6 +456,11 @@ public class ListOfBucketEntriesCreatorTest extends Assert {
         testBucketInformation(wantedListOfBuckets, result);
     }
 
+    /**
+     * This test checks if a correct list of BucketEntrys is created.
+     *
+     * @throws ParseException
+     */
     @Test
     public void testBucketProcessor_7_replace_third_BucketEntry() throws ParseException {
         List<VaultEntry> vaultEntries = new ArrayList<>();
@@ -428,6 +483,11 @@ public class ListOfBucketEntriesCreatorTest extends Assert {
         testBucketInformation(wantedListOfBuckets, result);
     }
 
+    /**
+     * This test checks if a correct list of BucketEntrys is created.
+     *
+     * @throws ParseException
+     */
     @Test
     public void testBucketProcessor_8_do_all_number_7_tests() throws ParseException {
         List<VaultEntry> vaultEntries = new ArrayList<>();
@@ -472,6 +532,11 @@ public class ListOfBucketEntriesCreatorTest extends Assert {
         testBucketInformation(wantedListOfBuckets, result);
     }
 
+    /**
+     * This test checks if a correct list of BucketEntrys is created.
+     *
+     * @throws ParseException
+     */
     @Test
     public void testBucketProcessor_8_do_all_number_7_tests_2() throws ParseException {
         List<VaultEntry> vaultEntries = new ArrayList<>();
@@ -519,6 +584,11 @@ public class ListOfBucketEntriesCreatorTest extends Assert {
         testBucketInformation(wantedListOfBuckets, result);
     }
 
+    /**
+     * This test checks if a correct list of BucketEntrys is created.
+     *
+     * @throws ParseException
+     */
     @Test
     public void testBucketProcessor_9_generate_empty_BucketEntrys_1() throws ParseException {
         List<VaultEntry> vaultEntries = new ArrayList<>();
@@ -655,6 +725,11 @@ public class ListOfBucketEntriesCreatorTest extends Assert {
         testBucketInformation(wantedListOfBuckets, result);
     }
 
+    /**
+     * This test checks if a correct list of BucketEntrys is created.
+     *
+     * @throws ParseException
+     */
     @Test
     public void testBucketProcessor_9_generate_empty_BucketEntrys_2() throws ParseException {
         List<VaultEntry> vaultEntries = new ArrayList<>();
@@ -789,6 +864,11 @@ public class ListOfBucketEntriesCreatorTest extends Assert {
         testBucketInformation(wantedListOfBuckets, result);
     }
 
+    /**
+     * This test checks if a correct list of BucketEntrys is created.
+     *
+     * @throws ParseException
+     */
     @Test
     public void testBucketProcessor_EMPTY_TEST() throws ParseException {
         List<VaultEntry> vaultEntries = new ArrayList<>();
@@ -801,6 +881,11 @@ public class ListOfBucketEntriesCreatorTest extends Assert {
         testBucketInformation(wantedListOfBuckets, result);
     }
 
+    /**
+     * This test checks if a correct list of BucketEntrys is created.
+     *
+     * @throws ParseException
+     */
     @Test(expected = NullPointerException.class)
     public void testBucketProcessor_NULL_TEST() throws ParseException {
         List<VaultEntry> vaultEntries = null;

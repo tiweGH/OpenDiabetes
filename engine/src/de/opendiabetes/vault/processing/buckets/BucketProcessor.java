@@ -386,6 +386,10 @@ public class BucketProcessor {
      * list by setting the bucketNumbers inside this list to the new
      * bucketNumber.
      *
+     * This method might still create a return list with incorrect values for
+     * the interpolation. to be sure that the list is correct use the
+     * removeUnneededBucketEntries_old method.
+     *
      * @param firstBucketEntryNumber This is the first BucketEntry number in the
      * returned list.
      * @param bucketList This is the list of BucketEntrys that will be used to

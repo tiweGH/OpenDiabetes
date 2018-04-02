@@ -49,14 +49,18 @@ public class BucketEventTriggersTest extends Assert {
     public void tearDown() {
     }
 
+    /**
+     * This test checks that all VaultEntryTypes and in a HashMap so that they
+     * can be processed.
+     */
     @Test
     public void testTriggerEventsSize() {
         int all_ml_rev_trigger_events = ARRAY_ENTRY_TRIGGER_HASHMAP.size();
-        int ml_rev_and_one_hot_size = TRIGGER_EVENT_ACT_TIME_GIVEN.size() + TRIGGER_EVENT_ACT_TIME_TILL_NEXT_EVENT.size() 
-                                        + TRIGGER_EVENT_ACT_TIME_ONE.size() + TRIGGER_EVENTS_NOT_YET_SET.size();
-        int ml_rev_and_NOT_one_hot_size = TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_SET.size() + TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_GIVEN.size() 
-                                        + TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_TILL_NEXT_EVENT.size() + TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_ONE.size() 
-                                        + TRIGGER_EVENT_NOT_ONE_HOT_VALUE_IS_A_TIMESTAMP.size();
+        int ml_rev_and_one_hot_size = TRIGGER_EVENT_ACT_TIME_GIVEN.size() + TRIGGER_EVENT_ACT_TIME_TILL_NEXT_EVENT.size()
+                + TRIGGER_EVENT_ACT_TIME_ONE.size() + TRIGGER_EVENTS_NOT_YET_SET.size();
+        int ml_rev_and_NOT_one_hot_size = TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_SET.size() + TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_GIVEN.size()
+                + TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_TILL_NEXT_EVENT.size() + TRIGGER_EVENT_NOT_ONE_HOT_ACT_TIME_ONE.size()
+                + TRIGGER_EVENT_NOT_ONE_HOT_VALUE_IS_A_TIMESTAMP.size();
         assertEquals(all_ml_rev_trigger_events, (ml_rev_and_one_hot_size + ml_rev_and_NOT_one_hot_size));
     }
 }

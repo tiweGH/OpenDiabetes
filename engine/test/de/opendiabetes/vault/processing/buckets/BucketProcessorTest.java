@@ -37,7 +37,7 @@ import org.junit.Test;
  * @author Chryat1s
  */
 public class BucketProcessorTest {
-    
+
     List<BucketEntry> resultBuckets;
     List<FinalBucketEntry> resultFinalBuckets;
     BucketProcessor bp;
@@ -74,7 +74,12 @@ public class BucketProcessorTest {
             }
         }
     }
-    
+
+    /**
+     * This test checks if a correct list of FinalBucketEntrys is created.
+     *
+     * @throws ParseException
+     */
     @Test
     public void testRunBucketProcessor() throws ParseException {
         List<VaultEntry> vaultEntries = new ArrayList<>();
@@ -89,12 +94,12 @@ public class BucketProcessorTest {
         //
         vaultEntries.add(new VaultEntry(VaultEntryType.STRESS, TestFunctions.creatNewDateToCheckFor("2000.01.01-00:08"), 21, 5));
         vaultEntries.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM_ALERT, TestFunctions.creatNewDateToCheckFor("2000.01.01-00:08"), 170));
-        
+
         bp = new BucketProcessor();
         List<FinalBucketEntry> result = bp.runProcess(0, vaultEntries, 1);
-        
+
         List<FinalBucketEntry> wantedResult = new ArrayList<>();
-        
+
         wantedResult.add(new FinalBucketEntry(0));
         wantedResult.get(0).setValues(0, 1);
         wantedResult.add(new FinalBucketEntry(1));
@@ -111,20 +116,25 @@ public class BucketProcessorTest {
         wantedResult.get(6).setValues(0, 0);
         wantedResult.add(new FinalBucketEntry(7));
         wantedResult.get(7).setValues(0, 1);
-        
+
         // check results
         testBucketInformation(wantedResult, result);
     }
-    
+
+    /**
+     * This test checks if a correct list of FinalBucketEntrys is created.
+     *
+     * @throws ParseException
+     */
     @Test
     public void testRunBucketProcessor_EMPTY() throws ParseException {
         List<VaultEntry> vaultEntries = new ArrayList<>();
-        
+
         bp = new BucketProcessor();
         List<FinalBucketEntry> result = bp.runProcess(0, vaultEntries, 1);
-        
+
         List<FinalBucketEntry> wantedResult = new ArrayList<>();
-        
+
         // check results
         assertEquals(wantedResult, result);
     }

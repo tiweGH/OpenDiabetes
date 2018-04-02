@@ -39,7 +39,7 @@ import org.junit.Test;
  * @author Chryat1s
  */
 public class BucketProcessorNewAllTests extends Assert {
-    
+
     List<BucketEntry> resultBuckets;
     List<FinalBucketEntry> resultFinalBuckets;
     BucketProcessor bp;
@@ -82,13 +82,18 @@ public class BucketProcessorNewAllTests extends Assert {
             }
         }
     }
-    
+
+    /**
+     * This test checks if the method checkPreviousBucketEntry works correctly.
+     *
+     * @throws ParseException
+     */
     @Test
     public void testBucketProcessor_checkPreviousBucketEntry() throws ParseException {
         lbe = new ListOfBucketEntriesCreator();
         Boolean result;
         Date date;
-        
+
         List<BucketEntry> listOfBuckets = new ArrayList<>();
         listOfBuckets.add(new BucketEntry(1, new VaultEntry(VaultEntryType.GLUCOSE_CGM_ALERT, TestFunctions.creatNewDateToCheckFor("2000.01.01-00:01"), 170)));
         listOfBuckets.get(0).setValueTimer(0, 1);
@@ -96,13 +101,13 @@ public class BucketProcessorNewAllTests extends Assert {
         listOfBuckets.add(new BucketEntry(2, new VaultEntry(VaultEntryType.GLUCOSE_CGM_ALERT, TestFunctions.creatNewDateToCheckFor("2000.01.01-00:01"), 170)));
         listOfBuckets.get(1).setValueTimer(0, 1);
         listOfBuckets.get(1).setValues(0, 1);
-        
+
         date = TestFunctions.creatNewDateToCheckFor("2000.01.01-00:01");
 
         result = lbe.checkPreviousBucketEntry(date, listOfBuckets);
-        
+
         assertEquals(false, (boolean) result);
-        
+
         listOfBuckets = new ArrayList<>();
         listOfBuckets.add(new BucketEntry(1, new VaultEntry(VaultEntryType.GLUCOSE_CGM_ALERT, TestFunctions.creatNewDateToCheckFor("2000.01.01-00:01"), 170)));
         listOfBuckets.get(0).setValueTimer(0, 1);
@@ -110,13 +115,13 @@ public class BucketProcessorNewAllTests extends Assert {
         listOfBuckets.add(new BucketEntry(2, new VaultEntry(VaultEntryType.EMPTY, TestFunctions.creatNewDateToCheckFor("2000.01.01-00:01"))));
         listOfBuckets.get(1).setValueTimer(0, 1);
         listOfBuckets.get(1).setValues(0, 1);
-        
+
         date = TestFunctions.creatNewDateToCheckFor("2000.01.01-00:01");
 
         result = lbe.checkPreviousBucketEntry(date, listOfBuckets);
-        
+
         assertEquals(true, (boolean) result);
-        
+
         listOfBuckets = new ArrayList<>();
         listOfBuckets.add(new BucketEntry(1, new VaultEntry(VaultEntryType.GLUCOSE_CGM_ALERT, TestFunctions.creatNewDateToCheckFor("2000.01.01-00:01"), 170)));
         listOfBuckets.get(0).setValueTimer(0, 1);
@@ -124,58 +129,69 @@ public class BucketProcessorNewAllTests extends Assert {
         listOfBuckets.add(new BucketEntry(2, new VaultEntry(VaultEntryType.EMPTY, TestFunctions.creatNewDateToCheckFor("2110.10.27-00:01"))));
         listOfBuckets.get(1).setValueTimer(0, 1);
         listOfBuckets.get(1).setValues(0, 1);
-        
+
         date = TestFunctions.creatNewDateToCheckFor("2110.10.27-00:01");
 
         result = lbe.checkPreviousBucketEntry(date, listOfBuckets);
-        
+
         assertEquals(true, (boolean) result);
     }
-    
+
+    /**
+     * This test checks if the compareTwoDates method works correctly.
+     *
+     * @throws ParseException
+     */
     @Test
     public void testBucketProcessor_compareTwoDates() throws ParseException {
         Date date_1;
         Date date_2;
         Integer result;
         lbe = new ListOfBucketEntriesCreator();
-        
+
         date_1 = TestFunctions.creatNewDateToCheckFor("2000.01.01-00:01");
         date_2 = TestFunctions.creatNewDateToCheckFor("2000.01.01-00:02");
-        
-        result = lbe.compareTwoDates(date_1, date_2);        
+
+        result = lbe.compareTwoDates(date_1, date_2);
         assertTrue(result == -1);
-        
+
         date_1 = TestFunctions.creatNewDateToCheckFor("2000.01.01-00:02");
         date_2 = TestFunctions.creatNewDateToCheckFor("2000.01.01-00:02");
-        
-        result = lbe.compareTwoDates(date_1, date_2);        
+
+        result = lbe.compareTwoDates(date_1, date_2);
         assertTrue(result == 0);
-        
+
         date_1 = TestFunctions.creatNewDateToCheckFor("2000.01.01-00:03");
         date_2 = TestFunctions.creatNewDateToCheckFor("2000.01.01-00:02");
-        
-        result = lbe.compareTwoDates(date_1, date_2);        
+
+        result = lbe.compareTwoDates(date_1, date_2);
         assertTrue(result == 1);
-        
+
         date_1 = TestFunctions.creatNewDateToCheckFor("2000.01.01-00:01");
         date_2 = TestFunctions.creatNewDateToCheckFor("2100.12.15-14:39");
-        
-        result = lbe.compareTwoDates(date_1, date_2);        
+
+        result = lbe.compareTwoDates(date_1, date_2);
         assertTrue(result == -1);
-        
+
         date_1 = TestFunctions.creatNewDateToCheckFor("1999.10.20-20:01");
         date_2 = TestFunctions.creatNewDateToCheckFor("1999.10.20-20:01");
-        
-        result = lbe.compareTwoDates(date_1, date_2);        
+
+        result = lbe.compareTwoDates(date_1, date_2);
         assertTrue(result == 0);
-        
+
         date_1 = TestFunctions.creatNewDateToCheckFor("2496.11.27-23:45");
         date_2 = TestFunctions.creatNewDateToCheckFor("2000.01.01-00:01");
-        
-        result = lbe.compareTwoDates(date_1, date_2);        
+
+        result = lbe.compareTwoDates(date_1, date_2);
         assertTrue(result == 1);
     }
-    
+
+    /**
+     * This test checks if a correct list of BucketEntrys starting with the
+     * bucket number 0 is created.
+     *
+     * @throws ParseException
+     */
     @Test
     public void testBucketProcessor_createListOfBuckets_start_number_0() throws ParseException {
         List<VaultEntry> vaultEntries = new ArrayList<>();
@@ -230,7 +246,13 @@ public class BucketProcessorNewAllTests extends Assert {
 
         testBucketInformation(wantedListOfBuckets, result);
     }
-    
+
+    /**
+     * This test checks if a correct list of BucketEntrys starting with the
+     * bucket number 1 is created.
+     *
+     * @throws ParseException
+     */
     @Test
     public void testBucketProcessor_createListOfBuckets_start_number_1() throws ParseException {
         List<VaultEntry> vaultEntries = new ArrayList<>();
@@ -285,5 +307,5 @@ public class BucketProcessorNewAllTests extends Assert {
 
         testBucketInformation(wantedListOfBuckets, result);
     }
-      
+
 }
