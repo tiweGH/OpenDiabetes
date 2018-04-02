@@ -19,7 +19,6 @@ package de.opendiabetes.vault.processing.filter;
 import de.opendiabetes.vault.container.VaultEntry;
 import de.opendiabetes.vault.processing.filter.options.DateTimeSpanFilterOption;
 import de.opendiabetes.vault.processing.filter.options.FilterOption;
-import de.opendiabetes.vault.processing.filter.options.VaultEntryTypeFilterOption;
 import de.opendiabetes.vault.util.TimestampUtils;
 import java.time.LocalDate;
 import java.util.Date;
@@ -27,8 +26,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * Filters entries within a date-specific timespan
  *
- * @author gizem
+ * @author tiweGH
  */
 public class DateTimeSpanFilter extends Filter {
 
@@ -36,11 +36,11 @@ public class DateTimeSpanFilter extends Filter {
     private final Date endTime;
 
     public DateTimeSpanFilter(FilterOption option) {
-        
+
         super(option);
         if (option instanceof DateTimeSpanFilterOption) {
-            this.startTime = ((DateTimeSpanFilterOption)option).getStartTime();
-            this.endTime = ((DateTimeSpanFilterOption)option).getEndTime();
+            this.startTime = ((DateTimeSpanFilterOption) option).getStartTime();
+            this.endTime = ((DateTimeSpanFilterOption) option).getEndTime();
         } else {
             String msg = "Option has to be an instance of DateTimeSpanFilterOption";
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, msg);
@@ -73,7 +73,7 @@ public class DateTimeSpanFilter extends Filter {
             tempEnd = TimestampUtils.setDayOfDate(endTime, vaultEntry.getTimestamp());
         }
         option = new DateTimeSpanFilterOption(tempStart, tempEnd);
-        
+
         return new DateTimeSpanFilter(option);
     }
 

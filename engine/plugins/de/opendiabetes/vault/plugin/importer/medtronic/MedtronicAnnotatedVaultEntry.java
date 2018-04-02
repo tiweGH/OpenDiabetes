@@ -17,7 +17,6 @@
 package de.opendiabetes.vault.plugin.importer.medtronic;
 
 import de.opendiabetes.vault.container.VaultEntry;
-
 import java.util.Objects;
 
 /**

@@ -1,5 +1,12 @@
 package de.opendiabetes.vault.testhelper;
 
+import de.opendiabetes.vault.container.VaultEntry;
+import de.opendiabetes.vault.exporter.MLExporter;
+import de.opendiabetes.vault.plugin.exporter.FileExporter;
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.List;
+
 /*
  * Copyright (C) 2017 tiweGH
  *
@@ -18,59 +25,15 @@ package de.opendiabetes.vault.testhelper;
  */
 /**
  *
- * @author tiweGH
+ * @author
  */
 public class Tester {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ParseException, IOException {
+        FileExporter mLExporter = new MLExporter();
+        List<VaultEntry> data = StaticDataset.getStaticDataset();
+        mLExporter.exportDataToFile("export", data);
 
-        /**
-         * try { List<VaultEntry> entryList = StaticDataset.getStaticDataset();
-         * List<VaultEntry> sensyList =
-         * SensitivityDataset.getSensitivityDataset(); List<VaultEntry> custSet
-         * = CustomDataset.getCustomDataset(); List<VaultEntry> workingSet =
-         * custSet; List<Filter> fl = new ArrayList<>(); FilterResult res;
-         * String importPath =
-         * "C:\\Users\\Timm\\Desktop\\bp\\export_stuff\\test\\export-v10_3-201801-164406.json";
-         * String path = "C:\\Users\\Timm\\Desktop\\bp\\export_stuff\\test\\";
-         * MLExporter exporter = new MLExporter(10, path + "asd");
-         * VaultDao.initializeDb();
-         *
-         *
-         * PumpInterpreterOptions iOptions = new PumpInterpreterOptions( false,
-         * 60, false, TimestampUtils.fromLocalDate(LocalDate.now()),
-         * TimestampUtils.fromLocalDate(LocalDate.now(), 86399000));
-         *
-         * NonInterpreter interpreter = new NonInterpreter( new
-         * ODVDBJsonImporter(null), iOptions, VaultDao.getInstance()); if
-         * (importPath != null && !importPath.isEmpty()) { ((FileImporter)
-         * interpreter.getImporter()).setImportFilePath(importPath);
-         * interpreter.importAndInterpret(); } workingSet =
-         * VaultDao.getInstance().queryAllVaultEntries(); fl = new
-         * NoDateTimeSpansWithoutGroup(workingSet, VaultEntryTypeGroup.HEART, 24
-         * * 60).createFilter();
-         *
-         * VaultEntrySlicer slicer = new VaultEntrySlicer();
-         * slicer.registerFilter(new DateTimeSpanFilter(new
-         * DateTimeSpanFilterOption(workingSet.get(0).getTimestamp(),
-         * TimestampUtils.addMinutesToTimestamp(workingSet.get(0).getTimestamp(),
-         * 48 * 60)))); slicer.registerFilter(fl); workingSet =
-         * slicer.sliceEntries(workingSet).filteredData;
-         * System.out.println(workingSet.toString());
-         *
-         * exporter.exportDataToFile(workingSet);
-         * VaultEntryJavacodeExporter.compile(workingSet, path +
-         * "ASDClass.java", "ASDClass");
-         *
-         * } catch (ParseException ex) {
-         * Logger.getLogger(Tester.class.getName()).log(Level.SEVERE, null, ex);
-         * } catch (IOException ex) {
-         * Logger.getLogger(Tester.class.getName()).log(Level.SEVERE, null, ex);
-         * } catch (SQLException ex) {
-         * Logger.getLogger(Tester.class.getName()).log(Level.SEVERE, null, ex);
-         * }
-        *
-         */
     }
 
 }

@@ -16,24 +16,14 @@
  */
 package de.opendiabetes.vault.processing;
 
-import de.opendiabetes.vault.processing.VaultEntrySlicer;
-import de.opendiabetes.vault.container.SliceEntry;
 import de.opendiabetes.vault.container.VaultEntry;
 import de.opendiabetes.vault.container.VaultEntryType;
-import de.opendiabetes.vault.processing.filter.VaultEntryTypeFilter;
-import de.opendiabetes.vault.processing.filter.Filter;
-import de.opendiabetes.vault.processing.filter.FilterResult;
-import de.opendiabetes.vault.processing.filter.NoneFilter;
-import de.opendiabetes.vault.processing.filter.TimePointFilter;
 import de.opendiabetes.vault.processing.preprocessing.ClusterPreprocessor;
 import de.opendiabetes.vault.processing.preprocessing.GapRemover;
 import de.opendiabetes.vault.processing.preprocessing.options.ClusterPreprocessorOption;
 import de.opendiabetes.vault.processing.preprocessing.options.GapRemoverPreprocessorOption;
 import de.opendiabetes.vault.testhelper.SensitivityDataset;
-import de.opendiabetes.vault.testhelper.StaticDataset;
 import java.text.ParseException;
-import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -111,7 +101,7 @@ public class VaultEntrySlicerTest extends Assert {
     public void testVaultEntrySlicerGap() throws ParseException {
         List<VaultEntry> data = SensitivityDataset.getSensitivityDataset();
         VaultEntrySlicer slicer = new VaultEntrySlicer();
-        
+
         slicer.registerPreProcess(new GapRemover(new GapRemoverPreprocessorOption(VaultEntryType.BASAL_PROFILE, 1)));
         List<VaultEntry> clustered = new GapRemover(new GapRemoverPreprocessorOption(VaultEntryType.BASAL_PROFILE, 1)).preprocess(data);
 

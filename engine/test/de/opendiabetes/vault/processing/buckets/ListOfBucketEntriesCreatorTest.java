@@ -18,12 +18,10 @@ package de.opendiabetes.vault.processing.buckets;
 
 import de.opendiabetes.vault.container.BucketEntry;
 import static de.opendiabetes.vault.container.BucketEntry.getNumberOfVaultEntryTriggerTypes;
-import de.opendiabetes.vault.container.FinalBucketEntry;
 import de.opendiabetes.vault.container.VaultEntry;
 import de.opendiabetes.vault.container.VaultEntryAnnotation;
 import de.opendiabetes.vault.container.VaultEntryType;
 import de.opendiabetes.vault.processing.filter.TestFunctions;
-import de.opendiabetes.vault.testhelper.StaticDataset;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -814,36 +812,35 @@ public class ListOfBucketEntriesCreatorTest extends Assert {
 
         testBucketInformation(wantedListOfBuckets, result);
     }
-    
+
     // ======================================
     // ======================================
     // ======================================
-    
-    @Test
-    public void testBucketProcessor_runable() throws ParseException {
-        List<VaultEntry> vaultEntries = new ArrayList<>();
-        
-        vaultEntries = StaticDataset.getStaticDataset();
-
-        BucketProcessor_runable instance_runable = new BucketProcessor_runable();
-        List<FinalBucketEntry> result_runable = instance_runable.processor(vaultEntries, 1);
-
-        List<FinalBucketEntry> wantedListOfBuckets = null;
-
-    //    testBucketInformation(wantedListOfBuckets, result_runable);
-    }
-    
-    @Test
-    public void testBucketProcessor_original() throws ParseException {
-        List<VaultEntry> vaultEntries = new ArrayList<>();
-        
-        vaultEntries = StaticDataset.getStaticDataset();
-
-        BucketProcessor_old instance = new BucketProcessor_old();
-        List<FinalBucketEntry> result = instance.processor(vaultEntries, 1);
-
-        List<FinalBucketEntry> wantedListOfBuckets = null;
-
-    //    testBucketInformation(wantedListOfBuckets, result_runable);
-    }
+//    @Test
+//    public void testBucketProcessor_runable() throws ParseException {
+//        List<VaultEntry> vaultEntries = new ArrayList<>();
+//
+//        vaultEntries = StaticDataset.getStaticDataset();
+//
+//        BucketProcessor_runable instance_runable = new BucketProcessor_runable();
+//        List<FinalBucketEntry> result_runable = instance_runable.processor(vaultEntries, 1);
+//
+//        List<FinalBucketEntry> wantedListOfBuckets = null;
+//
+//    //    testBucketInformation(wantedListOfBuckets, result_runable);
+//    }
+//
+//    @Test
+//    public void testBucketProcessor_original() throws ParseException {
+//        List<VaultEntry> vaultEntries = new ArrayList<>();
+//
+//        vaultEntries = StaticDataset.getStaticDataset();
+//
+//        BucketProcessor_old instance = new BucketProcessor_old();
+//        List<FinalBucketEntry> result = instance.processor(vaultEntries, 1);
+//
+//        List<FinalBucketEntry> wantedListOfBuckets = null;
+//
+//    //    testBucketInformation(wantedListOfBuckets, result_runable);
+//    }
 }

@@ -17,8 +17,6 @@
 package de.opendiabetes.vault.plugin.management;
 
 import de.opendiabetes.vault.plugin.common.OpenDiabetesPlugin;
-import org.pf4j.DefaultPluginManager;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -35,6 +33,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
+import org.pf4j.DefaultPluginManager;
 
 /**
  * This class is intended to simplify the interaction with all the plugins used in OpenDiabetes.

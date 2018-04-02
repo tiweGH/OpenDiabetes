@@ -3,7 +3,6 @@ package de.opendiabetes.vault.plugin.importer.googlecrawler.plot;
 import com.google.maps.model.LatLng;
 import de.opendiabetes.vault.plugin.importer.googlecrawler.helper.Constants;
 import de.opendiabetes.vault.plugin.importer.googlecrawler.helper.Credentials;
-
 import java.awt.Desktop;
 import java.io.File;
 import java.io.FileOutputStream;

@@ -20,7 +20,6 @@ import de.opendiabetes.vault.container.VaultEntry;
 import de.opendiabetes.vault.container.VaultEntryType;
 import de.opendiabetes.vault.processing.preprocessing.options.ClusterPreprocessorOption;
 import de.opendiabetes.vault.processing.preprocessing.options.PreprocessorOption;
-import de.opendiabetes.vault.processing.preprocessing.options.QueryPreprocessorOption;
 import de.opendiabetes.vault.util.TimestampUtils;
 import de.opendiabetes.vault.util.VaultEntryUtils;
 import java.util.ArrayList;

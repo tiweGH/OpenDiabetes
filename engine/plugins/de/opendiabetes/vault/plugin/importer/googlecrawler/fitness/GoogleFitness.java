@@ -10,7 +10,6 @@ import de.opendiabetes.vault.plugin.importer.googlecrawler.location.LocationHist
 import de.opendiabetes.vault.plugin.importer.googlecrawler.models.Activity;
 import de.opendiabetes.vault.plugin.importer.googlecrawler.models.Coordinate;
 import de.opendiabetes.vault.plugin.importer.googlecrawler.models.HeartRate;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;

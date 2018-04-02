@@ -23,15 +23,14 @@ import de.opendiabetes.vault.plugin.interpreter.VaultInterpreter;
 import de.opendiabetes.vault.plugin.util.EasyFormatter;
 import de.opendiabetes.vault.plugin.util.SortVaultEntryByDate;
 import de.opendiabetes.vault.plugin.util.TimestampUtils;
-import org.pf4j.Extension;
-import org.pf4j.Plugin;
-import org.pf4j.PluginWrapper;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
+import org.pf4j.Extension;
+import org.pf4j.Plugin;
+import org.pf4j.PluginWrapper;
 
 /**
  * Wrapper class for the ExerciseInterpreter plugin.

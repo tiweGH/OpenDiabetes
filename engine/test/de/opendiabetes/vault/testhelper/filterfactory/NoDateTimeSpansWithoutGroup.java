@@ -18,21 +18,14 @@ package de.opendiabetes.vault.testhelper.filterfactory;
 
 import de.opendiabetes.vault.container.VaultEntry;
 import de.opendiabetes.vault.container.VaultEntryTypeGroup;
-import de.opendiabetes.vault.processing.filter.CombinationFilter;
-import de.opendiabetes.vault.processing.filter.DateTimeSpanFilter;
 import de.opendiabetes.vault.processing.filter.Filter;
-import de.opendiabetes.vault.processing.filter.NoneFilter;
 import de.opendiabetes.vault.processing.filter.QueryFilter;
 import de.opendiabetes.vault.processing.filter.TimeClusterFilter;
 import de.opendiabetes.vault.processing.filter.TypeGroupFilter;
-import de.opendiabetes.vault.processing.filter.options.CombinationFilterOption;
-import de.opendiabetes.vault.processing.filter.options.DateTimeSpanFilterOption;
 import de.opendiabetes.vault.processing.filter.options.QueryFilterOption;
 import de.opendiabetes.vault.processing.filter.options.TimeClusterFilterOption;
 import de.opendiabetes.vault.processing.filter.options.TypeGroupFilterOption;
-import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -40,27 +33,22 @@ import java.util.List;
  * @author tiweGH
  */
 public class NoDateTimeSpansWithoutGroup extends FilterFactory {
+//Entferne Tage an denen kein Sport stattfand
 
     List<Filter> filters = new ArrayList<>();
 
-    public NoDateTimeSpansWithoutGroup(List<VaultEntry> data, VaultEntryTypeGroup group, int spanMinutes) {
-//        filters.add(
-//                new CombinationFilter(new CombinationFilterOption(
-//                        data,
-//                        new TypeGroupFilter(new TypeGroupFilterOption(group)),
-//                        new DateTimeSpanFilter(new DateTimeSpanFilterOption(startTime, endTime)))));
+    public NoDateTimeSpansWithoutGroup(List<VaultEntry> data) {
         List<Filter> innerfilters = new ArrayList<>();
         innerfilters.add(new QueryFilter(new QueryFilterOption(
-                new TypeGroupFilter(new TypeGroupFilterOption(group)),
+                new TypeGroupFilter(new TypeGroupFilterOption(VaultEntryTypeGroup.EXERCISE)),
                 1,
                 QueryFilterOption.DONT_CARE)));
         filters.add(
                 new TimeClusterFilter(new TimeClusterFilterOption(
                         innerfilters,
                         null,
-                        spanMinutes,
+                        24 * 60,
                         0)));
-
     }
 
     @Override

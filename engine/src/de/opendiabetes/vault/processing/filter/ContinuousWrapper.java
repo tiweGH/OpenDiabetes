@@ -19,7 +19,6 @@ package de.opendiabetes.vault.processing.filter;
 import de.opendiabetes.vault.container.VaultEntry;
 import de.opendiabetes.vault.processing.filter.options.ContinuousWrapperOption;
 import de.opendiabetes.vault.processing.filter.options.FilterOption;
-import de.opendiabetes.vault.processing.filter.options.VaultEntryTypeFilterOption;
 import de.opendiabetes.vault.util.TimestampUtils;
 import java.util.Date;
 import java.util.List;

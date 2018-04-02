@@ -24,6 +24,11 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * All Filters must be True for an entry to get filtered
+ *
+ * @author tiweGH
+ */
 public class AndFilter extends Filter {
 
     private final List<Filter> filters;

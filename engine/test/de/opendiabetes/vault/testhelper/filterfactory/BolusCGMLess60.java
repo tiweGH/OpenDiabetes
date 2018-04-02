@@ -19,12 +19,10 @@ package de.opendiabetes.vault.testhelper.filterfactory;
 import de.opendiabetes.vault.container.VaultEntry;
 import de.opendiabetes.vault.container.VaultEntryTypeGroup;
 import de.opendiabetes.vault.processing.filter.AndFilter;
-import de.opendiabetes.vault.processing.filter.CombinationFilter;
 import de.opendiabetes.vault.processing.filter.Filter;
 import de.opendiabetes.vault.processing.filter.ThresholdFilter;
 import de.opendiabetes.vault.processing.filter.TypeGroupFilter;
 import de.opendiabetes.vault.processing.filter.options.AndFilterOption;
-import de.opendiabetes.vault.processing.filter.options.CombinationFilterOption;
 import de.opendiabetes.vault.processing.filter.options.ThresholdFilterOption;
 import de.opendiabetes.vault.processing.filter.options.TypeGroupFilterOption;
 import java.util.ArrayList;
@@ -40,13 +38,10 @@ public class BolusCGMLess60 extends FilterFactory {
 
     public BolusCGMLess60(List<VaultEntry> data, VaultEntryTypeGroup group, double value) {
         filters.add(
-                new CombinationFilter(new CombinationFilterOption(
-                        data,
+                new AndFilter(new AndFilterOption(
                         new TypeGroupFilter(new TypeGroupFilterOption(group)),
-                        new AndFilter(new AndFilterOption(
-                                new TypeGroupFilter(new TypeGroupFilterOption(group)),
-                                new ThresholdFilter(new ThresholdFilterOption(
-                                        value, ThresholdFilter.UNDER)))))));
+                        new ThresholdFilter(new ThresholdFilterOption(
+                                value, ThresholdFilter.UNDER)))));
 
     }
 

@@ -18,10 +18,9 @@ package de.opendiabetes.vault.plugin.exporter;
 
 import de.opendiabetes.vault.container.VaultEntry;
 import de.opendiabetes.vault.plugin.common.OpenDiabetesPlugin;
-import org.pf4j.ExtensionPoint;
-
 import java.io.IOException;
 import java.util.List;
+import org.pf4j.ExtensionPoint;
 
 /**
  * This interface specifies the methods shared by all exporters.

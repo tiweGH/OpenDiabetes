@@ -18,13 +18,9 @@ package de.opendiabetes.vault.processing;
 
 import de.opendiabetes.vault.container.SliceEntry;
 import de.opendiabetes.vault.container.VaultEntry;
-import de.opendiabetes.vault.container.VaultEntryType;
 import de.opendiabetes.vault.processing.filter.Filter;
 import de.opendiabetes.vault.processing.filter.FilterResult;
 import de.opendiabetes.vault.processing.preprocessing.Preprocessor;
-import de.opendiabetes.vault.util.SortVaultEntryByDate;
-import de.opendiabetes.vault.util.TimestampUtils;
-import de.opendiabetes.vault.util.VaultEntryUtils;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

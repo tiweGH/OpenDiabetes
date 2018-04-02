@@ -18,7 +18,6 @@ package de.opendiabetes.vault.container.csv;
 
 import de.opendiabetes.vault.container.SliceEntry;
 import de.opendiabetes.vault.container.SliceFilterType;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;

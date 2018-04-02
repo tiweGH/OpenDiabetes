@@ -30,7 +30,6 @@ import com.j256.ormlite.table.TableUtils;
 import de.opendiabetes.vault.container.VaultEntry;
 import de.opendiabetes.vault.container.VaultEntryType;
 import de.opendiabetes.vault.plugin.util.TimestampUtils;
-
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;

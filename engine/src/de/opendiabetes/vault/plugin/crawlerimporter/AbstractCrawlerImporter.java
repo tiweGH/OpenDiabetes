@@ -2,7 +2,6 @@ package de.opendiabetes.vault.plugin.crawlerimporter;
 
 import de.opendiabetes.vault.container.VaultEntry;
 import de.opendiabetes.vault.plugin.common.AbstractPlugin;
-
 import java.util.List;
 
 /**

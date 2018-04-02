@@ -155,7 +155,6 @@ public class BucketProcessor {
                 }
 
                 // data is now ready for the interpolateGaps method
-                System.out.println("Hallo ich interpoliere");
                 List<Pair<Integer, Pair<VaultEntryType, Double>>> interpolatedData = interpolateGaps(sortedData);
 
                 // ===============================================================

@@ -2,10 +2,6 @@ package de.opendiabetes.vault.plugin.exporter.plotterexporter;
 
 import de.opendiabetes.vault.container.csv.ExportEntry;
 import de.opendiabetes.vault.plugin.exporter.VaultExporter;
-import org.pf4j.Extension;
-import org.pf4j.Plugin;
-import org.pf4j.PluginWrapper;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -16,6 +12,9 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
+import org.pf4j.Extension;
+import org.pf4j.Plugin;
+import org.pf4j.PluginWrapper;
 
 /**
  * Wrapper class for the PlotterExporter plugin.

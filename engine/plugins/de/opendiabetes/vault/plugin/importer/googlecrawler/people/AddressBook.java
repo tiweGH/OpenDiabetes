@@ -3,7 +3,6 @@ package de.opendiabetes.vault.plugin.importer.googlecrawler.people;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import de.opendiabetes.vault.plugin.importer.googlecrawler.models.Contact;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;

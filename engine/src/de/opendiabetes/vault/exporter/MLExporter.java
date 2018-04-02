@@ -21,11 +21,7 @@ import de.opendiabetes.vault.container.FinalBucketEntry;
 import de.opendiabetes.vault.container.VaultEntry;
 import de.opendiabetes.vault.container.VaultEntryType;
 import de.opendiabetes.vault.container.csv.ExportEntry;
-import de.opendiabetes.vault.plugin.exporter.AbstractExporter;
-import de.opendiabetes.vault.plugin.exporter.Exporter;
 import de.opendiabetes.vault.processing.buckets.BucketProcessor;
-import de.opendiabetes.vault.processing.buckets.BucketProcessor_old;
-import de.opendiabetes.vault.processing.buckets.BucketProcessor_runable;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -33,7 +29,6 @@ import java.math.RoundingMode;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +37,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * Creates a CSV file with processed Bucket entries from a given VaultEntry
+ * dataset.
  *
  * @author jorg
  */
@@ -51,17 +48,20 @@ public class MLExporter extends de.opendiabetes.vault.plugin.exporter.FileExport
     private String filePath;
 
     /**
-    public MLExporter(int wantedBucketSize, String filePath) {
-        this.wantedBucketSize = wantedBucketSize;
-        this.filePath = filePath;
-    }*/
-
-    protected String deleteComma(VaultEntry entry) {
+     * public MLExporter(int wantedBucketSize, String filePath) {
+     * this.wantedBucketSize = wantedBucketSize; this.filePath = filePath; }
+     */
+    private String deleteComma(VaultEntry entry) {
         String result = entry.toString();
         return result.replace(",", " ");
     }
 
-    protected String createHeader() {
+    /**
+     * writes the header for the columns of the csv file
+     *
+     * @return
+     */
+    private String createHeader() {
 
         HashMap<VaultEntryType, Integer> oneHotHeader = BucketEventTriggers.ARRAY_ENTRIES_AFTER_MERGE_TO;
         String[] header = new String[oneHotHeader.size()];
@@ -81,6 +81,13 @@ public class MLExporter extends de.opendiabetes.vault.plugin.exporter.FileExport
         return result;
     }
 
+    /**
+     * rounds the Double values of the given bucket to the second decimal place
+     *
+     * @param bucket
+     * @param i
+     * @throws ParseException
+     */
     private void shortenValues(FinalBucketEntry bucket, int i) throws ParseException {
         if ((bucket.getValues(i) != 0.0) && (bucket.getValues(i) != 1.0)) {
             BigDecimal bd = new BigDecimal(bucket.getValues(i));
@@ -89,16 +96,30 @@ public class MLExporter extends de.opendiabetes.vault.plugin.exporter.FileExport
         }
     }
 
-    public void exportDataToFile(List<VaultEntry> data) throws IOException, ParseException {
+    /**
+     * rusn the Bucket process with a given dataset
+     *
+     * @param data
+     * @throws IOException
+     * @throws ParseException
+     */
+    private void processBuckets(List<VaultEntry> data) throws IOException, ParseException {
 
-        long start;
-        start = System.currentTimeMillis();
-        System.out.println("Start new BProc at " + new Date(start));
+//        long start;
+//        start = System.currentTimeMillis();
+        //System.out.println("Start new BProc at " + new Date(start));
         BucketProcessor processor = new BucketProcessor();
         writeToFile(processor.runProcess(0, data, wantedBucketSize));
-        System.out.println("Writing took " + (System.currentTimeMillis() - start));
+        //System.out.println("Writing took " + (System.currentTimeMillis() - start));
     }
 
+    /**
+     * writes the processed Buckets to a csv file
+     *
+     * @param buckets
+     * @throws IOException
+     * @throws ParseException
+     */
     private void writeToFile(List<FinalBucketEntry> buckets) throws IOException, ParseException {
 
         //int x = buckets.get(1).getFullOnehotInformationArray().length;
@@ -125,20 +146,20 @@ public class MLExporter extends de.opendiabetes.vault.plugin.exporter.FileExport
             fw.close();
         }
     }
-            
+
     @Override
     public boolean loadPluginSpecificConfiguration(final Properties configuration) {
-    
+
         String temp = configuration.getProperty("wantedbucketsize");
-        
-        if(temp != null && temp.isEmpty())
+
+        if (temp != null && temp.isEmpty()) {
             wantedBucketSize = Integer.parseInt(temp);
-        else
+        } else {
             wantedBucketSize = 1;
-        
+        }
+
         return true;
     }
-    
 
     @Override
     public void setEntries(List<?> entries) throws IllegalArgumentException {
@@ -149,9 +170,9 @@ public class MLExporter extends de.opendiabetes.vault.plugin.exporter.FileExport
     public int exportDataToFile(String filePath, List<VaultEntry> data) throws IOException {
         this.filePath = filePath;
         //vermutlich über loadConfiguration
-                
+
         try {
-            exportDataToFile(data);
+            processBuckets(data);
         } catch (ParseException ex) {
             Logger.getLogger(MLExporter.class.getName()).log(Level.SEVERE, null, ex);
             return ReturnCode.RESULT_ERROR.getCode();
@@ -176,6 +197,5 @@ public class MLExporter extends de.opendiabetes.vault.plugin.exporter.FileExport
 
         return exportEntrys;
     }
-
 
 }

@@ -25,16 +25,15 @@ import de.opendiabetes.vault.plugin.importer.googlecrawler.location.LocationHist
 import de.opendiabetes.vault.plugin.importer.googlecrawler.people.GooglePeople;
 import de.opendiabetes.vault.plugin.importer.googlecrawler.plot.GoogleMapsPlot;
 import de.opendiabetes.vault.plugin.importer.googlecrawler.plot.Plotter;
-import org.pf4j.Extension;
-import org.pf4j.Plugin;
-import org.pf4j.PluginWrapper;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
+import org.pf4j.Extension;
+import org.pf4j.Plugin;
+import org.pf4j.PluginWrapper;
 
 /**
  * Wrapper class for the GoogleFitCrawlerImporter plugin.

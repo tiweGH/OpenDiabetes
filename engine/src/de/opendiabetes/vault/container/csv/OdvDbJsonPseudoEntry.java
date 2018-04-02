@@ -20,7 +20,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import de.opendiabetes.vault.container.VaultEntry;
 import de.opendiabetes.vault.container.VaultEntryGsonAdapter;
-
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;

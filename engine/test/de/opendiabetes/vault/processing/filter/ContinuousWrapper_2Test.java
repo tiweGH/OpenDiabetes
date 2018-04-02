@@ -16,9 +16,6 @@
  */
 package de.opendiabetes.vault.processing.filter;
 
-import de.opendiabetes.vault.processing.filter.ContinuousWrapper;
-import de.opendiabetes.vault.processing.filter.VaultEntryTypeFilter;
-import de.opendiabetes.vault.processing.filter.FilterResult;
 import de.opendiabetes.vault.container.VaultEntry;
 import de.opendiabetes.vault.container.VaultEntryAnnotation;
 import de.opendiabetes.vault.container.VaultEntryType;

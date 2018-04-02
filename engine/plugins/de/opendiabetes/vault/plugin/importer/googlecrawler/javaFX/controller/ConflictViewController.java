@@ -7,6 +7,14 @@ import de.opendiabetes.vault.plugin.importer.googlecrawler.location.LocationHist
 import de.opendiabetes.vault.plugin.importer.googlecrawler.models.ConflictedLocationIdentifier;
 import de.opendiabetes.vault.plugin.importer.googlecrawler.models.Location;
 import de.opendiabetes.vault.plugin.importer.googlecrawler.models.ResolvedLocations;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
@@ -14,15 +22,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-
-import java.text.SimpleDateFormat;
-import java.util.stream.Collectors;
-import java.util.List;
-import java.util.Map;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.Arrays;
-import java.util.ArrayList;
 
 /**
  * Class showing the conflicted locations.

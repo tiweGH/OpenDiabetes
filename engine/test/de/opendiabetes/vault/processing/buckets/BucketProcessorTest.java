@@ -16,8 +16,8 @@
  */
 package de.opendiabetes.vault.processing.buckets;
 
-import static de.opendiabetes.vault.container.BucketEventTriggers.ARRAY_ENTRIES_AFTER_MERGE_TO;
 import de.opendiabetes.vault.container.BucketEntry;
+import static de.opendiabetes.vault.container.BucketEventTriggers.ARRAY_ENTRIES_AFTER_MERGE_TO;
 import de.opendiabetes.vault.container.FinalBucketEntry;
 import de.opendiabetes.vault.container.VaultEntry;
 import de.opendiabetes.vault.container.VaultEntryType;

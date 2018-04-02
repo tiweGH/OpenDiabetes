@@ -6,13 +6,9 @@
 package deprecated_code;
 
 
-import de.opendiabetes.vault.plugin.importer.libretext.LibreTextImporter;
-import deprecated_code.DataHelper;
-import deprecated_code.RawDataEntry;
 import java.awt.Cursor;
 import java.awt.Dialog;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;

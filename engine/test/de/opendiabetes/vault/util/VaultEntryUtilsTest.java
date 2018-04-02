@@ -16,7 +16,6 @@
  */
 package de.opendiabetes.vault.util;
 
-import de.opendiabetes.vault.util.TimestampUtils;
 import java.text.ParseException;
 import java.util.Date;
 import org.junit.After;

@@ -1,10 +1,9 @@
 package de.opendiabetes.vault.plugin.importer.medtroniccrawler;
 
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
-
 import java.util.HashMap;
 import java.util.Map;
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
 
 
 /**

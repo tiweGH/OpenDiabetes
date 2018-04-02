@@ -1,8 +1,5 @@
 package de.opendiabetes.vault.plugin.importer.medtroniccrawler;
 
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -10,6 +7,8 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.Map;
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
 
 /**
  * Actual class for crawling the minimed web page.

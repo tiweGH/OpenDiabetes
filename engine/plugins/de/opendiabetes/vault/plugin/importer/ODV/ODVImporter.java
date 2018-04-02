@@ -17,16 +17,9 @@
 package de.opendiabetes.vault.plugin.importer.ODV;
 
 import de.opendiabetes.vault.container.VaultEntry;
-import de.opendiabetes.vault.plugin.fileimporter.FileImporter;
 import de.opendiabetes.vault.plugin.fileimporter.AbstractFileImporter;
+import de.opendiabetes.vault.plugin.fileimporter.FileImporter;
 import de.opendiabetes.vault.plugin.importer.Importer;
-import org.pf4j.DefaultPluginManager;
-import org.pf4j.Extension;
-import org.pf4j.Plugin;
-import org.pf4j.PluginManager;
-import org.pf4j.PluginWrapper;
-
-import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -46,6 +39,12 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
+import org.pf4j.DefaultPluginManager;
+import org.pf4j.Extension;
+import org.pf4j.Plugin;
+import org.pf4j.PluginManager;
+import org.pf4j.PluginWrapper;
 
 /**
  * Wrapper class for the {@link ODVImporterImplementation} used by the {@link org.pf4j.PluginManager}.

@@ -19,7 +19,6 @@ package de.opendiabetes.vault.plugin.importer.medtronic;
 import com.csvreader.CsvReader;
 import de.opendiabetes.vault.plugin.importer.validator.CSVValidator;
 import de.opendiabetes.vault.plugin.util.TimestampUtils;
-
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;

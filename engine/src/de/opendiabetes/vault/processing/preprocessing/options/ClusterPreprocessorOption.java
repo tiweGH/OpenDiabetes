@@ -16,26 +16,30 @@
  */
 package de.opendiabetes.vault.processing.preprocessing.options;
 
-import de.opendiabetes.vault.container.VaultEntry;
 import de.opendiabetes.vault.container.VaultEntryType;
-import de.opendiabetes.vault.processing.VaultEntrySlicer;
-import java.util.List;
-import java.util.logging.Logger;
 
 /**
  *
  * @author tiweGH
  */
-public class ClusterPreprocessorOption extends PreprocessorOption{
+public class ClusterPreprocessorOption extends PreprocessorOption {
 
     private final VaultEntryType clusterType;
     private final long clusterTimeInMinutes;
     private final VaultEntryType typeToBeClustered;
 
+    /**
+     * Clusters a given dataset with the following options
+     *
+     * @param clusterTimeInMinutes length of a cluster, used for the calculation
+     * fo the cluster entry
+     * @param typeToBeClustered entries of this type will be clustered
+     * @param clusterType type of the new calculated entry
+     */
     public ClusterPreprocessorOption(long clusterTimeInMinutes, VaultEntryType typeToBeClustered, VaultEntryType clusterType) {
         this.clusterTimeInMinutes = clusterTimeInMinutes;
         this.typeToBeClustered = typeToBeClustered;
-        this.clusterType = clusterType;        
+        this.clusterType = clusterType;
     }
 
     public VaultEntryType getTypeToBeClustered() {
@@ -50,6 +54,4 @@ public class ClusterPreprocessorOption extends PreprocessorOption{
         return clusterTimeInMinutes;
     }
 
-    
-    
 }

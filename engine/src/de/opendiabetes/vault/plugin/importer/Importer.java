@@ -18,9 +18,8 @@ package de.opendiabetes.vault.plugin.importer;
 
 import de.opendiabetes.vault.container.VaultEntry;
 import de.opendiabetes.vault.plugin.common.OpenDiabetesPlugin;
-import org.pf4j.ExtensionPoint;
-
 import java.util.List;
+import org.pf4j.ExtensionPoint;
 
 
 /**

@@ -16,8 +16,6 @@
  */
 package de.opendiabetes.vault.processing.filter.options;
 
-import de.opendiabetes.vault.processing.filter.FilterType;
-
 /**
  *
  * @author tiweGH

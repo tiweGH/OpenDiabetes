@@ -24,6 +24,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * This Filter runs its main filter and then checks if it matches the given
+ * criteria, in detail, it filters the result with the inner filter and checks
+ * if the inner result matches the given size. If not, the main result won't be
+ * returned.
+ *
  * @author tiweGH
  */
 public class QueryFilter extends Filter {

@@ -19,16 +19,17 @@ package de.opendiabetes.vault.testhelper.filterfactory;
 import de.opendiabetes.vault.container.VaultEntry;
 import de.opendiabetes.vault.container.VaultEntryTypeGroup;
 import de.opendiabetes.vault.processing.filter.CombinationFilter;
+import de.opendiabetes.vault.processing.filter.DateTimePointFilter;
 import de.opendiabetes.vault.processing.filter.Filter;
 import de.opendiabetes.vault.processing.filter.NegateFilter;
-import de.opendiabetes.vault.processing.filter.TimePointFilter;
 import de.opendiabetes.vault.processing.filter.TypeGroupFilter;
 import de.opendiabetes.vault.processing.filter.options.CombinationFilterOption;
+import de.opendiabetes.vault.processing.filter.options.DateTimePointFilterOption;
 import de.opendiabetes.vault.processing.filter.options.NegateFilterOption;
-import de.opendiabetes.vault.processing.filter.options.TimePointFilterOption;
 import de.opendiabetes.vault.processing.filter.options.TypeGroupFilterOption;
-import java.time.LocalTime;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -46,7 +47,8 @@ public class TypeAbsence extends FilterFactory {
                         new CombinationFilter(new CombinationFilterOption(
                                 data,
                                 new TypeGroupFilter(new TypeGroupFilterOption(group)),
-                                new TimePointFilter(new TimePointFilterOption(LocalTime.MIN, 0, absenceMargin)))))));
+                                new DateTimePointFilter(new DateTimePointFilterOption(
+                                        Date.from(Instant.MIN), 0, absenceMargin)))))));
 
     }
 

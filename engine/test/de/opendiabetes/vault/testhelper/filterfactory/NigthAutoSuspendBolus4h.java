@@ -21,18 +21,20 @@ import de.opendiabetes.vault.container.VaultEntryType;
 import de.opendiabetes.vault.container.VaultEntryTypeGroup;
 import de.opendiabetes.vault.processing.filter.CombinationFilter;
 import de.opendiabetes.vault.processing.filter.DatasetMarker;
+import de.opendiabetes.vault.processing.filter.DateTimePointFilter;
 import de.opendiabetes.vault.processing.filter.Filter;
-import de.opendiabetes.vault.processing.filter.TimePointFilter;
 import de.opendiabetes.vault.processing.filter.TimeSpanFilter;
 import de.opendiabetes.vault.processing.filter.TypeGroupFilter;
 import de.opendiabetes.vault.processing.filter.VaultEntryTypeFilter;
 import de.opendiabetes.vault.processing.filter.options.CombinationFilterOption;
-import de.opendiabetes.vault.processing.filter.options.TimePointFilterOption;
+import de.opendiabetes.vault.processing.filter.options.DateTimePointFilterOption;
 import de.opendiabetes.vault.processing.filter.options.TimeSpanFilterOption;
 import de.opendiabetes.vault.processing.filter.options.TypeGroupFilterOption;
 import de.opendiabetes.vault.processing.filter.options.VaultEntryTypeFilterOption;
+import java.time.Instant;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -52,7 +54,8 @@ public class NigthAutoSuspendBolus4h extends FilterFactory {
                 new CombinationFilter(new CombinationFilterOption(
                         pointer,
                         new TypeGroupFilter(new TypeGroupFilterOption(groupInMargin)),
-                        new TimePointFilter(new TimePointFilterOption(LocalTime.MIN, timeMarginMinutes)))));
+                        new DateTimePointFilter(new DateTimePointFilterOption(
+                                Date.from(Instant.MIN), timeMarginMinutes)))));
         filters.add(new VaultEntryTypeFilter(new VaultEntryTypeFilterOption(searchedType)));
     }
 

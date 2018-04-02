@@ -18,7 +18,6 @@ package de.opendiabetes.vault.plugin.importer.miband;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import java.util.List;
 
 /**

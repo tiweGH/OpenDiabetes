@@ -4,6 +4,18 @@ import de.opendiabetes.vault.plugin.importer.googlecrawler.location.LocationHist
 import de.opendiabetes.vault.plugin.importer.googlecrawler.models.Activity;
 import de.opendiabetes.vault.plugin.importer.googlecrawler.models.ActivityTypes;
 import de.opendiabetes.vault.plugin.importer.googlecrawler.models.HeartRate;
+import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+import javax.imageio.ImageIO;
+import javax.swing.JFrame;
+import javax.swing.WindowConstants;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.annotations.XYTextAnnotation;
@@ -21,19 +33,6 @@ import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.XYIntervalSeries;
 import org.jfree.data.xy.XYIntervalSeriesCollection;
 import org.jfree.ui.RefineryUtilities;
-
-import javax.imageio.ImageIO;
-import javax.swing.JFrame;
-import javax.swing.WindowConstants;
-import java.awt.image.BufferedImage;
-import java.awt.Color;
-import java.io.FileOutputStream;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Collections;
-import java.util.Date;
 
 /**
  * Plotter viewer.

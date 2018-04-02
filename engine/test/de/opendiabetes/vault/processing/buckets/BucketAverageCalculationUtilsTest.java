@@ -18,22 +18,22 @@ package de.opendiabetes.vault.processing.buckets;
 
 import de.opendiabetes.vault.container.BucketEntry;
 import static de.opendiabetes.vault.container.BucketEntry.getNumberOfVaultEntryTriggerTypes;
-import static de.opendiabetes.vault.container.BucketEventTriggers.ARRAY_ENTRY_TRIGGER_HASHMAP;
 import static de.opendiabetes.vault.container.BucketEventTriggers.ARRAY_ENTRIES_AFTER_MERGE_TO;
+import static de.opendiabetes.vault.container.BucketEventTriggers.ARRAY_ENTRY_TRIGGER_HASHMAP;
 import de.opendiabetes.vault.container.FinalBucketEntry;
 import de.opendiabetes.vault.container.VaultEntry;
 import de.opendiabetes.vault.container.VaultEntryType;
 import de.opendiabetes.vault.processing.filter.TestFunctions;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.List;
+import javafx.util.Pair;
 import org.junit.After;
 import org.junit.AfterClass;
+import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import java.util.List;
-import javafx.util.Pair;
-import static org.junit.Assert.assertEquals;
 
 /**
  *

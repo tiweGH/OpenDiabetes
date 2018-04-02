@@ -19,9 +19,8 @@ package de.opendiabetes.vault.plugin.interpreter;
 import de.opendiabetes.vault.container.VaultEntry;
 import de.opendiabetes.vault.data.VaultDao;
 import de.opendiabetes.vault.plugin.common.OpenDiabetesPlugin;
-import org.pf4j.ExtensionPoint;
-
 import java.util.List;
+import org.pf4j.ExtensionPoint;
 
 /**
  * This interface defines the basic methods used by the interpreter plugins.

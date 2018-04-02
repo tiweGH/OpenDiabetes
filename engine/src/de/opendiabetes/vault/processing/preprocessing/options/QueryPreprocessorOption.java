@@ -16,30 +16,27 @@
  */
 package de.opendiabetes.vault.processing.preprocessing.options;
 
-import de.opendiabetes.vault.container.VaultEntry;
-import de.opendiabetes.vault.processing.VaultEntrySlicer;
 import de.opendiabetes.vault.processing.filter.Filter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 /**
  *
- * @author tiweGH
+ * @author Daniel
  */
-public class QueryPreprocessorOption extends PreprocessorOption{
+public class QueryPreprocessorOption extends PreprocessorOption {
 
     private final List<Filter> queryFilters;
 
     public QueryPreprocessorOption(List<Filter> queryFilters) {
-        this.queryFilters  = queryFilters;
-    }    
-    
+        this.queryFilters = queryFilters;
+    }
+
     public QueryPreprocessorOption(Filter queryFilter) {
         this.queryFilters = new ArrayList<>();
         queryFilters.add(queryFilter);
-    }    
-    
+    }
+
     public List<Filter> getQueryFilters() {
         return queryFilters;
     }

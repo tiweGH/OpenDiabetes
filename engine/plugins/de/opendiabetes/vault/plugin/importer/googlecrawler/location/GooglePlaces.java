@@ -15,7 +15,6 @@ import de.opendiabetes.vault.plugin.importer.googlecrawler.models.Contact;
 import de.opendiabetes.vault.plugin.importer.googlecrawler.people.AddressBook;
 import de.opendiabetes.vault.plugin.importer.googlecrawler.people.GooglePeople;
 import de.opendiabetes.vault.plugin.importer.googlecrawler.plot.GoogleMapsPlot;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -16,21 +16,24 @@
  */
 package de.opendiabetes.vault.processing.preprocessing.options;
 
-import de.opendiabetes.vault.container.VaultEntry;
 import de.opendiabetes.vault.container.VaultEntryType;
-import de.opendiabetes.vault.processing.VaultEntrySlicer;
-import java.util.List;
-import java.util.logging.Logger;
 
 /**
  *
  * @author tiweGH
  */
-public class GapRemoverPreprocessorOption extends PreprocessorOption{
+public class GapRemoverPreprocessorOption extends PreprocessorOption {
 
     private final VaultEntryType removeType;
     private final long gapTimeInMinutes;
 
+    /**
+     * Get's a dataset of VaultEntries and removes gaps between entries of the
+     * given types, which are bigger than the given time in minutes
+     *
+     * @param removeType type which will be used for the gap calculation
+     * @param gapTimeInMinutes given maximum gap-length
+     */
     public GapRemoverPreprocessorOption(VaultEntryType removeType, long gapTimeInMinutes) {
         this.gapTimeInMinutes = gapTimeInMinutes;
         this.removeType = removeType;

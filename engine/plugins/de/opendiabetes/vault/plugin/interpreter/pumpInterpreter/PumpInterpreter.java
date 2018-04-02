@@ -24,10 +24,6 @@ import de.opendiabetes.vault.plugin.interpreter.VaultInterpreter;
 import de.opendiabetes.vault.plugin.util.SlidingWindow;
 import de.opendiabetes.vault.plugin.util.SortVaultEntryByDate;
 import de.opendiabetes.vault.plugin.util.TimestampUtils;
-import org.pf4j.Extension;
-import org.pf4j.Plugin;
-import org.pf4j.PluginWrapper;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -35,6 +31,9 @@ import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.pf4j.Extension;
+import org.pf4j.Plugin;
+import org.pf4j.PluginWrapper;
 
 /**
  * Wrapper class for the PumpInterpreter plugin.

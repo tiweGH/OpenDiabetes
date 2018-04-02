@@ -16,9 +16,6 @@
  */
 package de.opendiabetes.vault.processing.filter;
 
-import de.opendiabetes.vault.processing.filter.NoneFilter;
-import de.opendiabetes.vault.processing.filter.FilterResult;
-import de.opendiabetes.vault.processing.filter.PositionFilter;
 import de.opendiabetes.vault.container.VaultEntry;
 import de.opendiabetes.vault.exporter.NewDataset;
 import de.opendiabetes.vault.processing.filter.options.PositionFilterOption;

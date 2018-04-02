@@ -24,6 +24,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * Negates the matchesFilterParameters() return-value of the given Filter. Use
+ * this Filter to run "exclude this"-filter operations.
  *
  * @author tiweGH
  */

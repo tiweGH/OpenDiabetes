@@ -19,12 +19,10 @@ package de.opendiabetes.vault.container;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-
+import static de.opendiabetes.vault.plugin.util.TimestampUtils.copyTimestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import static de.opendiabetes.vault.plugin.util.TimestampUtils.copyTimestamp;
 
 /**
  * This class defines the SliceEntry data type.

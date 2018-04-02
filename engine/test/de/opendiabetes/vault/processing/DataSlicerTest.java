@@ -16,8 +16,6 @@
  */
 package de.opendiabetes.vault.processing;
 
-import de.opendiabetes.vault.processing.DataSlicer;
-import de.opendiabetes.vault.processing.DataSlicerOptions;
 import de.opendiabetes.vault.container.SliceEntry;
 import de.opendiabetes.vault.processing.filter.Filter;
 import de.opendiabetes.vault.processing.filter.NoneFilter;

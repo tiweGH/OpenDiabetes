@@ -16,11 +16,6 @@
  */
 package de.opendiabetes.vault.processing.preprocessing.options;
 
-import de.opendiabetes.vault.container.VaultEntry;
-import de.opendiabetes.vault.processing.VaultEntrySlicer;
-import java.util.List;
-import java.util.logging.Logger;
-
 /**
  *
  * @author tiweGH

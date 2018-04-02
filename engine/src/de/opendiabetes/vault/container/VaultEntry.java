@@ -22,14 +22,12 @@ import com.google.gson.reflect.TypeToken;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-
+import static de.opendiabetes.vault.plugin.util.TimestampUtils.copyTimestamp;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-
-import static de.opendiabetes.vault.plugin.util.TimestampUtils.copyTimestamp;
 
 /**
  * This class defines a vault entry.

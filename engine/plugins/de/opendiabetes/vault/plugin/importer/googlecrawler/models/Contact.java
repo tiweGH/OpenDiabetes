@@ -4,7 +4,6 @@ import com.google.api.services.people.v1.model.Address;
 import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.LatLng;
 import de.opendiabetes.vault.plugin.importer.googlecrawler.location.GooglePlaces;
-
 import java.util.List;
 import java.util.stream.Collectors;
 

@@ -26,7 +26,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * This Filter checks if the given VaultEntry is in an given range of Time.
+ * This Filter checks if the timestamp of the given vaultEntry matches a
+ * relative time of day.
  *
  * @author Daniel
  */
@@ -39,8 +40,10 @@ public class TimePointFilter extends Filter {
     private final int marginAfterInMinutes;
 
     /**
-     * Sets the startTime, endTime, which will be calculated from the marginBefore, marginAfter and timePoint. This attributes will be given from the options Object.
-     * 
+     * Sets the startTime, endTime, which will be calculated from the
+     * marginBefore, marginAfter and timePoint. This attributes will be given
+     * from the options Object.
+     *
      * @param option TimePointFilterOption
      */
     public TimePointFilter(FilterOption option) {

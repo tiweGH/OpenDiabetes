@@ -26,6 +26,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * Filters only one entry at a specific position (can be calculated, see
+ * PositionFilter constants). Use this Filter e.g. with the QueryFilter.
  *
  * @author tiweGH
  */

@@ -20,7 +20,6 @@ import com.csvreader.CsvWriter;
 import de.opendiabetes.vault.container.csv.CsvEntry;
 import de.opendiabetes.vault.container.csv.ExportEntry;
 import de.opendiabetes.vault.container.csv.VaultCsvEntry;
-
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;

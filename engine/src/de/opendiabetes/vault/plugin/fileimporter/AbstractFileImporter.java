@@ -18,7 +18,6 @@ package de.opendiabetes.vault.plugin.fileimporter;
 
 import de.opendiabetes.vault.container.VaultEntry;
 import de.opendiabetes.vault.plugin.common.AbstractPlugin;
-
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.List;

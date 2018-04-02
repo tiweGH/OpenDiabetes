@@ -17,19 +17,16 @@
 package de.opendiabetes.vault.testhelper.filterfactory;
 
 import de.opendiabetes.vault.container.VaultEntry;
-import de.opendiabetes.vault.container.VaultEntryType;
 import de.opendiabetes.vault.container.VaultEntryTypeGroup;
 import de.opendiabetes.vault.processing.filter.CounterFilter;
 import de.opendiabetes.vault.processing.filter.Filter;
 import de.opendiabetes.vault.processing.filter.LogicFilter;
 import de.opendiabetes.vault.processing.filter.PositionFilter;
 import de.opendiabetes.vault.processing.filter.TypeGroupFilter;
-import de.opendiabetes.vault.processing.filter.VaultEntryTypeFilter;
 import de.opendiabetes.vault.processing.filter.options.CounterFilterOption;
 import de.opendiabetes.vault.processing.filter.options.LogicFilterOption;
 import de.opendiabetes.vault.processing.filter.options.PositionFilterOption;
 import de.opendiabetes.vault.processing.filter.options.TypeGroupFilterOption;
-import de.opendiabetes.vault.processing.filter.options.VaultEntryTypeFilterOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,9 +48,11 @@ public class TypeAfterNthEventAfterEvent extends FilterFactory {
                         PositionFilter.LAST)));
         innerFilters.add(
                 new CounterFilter(new CounterFilterOption(
-                        new VaultEntryTypeFilter(new VaultEntryTypeFilterOption(VaultEntryType.HEART_RATE)),
+                        new TypeGroupFilter(new TypeGroupFilterOption(
+                                VaultEntryTypeGroup.MEAL)),
                         2, false)));
-        innerFilters.add(new VaultEntryTypeFilter(new VaultEntryTypeFilterOption(VaultEntryType.STRESS)));
+        innerFilters.add(new TypeGroupFilter(new TypeGroupFilterOption(
+                VaultEntryTypeGroup.EXERCISE)));
         filters.add(new LogicFilter(new LogicFilterOption(innerFilters, true)));
 
     }

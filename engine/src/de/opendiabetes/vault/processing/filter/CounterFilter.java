@@ -23,9 +23,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * This class extends filter and checks if the given Filter hits an specific
+ * amount, after a result the hitcounter will be reset.
  *
- * @author Daniel This class extends filter and checks if the given Filter hits
- * an specific amount, after a result the hitcounter will be reset.
+ * @author Daniel
  */
 public class CounterFilter extends Filter {
 

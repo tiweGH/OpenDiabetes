@@ -16,8 +16,6 @@
  */
 package de.opendiabetes.vault.processing.filter.options;
 
-import de.opendiabetes.vault.processing.filter.DatasetMarker;
-import de.opendiabetes.vault.processing.filter.Filter;
 import java.util.Date;
 
 /**

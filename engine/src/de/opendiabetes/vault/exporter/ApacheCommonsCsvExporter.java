@@ -16,8 +16,8 @@
  */
 package de.opendiabetes.vault.exporter;
 
-import de.opendiabetes.vault.container.VaultEntry;
 import de.opendiabetes.vault.container.BucketEventTriggers;
+import de.opendiabetes.vault.container.VaultEntry;
 import de.opendiabetes.vault.container.VaultEntryType;
 import java.io.FileWriter;
 import java.io.IOException;

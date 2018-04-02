@@ -17,18 +17,21 @@
 package de.opendiabetes.vault.testhelper.filterfactory;
 
 import de.opendiabetes.vault.container.VaultEntryType;
+import de.opendiabetes.vault.container.VaultEntryTypeGroup;
 import de.opendiabetes.vault.processing.filter.AndFilter;
 import de.opendiabetes.vault.processing.filter.Filter;
 import de.opendiabetes.vault.processing.filter.NegateFilter;
 import de.opendiabetes.vault.processing.filter.QueryFilter;
 import de.opendiabetes.vault.processing.filter.ThresholdFilter;
 import de.opendiabetes.vault.processing.filter.TimeClusterFilter;
+import de.opendiabetes.vault.processing.filter.TypeGroupFilter;
 import de.opendiabetes.vault.processing.filter.VaultEntryTypeFilter;
 import de.opendiabetes.vault.processing.filter.options.AndFilterOption;
 import de.opendiabetes.vault.processing.filter.options.NegateFilterOption;
 import de.opendiabetes.vault.processing.filter.options.QueryFilterOption;
 import de.opendiabetes.vault.processing.filter.options.ThresholdFilterOption;
 import de.opendiabetes.vault.processing.filter.options.TimeClusterFilterOption;
+import de.opendiabetes.vault.processing.filter.options.TypeGroupFilterOption;
 import de.opendiabetes.vault.processing.filter.options.VaultEntryTypeFilterOption;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -39,10 +42,13 @@ import java.util.List;
  * @author tiweGH
  */
 public class ExcludeTimespanWithCriteria extends FilterFactory {
+//Entferne Nachmittage an denen der Stresslevel sehr hoch ist, der CGM Wert > 200 und gleichzeitig mehr als 2 Boli vorhanden sind.
 
     List<Filter> filters = new ArrayList<>();
+    LocalTime startTime = LocalTime.of(14, 0);
+    long lengthOfAfternoon = TimeClusterFilter.HOUR * 4;
 
-    public ExcludeTimespanWithCriteria(LocalTime startTime, long timespan) {
+    public ExcludeTimespanWithCriteria() {
 
         List<Filter> innerFilters = new ArrayList<>();
         innerFilters.add(
@@ -56,18 +62,18 @@ public class ExcludeTimespanWithCriteria extends FilterFactory {
                 new QueryFilter(new QueryFilterOption(
                         new AndFilter(new AndFilterOption(
                                 new VaultEntryTypeFilter(new VaultEntryTypeFilterOption(VaultEntryType.GLUCOSE_CGM)),
-                                new ThresholdFilter(new ThresholdFilterOption(120.0, ThresholdFilter.OVER)))),
+                                new ThresholdFilter(new ThresholdFilterOption(200, ThresholdFilter.OVER)))),
                         1, QueryFilter.DONT_CARE))
         );
         innerFilters.add(
                 new QueryFilter(new QueryFilterOption(
-                        new VaultEntryTypeFilter(new VaultEntryTypeFilterOption(VaultEntryType.BOLUS_NORMAL)),
-                        QueryFilter.DONT_CARE, 1))
+                        new TypeGroupFilter(new TypeGroupFilterOption(VaultEntryTypeGroup.BOLUS)),
+                        QueryFilter.DONT_CARE, 2))
         );
         filters.add(
                 new NegateFilter(new NegateFilterOption(
                         new TimeClusterFilter(new TimeClusterFilterOption(
-                                innerFilters, startTime, timespan, TimeClusterFilter.DAY - timespan)))));
+                                innerFilters, startTime, lengthOfAfternoon, TimeClusterFilter.DAY - lengthOfAfternoon)))));
 
     }
 

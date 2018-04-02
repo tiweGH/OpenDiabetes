@@ -16,7 +16,6 @@
  */
 package de.opendiabetes.vault.testhelper.filterfactory;
 
-import de.opendiabetes.vault.container.VaultEntry;
 import de.opendiabetes.vault.processing.filter.Filter;
 import java.util.List;
 

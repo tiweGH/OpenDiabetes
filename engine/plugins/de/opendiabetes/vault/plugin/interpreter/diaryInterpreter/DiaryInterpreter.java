@@ -18,12 +18,11 @@ package de.opendiabetes.vault.plugin.interpreter.diaryInterpreter;
 
 import de.opendiabetes.vault.container.VaultEntry;
 import de.opendiabetes.vault.plugin.interpreter.VaultInterpreter;
+import java.util.List;
+import java.util.Properties;
 import org.pf4j.Extension;
 import org.pf4j.Plugin;
 import org.pf4j.PluginWrapper;
-
-import java.util.List;
-import java.util.Properties;
 
 /**
  * Wrapper class for the DiaryInterpreter plugin.

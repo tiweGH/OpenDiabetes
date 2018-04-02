@@ -25,8 +25,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * Filters entries with a specific date (compared to the TimePointFilter)
  *
- * @author gizem
+ * @author tiweGH
  */
 public class DateTimePointFilter extends Filter {
 

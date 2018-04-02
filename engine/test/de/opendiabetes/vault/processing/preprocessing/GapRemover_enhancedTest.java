@@ -16,7 +16,6 @@
  */
 package de.opendiabetes.vault.processing.preprocessing;
 
-import de.opendiabetes.vault.processing.preprocessing.GapRemover_enhanced;
 import de.opendiabetes.vault.container.VaultEntry;
 import de.opendiabetes.vault.container.VaultEntryType;
 import de.opendiabetes.vault.processing.preprocessing.options.GapRemoverPreprocessorOption;
@@ -26,10 +25,10 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.After;
 import org.junit.AfterClass;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -37,7 +36,7 @@ import static org.junit.Assert.*;
  */
 public class GapRemover_enhancedTest {
 
-    GapRemover_enhanced instance;
+    GapRemover instance;
     List<VaultEntry> data;
     List<VaultEntry> actualResult;
     List<VaultEntry> expectedResult;
@@ -68,10 +67,10 @@ public class GapRemover_enhancedTest {
         GapRemoverPreprocessorOption gapRemoverPreprocessorOption = new GapRemoverPreprocessorOption(VaultEntryType.GLUCOSE_CGM, 0);
         GapRemoverPreprocessorOption gapRemoverPreprocessorOptionTwo = new GapRemoverPreprocessorOption(VaultEntryType.GLUCOSE_CGM, 5);
         
-        instance = new GapRemover_enhanced(gapRemoverPreprocessorOption);
+        instance = new GapRemover(gapRemoverPreprocessorOption);
         assertEquals(instance.preprocess(data), new ArrayList<>());
 
-        instance = new GapRemover_enhanced(gapRemoverPreprocessorOptionTwo);
+        instance = new GapRemover(gapRemoverPreprocessorOptionTwo);
         assertEquals(instance.preprocess(data), new ArrayList<>());
     }
 
@@ -87,7 +86,7 @@ public class GapRemover_enhancedTest {
         data.add(new VaultEntry(VaultEntryType.BOLUS_NORMAL, TimestampUtils.createCleanTimestamp("2010.01.08-00:04", "yyyy.MM.dd-HH:mm"), 0.3));
 
         GapRemoverPreprocessorOption gapRemoverPreprocessorOption = new GapRemoverPreprocessorOption(VaultEntryType.GLUCOSE_CGM, 5);
-        instance = new GapRemover_enhanced(gapRemoverPreprocessorOption);
+        instance = new GapRemover(gapRemoverPreprocessorOption);
 
         assertEquals(data, instance.preprocess(data));
 
@@ -111,7 +110,7 @@ public class GapRemover_enhancedTest {
         expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TimestampUtils.createCleanTimestamp("2010.01.08-00:00", "yyyy.MM.dd-HH:mm"), 151.0));
 
         GapRemoverPreprocessorOption gapRemoverPreprocessorOption = new GapRemoverPreprocessorOption(VaultEntryType.GLUCOSE_CGM, 5);
-        instance = new GapRemover_enhanced(gapRemoverPreprocessorOption);
+        instance = new GapRemover(gapRemoverPreprocessorOption);
 
 //        actualResult = instance.preprocess(data);
 //        System.out.println("testData_OneMatchingEntry_RestOutOfRange");
@@ -156,7 +155,7 @@ public class GapRemover_enhancedTest {
         expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_ELEVATION_30, TimestampUtils.createCleanTimestamp("2010.01.08-00:05", "yyyy.MM.dd-HH:mm"), -41.0));
 
         GapRemoverPreprocessorOption gapRemoverPreprocessorOption = new GapRemoverPreprocessorOption(VaultEntryType.GLUCOSE_CGM, 5);
-        instance = new GapRemover_enhanced(gapRemoverPreprocessorOption);
+        instance = new GapRemover(gapRemoverPreprocessorOption);
 
         System.out.println("testData_TwoMatchingEntries_RestOutOfRange");
         actualResult = instance.preprocess(data);
@@ -192,7 +191,7 @@ public class GapRemover_enhancedTest {
         expectedResult = data;
 
         GapRemoverPreprocessorOption gapRemoverPreprocessorOption = new GapRemoverPreprocessorOption(VaultEntryType.GLUCOSE_CGM, 5);
-        instance = new GapRemover_enhanced(gapRemoverPreprocessorOption);
+        instance = new GapRemover(gapRemoverPreprocessorOption);
 
         System.out.println("testData_TwoMatchingEntries_RestInRange");
         actualResult = instance.preprocess(data);
@@ -270,7 +269,7 @@ public class GapRemover_enhancedTest {
         expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TimestampUtils.createCleanTimestamp("2010.01.08-00:20", "yyyy.MM.dd-HH:mm"), 122.0));
 
         GapRemoverPreprocessorOption gapRemoverPreprocessorOption = new GapRemoverPreprocessorOption(VaultEntryType.GLUCOSE_CGM, 5);
-        instance = new GapRemover_enhanced(gapRemoverPreprocessorOption);
+        instance = new GapRemover(gapRemoverPreprocessorOption);
 
         System.out.println("testData_MultipleMatchingEntries_GapInMiddle_MiddleCGMTooLate");
         actualResult = instance.preprocess(data);
@@ -342,7 +341,7 @@ public class GapRemover_enhancedTest {
         expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TimestampUtils.createCleanTimestamp("2010.01.08-00:20", "yyyy.MM.dd-HH:mm"), 122.0));
 
         GapRemoverPreprocessorOption gapRemoverPreprocessorOption = new GapRemoverPreprocessorOption(VaultEntryType.GLUCOSE_CGM, 5);
-        instance = new GapRemover_enhanced(gapRemoverPreprocessorOption);
+        instance = new GapRemover(gapRemoverPreprocessorOption);
 
         System.out.println("testData_MultipleMatchingEntries_TwoGapsInMiddle_Successive");
         actualResult = instance.preprocess(data);
@@ -434,7 +433,7 @@ public class GapRemover_enhancedTest {
         expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TimestampUtils.createCleanTimestamp("2010.01.08-00:25", "yyyy.MM.dd-HH:mm"), 113.0));
 
         GapRemoverPreprocessorOption gapRemoverPreprocessorOption = new GapRemoverPreprocessorOption(VaultEntryType.GLUCOSE_CGM, 5);
-        instance = new GapRemover_enhanced(gapRemoverPreprocessorOption);
+        instance = new GapRemover(gapRemoverPreprocessorOption);
 
         System.out.println("testData_MultipleMatchingEntries_TwoGapsInMiddle_Successive");
         actualResult = instance.preprocess(data);
@@ -503,7 +502,7 @@ public class GapRemover_enhancedTest {
         expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TimestampUtils.createCleanTimestamp("2010.01.08-00:20", "yyyy.MM.dd-HH:mm"), 122.0));
 
         GapRemoverPreprocessorOption gapRemoverPreprocessorOption = new GapRemoverPreprocessorOption(VaultEntryType.GLUCOSE_CGM, 5);
-        instance = new GapRemover_enhanced(gapRemoverPreprocessorOption);
+        instance = new GapRemover(gapRemoverPreprocessorOption);
 
         System.out.println("testData_MultipleMatchingEntries_TwoGapsInMiddle_Successive_WithoutDataInSecond");
         actualResult = instance.preprocess(data);
@@ -566,7 +565,7 @@ public class GapRemover_enhancedTest {
         expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TimestampUtils.createCleanTimestamp("2010.01.08-00:20", "yyyy.MM.dd-HH:mm"), 122.0));
 
         GapRemoverPreprocessorOption gapRemoverPreprocessorOption = new GapRemoverPreprocessorOption(VaultEntryType.GLUCOSE_CGM, 5);
-        instance = new GapRemover_enhanced(gapRemoverPreprocessorOption);
+        instance = new GapRemover(gapRemoverPreprocessorOption);
 
         System.out.println("testData_MultipleMatchingEntries_TwoGapsInMiddle_Successive_WithoutDataInFirst");
         actualResult = instance.preprocess(data);
@@ -634,7 +633,7 @@ public class GapRemover_enhancedTest {
         expectedResult.add(new VaultEntry(VaultEntryType.GLUCOSE_CGM, TimestampUtils.createCleanTimestamp("2010.01.08-00:20", "yyyy.MM.dd-HH:mm"), 122.0));
 
         GapRemoverPreprocessorOption gapRemoverPreprocessorOption = new GapRemoverPreprocessorOption(VaultEntryType.GLUCOSE_CGM, 5);
-        instance = new GapRemover_enhanced(gapRemoverPreprocessorOption);
+        instance = new GapRemover(gapRemoverPreprocessorOption);
 
         System.out.println("testData_MultipleMatchingEntries_GapInMiddle_WithoutData");
         actualResult = instance.preprocess(data);

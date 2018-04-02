@@ -11,7 +11,6 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.fitness.FitnessScopes;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;

@@ -19,7 +19,6 @@ package de.opendiabetes.vault.plugin.util;
 
 import de.opendiabetes.vault.container.VaultEntry;
 import de.opendiabetes.vault.container.VaultEntryType;
-
 import java.util.ArrayList;
 import java.util.Date;
 

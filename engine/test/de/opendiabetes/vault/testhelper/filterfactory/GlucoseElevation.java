@@ -20,17 +20,18 @@ import de.opendiabetes.vault.container.VaultEntry;
 import de.opendiabetes.vault.container.VaultEntryType;
 import de.opendiabetes.vault.processing.filter.AndFilter;
 import de.opendiabetes.vault.processing.filter.CombinationFilter;
+import de.opendiabetes.vault.processing.filter.DateTimePointFilter;
 import de.opendiabetes.vault.processing.filter.Filter;
 import de.opendiabetes.vault.processing.filter.ThresholdFilter;
-import de.opendiabetes.vault.processing.filter.TimePointFilter;
 import de.opendiabetes.vault.processing.filter.VaultEntryTypeFilter;
 import de.opendiabetes.vault.processing.filter.options.AndFilterOption;
 import de.opendiabetes.vault.processing.filter.options.CombinationFilterOption;
+import de.opendiabetes.vault.processing.filter.options.DateTimePointFilterOption;
 import de.opendiabetes.vault.processing.filter.options.ThresholdFilterOption;
-import de.opendiabetes.vault.processing.filter.options.TimePointFilterOption;
 import de.opendiabetes.vault.processing.filter.options.VaultEntryTypeFilterOption;
-import java.time.LocalTime;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -38,10 +39,11 @@ import java.util.List;
  * @author tiweGH
  */
 public class GlucoseElevation extends FilterFactory {
+//... einen CGM Wert <70 und innerhalb der nächsten 5 Stunden einen steileren Anstieg > 30 enthalten
 
     List<Filter> filters = new ArrayList<>();
 
-    public GlucoseElevation(List<VaultEntry> data, double cgm_value, double rise_value, int minutes) {
+    public GlucoseElevation(List<VaultEntry> data) {
         filters.add(
                 new CombinationFilter(new CombinationFilterOption(
                         data,
@@ -49,17 +51,17 @@ public class GlucoseElevation extends FilterFactory {
                                 new VaultEntryTypeFilter(new VaultEntryTypeFilterOption(
                                         VaultEntryType.GLUCOSE_ELEVATION_30)),
                                 new ThresholdFilter(new ThresholdFilterOption(
-                                        rise_value,
+                                        20,
                                         ThresholdFilter.OVER)))),
-                        new TimePointFilter(new TimePointFilterOption(
-                                LocalTime.MIN, minutes)))));
+                        new DateTimePointFilter(new DateTimePointFilterOption(
+                                Date.from(Instant.MIN), 5 * 60, 0)))));
         filters.add(
                 new CombinationFilter(new CombinationFilterOption(
                         data,
                         new VaultEntryTypeFilter(new VaultEntryTypeFilterOption(
                                 VaultEntryType.GLUCOSE_CGM)),
                         new ThresholdFilter(new ThresholdFilterOption(
-                                cgm_value,
+                                70,
                                 ThresholdFilter.UNDER))
                 )));
 

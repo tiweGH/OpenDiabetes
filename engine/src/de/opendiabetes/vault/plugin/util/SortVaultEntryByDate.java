@@ -17,7 +17,6 @@
 package de.opendiabetes.vault.plugin.util;
 
 import de.opendiabetes.vault.container.VaultEntry;
-
 import java.io.Serializable;
 import java.util.Comparator;
 

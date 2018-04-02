@@ -6,7 +6,6 @@ import de.opendiabetes.vault.container.csv.ExportEntry;
 import de.opendiabetes.vault.container.csv.VaultCsvEntry;
 import de.opendiabetes.vault.plugin.util.EasyFormatter;
 import de.opendiabetes.vault.plugin.util.TimestampUtils;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
