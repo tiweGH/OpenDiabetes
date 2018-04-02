@@ -50,10 +50,11 @@ public class MLExporter extends de.opendiabetes.vault.plugin.exporter.FileExport
     private int wantedBucketSize = 1;
     private String filePath;
 
+    /**
     public MLExporter(int wantedBucketSize, String filePath) {
         this.wantedBucketSize = wantedBucketSize;
         this.filePath = filePath;
-    }
+    }*/
 
     protected String deleteComma(VaultEntry entry) {
         String result = entry.toString();
