@@ -47,7 +47,7 @@ import java.util.logging.Logger;
  */
 public class MLExporter extends de.opendiabetes.vault.plugin.exporter.FileExporter {
 
-    private int wantedBucketSize;
+    private int wantedBucketSize = 1;
     private String filePath;
 
     public MLExporter(int wantedBucketSize, String filePath) {
@@ -124,6 +124,20 @@ public class MLExporter extends de.opendiabetes.vault.plugin.exporter.FileExport
             fw.close();
         }
     }
+            
+    @Override
+    public boolean loadPluginSpecificConfiguration(final Properties configuration) {
+    
+        String temp = configuration.getProperty("wantedbucketsize");
+        
+        if(temp != null && temp.isEmpty())
+            wantedBucketSize = Integer.parseInt(temp);
+        else
+            wantedBucketSize = 1;
+        
+        return true;
+    }
+    
 
     @Override
     public void setEntries(List<?> entries) throws IllegalArgumentException {
@@ -134,7 +148,7 @@ public class MLExporter extends de.opendiabetes.vault.plugin.exporter.FileExport
     public int exportDataToFile(String filePath, List<VaultEntry> data) throws IOException {
         this.filePath = filePath;
         //vermutlich über loadConfiguration
-        wantedBucketSize = 1;
+                
         try {
             exportDataToFile(data);
         } catch (ParseException ex) {
@@ -161,4 +175,6 @@ public class MLExporter extends de.opendiabetes.vault.plugin.exporter.FileExport
 
         return exportEntrys;
     }
+
+
 }
